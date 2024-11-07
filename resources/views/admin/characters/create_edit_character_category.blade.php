@@ -52,6 +52,10 @@
         {!! Form::label('Description (Optional)') !!}
         {!! Form::textarea('description', $category->description, ['class' => 'form-control wysiwyg']) !!}
     </div>
+    @include('admin.lineage._edit_lineage_blacklist', [
+        'lineageBlacklist' => $lineageBlacklist,
+        'type' => 'category'
+    ])
 
     <div class="form-group">
         {!! Form::checkbox('is_visible', 1, $category->id ? $category->is_visible : 1, ['class' => 'form-check-input', 'data-toggle' => 'toggle']) !!}

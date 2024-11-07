@@ -13,6 +13,9 @@ use App\Models\Character\CharacterFeature;
 use App\Models\Character\CharacterImage;
 use App\Models\Character\CharacterTransfer;
 use App\Models\Sales\SalesCharacter;
+use App\Models\Character\CharacterLineage;
+use App\Models\User\UserCharacterLog;
+use App\Models\Species\Species;
 use App\Models\Species\Subtype;
 use App\Models\User\User;
 use App\Models\WorldExpansion\FactionRankMember;
@@ -131,6 +134,9 @@ class CharacterManager extends Service {
                 throw new \Exception('Error happened while trying to create character.');
             }
 
+            // Create character lineage
+            $lineage = $this->handleCharacterLineage($data, $character, $isMyo);
+
             // Create character image
             $data['is_valid'] = true; // New image of new characters are always valid
             $image = $this->handleCharacterImage($data, $character, $isMyo);
@@ -182,40 +188,153 @@ class CharacterManager extends Service {
     }
 
     /**
-     * Trims and optionally resizes and watermarks an image.
+     * Handles character lineage data.
      *
-     * @param CharacterImage $characterImage
+     * @param  array                            $data
+     * @return \App\Models\Character\Character  $character
+     * @param  bool                             $isMyo
+     * @return \App\Models\Character\CharacterLineage|bool
      */
-    public function processImage($characterImage) {
-        $imageProperties = getimagesize($characterImage->imagePath.'/'.$characterImage->imageFileName);
-        if ($imageProperties[0] > 2000 || $imageProperties[1] > 2000) {
-            // For large images (in terms of dimensions),
-            // use imagick instead, as it's better at handling them
-            Config::set('image.driver', 'imagick');
-        }
+    private function handleCharacterLineage($data, $character, $isMyo = false)
+    {
+        try {
+            // TODO take values from $data
+            $lineageData = [
+                'character_id'          => $character->id,
+                'sire_id'               => null,
+                'sire_name'             => null,
+                'sire_sire_id'          => null,
+                'sire_sire_name'        => null,
+                'sire_sire_sire_id'     => null,
+                'sire_sire_sire_name'   => null,
+                'sire_sire_dam_id'      => null,
+                'sire_sire_dam_name'    => null,
+                'sire_dam_id'           => null,
+                'sire_dam_name'         => null,
+                'sire_dam_sire_id'      => null,
+                'sire_dam_sire_name'    => null,
+                'sire_dam_dam_id'       => null,
+                'sire_dam_dam_name'     => null,
+                'dam_id'                => null,
+                'dam_name'              => null,
+                'dam_sire_id'           => null,
+                'dam_sire_name'         => null,
+                'dam_sire_sire_id'      => null,
+                'dam_sire_sire_name'    => null,
+                'dam_sire_dam_id'       => null,
+                'dam_sire_dam_name'     => null,
+                'dam_dam_id'            => null,
+                'dam_dam_name'          => null,
+                'dam_dam_sire_id'       => null,
+                'dam_dam_sire_name'     => null,
+                'dam_dam_dam_id'        => null,
+                'dam_dam_dam_name'      => null,
+            ];
+            $roots = [
+                'sire',
+                'sire_sire',
+                'sire_sire_sire',
+                'sire_sire_dam',
+                'sire_dam',
+                'sire_dam_sire',
+                'sire_dam_dam',
+                'dam',
+                'dam_sire',
+                'dam_sire_sire',
+                'dam_sire_dam',
+                'dam_dam',
+                'dam_dam_sire',
+                'dam_dam_dam'
+            ];
+            // you don't need to look for great-great-grandparents
+            $shortlist = [
+                'sire',
+                'sire_sire',
+                'sire_dam',
+                'dam',
+                'dam_sire',
+                'dam_dam',
+            ];
 
-        // Trim transparent parts of image.
-        $image = Image::make($characterImage->imagePath.'/'.$characterImage->imageFileName)->trim('transparent');
+            // check if lineage is empty ...
+            $isEmpty = true;
 
-        if (config('lorekeeper.settings.masterlist_image_automation') == 1) {
-            // Make the image be square
-            $imageWidth = $image->width();
-            $imageHeight = $image->height();
+            // Checking inputs ?
+            for ($i=0; $i < 14; $i++) {
+                // if isset Data key_id, set Lineage key_id and check if that character exists?
+                // else if isset Data key_name, set Lineage key_name to that.
+                if (isset($data[$roots[$i].'_id'])) {
+                    $id = $data[$roots[$i].'_id'];
+                    $lineageData[$roots[$i].'_id'] = $id;
+                    $char = Character::find($id);
 
-            if ($imageWidth > $imageHeight) {
-                // Landscape
-                $canvas = Image::canvas($image->width(), $image->width());
-                $image = $canvas->insert($image, 'center');
-            } else {
-                // Portrait
-                $canvas = Image::canvas($image->height(), $image->height());
-                $image = $canvas->insert($image, 'center');
+                    // TODO Set name to be the slug of the character.
+                    $lineageData[$roots[$i].'_name'] = $char->slug;
+                    $isEmpty = false;
+                }
+                else if (isset($data[$roots[$i].'_name'])) {
+                    $lineageData[$roots[$i].'_name'] = $data[$roots[$i].'_name'];
+                    $isEmpty = $data[$roots[$i].'_name'] == "" ? $isEmpty : false;
+                }
             }
+
+            //TODO: Fill from ancestor(s) IF ancestor fill is checked.
+            if (isset($data['generate_ancestors']) && !$isEmpty)
+            {
+                for ($j=0; $j < 6; $j++) {
+                    $key = $shortlist[$j];
+                    $id = $data[$key.'_id'];
+
+                    // check if this is a character id and not null
+                    if ($id !== null)
+                    {
+                        // check if this exists and has lineage
+                        $char = Character::find($id);
+                        if($char->exists() && $char->lineage !== null)
+                        {
+                            // go through their parents and gparents
+                            for ($k=0; $k < 6; $k++)
+                            {
+                                // checks that this is a valid lineage index
+                                // eg. sire_sire_sire and not sire_sire_sire_sire
+                                $key2 = $key."_".$shortlist[$k];
+                                if (in_array($key2, $roots, true))
+                                {
+                                    $lineageData[$key2."_id"] = $char->lineage[$shortlist[$k]."_id"];
+                                    $lineageData[$key2."_name"] = $char->lineage[$shortlist[$k]."_name"];
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            // throw new \Exception('Everything went right, we hope.');
+
+            $lineage = $isEmpty ? null : CharacterLineage::create($lineageData);
+            return $lineage;
+        } catch(\Exception $e) {
+            $this->setError('error', $e->getMessage());
         }
 
         // Add background fill if destination format is not transparent
         if (!in_array(config('lorekeeper.settings.masterlist_image_format'), ['png', 'webp']) && config('lorekeeper.settings.masterlist_image_format') != null && config('lorekeeper.settings.masterlist_image_background') != null) {
             $canvas = Image::canvas($image->width(), $image->height(), config('lorekeeper.settings.masterlist_image_background'));
+    }
+}
+
+    /**
+     * Trims and optionally resizes and watermarks an image.
+     *
+     *
+     * @param  \App\Models\Character\CharacterImage  $characterImage
+     */
+    private function processImage($characterImage)
+    {
+        // Trim transparent parts of image.
+        $image = Image::make($characterImage->imagePath . '/' . $characterImage->imageFileName)->trim('transparent');
+
+        if(Config::get('lorekeeper.settings.masterlist_image_format') != 'png' && Config::get('lorekeeper.settings.masterlist_image_format') != null && Config::get('lorekeeper.settings.masterlist_image_background') != null) {
+            $canvas = Image::canvas($image->width(), $image->height(), Config::get('lorekeeper.settings.masterlist_image_background'));
             $image = $canvas->insert($image, 'center');
         }
 
@@ -1362,7 +1481,151 @@ class CharacterManager extends Service {
             }
 
             return $this->commitReturn(true);
-        } catch (\Exception $e) {
+        } catch(\Exception $e) {
+            $this->setError('error', $e->getMessage());
+        }
+        return $this->rollbackReturn(false);
+    }
+        
+
+    /**
+     * Updates a character's lineage.
+     *
+     * @param  array                            $data
+     * @param  \App\Models\Character\Character  $character
+     * @param  \App\Models\User\User            $user
+     * @param  bool                             $isAdmin
+     * @return  bool
+     */
+    public function updateCharacterLineage($data, $character, $user, $isAdmin = false) {
+        DB::beginTransaction();
+
+        try {
+            if(!$user->hasPower('manage_characters')) throw new \Exception('You do not have the required permissions to do this.');
+            $roots = [
+                'sire',
+                'sire_sire', 'sire_sire_sire', 'sire_sire_dam',
+                'sire_dam',  'sire_dam_sire',  'sire_dam_dam',
+                'dam',
+                'dam_sire',  'dam_sire_sire',  'dam_sire_dam',
+                'dam_dam',   'dam_dam_sire',   'dam_dam_dam'
+            ];
+            // you don't need to look for great-great-grandparents
+            $shortlist = [
+                'sire', 'sire_sire', 'sire_dam',
+                'dam', 'dam_sire', 'dam_dam',
+            ];
+            $line = null;
+            $skipFlag = false;
+
+            // Check if we need to create a lineage bc this character doesn't have one.
+            if(!$character->lineage) {
+                $line = $this->handleCharacterLineage($data, $character, $character->is_myo_slot);
+                // tells us we don't need to calculate ancestors as handleCharacterLineage already does
+                $skipFlag = true;
+            }
+            else {
+                // Grab the character's existing lineage
+                $line = $character->lineage;
+            }
+
+            // If we have a lineage already, and didn't just create one, then update it.
+            if(!$skipFlag){
+                // Checking inputs ?
+                for ($i=0; $i < 14; $i++) {
+                    // if isset Data key_id, set Lineage key_id and check if that character exists?
+                    // else if isset Data key_name, set Lineage key_name to that.
+                    if (isset($data[$roots[$i].'_id'])) {
+                        $id = $data[$roots[$i].'_id'];
+                        $line[$roots[$i].'_id'] = $id;
+                        $char = Character::find($id);
+
+                        // TODO Set name to be the slug of the character.
+                        $line[$roots[$i].'_name'] = $char->slug;
+                    }
+                    else if (isset($data[$roots[$i].'_name'])) {
+                        $line[$roots[$i].'_name'] = $data[$roots[$i].'_name'];
+                    }
+                    else {
+                        // EG. someone deleted it, so we erase it.
+                        $line[$roots[$i].'_id'] = null;
+                        $line[$roots[$i].'_name'] = null;
+                    }
+                }
+            }
+
+            // If generate_ancestors is set and we didn't just create a new lineage ...
+            if (!$skipFlag && isset($data['generate_ancestors'])) {
+                // for each of this character's shortlist of ancestors...
+                for ($j=0; $j < 6; $j++) {
+                    $key = $shortlist[$j];
+                    $id = isset($data[$key.'_id']) ? $data[$key.'_id'] : null;
+
+                    // check if this is a character id and not null
+                    if ($id !== null) {
+                        // check if this exists and has lineage
+                        $char = Character::find($id);
+                        if($char->exists() && $char->lineage !== null) {
+                            // go through their parents and gparents
+                            for ($k=0; $k < 6; $k++) {
+                                // checks that this is a valid lineage index
+                                // eg. sire_sire_sire and not sire_sire_sire_sire
+                                $key2 = $key."_".$shortlist[$k];
+                                if (in_array($key2, $roots, true)) {
+                                    $line[$key2."_id"] = $char->lineage[$shortlist[$k]."_id"];
+                                    $line[$key2."_name"] = $char->lineage[$shortlist[$k]."_name"];
+                                }
+                            }
+                        }
+                        else {
+                            for ($k=0; $k < 6; $k++) {
+                                $key2 = $key."_".$shortlist[$k];
+                                if (in_array($key2, $roots, true)) {
+                                    $line[$key2."_id"] = null;
+                                    $line[$key2."_name"] = null;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            // if this request wants to update descendants
+            if (isset($data['update_descendants'])) {
+                // TODO: See if there's a better way to query this, because it is HELL on the database.
+
+                // find the descendants of this character
+                $children = CharacterLineage::query()
+                    ->where  ('sire_id',        $character->id)
+                    ->orWhere('sire_sire_id',   $character->id)
+                    ->orWhere('sire_dam_id',    $character->id)
+                    ->orWhere('dam_id',         $character->id)
+                    ->orWhere('dam_dam_id',     $character->id)
+                    ->orWhere('dam_sire_id',    $character->id)
+                    ->get();
+
+                // go through each descendant
+                foreach ($children as $child) {
+                    // search the lineage to find which ancestor this character is
+                    for ($k=0; $k < 6; $k++) {
+                        if ($child[$shortlist[$k]."_id"] == $character-> id) {
+                            for ($j=0; $j < 6; $j++) {
+                                $key = $shortlist[$k]."_".$shortlist[$j];
+                                if (in_array($key, $roots, true)) {
+                                    $child[$key."_id"] = $line[$shortlist[$j].'_id'];
+                                    $child[$key."_name"] = $line[$shortlist[$j].'_name'];
+                                }
+                            }
+                        }
+                    }
+                // save the changes
+                $child->save();
+                }
+            }
+            // and we're done!
+            if(!$skipFlag) $character->lineage->save();
+            return $this->commitReturn(true);
+        } catch(\Exception $e) {
             $this->setError('error', $e->getMessage());
         }
 
@@ -2053,22 +2316,272 @@ class CharacterManager extends Service {
      * Generates a list of features for displaying.
      *
      * @param CharacterImage $image
-     *
-     * @return string
+     * @param  \App\Models\Character\CharacterDesignUpdate  $request
+     * @return  bool
      */
+    public function submitRequest($request) {
+        DB::beginTransaction();
+
+        try {
+            if($request->status != 'Draft') throw new \Exception("This request cannot be resubmitted to the queue.");
+
+            // Recheck and set update type, as insurance/in case of pre-existing drafts
+            if($request->character->is_myo_slot)
+            $request->update_type = 'MYO';
+            else $request->update_type = 'Character';
+            // We've done validation and all section by section,
+            // so it's safe to simply set the status to Pending here
+            $request->status = 'Pending';
+            if(!$request->submitted_at) $request->submitted_at = Carbon::now();
+            $request->save();
+            return $this->commitReturn(true);
+        } catch(\Exception $e) {
+            $this->setError('error', $e->getMessage());
+        }
+        return $this->rollbackReturn(false);
+    }
+
     private function generateFeatureList($image) {
         $result = '';
         foreach ($image->features as $feature) {
             $result .= '<div>'.($feature->feature->category ? '<strong>'.$feature->feature->category->displayName.':</strong> ' : '').$feature->feature->displayName.'</div>';
         }
+    }
 
+    /**
+     * Approves a character design update request and processes it.
+     *
+     * @return string
+     */
+    public function approveRequest($data, $request, $user)
+    {
+        DB::beginTransaction();
+
+        try {
+            if($request->status != 'Pending') throw new \Exception("This request cannot be processed.");
+            if(!isset($data['character_category_id'])) throw new \Exception("Please select a character category.");
+            if(!isset($data['number'])) throw new \Exception("Please enter a character number.");
+            if(!isset($data['slug']) || Character::where('slug', $data['slug'])->where('id', '!=', $request->character_id)->exists()) throw new \Exception("Please enter a unique character code.");
+
+            // Remove any added items/currency
+            // Currency has already been removed, so no action required
+            // However logs need to be added for each of these
+            $requestData = $request->data;
+            $inventoryManager = new InventoryManager;
+            if(isset($requestData['user']) && isset($requestData['user']['user_items'])) {
+                $stacks = $requestData['user']['user_items'];
+                foreach($requestData['user']['user_items'] as $userItemId=>$quantity) {
+                    $userItemRow = UserItem::find($userItemId);
+                    if(!$userItemRow) throw new \Exception("Cannot return an invalid item. (".$userItemId.")");
+                    if($userItemRow->update_count < $quantity) throw new \Exception("Cannot return more items than was held. (".$userItemId.")");
+                    $userItemRow->update_count -= $quantity;
+                    $userItemRow->save();
+                }
+
+                $staff = $user;
+                foreach($stacks as $stackId=>$quantity) {
+                    $stack = UserItem::find($stackId);
+                    $user = User::find($request->user_id);
+                    if(!$inventoryManager->debitStack($user, $request->character->is_myo_slot ? 'MYO Design Approved' : 'Character Design Updated', ['data' => 'Item used in ' . ($request->character->is_myo_slot ? 'MYO design approval' : 'Character design update') . ' (<a href="'.$request->url.'">#'.$request->id.'</a>)'], $stack, $quantity)) throw new \Exception("Failed to create log for item stack.");
+                }
+                $user = $staff;
+            }
+            $currencyManager = new CurrencyManager;
+            if(isset($requestData['user']['currencies']) && $requestData['user']['currencies'])
+            {
+                foreach($requestData['user']['currencies'] as $currencyId=>$quantity) {
+                    $currency = Currency::find($currencyId);
+                    if(!$currencyManager->createLog($request->user_id, 'User', null, null,
+                    $request->character->is_myo_slot ? 'MYO Design Approved' : 'Character Design Updated',
+                    'Used in ' . ($request->character->is_myo_slot ? 'MYO design approval' : 'character design update') . ' (<a href="'.$request->url.'">#'.$request->id.'</a>)',
+                    $currencyId, $quantity))
+                        throw new \Exception("Failed to create log for user currency.");
+                }
+            }
+            if(isset($requestData['character']['currencies']) && $requestData['character']['currencies'])
+            {
+                foreach($requestData['character']['currencies'] as $currencyId=>$quantity) {
+                    $currency = Currency::find($currencyId);
+                    if(!$currencyManager->createLog($request->character_id, 'Character', null, null,
+                    $request->character->is_myo_slot ? 'MYO Design Approved' : 'Character Design Updated',
+                    'Used in ' . ($request->character->is_myo_slot ? 'MYO design approval' : 'character design update') . ' (<a href="'.$request->url.'">#'.$request->id.'</a>)',
+                    $currencyId, $quantity))
+                        throw new \Exception("Failed to create log for character currency.");
+                }
+            }
+
+            $extension = Config::get('lorekeeper.settings.masterlist_image_format') != null ? Config::get('lorekeeper.settings.masterlist_image_format') : $request->extension;
+
+            // Create a new image with the request data
+            $image = CharacterImage::create([
+                'character_id' => $request->character_id,
+                'is_visible' => 1,
+                'hash' => $request->hash,
+                'fullsize_hash' => $request->fullsize_hash ? $request->fullsize_hash : randomString(15),
+                'extension' => $extension,
+                'use_cropper' => $request->use_cropper,
+                'x0' => $request->x0,
+                'x1' => $request->x1,
+                'y0' => $request->y0,
+                'y1' => $request->y1,
+                'species_id' => $request->species_id,
+                'subtype_id' => ($request->character->is_myo_slot && isset($request->character->image->subtype_id)) ? $request->character->image->subtype_id : $request->subtype_id,
+                'rarity_id' => $request->rarity_id,
+                'sort' => 0,
+            ]);
+
+            // Shift the image credits over to the new image
+            $request->designers()->update(['character_type' => 'Character', 'character_image_id' => $image->id]);
+            $request->artists()->update(['character_type' => 'Character', 'character_image_id' => $image->id]);
+
+            // Add the compulsory features
+            if($request->character->is_myo_slot)
+            {
+                foreach($request->character->image->features as $feature)
+                {
+                    CharacterFeature::create(['character_image_id' => $image->id, 'feature_id' => $feature->feature_id, 'data' => $feature->data, 'character_type' => 'Character']);
+                }
+            }
+
+            // Shift the image features over to the new image
+            $request->rawFeatures()->update(['character_image_id' => $image->id, 'character_type' => 'Character']);
+
+            // Make the image directory if it doesn't exist
+            if(!file_exists($image->imagePath))
+            {
+                // Create the directory.
+                if (!mkdir($image->imagePath, 0755, true)) {
+                    $this->setError('error', 'Failed to create image directory.');
+                    return false;
+                }
+                chmod($image->imagePath, 0755);
+            }
+
+            // Move the image file to the new image
+            File::move($request->imagePath . '/' . $request->imageFileName, $image->imagePath . '/' . $image->imageFileName);
+            // Process and save the image
+            $this->processImage($image);
+
+            // The thumbnail is already generated, so it can just be moved without processing
+            File::move($request->thumbnailPath . '/' . $request->thumbnailFileName, $image->thumbnailPath . '/' . $image->thumbnailFileName);
+
+            // Set character data and other info such as cooldown time, resell cost and terms etc.
+            // since those might be updated with the new design update
+            if(isset($data['transferrable_at'])) $request->character->transferrable_at = $data['transferrable_at'];
+            $request->character->character_category_id = $data['character_category_id'];
+            $request->character->number = $data['number'];
+            $request->character->slug = $data['slug'];
+            $request->character->rarity_id = $request->rarity_id;
+
+            $request->character->description = $data['description'];
+            $request->character->parsed_description = parse($data['description']);
+
+            $request->character->is_sellable = isset($data['is_sellable']);
+            $request->character->is_tradeable = isset($data['is_tradeable']);
+            $request->character->is_giftable = isset($data['is_giftable']);
+            $request->character->sale_value = isset($data['sale_value']) ? $data['sale_value'] : 0;
+
+            // Invalidate old image if desired
+            if(isset($data['invalidate_old']))
+            {
+                $request->character->image->is_valid = 0;
+                $request->character->image->save();
+            }
+
+            // Set new image if desired
+            if(isset($data['set_active']))
+            {
+                $request->character->character_image_id = $image->id;
+            }
+
+            // Final recheck and setting of update type, as insurance
+            if($request->character->is_myo_slot)
+            $request->update_type = 'MYO';
+            else $request->update_type = 'Character';
+            $request->save();
+
+            // Add a log for the character and user
+            $this->createLog($user->id, null, $request->character->user_id, $request->character->user->alias, $request->character->id, $request->update_type == 'MYO' ? 'MYO Design Approved' : 'Character Design Updated', '[#'.$image->id.']', 'character');
+            $this->createLog($user->id, null, $request->character->user_id, $request->character->user->alias, $request->character->id, $request->update_type == 'MYO' ? 'MYO Design Approved' : 'Character Design Updated', '[#'.$image->id.']', 'user');
+
+            // If this is for a MYO, set user's FTO status and the MYO status of the slot
+            // and clear the character's name
+            if($request->character->is_myo_slot)
+            {
+                if(Config::get('lorekeeper.settings.clear_myo_slot_name_on_approval')) $request->character->name = null;
+                $request->character->is_myo_slot = 0;
+                $request->user->settings->is_fto = 0;
+                $request->user->settings->save();
+            }
+            $request->character->save();
+
+            // Set status to approved
+            $request->staff_id = $user->id;
+            $request->status = 'Approved';
+            $request->save();
+
+            // Notify the user
+            Notifications::create('DESIGN_APPROVED', $request->user, [
+                'design_url' => $request->url,
+                'character_url' => $request->character->url,
+                'name' => $request->character->fullName
+            ]);
+
+            // Notify bookmarkers
+            $request->character->notifyBookmarkers('BOOKMARK_IMAGE');
+
+            return $this->commitReturn(true);
+        } catch(\Exception $e) {
+            $this->setError('error', $e->getMessage());
+        }
         return $result;
     }
+        
 
     /**
      * Generates a list of image credits for displaying.
      *
      * @param CharacterImage $image
+     * @param  array                                        $data
+     * @param  \App\Models\Character\CharacterDesignUpdate  $request
+     * @param  \App\Models\User\User                        $user
+     * @return  bool
+     */
+    public function cancelRequest($data, $request, $user)
+    {
+        DB::beginTransaction();
+
+        try {
+            if($request->status != 'Pending') throw new \Exception("This request cannot be processed.");
+
+            // Soft removes the request from the queue -
+            // it preserves all the data entered, but allows the staff member
+            // to add a comment to it. Status is returned to Draft status.
+            // Use when rejecting a request that just requires minor modifications to approve.
+
+            // Set staff comment and status
+            $request->staff_id = $user->id;
+            $request->staff_comments = isset($data['staff_comments']) ? $data['staff_comments'] : null;
+            $request->status = 'Draft';
+            if(!isset($data['preserve_queue'])) $request->submitted_at = null;
+            $request->save();
+
+            // Notify the user
+            Notifications::create('DESIGN_CANCELED', $request->user, [
+                'design_url' => $request->url,
+                'character_url' => $request->character->url,
+                'name' => $request->character->fullName
+            ]);
+
+            return $this->commitReturn(true);
+        } catch(\Exception $e) {
+            $this->setError('error', $e->getMessage());
+        }
+        return $this->rollbackReturn(false);
+    }
+
+    /**
+     * Deletes a character design update request.
      *
      * @return string
      */
@@ -2079,6 +2592,100 @@ class CharacterManager extends Service {
         }
         foreach ($image->artists as $artist) {
             $result['artists'] .= '<div>'.$artist->displayLink().'</div>';
+        }
+    }
+
+    
+    public function deleteRequest($request)
+    {
+        DB::beginTransaction();
+
+        try {
+            if($request->status != 'Draft') throw new \Exception("This request cannot be processed.");
+
+            // Deletes the request entirely, including images and etc.
+            // This returns any attached items/currency
+            // Characters with an open draft request cannot be transferred (due to attached items/currency),
+            // so this is necessary to transfer a character
+
+            $requestData = $request->data;
+            // Return all added items/currency
+            if(isset($requestData['user']) && isset($requestData['user']['user_items'])) {
+                foreach($requestData['user']['user_items'] as $userItemId=>$quantity) {
+                    $userItemRow = UserItem::find($userItemId);
+                    if(!$userItemRow) throw new \Exception("Cannot return an invalid item. (".$userItemId.")");
+                    if($userItemRow->update_count < $quantity) throw new \Exception("Cannot return more items than was held. (".$userItemId.")");
+                    $userItemRow->update_count -= $quantity;
+                    $userItemRow->save();
+                }
+            }
+
+            $currencyManager = new CurrencyManager;
+            if(isset($requestData['user']['currencies']) && $requestData['user']['currencies'])
+            {
+                foreach($requestData['user']['currencies'] as $currencyId=>$quantity) {
+                    $currency = Currency::find($currencyId);
+                    if(!$currency) throw new \Exception("Cannot return an invalid currency. (".$currencyId.")");
+                    if(!$currencyManager->creditCurrency(null, $request->user, null, null, $currency, $quantity)) throw new \Exception("Could not return currency to user. (".$currencyId.")");
+                }
+            }
+            if(isset($requestData['character']['currencies']) && $requestData['character']['currencies'])
+            {
+                foreach($requestData['character']['currencies'] as $currencyId=>$quantity) {
+                    $currency = Currency::find($currencyId);
+                    if(!$currency) throw new \Exception("Cannot return an invalid currency. (".$currencyId.")");
+                    if(!$currencyManager->creditCurrency(null, $request->character, null, null, $currency, $quantity)) throw new \Exception("Could not return currency to character. (".$currencyId.")");
+                }
+            }
+
+            // Delete the request
+            $request->delete();
+
+            return $this->commitReturn(true);
+        } catch(\Exception $e) {
+            $this->setError('error', $e->getMessage());
+        }
+        return $this->rollbackReturn(false);
+    }
+
+    /**
+     * Votes on a a character design update request.
+     *
+     * @param  string                                       $action
+     * @param  \App\Models\Character\CharacterDesignUpdate  $request
+     * @param  \App\Models\User\User                        $user
+     * @return  bool
+     */
+    public function voteRequest($action, $request, $user)
+    {
+        DB::beginTransaction();
+
+        try {
+            if($request->status != 'Pending') throw new \Exception("This request cannot be processed.");
+            if(!Config::get('lorekeeper.extensions.design_update_voting')) throw new \Exception('This extension is not currently enabled.');
+
+            switch($action) {
+                default:
+                    flash('Invalid action.')->error();
+                    break;
+                case 'approve':
+                    $vote = 2;
+                    break;
+                case 'reject':
+                    $vote = 1;
+                    break;
+            }
+
+            $voteData = (isset($request->vote_data) ? collect(json_decode($request->vote_data, true)) : collect([]));
+            $voteData->get($user->id) ? $voteData->pull($user->id) : null;
+            $voteData->put($user->id, $vote);
+            $request->vote_data = $voteData->toJson();
+
+            $request->save();
+
+            return $this->commitReturn(true);
+        } catch(\Exception $e) {
+            $this->setError('error', $e->getMessage());
         }
 
         return $result;

@@ -43,6 +43,10 @@
         {!! Form::label('Description (Optional)') !!}
         {!! Form::textarea('description', $species->description, ['class' => 'form-control wysiwyg']) !!}
     </div>
+    @include('admin.lineage._edit_lineage_blacklist', [
+        'lineageBlacklist' => $lineageBlacklist,
+        'type' => 'species'
+    ])
 
     <div class="form-group">
         {!! Form::checkbox('is_visible', 1, $species->id ? $species->is_visible : 1, ['class' => 'form-check-input', 'data-toggle' => 'toggle']) !!}

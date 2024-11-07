@@ -2,7 +2,18 @@
 
 namespace App\Models\Character;
 
-use App\Facades\Notifications;
+use Config;
+use DB;
+use Notifications;
+
+use App\Models\Character\Character;
+use App\Models\Character\CharacterCategory;
+use App\Models\Character\CharacterTransfer;
+use App\Models\Character\CharacterBookmark;
+use App\Models\Character\CharacterLineage;
+use App\Models\Character\CharacterLineageBlacklist;
+
+use App\Models\Character\CharacterCurrency;
 use App\Models\Currency\Currency;
 use App\Models\Currency\CurrencyLog;
 use App\Models\Gallery\GalleryCharacter;
@@ -210,6 +221,14 @@ class Character extends Model {
      */
     public function items() {
         return $this->belongsToMany(Item::class, 'character_items')->withPivot('count', 'data', 'updated_at', 'id')->whereNull('character_items.deleted_at');
+    }
+
+    /**
+     * Get the lineage of the character.
+     */
+    public function lineage()
+    {
+        return $this->hasOne('App\Models\Character\CharacterLineage', 'character_id');
     }
 
     /**********************************************************************************************
@@ -667,7 +686,23 @@ class Character extends Model {
                     'character_url'  => $this->url,
                     'character_name' => $this->fullName,
                 ]);
-            }
         }
     }
 }
+
+/**
+     * Finds the lineage blacklist level of this character.
+     * 0 is no restriction at all
+     * 1 is no ancestors but no children
+     * 2 is no lineage at all
+     *
+     * @return int
+     */
+    public function getLineageBlacklistLevel($maxLevel = 2) {
+        return CharacterLineageBlacklist::getBlacklistLevel($this, $maxLevel);
+    }
+}
+
+
+    
+
