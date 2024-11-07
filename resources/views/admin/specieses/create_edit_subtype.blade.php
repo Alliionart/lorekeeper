@@ -51,12 +51,12 @@
 
     @include('admin.lineage._edit_lineage_blacklist', [
         'lineageBlacklist' => $lineageBlacklist,
-        'type' => 'subtype'
+        'type' => 'subtype',
     ])
 
-<div class="text-right">
-    {!! Form::submit($subtype->id ? 'Edit' : 'Create', ['class' => 'btn btn-primary']) !!}
-</div>
+    <div class="text-right">
+        {!! Form::submit($subtype->id ? 'Edit' : 'Create', ['class' => 'btn btn-primary']) !!}
+    </div>
 
     {!! Form::close() !!}
 

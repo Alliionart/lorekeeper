@@ -60,7 +60,7 @@
         });
         $('.edit-lineage').on('click', function(e) {
             e.preventDefault();
-            loadModal("{{ url($character->is_myo_slot ? 'admin/myo/' : 'admin/character/') }}/"+$(this).data('{{ $character->is_myo_slot ? 'id' : 'slug' }}')+"/lineage", 'Edit Character Lineage');
+            loadModal("{{ url($character->is_myo_slot ? 'admin/myo/' : 'admin/character/') }}/" + $(this).data('{{ $character->is_myo_slot ? 'id' : 'slug' }}') + "/lineage", 'Edit Character Lineage');
         });
         $('.edit-description').on('click', function(e) {
             e.preventDefault();
