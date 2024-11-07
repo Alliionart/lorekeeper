@@ -86,7 +86,7 @@
     @endif
     @if ($theme?->has_css)
         <style type="text/css" media="screen">
-            @php include_once($theme?->cssUrl)
+            @php if(isset($theme) && $theme && file_exists($theme?->cssUrl)) include_once($theme->cssUrl) 
             @endphp
             {{-- css in style tag to so that order matters --}}
         </style>
