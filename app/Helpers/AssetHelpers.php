@@ -70,12 +70,10 @@ function calculateGroupCurrency($data) {
  *
  * @return array
  */
-function getAssetKeys($isCharacter = false) {
-    if (!$isCharacter) {
-        return ['items', 'currencies', 'raffle_tickets', 'loot_tables', 'user_items', 'characters'];
-    } else {
-        return ['currencies', 'items', 'character_items', 'loot_tables'];
-    }
+function getAssetKeys($isCharacter = false)
+{
+    if (!$isCharacter) return ['items', 'currencies', 'raffle_tickets', 'loot_tables', 'user_items', 'characters', 'themes'];
+    else return ['currencies', 'items', 'character_items', 'loot_tables'];
 }
 
 /**
@@ -144,6 +142,12 @@ function getAssetModelString($type, $namespaced = true) {
                 return 'CharacterItem';
             }
             break;
+
+        case 'themes':
+            if ($namespaced) return '\App\Models\Theme';
+            else return 'Theme';
+            break;
+    
     }
 
     return null;
@@ -294,42 +298,41 @@ function fillUserAssets($assets, $sender, $recipient, $logType, $data) {
         unset($assets['loot_tables']);
     }
 
-    foreach ($assets as $key => $contents) {
-        if ($key == 'items' && count($contents)) {
-            $service = new App\Services\InventoryManager;
-            foreach ($contents as $asset) {
-                if (!$service->creditItem($sender, $recipient, $logType, $data, $asset['asset'], $asset['quantity'])) {
-                    return false;
-                }
-            }
-        } elseif ($key == 'currencies' && count($contents)) {
-            $service = new App\Services\CurrencyManager;
-            foreach ($contents as $asset) {
-                if (!$service->creditCurrency($sender, $recipient, $logType, $data['data'], $asset['asset'], $asset['quantity'])) {
-                    return false;
-                }
-            }
-        } elseif ($key == 'raffle_tickets' && count($contents)) {
-            $service = new App\Services\RaffleManager;
-            foreach ($contents as $asset) {
-                if (!$service->addTicket($recipient, $asset['asset'], $asset['quantity'])) {
-                    return false;
-                }
-            }
-        } elseif ($key == 'user_items' && count($contents)) {
-            $service = new App\Services\InventoryManager;
-            foreach ($contents as $asset) {
-                if (!$service->moveStack($sender, $recipient, $logType, $data, $asset['asset'])) {
-                    return false;
-                }
-            }
-        } elseif ($key == 'characters' && count($contents)) {
-            $service = new App\Services\CharacterManager;
-            foreach ($contents as $asset) {
-                if (!$service->moveCharacter($asset['asset'], $recipient, $data, $asset['quantity'], $logType)) {
-                    return false;
-                }
-            }
+    foreach($assets as $key => $contents)
+    {
+        if($key == 'items' && count($contents))
+        {
+            $service = new \App\Services\InventoryManager;
+            foreach($contents as $asset)
+                if(!$service->creditItem($sender, $recipient, $logType, $data, $asset['asset'], $asset['quantity'])) return false;
+        }
+        elseif($key == 'currencies' && count($contents))
+        {
+            $service = new \App\Services\CurrencyManager;
+            foreach($contents as $asset)
+                if(!$service->creditCurrency($sender, $recipient, $logType, $data['data'], $asset['asset'], $asset['quantity'])) return false;
+        }
+        elseif($key == 'raffle_tickets' && count($contents))
+        {
+            $service = new \App\Services\RaffleManager;
+            foreach($contents as $asset)
+                if(!$service->addTicket($recipient, $asset['asset'], $asset['quantity'])) return false;
+        }
+        elseif($key == 'user_items' && count($contents))
+        {
+            $service = new \App\Services\InventoryManager;
+            foreach($contents as $asset)
+                if(!$service->moveStack($sender, $recipient, $logType, $data, $asset['asset'])) return false;
+        }
+        elseif($key == 'characters' && count($contents))
+        {
+            $service = new \App\Services\CharacterManager;
+            foreach($contents as $asset)
+                if(!$service->moveCharacter($asset['asset'], $recipient, $data, $asset['quantity'], $logType)) return false;
+        } else if ($key == 'themes' && count($contents)) {
+            $service = new \App\Services\ThemeManager;
+            foreach ($contents as $asset)
+                if (!$service->creditTheme($recipient, $asset['asset'])) return false;
         }
     }
 

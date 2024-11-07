@@ -81,18 +81,62 @@
         <link href="{{ asset('css/custom.css') . '?v=' . filemtime(public_path('css/lorekeeper.css')) }}" rel="stylesheet">
     @endif
 
-    @include('feed::links')
+    @if ($theme?->prioritize_css)
+        @include('layouts.editable_theme')
+    @endif
+    @if ($theme?->has_css)
+        <style type="text/css" media="screen">
+            @php include_once($theme?->cssUrl)
+            @endphp
+            {{-- css in style tag to so that order matters --}}
+        </style>
+    @endif
+    @if (!$theme?->prioritize_css)
+        @include('layouts.editable_theme')
+    @endif
+
+    {{-- Conditional Themes are dependent on other site features --}}
+    @if ($conditionalTheme?->prioritize_css)
+        @include('layouts.editable_theme', ['theme' => $conditionalTheme])
+    @endif
+    @if ($conditionalTheme?->has_css)
+        <style type="text/css" media="screen">
+            @php include_once($conditionalTheme?->cssUrl)
+            @endphp
+            {{-- css in style tag to so that order matters --}}
+        </style>
+    @endif
+    @if (!$conditionalTheme?->prioritize_css)
+        @include('layouts.editable_theme', ['theme' => $conditionalTheme])
+    @endif
+
+    @if ($decoratorTheme?->prioritize_css)
+        @include('layouts.editable_theme', ['theme' => $decoratorTheme])
+    @endif
+    @if ($decoratorTheme?->has_css)
+        <style type="text/css" media="screen">
+            @php include_once($decoratorTheme?->cssUrl)
+            @endphp
+            {{-- css in style tag to so that order matters --}}
+        </style>
+    @endif
+    @if (!$decoratorTheme?->prioritize_css)
+        @include('layouts.editable_theme', ['theme' => $decoratorTheme])
+    @endif
+
 </head>
 
 <body>
     <div id="app">
-        <div class="site-header-image" id="header" style="background-image: url('{{ asset('images/header.png') }}');"></div>
+
+        <div class="site-header-image" id="header" style="background-image: url('{{ $decoratorTheme?->headerImageUrl ?? ($conditionalTheme?->headerImageUrl ?? ($theme?->headerImageUrl ?? asset('images/header.png'))) }}');"></div>
+
         @include('layouts._nav')
         @if (View::hasSection('sidebar'))
             <div class="site-mobile-header bg-secondary"><a href="#" class="btn btn-sm btn-outline-light" id="mobileMenuButton">Menu <i class="fas fa-caret-right ml-1"></i></a></div>
         @endif
 
-        <main class="container-fluid">
+        <main class="container-fluid" id="main">
             <div class="row">
 
                 <div class="sidebar col-lg-2" id="sidebar">
@@ -163,8 +207,18 @@
                     toolbar: 'undo redo | formatselect | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | spoiler-add spoiler-remove | removeformat | code',
                     content_css: [
                         '{{ asset('css/app.css') }}',
-                        '{{ asset('css/lorekeeper.css') }}'
+                        '{{ asset('css/lorekeeper.css') }}',
+                        '{{ asset('css/custom.css') }}',
+                        '{{ asset($theme?->cssUrl) }}',
+                        '{{ asset($conditionalTheme?->cssUrl) }}',
+                        '{{ asset($decoratorTheme?->cssUrl) }}',
+                        '{{ asset('css/all.min.css') }}' //fontawesome
                     ],
+                    content_style: `
+                    {{ str_replace(['<style>', '</style>'], '', view('layouts.editable_theme', ['theme' => $theme])) }}
+                    {{ str_replace(['<style>', '</style>'], '', view('layouts.editable_theme', ['theme' => $conditionalTheme])) }}
+                    {{ str_replace(['<style>', '</style>'], '', view('layouts.editable_theme', ['theme' => $decoratorTheme])) }}
+                    `,
                     spoiler_caption: 'Toggle Spoiler',
                     target_list: false
                 });
