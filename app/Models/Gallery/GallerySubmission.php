@@ -8,6 +8,7 @@ use App\Models\Model;
 use App\Models\Prompt\Prompt;
 use App\Models\Submission\Submission;
 use App\Models\User\User;
+use App\Models\WorldExpansion\Location;
 use App\Traits\Commentable;
 
 class GallerySubmission extends Model {
@@ -25,6 +26,7 @@ class GallerySubmission extends Model {
         'prompt_id', 'data', 'is_visible', 'status',
         'vote_data', 'staff_id', 'is_valued',
         'staff_comments', 'parsed_staff_comments',
+        'location_id',
     ];
 
     /**
@@ -124,6 +126,13 @@ class GallerySubmission extends Model {
      */
     public function prompt() {
         return $this->belongsTo(Prompt::class, 'prompt_id');
+    }
+
+    /**
+     * Get the location this submission is for if relevant.
+     */
+    public function location() {
+        return $this->belongsTo(Location::class, 'location_id');
     }
 
     /**********************************************************************************************
@@ -492,6 +501,28 @@ class GallerySubmission extends Model {
         // Only returns submissions which are viewable to everyone,
         // but given that this is for the sake of public display, that's fine
         return Prompt::whereIn('id', $this->promptSubmissions->pluck('prompt_id'))->get();
+    }
+
+    /**
+     * Gets prompt submissions associated with this gallery submission.
+     *
+     * @return array
+     */
+    public function getLocationSubmissionsAttribute() {
+        // Only returns submissions which are viewable to everyone,
+        // but given that this is for the sake of public display, that's fine
+        return Submission::viewable()->whereNotNull('location_id')->where('url', $this->url)->get();
+    }
+
+    /**
+     * Gets prompts associated with this gallery submission.
+     *
+     * @return array
+     */
+    public function getLocationsAttribute() {
+        // Only returns submissions which are viewable to everyone,
+        // but given that this is for the sake of public display, that's fine
+        return Prompt::whereIn('id', $this->promptSubmissions->pluck('location_id'))->get();
     }
 
     /**
