@@ -10,6 +10,7 @@ use App\Models\Gallery\Gallery;
 use App\Models\Gallery\GallerySubmission;
 use App\Models\Prompt\Prompt;
 use App\Models\User\User;
+use App\Models\WorldExpansion\Location;
 use App\Services\GalleryManager;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -67,8 +68,13 @@ class GalleryController extends Controller {
                 $query->where('gallery_submissions.title', 'LIKE', '%'.$request->get('title').'%');
             });
         }
+
         if ($request->get('prompt_id')) {
             $query->where('prompt_id', $request->get('prompt_id'));
+        }
+
+        if ($request->get('location_id')) {
+            $query->where('location_id', $request->get('location_id'));
         }
 
         if (isset($sort['sort'])) {
@@ -99,7 +105,8 @@ class GalleryController extends Controller {
         return view('galleries.gallery', [
             'gallery'          => $gallery,
             'submissions'      => $query->paginate(20)->appends($request->query()),
-            'prompts'          => [0 => 'Any Prompt'] + Prompt::whereIn('id', GallerySubmission::where('gallery_id', $gallery->id)->visible(Auth::check() ? Auth::user() : null)->accepted()->whereNotNull('prompt_id')->select('prompt_id')->distinct()->pluck('prompt_id')->toArray())->orderBy('name')->pluck('name', 'id')->toArray(),
+            'locations'        => [0 => 'Any Location'] + Location::whereIn('id', GallerySubmission::where('gallery_id', $gallery->id)->visible(Auth::check() ? Auth::user() : null)->accepted()->whereNotNull('location_id')->pluck('location_id')->toArray())->orderBy('name')->get()->pluck('styleParent', 'id')->toArray(),
+            'prompts'          => [0 => 'Any Prompt'] + Prompt::whereIn('id', GallerySubmission::where('gallery_id', $gallery->id)->visible(Auth::check() ? Auth::user() : null)->accepted()->whereNotNull('prompt_id')->pluck('prompt_id')->toArray())->orderBy('name')->pluck('name', 'id')->toArray(),
             'childSubmissions' => GallerySubmission::whereIn('gallery_id', $gallery->children->pluck('id')->toArray())->where('is_visible', 1)->where('status', 'Accepted'),
             'galleryPage'      => true,
             'sideGallery'      => $gallery,
@@ -282,6 +289,7 @@ class GalleryController extends Controller {
             'gallery'     => $gallery,
             'submission'  => new GallerySubmission,
             'prompts'     => Prompt::active()->sortAlphabetical()->pluck('name', 'id')->toArray(),
+            'locations'   => Location::visible()->sortAlphabetical()->get()->sortBy('parent_id')->pluck('styleParent', 'id')->toArray(),
             'users'       => User::visible()->orderBy('name')->pluck('name', 'id')->toArray(),
             'currency'    => Currency::find(Settings::get('group_currency')),
             'galleryPage' => true,
@@ -318,6 +326,7 @@ class GalleryController extends Controller {
             'gallery'        => $submission->gallery,
             'galleryOptions' => Gallery::orderBy('name')->pluck('name', 'id')->toArray(),
             'prompts'        => $prompts->sortAlphabetical()->pluck('name', 'id')->toArray(),
+            'locations'      => Location::visible()->sortAlphabetical()->get()->sortBy('parent_id')->pluck('styleParent', 'id')->toArray(),
             'submission'     => $submission,
             'users'          => User::visible()->orderBy('name')->pluck('name', 'id')->toArray(),
             'currency'       => Currency::find(Settings::get('group_currency')),
@@ -366,7 +375,7 @@ class GalleryController extends Controller {
      */
     public function postCreateEditGallerySubmission(Request $request, GalleryManager $service, $id = null) {
         $id ? $request->validate(GallerySubmission::$updateRules) : $request->validate(GallerySubmission::$createRules);
-        $data = $request->only(['image', 'text', 'title', 'description', 'slug', 'collaborator_id', 'collaborator_data', 'participant_id', 'participant_type', 'gallery_id', 'alert_user', 'prompt_id', 'content_warning']);
+        $data = $request->only(['image', 'text', 'title', 'description', 'slug', 'collaborator_id', 'collaborator_data', 'participant_id', 'participant_type', 'gallery_id', 'alert_user', 'prompt_id', 'location_id', 'content_warning']);
 
         if (!$id && Settings::get('gallery_submissions_reward_currency')) {
             $currencyFormData = $request->only(collect(config('lorekeeper.group_currency_form'))->keys()->toArray());
