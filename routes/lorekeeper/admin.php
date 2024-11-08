@@ -78,8 +78,8 @@ Route::group(['prefix' => 'files', 'middleware' => 'power:edit_site_settings'], 
     Route::post('folder/rename', 'FileController@postRenameFolder');
 });
 
-# THEME MANAGER
-Route::group(['prefix' => 'themes', 'middleware' => 'power:edit_site_settings'], function() {
+// THEME MANAGER
+Route::group(['prefix' => 'themes', 'middleware' => 'power:edit_site_settings'], function () {
     Route::get('/', 'ThemeController@getIndex');
 
     Route::get('create', 'ThemeController@getCreateTheme');
@@ -90,8 +90,8 @@ Route::group(['prefix' => 'themes', 'middleware' => 'power:edit_site_settings'],
     Route::post('delete/{id}', 'ThemeController@postDeleteTheme');
 });
 
-# SITE IMAGES
-Route::group(['prefix' => 'images', 'middleware' => 'power:edit_site_settings'], function() {
+// SITE IMAGES
+Route::group(['prefix' => 'images', 'middleware' => 'power:edit_site_settings'], function () {
     Route::get('/', 'FileController@getSiteImages');
 
     Route::post('upload/css', 'FileController@postUploadCss');
@@ -99,11 +99,9 @@ Route::group(['prefix' => 'images', 'middleware' => 'power:edit_site_settings'],
     Route::post('reset', 'FileController@postResetFile');
 });
 
-
-# DATA
-Route::group(['prefix' => 'data', 'namespace' => 'Data', 'middleware' => 'power:edit_data'], function() {
-
-    # GALLERIES
+// DATA
+Route::group(['prefix' => 'data', 'namespace' => 'Data', 'middleware' => 'power:edit_data'], function () {
+    // GALLERIES
     Route::get('galleries', 'GalleryController@getIndex');
     Route::get('galleries/create', 'GalleryController@getCreateGallery');
     Route::get('galleries/edit/{id}', 'GalleryController@getEditGallery');
@@ -519,7 +517,7 @@ Route::group(['prefix' => 'character', 'namespace' => 'Characters', 'middleware'
 
     Route::post('{slug}/transfer', 'CharacterController@postTransfer');
 
-    # LINEAGE
+    // LINEAGE
     Route::get('{slug}/lineage', 'CharacterLineageController@getEditCharacterLineage');
     Route::post('{slug}/lineage', 'CharacterLineageController@postEditCharacterLineage');
 });
@@ -542,7 +540,7 @@ Route::group(['prefix' => 'myo', 'namespace' => 'Characters', 'middleware' => 'p
 
     Route::post('{id}/transfer', 'CharacterController@postMyoTransfer');
 
-    # LINEAGE
+    // LINEAGE
     Route::get('{id}/lineage', 'CharacterLineageController@getEditMyoLineage');
     Route::post('{id}/lineage', 'CharacterLineageController@postEditMyoLineage');
 });
@@ -751,7 +749,6 @@ Route::group(['prefix' => 'world',  'namespace' => 'World', 'middleware' => 'pow
     Route::post('glossary/edit/{id}', 'GlossaryController@postCreateEditTerm');
     Route::get('glossary/delete/{id}', 'GlossaryController@getDeleteTerm');
     Route::post('glossary/delete/{id}', 'GlossaryController@postDeleteTerm');
-
 });
 /***********************************************************************************
  *

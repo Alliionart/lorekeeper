@@ -4,8 +4,8 @@ namespace App\Services;
 
 use App\Models\Character\Character;
 use App\Models\Character\CharacterCategory;
-use Illuminate\Support\Facades\DB;
 use App\Models\Character\CharacterLineageBlacklist;
+use Illuminate\Support\Facades\DB;
 
 class CharacterCategoryService extends Service {
     /*

@@ -328,8 +328,8 @@ return [
             ],
             [
                 'name' => 'Theme Manager',
-                'url' => 'admin/themes'
+                'url'  => 'admin/themes',
             ],
-        ]
+        ],
     ],
 ];
