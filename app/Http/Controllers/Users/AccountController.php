@@ -184,7 +184,7 @@ class AccountController extends Controller {
                 flash($error)->error();
             }
         }
-    };
+    }
      /* Edits the user's theme.
      *
      * @param  \Illuminate\Http\Request  $request
