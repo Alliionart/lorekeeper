@@ -2,18 +2,6 @@
 
 namespace App\Models\Character;
 
-use Config;
-use DB;
-use Notifications;
-
-use App\Models\Character\Character;
-use App\Models\Character\CharacterCategory;
-use App\Models\Character\CharacterTransfer;
-use App\Models\Character\CharacterBookmark;
-use App\Models\Character\CharacterLineage;
-use App\Models\Character\CharacterLineageBlacklist;
-
-use App\Models\Character\CharacterCurrency;
 use App\Models\Currency\Currency;
 use App\Models\Currency\CurrencyLog;
 use App\Models\Gallery\GalleryCharacter;
@@ -35,6 +23,7 @@ use App\Models\User\UserCharacterLog;
 use App\Models\WorldExpansion\FactionRankMember;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Notifications;
 use Settings;
 
 class Character extends Model {
@@ -275,8 +264,7 @@ class Character extends Model {
     /**
      * Get the lineage of the character.
      */
-    public function lineage()
-    {
+    public function lineage() {
         return $this->hasOne('App\Models\Character\CharacterLineage', 'character_id');
     }
 
@@ -978,11 +966,13 @@ class Character extends Model {
         });
     }
 
-/**
+    /**
      * Finds the lineage blacklist level of this character.
      * 0 is no restriction at all
      * 1 is no ancestors but no children
-     * 2 is no lineage at all
+     * 2 is no lineage at all.
+     *
+     * @param mixed $maxLevel
      *
      * @return int
      */
@@ -990,7 +980,3 @@ class Character extends Model {
         return CharacterLineageBlacklist::getBlacklistLevel($this, $maxLevel);
     }
 }
-
-
-    
-

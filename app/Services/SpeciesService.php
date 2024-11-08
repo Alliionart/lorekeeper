@@ -3,10 +3,10 @@
 namespace App\Services;
 
 use App\Models\Character\CharacterImage;
+use App\Models\Character\CharacterLineageBlacklist;
 use App\Models\Species\Species;
 use App\Models\Species\Subtype;
 use Illuminate\Support\Facades\DB;
-use App\Models\Character\CharacterLineageBlacklist;
 
 class SpeciesService extends Service {
     /*

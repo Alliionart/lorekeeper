@@ -286,11 +286,11 @@ class UserController extends Controller {
         ]);
     }
 
-     /* Shows a user's Bank.
-     * @param string $name
-     *
-     * @return \Illuminate\Contracts\Support\Renderable
-     */
+    /* Shows a user's Bank.
+    * @param string $name
+    *
+    * @return \Illuminate\Contracts\Support\Renderable
+    */
     public function getUserBank($name) {
         $user = $this->user;
 

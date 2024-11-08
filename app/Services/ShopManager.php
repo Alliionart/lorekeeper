@@ -84,9 +84,11 @@ class ShopManager extends Service {
                     throw new \Exception('No discount amount set, please contact a site admin before trying to purchase again.');
                 }
 
-            if($shopStock->purchase_limit && $quantity > $shopStock->purchase_limit) throw new \Exception("The quantity specified exceeds the amount of this item you can buy.");
+                if ($shopStock->purchase_limit && $quantity > $shopStock->purchase_limit) {
+                    throw new \Exception('The quantity specified exceeds the amount of this item you can buy.');
+                }
 
-            $total_cost = $shopStock->cost * $quantity;
+                $total_cost = $shopStock->cost * $quantity;
                 // if the coupon isn't infinite kill it
                 if (!$coupon['infinite']) {
                     if (!(new InventoryManager)->debitStack($user, 'Coupon Used', ['data' => 'Coupon used in purchase of '.$shopStock->item->name.' from '.$shop->name], $userItem, 1)) {

@@ -6,9 +6,9 @@ use App\Facades\Settings;
 use App\Http\Controllers\Controller;
 use App\Models\Character\Character;
 use App\Models\Character\CharacterCategory;
+use App\Models\Character\CharacterLineageBlacklist;
 use App\Models\Character\CharacterTransfer;
 use App\Models\Feature\Feature;
-use App\Models\Character\CharacterLineageBlacklist;
 use App\Models\Rarity;
 use App\Models\Species\Species;
 use App\Models\Species\Subtype;
@@ -49,15 +49,15 @@ class CharacterController extends Controller {
      */
     public function getCreateCharacter() {
         return view('admin.masterlist.create_character', [
-            'categories'  => CharacterCategory::orderBy('sort')->get(),
-            'userOptions' => User::query()->orderBy('name')->pluck('name', 'id')->toArray(),
+            'categories'       => CharacterCategory::orderBy('sort')->get(),
+            'userOptions'      => User::query()->orderBy('name')->pluck('name', 'id')->toArray(),
             'characterOptions' => CharacterLineageBlacklist::getAncestorOptions(),
-            'rarities'    => ['0' => 'Select Rarity'] + Rarity::orderBy('sort', 'DESC')->pluck('name', 'id')->toArray(),
-            'specieses'   => ['0' => 'Select Species'] + Species::orderBy('sort', 'DESC')->pluck('name', 'id')->toArray(),
-            'subtypes'    => ['0' => 'Pick a Species First'],
-            'features'    => Feature::getDropdownItems(1),
-            'isMyo'       => false,
-            'stats'       => Stat::orderBy('name')->get(),
+            'rarities'         => ['0' => 'Select Rarity'] + Rarity::orderBy('sort', 'DESC')->pluck('name', 'id')->toArray(),
+            'specieses'        => ['0' => 'Select Species'] + Species::orderBy('sort', 'DESC')->pluck('name', 'id')->toArray(),
+            'subtypes'         => ['0' => 'Pick a Species First'],
+            'features'         => Feature::getDropdownItems(1),
+            'isMyo'            => false,
+            'stats'            => Stat::orderBy('name')->get(),
         ]);
     }
 
@@ -68,14 +68,14 @@ class CharacterController extends Controller {
      */
     public function getCreateMyo() {
         return view('admin.masterlist.create_character', [
-            'userOptions' => User::query()->orderBy('name')->pluck('name', 'id')->toArray(),
+            'userOptions'      => User::query()->orderBy('name')->pluck('name', 'id')->toArray(),
             'characterOptions' => CharacterLineageBlacklist::getAncestorOptions(),
-            'rarities'    => ['0' => 'Select Rarity'] + Rarity::orderBy('sort', 'DESC')->pluck('name', 'id')->toArray(),
-            'specieses'   => ['0' => 'Select Species'] + Species::orderBy('sort', 'DESC')->pluck('name', 'id')->toArray(),
-            'subtypes'    => ['0' => 'Pick a Species First'],
-            'features'    => Feature::getDropdownItems(1),
-            'isMyo'       => true,
-            'stats'       => Stat::orderBy('name')->get(),
+            'rarities'         => ['0' => 'Select Rarity'] + Rarity::orderBy('sort', 'DESC')->pluck('name', 'id')->toArray(),
+            'specieses'        => ['0' => 'Select Species'] + Species::orderBy('sort', 'DESC')->pluck('name', 'id')->toArray(),
+            'subtypes'         => ['0' => 'Pick a Species First'],
+            'features'         => Feature::getDropdownItems(1),
+            'isMyo'            => true,
+            'stats'            => Stat::orderBy('name')->get(),
         ]);
     }
 

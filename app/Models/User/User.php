@@ -26,10 +26,10 @@ use App\Models\Shop\ShopLog;
 use App\Models\Stat\ExpLog;
 use App\Models\Stat\StatTransferLog;
 use App\Models\Submission\Submission;
+use App\Models\Theme;
 use App\Models\WorldExpansion\Faction;
 use App\Models\WorldExpansion\FactionRankMember;
 use App\Models\WorldExpansion\Location;
-use App\Models\Theme;
 use App\Traits\Commenter;
 use Carbon\Carbon;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -113,8 +113,7 @@ class User extends Authenticatable implements MustVerifyEmail {
     /**
      * Get user theme.
      */
-    public function theme()
-    {
+    public function theme() {
         return $this->belongsTo('App\Models\Theme');
     }
 
@@ -125,9 +124,8 @@ class User extends Authenticatable implements MustVerifyEmail {
         return $this->belongsTo('App\Models\Theme', 'decorator_theme_id');
     }
 
-
     /**
-     * Get User Granted Themes 
+     * Get User Granted Themes.
      */
     /**
      * Get user theme.
@@ -328,7 +326,9 @@ class User extends Authenticatable implements MustVerifyEmail {
      **********************************************************************************************/
 
     /**
-     * Checks if the user has the named recipe
+     * Checks if the user has the named recipe.
+     *
+     * @param mixed $theme_id
      *
      * @return bool
      */
@@ -336,9 +336,10 @@ class User extends Authenticatable implements MustVerifyEmail {
         $theme = Theme::find($theme_id);
         $user_has = $this->recipes && $this->recipes->contains($theme);
         $default = $theme->is_user_selectable;
+
         return $default ? true : $user_has;
     }
-    
+
     /**
      * Get the user's alias.
      *
