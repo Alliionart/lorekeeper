@@ -10,7 +10,7 @@ class CreatePetLevelTables extends Migration {
      */
     public function up(): void {
         Schema::table('user_pets', function (Blueprint $table) {
-            $table->renameColumn('character_id', 'character_id');
+            $table->renameColumn('chara_id', 'character_id');
             $table->integer('sort')->unsigned()->default(0);
             $table->timestamp('bonded_at')->nullable()->default(null);
         });
