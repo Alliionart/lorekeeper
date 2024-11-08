@@ -40,7 +40,7 @@ class Kernel extends ConsoleKernel {
         $schedule->command('check-pet-drops')
             ->everyMinute();
         $schedule->command('change-feature')
-                ->monthly();
+            ->monthly();
     }
 
     /**
