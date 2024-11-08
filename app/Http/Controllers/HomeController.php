@@ -4,11 +4,17 @@ namespace App\Http\Controllers;
 
 use App\Models\Gallery\GallerySubmission;
 use App\Models\SitePage;
+use Auth;
+use DB;
+use Config;
+use Carbon\Carbon;
+use Settings;
+use App\Http\Controllers\Controller;
+use App\Models\Character\Character;
+
 use App\Services\LinkService;
 use App\Services\UserService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Laravel\Socialite\Facades\Socialite;
 
 class HomeController extends Controller {
@@ -33,10 +39,16 @@ class HomeController extends Controller {
         } else {
             $gallerySubmissions = [];
         }
+        /*Featured Character */
+        if(Settings::get('featured_character')) {
+            $character = Character::find(Settings::get('featured_character'));
+        }
+        else $character = null;
 
         return view('welcome', [
             'about'               => SitePage::where('key', 'about')->first(),
             'gallerySubmissions'  => $gallerySubmissions,
+            'featured' => $character,
         ]);
     }
 
