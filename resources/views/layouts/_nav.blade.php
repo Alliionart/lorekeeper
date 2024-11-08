@@ -141,6 +141,8 @@
 
             <!-- Right Side Of Navbar -->
             <ul class="navbar-nav ml-auto">
+                <!-- Clock -->
+                {!! LiveClock("America/Boise") !!}
                 <!-- Authentication Links -->
                 @guest
                     <li class="nav-item">
