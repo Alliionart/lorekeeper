@@ -140,6 +140,8 @@ function parse($text, &$pings = null) {
         $pings = ['users' => $users, 'characters' => $characters];
     }
 
+    $text = parseLiveClock($text);
+
     return $text;
 }
 
@@ -485,4 +487,71 @@ function allAttachments($model) {
  */
 function getDisplayName($model, $id) {
     return $model::find($id)?->displayName;
+}
+
+/**
+ * Puts down the HTML needed for a LiveClock.
+ * Now with Timezones feature!
+ *
+ * @param string $LCtimezone
+ *
+ * @return string
+ */
+function LiveClock($LCtimezone = NULL)
+{
+    ?>
+    <div class="card time px-4 py-2 d-flex flex-row align-items-center"><i class="far fa-clock"></i><p class="mb-0" id="hdclock"></p></div>
+        <script>
+            var timeDisplay = document.getElementById("hdclock");
+            function refreshTime() {
+                var date = new Date().toLocaleString('default', { month: 'short' }) + ' ' + new Date().toLocaleString('default', { day: 'numeric' }) + ', ' + new Date().toLocaleString('default', { year: 'numeric' }) ;
+                var time = new Date().toLocaleString('default', { timeStyle: 'medium' });
+                timeDisplay.innerHTML = date + '<br><span>'+ time +'</span></div>';
+                }
+
+                setInterval(refreshTime, 1000);
+        </script>
+    <?php
+    // $date = NULL;
+    // try {
+    //     $date = new DateTimeZone($LCtimezone);
+    // }
+    // catch(Exception $e) { /* Do Nothing If Wrong, Will End Up As Default */}
+
+    // $LCtimezone = Carbon\Carbon::now($date);
+
+    // $LCcode = '<span class="LiveClock" LiveClockOffset="'.$LCtimezone->utcOffset().'"></span>';
+    // $LCtz = '<abbr data-toggle="tooltip" title="UTC'.$LCtimezone->timezone->toOffsetName().'">' . strtoupper($LCtimezone->timezone->getAbbreviatedName($LCtimezone->isDST())) . '</abbr>';
+    // return $LCcode . " " . $LCtz;
+}
+
+/**
+ * Parses a piece of user-entered text to match LiveClock mentions
+ * and replace with a fully functional LiveClock.
+ *
+ * @param string $text
+ *
+ * @return string
+ */
+function parseLiveClock($text) {
+    $matches = null;
+    $matches2 = null;
+    
+    $count = preg_match_all('/\[liveclock\]/', $text, $matches);
+    if ($count) {
+        $matches = array_unique($matches);
+        foreach ($matches as $match) {
+            $text = preg_replace('/\[liveclock\]/', LiveClock(), $text);
+        }
+    }
+
+    $count2 = preg_match_all('/\[liveclock=([^\[\]&<>?"\']+)\]/', $text, $matches2);
+    if ($count2) {
+        $matches2 = array_unique($matches2[1]);
+        foreach ($matches2 as $match2) {
+            $text = str_replace('[liveclock='.$match2.']', LiveClock($match2), $text);
+        }
+    }
+
+    return $text;
 }
