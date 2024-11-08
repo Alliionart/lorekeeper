@@ -500,13 +500,13 @@ function getDisplayName($model, $id) {
 function LiveClock($LCtimezone = NULL)
 {
     ?>
-    <div class="card time px-4 py-2 d-flex flex-row align-items-center"><i class="far fa-clock"></i><p class="mb-0" id="hdclock"></p></div>
+    <div class="card time px-4 py-2 d-flex flex-row align-items-center"><i class="fas fa-clock"></i></i><p class="mb-0" id="hdclock"></p></div>
         <script>
             var timeDisplay = document.getElementById("hdclock");
             function refreshTime() {
                 var date = new Date().toLocaleString('default', { month: 'short' }) + ' ' + new Date().toLocaleString('default', { day: 'numeric' }) + ', ' + new Date().toLocaleString('default', { year: 'numeric' }) ;
                 var time = new Date().toLocaleString('default', { timeStyle: 'medium' });
-                timeDisplay.innerHTML = date + '<br><span>'+ time +'</span></div>';
+                timeDisplay.innerHTML = '<p>' + date + '</p><p>'+ time +'</p></div>';
                 }
 
                 setInterval(refreshTime, 1000);
