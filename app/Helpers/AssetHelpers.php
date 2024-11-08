@@ -431,37 +431,38 @@ function parseAssetData($array) {
  * @param App\Models\User\User $recipient
  * @param string               $logType
  * @param string               $data
+ * @param mixed                $isSubmission
  *
  * @return array
  */
-function fillUserAssets($assets, $sender, $recipient, $logType, $data, $isSubmission = False)
-{
+function fillUserAssets($assets, $sender, $recipient, $logType, $data, $isSubmission = false) {
     // Roll on any loot tables
-    if(isset($assets['loot_tables']))
-    {
+    if (isset($assets['loot_tables'])) {
         $loot = [];
-        foreach($assets['loot_tables'] as $table)
-        {
-            if($isSubmission) {
-                if (!isset($loot[$table['asset']->id]))
+        foreach ($assets['loot_tables'] as $table) {
+            if ($isSubmission) {
+                if (!isset($loot[$table['asset']->id])) {
                     $loot[$table['asset']->id] = [];
-                $reward =  $table['asset']->roll($table['quantity']);
-                foreach($reward as $key => $item) {
-                    if($item) {
-                        if (!isset($loot[$table['asset']->id][$key]))
+                }
+                $reward = $table['asset']->roll($table['quantity']);
+                foreach ($reward as $key => $item) {
+                    if ($item) {
+                        if (!isset($loot[$table['asset']->id][$key])) {
                             $loot[$table['asset']->id][$key] = [];
-                        foreach($item as $asset) {
-                            if (isset($loot[$table['asset']->id][$key]['asset'][$asset['asset']->id]))
+                        }
+                        foreach ($item as $asset) {
+                            if (isset($loot[$table['asset']->id][$key]['asset'][$asset['asset']->id])) {
                                 $loot[$table['asset']->id][$key]['asset'][$asset['asset']->id]['quantity'] += $asset['quantity'];
-                            else
-                                $loot[$table['asset']->id][$key][] = ['asset' => $asset['asset']->id,'quantity' => $asset['quantity']];
+                            } else {
+                                $loot[$table['asset']->id][$key][] = ['asset' => $asset['asset']->id, 'quantity' => $asset['quantity']];
+                            }
                         }
                     }
                 }
-                $assets = mergeAssetsArrays($assets, $reward);    
+                $assets = mergeAssetsArrays($assets, $reward);
+            } else {
+                $assets = mergeAssetsArrays($assets, $table['asset']->roll($table['quantity']));
             }
-            else
-            $assets = mergeAssetsArrays($assets, $table['asset']->roll($table['quantity']));
         }
         unset($assets['loot_tables']);
     }
@@ -543,11 +544,11 @@ function fillUserAssets($assets, $sender, $recipient, $logType, $data, $isSubmis
             }
         }
     }
-    if($isSubmission)
-    {
+    if ($isSubmission) {
         return ['assets' => $assets, 'loot' => $loot];
+    } else {
+        return $assets;
     }
-    else return $assets;
 }
 
 /**

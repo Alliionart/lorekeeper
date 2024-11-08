@@ -411,7 +411,9 @@ class SubmissionManager extends Service {
             ];
 
             // Distribute user rewards
-            if(!$rewards = fillUserAssets($rewards, $user, $submission->user, $promptLogType, $promptData, True)) throw new \Exception("Failed to distribute rewards to user.");
+            if (!$rewards = fillUserAssets($rewards, $user, $submission->user, $promptLogType, $promptData, true)) {
+                throw new \Exception('Failed to distribute rewards to user.');
+            }
 
             // Retrieve all reward IDs for characters
             $currencyIds = [];
@@ -524,10 +526,10 @@ class SubmissionManager extends Service {
                 'staff_id'              => $user->id,
                 'status'                => 'Approved',
                 'data'                  => json_encode([
-                    'user'    => $addonData,
-                    'rewards' => getDataReadyAssets($rewards),
-                    'skills'  => $skills ?? null,
-                    'loot_tables' => isset($rewards['loot']) ? $rewards['loot'] : [],
+                    'user'        => $addonData,
+                    'rewards'     => getDataReadyAssets($rewards),
+                    'skills'      => $skills ?? null,
+                    'loot_tables' => $rewards['loot'] ?? [],
                 ]), // list of rewards
             ]);
 
