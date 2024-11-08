@@ -262,7 +262,7 @@
                     </div>
                     <div class="col-lg-8 col-8">
                         @foreach ($image->designers as $designer)
-                            <div>{!! $designer->displayLink() !!}</div>
+                            <div>{!! $designer->displayLink() !!} {{ $designer->credit_type ? '(' . $designer->credit_type . ')' : null}}</div>
                         @endforeach
                     </div>
                 </div>
@@ -272,7 +272,7 @@
                     </div>
                     <div class="col-lg-8 col-8">
                         @foreach ($image->artists as $artist)
-                            <div>{!! $artist->displayLink() !!}</div>
+                            <div>{!! $artist->displayLink() !!} {{ $artist->credit_type ? '(' . $artist->credit_type . ')' : null}}</div>
                         @endforeach
                     </div>
                 </div>

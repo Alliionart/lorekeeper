@@ -106,4 +106,6 @@ return [
     // Use ReCaptcha to check new user registrations - Mercury
     // Requires site key and secret be set in your .env file!
     'use_recaptcha' => 0,
+    // Extra Image Credits - Newt
+    'extra_image_credits' => 1,
 ];
