@@ -497,8 +497,7 @@ function getDisplayName($model, $id) {
  *
  * @return string
  */
-function LiveClock($LCtimezone = NULL)
-{
+function LiveClock($LCtimezone = null) {
     ?>
     <div class="card time px-4 py-2 d-flex flex-row align-items-center"><i class="far fa-clock"></i><p class="mb-0" id="hdclock"></p></div>
         <script>
@@ -536,7 +535,7 @@ function LiveClock($LCtimezone = NULL)
 function parseLiveClock($text) {
     $matches = null;
     $matches2 = null;
-    
+
     $count = preg_match_all('/\[liveclock\]/', $text, $matches);
     if ($count) {
         $matches = array_unique($matches);
