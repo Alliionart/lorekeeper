@@ -67,6 +67,74 @@
         </div>
     @endif
 </div>
+<h2>Comments</h2>
+<div class="card mb-3"><div class="card-body">{!! nl2br(htmlentities($submission->comments)) !!}</div></div>
+@if(Auth::check() && $submission->staff_comments && ($submission->user_id == Auth::user()->id || Auth::user()->hasPower('manage_submissions')))
+    <h2>Staff Comments</h2>
+    <div class="card mb-3"><div class="card-body">
+	    @if(isset($submission->parsed_staff_comments))
+            {!! $submission->parsed_staff_comments !!}
+        @else
+            {!! $submission->staff_comments !!}
+        @endif
+		</div></div>
+@endif
+
+@if(isset($submission->data['loot_tables']))
+<h2>Loot Tables Rolled</h2>
+<table class="table table-sm">
+    <thead>
+        <tr>
+            <th width="30%">Loot Table</th>
+            <th width="40%">Reward</th>
+            <th width="30%">Amount</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach($submission->data['loot_tables'] as $id => $type)
+        @php $loot = \App\Models\Loot\LootTable::find($id); @endphp
+        @if($submission->data['loot_tables'][$id] == [])
+            <tr>
+                <td>{!! $loot->displayName !!}</td>
+                <td>None</td>
+                <td>N/A</td>
+            </tr>
+        @else
+            @foreach($type as $key => $assets)
+                @foreach($assets as $asset)
+                <tr>
+                    @php $model = getAssetModelString($key); if($asset) $reward = $model::find($asset['asset']); @endphp
+                    <td>{!! $loot->displayName !!}</td>
+                    <td>{!! $reward ? $reward->displayName : 'Deleted Asset' !!}</td>
+                    <td>{{ $asset['quantity'] }}</td>
+                </tr>
+                @endforeach
+            @endforeach
+        @endif
+        @endforeach
+    </tbody>
+</table>
+@endif
+
+<h2>Rewards</h2>
+<table class="table table-sm">
+    <thead>
+        <tr>
+            <th width="70%">Reward</th>
+            <th width="30%">Amount</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach(parseAssetData( isset($submission->data['rewards']) ? $submission->data['rewards'] : $submission->data ) as $type)
+            @foreach($type as $asset)
+                <tr>
+                    <td>{!! $asset['asset'] ? $asset['asset']->displayName : 'Deleted Asset' !!}</td>
+                    <td>{{ $asset['quantity'] }}</td>
+                </tr>
+            @endforeach
+        @endforeach
+    </tbody>
+</table>
 
 @if (array_filter(parseAssetData(isset($submission->data['rewards']) ? $submission->data['rewards'] : $submission->data)))
     <div class="card mb-3">
