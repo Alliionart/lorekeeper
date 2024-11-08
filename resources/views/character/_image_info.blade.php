@@ -37,7 +37,19 @@
             {{-- Basic info --}}
             <div class="tab-pane fade show active" id="info-{{ $image->id }}">
                 <div class="row no-gutters">
-                    <div class="col-lg-4 col-5">
+                    <div class="col-lg-4 col-md-6 col-4">
+                        <h5>Class</h5>
+                    </div>
+                    <div class="col-lg-8 col-md-6 col-8">{!! $image->character->class_id ? $image->character->class->displayName : 'None' !!}
+                        @if (Auth::check())
+                            @if (Auth::user()->isStaff || (Auth::user()->id == $image->character->user_id && $image->character->class_id == null))
+                                <a href="#" class="btn btn-outline-info btn-sm edit-class ml-1" data-id="{{ $image->character->id }}"><i class="fas fa-cog"></i></a>
+                            @endif
+                        @endif
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-4 col-md-6 col-4">
                         <h5>Species</h5>
                     </div>
                     <div class="col-lg-8 col-7 pl-1">{!! $image->species_id ? $image->species->displayName : 'None' !!}</div>
@@ -72,6 +84,42 @@
                     </div>
                     <div class="col-lg-8 col-7 pl-1">{!! $image->rarity_id ? $image->rarity->displayName : 'None' !!}</div>
                 </div>
+                @php
+                    // check if there is a type for this object if not passed
+                    // for characters first check subtype (since it takes precedence)
+                    $type = \App\Models\Element\Typing::where('typing_model', 'App\Models\Character\CharacterImage')
+                        ->where('typing_id', $image->id)
+                        ->first();
+                    if (!isset($type) && $image->subtype_id) {
+                        $type = \App\Models\Element\Typing::where('typing_model', 'App\Models\Species\Subtype')
+                            ->where('typing_id', $image->subtype_id)
+                            ->first();
+                    }
+                    if (!isset($type)) {
+                        $type = \App\Models\Element\Typing::where('typing_model', 'App\Models\Species\Species')
+                            ->where('typing_id', $image->species_id)
+                            ->first();
+                    }
+                    $type = $type ?? null;
+                @endphp
+                @if ($type || (Auth::check() && Auth::user()->hasPower('manage_characters')))
+                    <div class="row">
+                        <div class="col-lg-4 col-md-6 col-4">
+                            <h5>Typing</h5>
+                        </div>
+                        <div class="col-lg-8 col-md-6 col-8 row">
+                            <h5>{!! $type?->displayElements !!}</h5>
+                            @if (Auth::check() && Auth::user()->hasPower('manage_characters'))
+                                {!! add_help('Typing is assigned on an image basis') !!}
+                                <div class="ml-auto">
+                                    <a href="#" class="btn btn-outline-info btn-sm edit-typing" data-id="{{ $image->id }}">
+                                        <i class="fas fa-cog"></i> {{ $type ? 'Edit' : 'Create' }}
+                                    </a>
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+                @endif
 
                 <div class="mb-3">
                     <div>
@@ -136,7 +184,57 @@
 
                 @if (Auth::check() && Auth::user()->hasPower('manage_characters'))
                     <div class="mt-3">
-                        <a href="#" class="btn btn-outline-info btn-sm edit-features" data-id="{{ $image->id }}"><i class="fas fa-cog"></i> Edit</a>
+                        <a href="#" class="btn btn-outline-info btn-sm edit-features mb-3" data-id="{{ $image->id }}"><i class="fas fa-cog"></i> Edit</a>
+                    </div>
+                @endif
+
+                @if (count($image->character->pets))
+                    <div class="row justify-content-center text-center">
+                        {{-- get one random pet --}}
+                        @php
+                            $pets = $image->character
+                                ->pets()
+                                ->orderBy('sort', 'DESC')
+                                ->limit(config('lorekeeper.pets.display_pet_count'))
+                                ->get();
+                        @endphp
+                        @foreach ($pets as $pet)
+                            @if (config('lorekeeper.pets.pet_bonding_enabled'))
+                                @include('character._pet_bonding_info', ['pet' => $pet])
+                            @else
+                                <div class="ml-2 mr-3">
+                                    <img src="{{ $pet->pet->variantImage($pet->id) }}" style="max-width: 75px;" />
+                                    <br>
+                                    <span class="text-light badge badge-dark" style="font-size:95%;">{!! $pet->pet_name !!}</span>
+                                </div>
+                            @endif
+                        @endforeach
+                        <div class="ml-auto float-right mr-3">
+                            <a href="{{ $character->url . '/pets' }}" class="btn btn-outline-info btn-sm">View All</a>
+                        </div>
+                    </div>
+                @endif
+                @if (count($image->character->equipment()))
+                    <div class="mb-1 mt-4">
+                        <div class="mb-0">
+                            <h5>Equipment</h5>
+                        </div>
+                        <div class="text-center row">
+                            @foreach ($image->character->equipment()->take(5) as $equipment)
+                                <div class="col-md-2">
+                                    @if ($equipment->has_image)
+                                        <img class="rounded" src="{{ $equipment->imageUrl }}" data-toggle="tooltip" title="{{ $equipment->equipment->name }}" style="max-width: 75px;" />
+                                    @elseif($equipment->equipment->imageurl)
+                                        <img class="rounded" src="{{ $equipment->equipment->imageUrl }}" data-toggle="tooltip" title="{{ $equipment->equipment->name }}" style="max-width: 75px;" />
+                                    @else
+                                        {!! $equipment->equipment->displayName !!}
+                                    @endif
+                                </div>
+                            @endforeach
+                        </div>
+                        <div class="float-right">
+                            <a href="{{ $character->url . '/stats' }}">View All...</a>
+                        </div>
                     </div>
                 @endif
             </div>

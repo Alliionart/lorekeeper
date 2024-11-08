@@ -7,10 +7,12 @@ use App\Facades\Settings;
 use App\Models\Character\Character;
 use App\Models\Character\CharacterBookmark;
 use App\Models\Character\CharacterCategory;
+use App\Models\Character\CharacterClass;
 use App\Models\Character\CharacterCurrency;
 use App\Models\Character\CharacterDesignUpdate;
 use App\Models\Character\CharacterFeature;
 use App\Models\Character\CharacterImage;
+use App\Models\Character\CharacterStat;
 use App\Models\Character\CharacterTransfer;
 use App\Models\Sales\SalesCharacter;
 use App\Models\Character\CharacterLineage;
@@ -19,6 +21,7 @@ use App\Models\Species\Species;
 use App\Models\Species\Subtype;
 use App\Models\User\User;
 use App\Models\WorldExpansion\FactionRankMember;
+use App\Models\User\UserPet;
 use Carbon\Carbon;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Config;
@@ -147,6 +150,21 @@ class CharacterManager extends Service {
             // Update the character's image ID
             $character->character_image_id = $image->id;
             $character->save();
+
+            // Create character stats
+            $character->level()->create([
+                'character_id' => $character->id,
+            ]);
+
+            if (isset($data['stats'])) {
+                foreach ($data['stats'] as $key=>$stat) {
+                    CharacterStat::create([
+                        'character_id' => $character->id,
+                        'stat_id'      => $key,
+                        'count'        => $stat,
+                    ]);
+                }
+            }
 
             // Add a log for the character
             // This logs all the updates made to the character
@@ -1198,6 +1216,40 @@ class CharacterManager extends Service {
     }
 
     /**
+     * Sorts a character's pets.
+     *
+     * @param array $data
+     * @param User  $user
+     *
+     * @return bool
+     */
+    public function sortCharacterPets($data, $user) {
+        DB::beginTransaction();
+
+        try {
+            $ids = array_reverse(explode(',', $data['sort']));
+            $pets = UserPet::whereIn('id', $ids)->where('user_id', $user->id)->orderBy(DB::raw('FIELD(id, '.implode(',', $ids).')'))->get();
+
+            if (count($pets) != count($ids)) {
+                throw new \Exception('Invalid pet included in sorting order.');
+            }
+
+            $count = 0;
+            foreach ($pets as $pet) {
+                $pet->sort = $count;
+                $pet->save();
+                $count++;
+            }
+
+            return $this->commitReturn(true);
+        } catch (\Exception $e) {
+            $this->setError('error', $e->getMessage());
+        }
+
+        return $this->rollbackReturn(false);
+    }
+
+    /**
      * Updates a character's stats.
      *
      * @param array $data
@@ -1721,6 +1773,16 @@ class CharacterManager extends Service {
                 throw new \Exception('Cannot transfer character to a banned member.');
             }
 
+            if ($character->pets()->exists()) {
+                throw new \Exception('This character has pets attached to it.');
+            }
+            if ($character->weapons()->exists()) {
+                throw new \Exception('This character has weapons attached to it.');
+            }
+            if ($character->gear()->exists()) {
+                throw new \Exception('This character has gear attached to it.');
+            }
+
             // deletes any pending design drafts
             foreach ($character->designUpdate as $update) {
                 if ($update->status == 'Draft') {
@@ -1773,6 +1835,16 @@ class CharacterManager extends Service {
         DB::beginTransaction();
 
         try {
+            if ($character->pets()->exists()) {
+                throw new \Exception('This character has pets attached to it.');
+            }
+            if ($character->weapons()->exists()) {
+                throw new \Exception('This character has weapons attached to it.');
+            }
+            if ($character->gear()->exists()) {
+                throw new \Exception('This character has gear attached to it.');
+            }
+
             if (isset($data['recipient_id']) && $data['recipient_id']) {
                 $recipient = User::find($data['recipient_id']);
                 if (!$recipient) {
@@ -2125,6 +2197,51 @@ class CharacterManager extends Service {
             $data,
             'user'
         );
+    }
+
+    /*************************************************************************************
+     * CLAYMORE
+     *************************************************************************************/
+
+    /**
+     * Edits a character's class.
+     *
+     * @param array     $data
+     * @param Character $character
+     * @param User      $user
+     *
+     * @return bool
+     */
+    public function editClass($data, $character, $user) {
+        DB::beginTransaction();
+
+        try {
+            if ($data['class_id'] != 'none') {
+                $class = CharacterClass::find($data['class_id']);
+                if (!$class) {
+                    throw new \Exception('Invalid class.');
+                }
+                $character->class_id = $class->id;
+                $character->save();
+
+                if (!$this->createLog($user->id, null, $character->user_id, ($character->user_id ? null : $character->owner_url), $character->id, 'Character Class Updated', '['.$class->displayName.']', 'character')) {
+                    throw new \Exception('Failed to create log.');
+                }
+            } else {
+                $character->class_id = null;
+                $character->save();
+
+                if (!$this->createLog($user->id, null, $character->user_id, ($character->user_id ? null : $character->owner_url), $character->id, 'Character Class Removed', '[None]', 'character')) {
+                    throw new \Exception('Failed to create log.');
+                }
+            }
+
+            return $this->commitReturn(true);
+        } catch (\Exception $e) {
+            $this->setError('error', $e->getMessage());
+
+            return $this->rollbackReturn(false);
+        }
     }
 
     /**

@@ -124,6 +124,8 @@
         @include('layouts.editable_theme', ['theme' => $decoratorTheme])
     @endif
 
+    @stack('styles')
+    @include('feed::links')
 </head>
 
 <body>
