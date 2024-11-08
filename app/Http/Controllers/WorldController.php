@@ -15,11 +15,13 @@ use App\Models\Feature\FeatureCategory;
 use App\Models\Item\Item;
 use App\Models\Item\ItemCategory;
 use App\Models\Level\Level;
+use App\Models\News;
 use App\Models\Pet\Pet;
 use App\Models\Pet\PetCategory;
 use App\Models\Rarity;
 use App\Models\Shop\Shop;
 use App\Models\Shop\ShopStock;
+use App\Models\SitePage;
 use App\Models\Skill\Skill;
 use App\Models\Skill\SkillCategory;
 use App\Models\Species\Species;
@@ -28,9 +30,6 @@ use App\Models\Stat\Stat;
 use App\Models\User\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-
-use App\Models\SitePage;
-use App\Models\News;
 
 class WorldController extends Controller {
     /*
@@ -858,25 +857,27 @@ class WorldController extends Controller {
     /*********************************************************************
      * SITE SEARCH
      *********************************************************************/
-    
+
     /**
-     * Searches the whole site for any matching keywords
-     * 
+     * Searches the whole site for any matching keywords.
+     *
      * This is a very intensive search. It will search all items, traits, and
      * other content on the site.
      */
-    public function getSiteSearch(Request $request)
-    {
+    public function getSiteSearch(Request $request) {
         return view('browse.search');
     }
 
     /**
-     * Searches the whole site for any matching keywords
+     * Searches the whole site for any matching keywords.
+     *
+     * @param mixed $query
      */
-    public function postSiteSearch(Request $request, $query)
-    {
+    public function postSiteSearch(Request $request, $query) {
         $query = $query ?: $request->get('query');
-        if(!$query) return redirect()->to('search');
+        if (!$query) {
+            return redirect()->to('search');
+        }
 
         // search following tables
         $results = collect();
@@ -897,10 +898,10 @@ class WorldController extends Controller {
         $results->push(News::visible()->where('title', 'LIKE', '%'.$query.'%')->orWhere('text', 'LIKE', '%'.$query.'%')->get());
 
         return response()->json([
-            'status' => 'success',
+            'status'  => 'success',
             'results' => view('browse._search_query', [
-                'results' => $results
-            ])->render()
+                'results' => $results,
+            ])->render(),
         ]);
     }
 }

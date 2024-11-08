@@ -655,7 +655,7 @@ class CharacterManager extends Service {
                         'type'               => 'Designer',
                         'url'                => $data['designer_url'][$key],
                         'user_id'            => $id,
-                        'credit_type' => isset($data['designer_type'][$key]) ? $data['designer_type'][$key] : null,
+                        'credit_type'        => $data['designer_type'][$key] ?? null,
                     ]);
                 }
             }
@@ -666,7 +666,7 @@ class CharacterManager extends Service {
                         'type'               => 'Artist',
                         'url'                => $data['artist_url'][$key],
                         'user_id'            => $id,
-                        'credit_type' => isset($data['artist_type'][$key]) ? $data['artist_type'][$key] : null,
+                        'credit_type'        => $data['artist_type'][$key] ?? null,
                     ]);
                 }
             }
@@ -1951,44 +1951,47 @@ class CharacterManager extends Service {
     /**
      * Edits a character's class.
      *
-     * @param array     $data
-     * @param Character $character
-     * @param User      $user
+     * @param array                 $data
+     * @param array                 $data
+     * @param CharacterDesignUpdate $request
+     * @param bool                  $isAdmin
      *
      * @return bool
-     * @param  array                                        $data
-     * @param  \App\Models\Character\CharacterDesignUpdate  $request
-     * @param  bool                                         $isAdmin
-     * @return  bool
+     * @return bool
      */
-    public function saveRequestImage($data, $request, $isAdmin = false)
-    {
+    public function saveRequestImage($data, $request, $isAdmin = false) {
         DB::beginTransaction();
 
         try {
             // Require an image to be uploaded the first time, but if an image already exists, allow user to update the other details
-            if(!$isAdmin && !isset($data['image']) && !file_exists($request->imagePath . '/' . $request->imageFileName)) throw new \Exception("Please upload a valid image.");
+            if (!$isAdmin && !isset($data['image']) && !file_exists($request->imagePath.'/'.$request->imageFileName)) {
+                throw new \Exception('Please upload a valid image.');
+            }
 
             // Require a thumbnail to be uploaded the first time as well
-            if(!file_exists($request->thumbnailPath . '/' . $request->thumbnailFileName)) {
+            if (!file_exists($request->thumbnailPath.'/'.$request->thumbnailFileName)) {
                 // If the crop dimensions are invalid...
                 // The crop function resizes the thumbnail to fit, so we only need to check that it's not null
-                if(!$isAdmin || ($isAdmin && isset($data['modify_thumbnail']))) {
-                    if(isset($data['use_cropper']) && ($data['x0'] === null || $data['x1'] === null || $data['y0'] === null || $data['y1'] === null)) throw new \Exception('Invalid crop dimensions specified.');
-                    if(!isset($data['use_cropper']) && !isset($data['thumbnail'])) throw new \Exception("Please upload a valid thumbnail or use the image cropper.");
+                if (!$isAdmin || ($isAdmin && isset($data['modify_thumbnail']))) {
+                    if (isset($data['use_cropper']) && ($data['x0'] === null || $data['x1'] === null || $data['y0'] === null || $data['y1'] === null)) {
+                        throw new \Exception('Invalid crop dimensions specified.');
+                    }
+                    if (!isset($data['use_cropper']) && !isset($data['thumbnail'])) {
+                        throw new \Exception('Please upload a valid thumbnail or use the image cropper.');
+                    }
                 }
             }
-            if(!$isAdmin || ($isAdmin && isset($data['modify_thumbnail']))) {
+            if (!$isAdmin || ($isAdmin && isset($data['modify_thumbnail']))) {
                 $imageData = [];
-                if(isset($data['use_cropper'])) {
+                if (isset($data['use_cropper'])) {
                     $imageData = Arr::only($data, [
                         'use_cropper',
                         'x0', 'x1', 'y0', 'y1',
                     ]);
                     $imageData['use_cropper'] = isset($data['use_cropper']);
                 }
-                if(!$isAdmin && isset($data['image'])) {
-                    $imageData['extension'] = (Config::get('lorekeeper.settings.masterlist_image_format') ? Config::get('lorekeeper.settings.masterlist_image_format') : (isset($data['extension']) ? $data['extension'] : $data['image']->getClientOriginalExtension()));
+                if (!$isAdmin && isset($data['image'])) {
+                    $imageData['extension'] = (Config::get('lorekeeper.settings.masterlist_image_format') ? Config::get('lorekeeper.settings.masterlist_image_format') : ($data['extension'] ?? $data['image']->getClientOriginalExtension()));
                     $imageData['has_image'] = true;
                 }
                 $request->update($imageData);
@@ -1998,67 +2001,79 @@ class CharacterManager extends Service {
             $request->artists()->delete();
 
             // Check that users with the specified id(s) exist on site
-            foreach($data['designer_id'] as $id) {
-                if(isset($id) && $id) {
+            foreach ($data['designer_id'] as $id) {
+                if (isset($id) && $id) {
                     $user = User::find($id);
-                    if(!$user) throw new \Exception('One or more designers is invalid.');
+                    if (!$user) {
+                        throw new \Exception('One or more designers is invalid.');
+                    }
                 }
             }
-            foreach($data['artist_id'] as $id) {
-                if(isset($id) && $id) {
+            foreach ($data['artist_id'] as $id) {
+                if (isset($id) && $id) {
                     $user = $user = User::find($id);
-                    if(!$user) throw new \Exception('One or more artists is invalid.');
+                    if (!$user) {
+                        throw new \Exception('One or more artists is invalid.');
+                    }
                 }
             }
 
             // Attach artists/designers
-            foreach($data['designer_id'] as $key => $id) {
-                if($id || $data['designer_url'][$key])
+            foreach ($data['designer_id'] as $key => $id) {
+                if ($id || $data['designer_url'][$key]) {
                     DB::table('character_image_creators')->insert([
                         'character_image_id' => $request->id,
-                        'type' => 'Designer',
-                        'character_type' => 'Update',
-                        'url' => $data['designer_url'][$key],
-                        'user_id' => $id,
-                        'credit_type' => isset($data['designer_type'][$key]) ? $data['designer_type'][$key] : null
+                        'type'               => 'Designer',
+                        'character_type'     => 'Update',
+                        'url'                => $data['designer_url'][$key],
+                        'user_id'            => $id,
+                        'credit_type'        => $data['designer_type'][$key] ?? null,
                     ]);
+                }
             }
-            foreach($data['artist_id'] as $key => $id) {
-                if($id || $data['artist_url'][$key])
+            foreach ($data['artist_id'] as $key => $id) {
+                if ($id || $data['artist_url'][$key]) {
                     DB::table('character_image_creators')->insert([
                         'character_image_id' => $request->id,
-                        'type' => 'Artist',
-                        'character_type' => 'Update',
-                        'url' => $data['artist_url'][$key],
-                        'user_id' => $id,
-                        'credit_type' => isset($data['artist_type'][$key]) ? $data['artist_type'][$key] : null
+                        'type'               => 'Artist',
+                        'character_type'     => 'Update',
+                        'url'                => $data['artist_url'][$key],
+                        'user_id'            => $id,
+                        'credit_type'        => $data['artist_type'][$key] ?? null,
                     ]);
+                }
             }
 
             // Save image
-            if(!$isAdmin && isset($data['image'])) $this->handleImage($data['image'], $request->imageDirectory, $request->imageFileName, null, isset($data['default_image']));
+            if (!$isAdmin && isset($data['image'])) {
+                $this->handleImage($data['image'], $request->imageDirectory, $request->imageFileName, null, isset($data['default_image']));
+            }
 
             // Save thumbnail
-            if(!$isAdmin || ($isAdmin && isset($data['modify_thumbnail']))) {
-                if(isset($data['use_cropper']))
-                    $this->cropThumbnail(Arr::only($data, ['x0','x1','y0','y1']), $request);
-                else if(isset($data['thumbnail']))
+            if (!$isAdmin || ($isAdmin && isset($data['modify_thumbnail']))) {
+                if (isset($data['use_cropper'])) {
+                    $this->cropThumbnail(Arr::only($data, ['x0', 'x1', 'y0', 'y1']), $request);
+                } elseif (isset($data['thumbnail'])) {
                     $this->handleImage($data['thumbnail'], $request->imageDirectory, $request->thumbnailFileName);
+                }
             }
 
             return $this->commitReturn(true);
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             $this->setError('error', $e->getMessage());
         }
+
         return $this->rollbackReturn(false);
     }
 
     /**
      * Saves the addons section of a character design update request.
      *
-     * @param  array                                        $data
-     * @param  \App\Models\Character\CharacterDesignUpdate  $request
-     * @return  bool
+     * @param array $data
+     * @param mixed $character
+     * @param mixed $user
+     *
+     * @return bool
      */
     public function editClass($data, $character, $user) {
         DB::beginTransaction();
@@ -2898,7 +2913,7 @@ class CharacterManager extends Service {
                         'type'               => 'Designer',
                         'url'                => $data['designer_url'][$key],
                         'user_id'            => $id,
-                        'credit_type' => isset($data['artist_type'][$key]) ? $data['artist_type'][$key] : null,
+                        'credit_type'        => $data['artist_type'][$key] ?? null,
                     ]);
                 }
             }
@@ -2909,7 +2924,7 @@ class CharacterManager extends Service {
                         'type'               => 'Artist',
                         'url'                => $data['artist_url'][$key],
                         'user_id'            => $id,
-                        'credit_type' => isset($data['artist_type'][$key]) ? $data['artist_type'][$key] : null,
+                        'credit_type'        => $data['artist_type'][$key] ?? null,
                     ]);
                 }
             }
