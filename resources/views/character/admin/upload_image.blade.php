@@ -354,9 +354,9 @@
                 });
                 //Transformations
                 $.ajax({
-                type: "GET",
-                url: "{{ url('admin/character/image/transformation') }}?species=" + species + "&id=" + id,
-                dataType: "text"
+                    type: "GET",
+                    url: "{{ url('admin/character/image/transformation') }}?species=" + species + "&id=" + id,
+                    dataType: "text"
                 }).done(function(res) {
                     $("#transformations").html(res);
                 }).fail(function(jqXHR, textStatus, errorThrown) {
