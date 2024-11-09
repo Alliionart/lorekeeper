@@ -7,8 +7,8 @@
         </tr>
     </thead>
     <tbody id="linkTable" class="sortable">
-        @if(isset($links->contacts))
-            @foreach($links->contacts['site'] as $key=>$contact)
+        @if (isset($links->contacts))
+            @foreach ($links->contacts['site'] as $key => $contact)
                 <tr class="link-row">
                     <td>
                         <a class="fas fa-arrows-alt-v handle mr-3" href="#"></a>

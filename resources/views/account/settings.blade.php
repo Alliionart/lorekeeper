@@ -159,7 +159,7 @@
         {!! Form::close() !!}
     </div>
 
-    @if(Auth::user()->isStaff)
+    @if (Auth::user()->isStaff)
         @include('widgets._staff_profile_form', ['user' => Auth::user(), 'adminView' => 0])
     @endif
 
@@ -274,8 +274,8 @@
 @endsection
 
 @section('scripts')
-@parent
-    @if(Auth::user()->isStaff)
+    @parent
+    @if (Auth::user()->isStaff)
         @include('js._website_links_js')
     @endif
 @endsection

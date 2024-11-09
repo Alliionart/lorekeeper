@@ -178,8 +178,8 @@
 @endsection
 
 @section('scripts')
-@parent
-    @if(Auth::user()->isStaff)
+    @parent
+    @if (Auth::user()->isStaff)
         @include('js._website_links_js')
     @endif
 @endsection
