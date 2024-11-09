@@ -289,7 +289,14 @@
     </div>
 
 
-    <h3>Traits</h3>
+        <div class="form-group" id="subtypes">
+            {!! Form::label('Subtype (Optional)') !!} @if ($isMyo)
+                {!! add_help(
+                    'This will lock the slot into a particular subtype. Leave it blank if you would like to give the user a choice, or not select a subtype. The subtype must match the species selected above, and if no species is specified, the subtype will not be applied.',
+                ) !!}
+            @endif
+            {!! Form::select('subtype_id', $subtypes, old('subtype_id'), ['class' => 'form-control disabled', 'id' => 'subtype']) !!}
+        </div>
 
     <div class="form-group">
         {!! Form::label('Species') !!} @if ($isMyo)
@@ -313,6 +320,22 @@
         @endif
         {!! Form::select('rarity_id', $rarities, old('rarity_id'), ['class' => 'form-control']) !!}
     </div>
+
+    <hr>
+        <h5>{{ ucfirst(__('transformations.transformations')) }}</h5>
+        <div class="form-group" id="transformations">
+            {!! Form::label(ucfirst(__('transformations.transformation')) . ' (Optional)') !!} {!! add_help('This will make the image have the selected ' . __('transformations.transformation') . ' id.') !!}
+            {!! Form::select('transformation_id', $transformations, old('transformation_id'), ['class' => 'form-control']) !!}
+        </div>
+        <div class="form-group">
+            {!! Form::label(ucfirst(__('transformations.transformation')) . ' Tab Info (Optional)') !!}{!! add_help('This is text that will show alongside the ' . __('transformations.transformation') . ' name in the tabs, so try to keep it short.') !!}
+            {!! Form::text('transformation_info', old('transformation_info'), ['class' => 'form-control mr-2', 'placeholder' => 'Tab Info (Optional)']) !!}
+        </div>
+        <div class="form-group">
+            {!! Form::label(ucfirst(__('transformations.transformation')) . ' Origin/Lore (Optional)') !!}{!! add_help('This is text that will show alongside the ' . __('transformations.transformation') . ' name on the image info area. Explains why the character takes this form, how, etc. Should be pretty short.') !!}
+            {!! Form::text('transformation_description', old('transformation_description'), ['class' => 'form-control mr-2', 'placeholder' => 'Origin Info (Optional)']) !!}
+        </div>
+        <hr>
 
     <div class="form-group">
         {!! Form::label('Traits') !!} @if ($isMyo)
@@ -376,6 +399,17 @@
                 dataType: "text"
             }).done(function(res) {
                 $("#stats").html(res);
+            }).fail(function(jqXHR, textStatus, errorThrown) {
+                alert("AJAX call failed: " + textStatus + ", " + errorThrown);
+            });
+
+            //Transformations
+            $.ajax({
+                type: "GET",
+                url: "{{ url('admin/masterlist/check-transformation') }}?species=" + species + "&myo=" + myo,
+                dataType: "text"
+            }).done(function(res) {
+                $("#transformations").html(res);
             }).fail(function(jqXHR, textStatus, errorThrown) {
                 alert("AJAX call failed: " + textStatus + ", " + errorThrown);
             });

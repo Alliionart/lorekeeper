@@ -89,6 +89,7 @@ Route::group(['prefix' => 'character', 'namespace' => 'Characters'], function ()
     Route::get('{slug}/level', 'CharacterController@getCharacterLevel');
     Route::get('{slug}/inventory', 'CharacterController@getCharacterInventory');
     Route::get('{slug}/images', 'CharacterController@getCharacterImages');
+    Route::get('{slug}/image/{id}', 'CharacterController@getCharacterImage');
 
     Route::get('{slug}/currency-logs', 'CharacterController@getCharacterCurrencyLogs');
     Route::get('{slug}/item-logs', 'CharacterController@getCharacterItemLogs');
@@ -156,6 +157,7 @@ Route::group(['prefix' => 'world'], function () {
     Route::get('skills/{id}', 'WorldController@getSkill');
     Route::get('elements', 'WorldController@getElements');
     Route::get('elements/{id}', 'WorldController@getElement');
+    Route::get(__('transformations.transformations'), 'WorldController@getTransformations');
 });
 
 Route::group(['prefix' => 'prompts'], function () {

@@ -222,7 +222,11 @@ return [
                 'name' => 'Pets',
                 'url'  => 'admin/data/pets',
             ],
-        ],
+            [    
+                'name' => 'Transformations',
+                'url'  => 'admin/data/transformations',
+            ],
+        ]
     ],
     'Claymores' => [
         'power' => 'edit_claymores',
