@@ -202,8 +202,10 @@ class InventoryManager extends Service {
                     throw new \Exception('One of the selected items cannot be owned by characters.');
                 }
                 //for character-locked items
-                if($sender->logType == 'Character' && $stack->item->isLocked && !Auth::user()->hasPower('edit_inventories')) throw new \Exception("This item is character-locked.");
-                
+                if ($sender->logType == 'Character' && $stack->item->isLocked && !Auth::user()->hasPower('edit_inventories')) {
+                    throw new \Exception('This item is character-locked.');
+                }
+
                 if ((!$stack->item->allow_transfer || isset($stack->data['disallow_transfer'])) && !$user->hasPower('edit_inventories')) {
                     throw new \Exception('One of the selected items cannot be transferred.');
                 }

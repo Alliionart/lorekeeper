@@ -4,15 +4,11 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class MakeCharacterLockedItems extends Migration
-{
+class MakeCharacterLockedItems extends Migration {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
-    {
+    public function up() {
         Schema::table('item_categories', function (Blueprint $table) {
             //
             $table->boolean('is_character_locked')->default(0);
@@ -25,11 +21,8 @@ class MakeCharacterLockedItems extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
-    public function down()
-    {
+    public function down() {
         //
     }
 }
