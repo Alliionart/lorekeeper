@@ -72,8 +72,8 @@ return [
         ]),
         'version' => '2.0.0',
     ],
-    [
-        'Character_Transformations' => [
+
+    'Character_Transformations' => [
             'key'      => 'character_transformations',
             'wiki_key' => 'Character_Transformations',
             'creators' => json_encode([
@@ -81,6 +81,14 @@ return [
                 'Newt'   => 'https://github.com/Ne-wt',
             ]),
             'version' => '1.0.0',
-        ],
+    ],
+    
+    'dailies' => [
+        'key' => 'dailies',
+        'wiki_key' => 'Dailies',
+        'creators' => json_encode([
+            'Cylunny' => 'https://toyhou.se/cylunny',
+        ]),
+        'version' => '2.0.1', 
     ],
 ];
