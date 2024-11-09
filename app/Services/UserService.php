@@ -4,12 +4,6 @@ namespace App\Services;
 
 use App\Facades\Notifications;
 use App\Facades\Settings;
-use DB;
-use Auth;
-use File;
-use Image;
-
-use App\Models\User\StaffProfile;
 use App\Models\Character\CharacterDesignUpdate;
 use App\Models\Character\CharacterTransfer;
 use App\Models\Gallery\GallerySubmission;
@@ -17,16 +11,21 @@ use App\Models\Invitation;
 use App\Models\Rank\Rank;
 use App\Models\Submission\Submission;
 use App\Models\Trade;
+use App\Models\User\StaffProfile;
 use App\Models\User\User;
 use App\Models\User\UserUpdateLog;
 use App\Models\WorldExpansion\Faction;
 use App\Models\WorldExpansion\FactionRankMember;
 use App\Models\WorldExpansion\Location;
+use Auth;
 use Carbon\Carbon;
+use DB;
+use File;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Image;
 use Intervention\Image\Facades\Image;
 use Laravel\Fortify\Contracts\TwoFactorAuthenticationProvider;
 
@@ -505,68 +504,72 @@ class UserService extends Service {
         return $this->rollbackReturn(false);
     }
 
-    
-    public function updateStaffProfile($data, $user)
-    {
+    public function updateStaffProfile($data, $user) {
         DB::beginTransaction();
 
         try {
-            if(!$user->isStaff) throw new \Exception("You must be a current staff member to update a staff profile.");
+            if (!$user->isStaff) {
+                throw new \Exception('You must be a current staff member to update a staff profile.');
+            }
 
             $staffProfile = StaffProfile::find($user->id);
-            if($staffProfile) {
+            if ($staffProfile) {
                 $staffProfile->update([
-                    'text' => $data['text']
-                    ]);
-            }
-            else {
+                    'text' => $data['text'],
+                ]);
+            } else {
                 $staffProfile = StaffProfile::create([
                     'user_id' => $user->id,
-                    'text' => $data['text']
-                    ]);
+                    'text'    => $data['text'],
+                ]);
             }
-            
+
             return $this->commitReturn($staffProfile);
-        } catch(\Exception $e) { 
+        } catch (\Exception $e) {
             $this->setError('error', $e->getMessage());
         }
+
         return $this->rollbackReturn(false);
     }
 
     /**
-     * Updates or creates a user's staff links
+     * Updates or creates a user's staff links.
+     *
+     * @param mixed $data
+     * @param mixed $user
      */
-    public function updateStaffLinks($data, $user)
-    {
+    public function updateStaffLinks($data, $user) {
         DB::beginTransaction();
 
         try {
-            if(!$user->isStaff) throw new \Exception("You must be a current staff member to update your staff links.");
+            if (!$user->isStaff) {
+                throw new \Exception('You must be a current staff member to update your staff links.');
+            }
 
             $staffProfile = StaffProfile::find($user->id);
 
-            if($staffProfile) {
+            if ($staffProfile) {
                 $staffProfile->update([
                     'contacts' => !$data ? null : json_encode([
                         'site' => $data['site'],
-                        'url' =>  $data['url']
-                    ])
+                        'url'  => $data['url'],
+                    ]),
                 ]);
-            }
-            else {
+            } else {
                 $staffProfile = StaffProfile::create([
-                    'user_id' => $user->id,
+                    'user_id'  => $user->id,
                     'contacts' => !$data ? null : json_encode([
                         'site' => $data['site'],
-                        'url' =>  $data['url']
-                    ])
+                        'url'  => $data['url'],
+                    ]),
                 ]);
             }
-            
+
             return $this->commitReturn($staffProfile);
-        } catch(\Exception $e) { 
+        } catch (\Exception $e) {
             $this->setError('error', $e->getMessage());
         }
+
         return $this->rollbackReturn(false);
     }
 
@@ -576,7 +579,7 @@ class UserService extends Service {
      * @param array $data
      * @param User  $user
      * @param User  $staff
-     * Updates or creates a user's staff profile
+     *                     Updates or creates a user's staff profile
      */
     public function ban($data, $user, $staff) {
         DB::beginTransaction();

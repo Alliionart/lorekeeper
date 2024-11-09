@@ -63,11 +63,11 @@ return [
         'links' => [
             [
                 'name' => 'Page Sections',
-                'url' => 'admin/page-sections'
+                'url'  => 'admin/page-sections',
             ],
             [
                 'name' => 'Page Categories',
-                'url' => 'admin/page-categories'
+                'url'  => 'admin/page-categories',
             ],
             [
                 'name' => 'Pages',

@@ -3,9 +3,9 @@
 namespace App\Services;
 
 use App\Models\SitePage;
-use Illuminate\Support\Facades\DB;
 use App\Models\SitePageCategory;
 use App\Models\SitePageSection;
+use Illuminate\Support\Facades\DB;
 
 class PageService extends Service {
     /*
@@ -118,7 +118,7 @@ class PageService extends Service {
     }
 
     /**********************************************************************************************
-     
+
         PAGE CATEGORIES
 
     **********************************************************************************************/
@@ -126,11 +126,11 @@ class PageService extends Service {
     /**
      * Create a category.
      *
-     * @param  array                 $data
-     * @return \App\Models\SitePageCategory|bool
+     * @param array $data
+     *
+     * @return bool|SitePageCategory
      */
-    public function createPageCategory($data)
-    {
+    public function createPageCategory($data) {
         DB::beginTransaction();
 
         try {
@@ -139,31 +139,34 @@ class PageService extends Service {
             $category = SitePageCategory::create($data);
 
             return $this->commitReturn($category);
-        } catch(\Exception $e) { 
+        } catch (\Exception $e) {
             $this->setError('error', $e->getMessage());
         }
+
         return $this->rollbackReturn(false);
     }
 
     /**
      * Update a category.
      *
-     * @param  \App\Models\SitePageCategory         $category
-     * @param  array                                $data
-     * @return \App\Models\SitePageCategory|bool
+     * @param SitePageCategory $category
+     * @param array            $data
+     *
+     * @return bool|SitePageCategory
      */
-    public function updatePageCategory($category, $data)
-    {
+    public function updatePageCategory($category, $data) {
         DB::beginTransaction();
 
         try {
             // More specific validation
-            if(SitePageCategory::where('name', $data['name'])->where('id', '!=', $category->id)->exists()) throw new \Exception("The name has already been taken.");
+            if (SitePageCategory::where('name', $data['name'])->where('id', '!=', $category->id)->exists()) {
+                throw new \Exception('The name has already been taken.');
+            }
 
             $data = $this->populateCategoryData($data, $category);
 
-            $image = null;            
-            if(isset($data['image']) && $data['image']) {
+            $image = null;
+            if (isset($data['image']) && $data['image']) {
                 $data['has_image'] = 1;
                 $image = $data['image'];
                 unset($data['image']);
@@ -171,90 +174,75 @@ class PageService extends Service {
 
             $category->update($data);
 
-            if ($category) $this->handleImage($image, $category->categoryImagePath, $category->categoryImageFileName);
+            if ($category) {
+                $this->handleImage($image, $category->categoryImagePath, $category->categoryImageFileName);
+            }
 
             return $this->commitReturn($category);
-        } catch(\Exception $e) { 
+        } catch (\Exception $e) {
             $this->setError('error', $e->getMessage());
         }
+
         return $this->rollbackReturn(false);
-    }
-
-    /**
-     * Handle category data.
-     *
-     * @param  array                                     $data
-     * @param  \App\Models\SitePageCategory|null  $category
-     * @return array
-     */
-    private function populateCategoryData($data, $category = null)
-    {
-        if(isset($data['description']) && $data['description']) $data['parsed_description'] = parse($data['description']);
-        
-        if(isset($data['remove_image']))
-        {
-            if($category && $category->has_image && $data['remove_image']) 
-            { 
-                $data['has_image'] = 0; 
-                $this->deleteImage($category->categoryImagePath, $category->categoryImageFileName); 
-            }
-            unset($data['remove_image']);
-        }
-
-        return $data;
     }
 
     /**
      * Delete a category.
      *
-     * @param  \App\Models\SitePageCategory  $category
+     * @param SitePageCategory $category
+     *
      * @return bool
      */
-    public function deletePageCategory($category)
-    {
+    public function deletePageCategory($category) {
         DB::beginTransaction();
 
         try {
             // Check first if the category is currently in use
-            if(SitePage::where('page_category_id', $category->id)->exists()) throw new \Exception("A page with this category exists. Please change its category first.");
-            
-            if($category->has_image) $this->deleteImage($category->categoryImagePath, $category->categoryImageFileName); 
+            if (SitePage::where('page_category_id', $category->id)->exists()) {
+                throw new \Exception('A page with this category exists. Please change its category first.');
+            }
+
+            if ($category->has_image) {
+                $this->deleteImage($category->categoryImagePath, $category->categoryImageFileName);
+            }
             $category->delete();
 
             return $this->commitReturn(true);
-        } catch(\Exception $e) { 
+        } catch (\Exception $e) {
             $this->setError('error', $e->getMessage());
         }
+
         return $this->rollbackReturn(false);
     }
 
     /**
      * Sorts category order.
      *
-     * @param  array  $data
+     * @param array $data
+     *
      * @return bool
      */
-    public function sortPageCategory($data)
-    {
+    public function sortPageCategory($data) {
         DB::beginTransaction();
 
         try {
             // explode the sort array and reverse it since the order is inverted
             $sort = array_reverse(explode(',', $data));
 
-            foreach($sort as $key => $s) {
+            foreach ($sort as $key => $s) {
                 SitePageCategory::where('id', $s)->update(['sort' => $key]);
             }
 
             return $this->commitReturn(true);
-        } catch(\Exception $e) { 
+        } catch (\Exception $e) {
             $this->setError('error', $e->getMessage());
         }
+
         return $this->rollbackReturn(false);
     }
 
     /**********************************************************************************************
-     
+
         PAGE SECTIONS
 
     **********************************************************************************************/
@@ -262,103 +250,134 @@ class PageService extends Service {
     /**
      * Create a section.
      *
-     * @param  array                 $data
-     * @param  array                 $contents
-     * @return \App\Models\SitePageSection|bool
+     * @param array $data
+     * @param array $contents
+     *
+     * @return bool|SitePageSection
      */
-    public function createPageSection($data, $contents)
-    {
+    public function createPageSection($data, $contents) {
         DB::beginTransaction();
 
         try {
             $section = SitePageSection::create($data);
 
             //update categories
-            if(isset($contents['categories']) && $contents['categories'])
-                SitePageCategory::whereIn('id', $contents['categories'])->update(array('section_id' => $section->id));
+            if (isset($contents['categories']) && $contents['categories']) {
+                SitePageCategory::whereIn('id', $contents['categories'])->update(['section_id' => $section->id]);
+            }
 
             return $this->commitReturn($section);
-        } catch(\Exception $e) { 
+        } catch (\Exception $e) {
             $this->setError('error', $e->getMessage());
         }
+
         return $this->rollbackReturn(false);
     }
 
     /**
      * Update a section.
      *
-     * @param  \App\Models\SitePageSection         $section
-     * @param  array                                $data
-     * @param  array                 $contents
-     * @return \App\Models\SitePageSection|bool
+     * @param SitePageSection $section
+     * @param array           $data
+     * @param array           $contents
+     *
+     * @return bool|SitePageSection
      */
-    public function updatePageSection($section, $data, $contents)
-    {
+    public function updatePageSection($section, $data, $contents) {
         DB::beginTransaction();
 
         try {
             // More specific validation
-            if(SitePageSection::where('name', $data['name'])->where('id', '!=', $section->id)->exists()) throw new \Exception("The name has already been taken.");
+            if (SitePageSection::where('name', $data['name'])->where('id', '!=', $section->id)->exists()) {
+                throw new \Exception('The name has already been taken.');
+            }
 
             $section->update($data);
 
-            SitePageCategory::where('section_id', $section->id)->update(array('section_id' => 0));
-            if(isset($contents['categories']))
-                SitePageCategory::whereIn('id', $contents['categories'])->update(array('section_id' => $section->id));
+            SitePageCategory::where('section_id', $section->id)->update(['section_id' => 0]);
+            if (isset($contents['categories'])) {
+                SitePageCategory::whereIn('id', $contents['categories'])->update(['section_id' => $section->id]);
+            }
 
             return $this->commitReturn($section);
-        } catch(\Exception $e) { 
+        } catch (\Exception $e) {
             $this->setError('error', $e->getMessage());
         }
+
         return $this->rollbackReturn(false);
     }
 
     /**
      * Delete a section.
      *
-     * @param  \App\Models\SitePageSection  $section
+     * @param SitePageSection $section
+     *
      * @return bool
      */
-    public function deletePageSection($section)
-    {
+    public function deletePageSection($section) {
         DB::beginTransaction();
 
         try {
             // Check first if the section is currently in use
-            SitePageCategory::where('section_id', $section->id)->update(array('section_id' => 0));
-            
+            SitePageCategory::where('section_id', $section->id)->update(['section_id' => 0]);
+
             $section->delete();
 
             return $this->commitReturn(true);
-        } catch(\Exception $e) { 
+        } catch (\Exception $e) {
             $this->setError('error', $e->getMessage());
         }
+
         return $this->rollbackReturn(false);
     }
 
     /**
      * Sorts section order.
      *
-     * @param  array  $data
+     * @param array $data
+     *
      * @return bool
      */
-    public function sortPageSection($data)
-    {
+    public function sortPageSection($data) {
         DB::beginTransaction();
 
         try {
             // explode the sort array and reverse it since the order is inverted
             $sort = array_reverse(explode(',', $data));
 
-            foreach($sort as $key => $s) {
+            foreach ($sort as $key => $s) {
                 SitePageSection::where('id', $s)->update(['sort' => $key]);
             }
 
             return $this->commitReturn(true);
-        } catch(\Exception $e) { 
+        } catch (\Exception $e) {
             $this->setError('error', $e->getMessage());
         }
+
         return $this->rollbackReturn(false);
     }
 
+    /**
+     * Handle category data.
+     *
+     * @param array                 $data
+     * @param SitePageCategory|null $category
+     *
+     * @return array
+     */
+    private function populateCategoryData($data, $category = null) {
+        if (isset($data['description']) && $data['description']) {
+            $data['parsed_description'] = parse($data['description']);
+        }
+
+        if (isset($data['remove_image'])) {
+            if ($category && $category->has_image && $data['remove_image']) {
+                $data['has_image'] = 0;
+                $this->deleteImage($category->categoryImagePath, $category->categoryImageFileName);
+            }
+            unset($data['remove_image']);
+        }
+
+        return $data;
+    }
 }
