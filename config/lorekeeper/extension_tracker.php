@@ -74,21 +74,21 @@ return [
     ],
 
     'Character_Transformations' => [
-            'key'      => 'character_transformations',
-            'wiki_key' => 'Character_Transformations',
-            'creators' => json_encode([
-                'CH3RVB' => 'https://github.com/CH3RVB/',
-                'Newt'   => 'https://github.com/Ne-wt',
-            ]),
-            'version' => '1.0.0',
+        'key'      => 'character_transformations',
+        'wiki_key' => 'Character_Transformations',
+        'creators' => json_encode([
+            'CH3RVB' => 'https://github.com/CH3RVB/',
+            'Newt'   => 'https://github.com/Ne-wt',
+        ]),
+        'version' => '1.0.0',
     ],
-    
+
     'dailies' => [
-        'key' => 'dailies',
+        'key'      => 'dailies',
         'wiki_key' => 'Dailies',
         'creators' => json_encode([
             'Cylunny' => 'https://toyhou.se/cylunny',
         ]),
-        'version' => '2.0.1', 
+        'version' => '2.0.1',
     ],
 ];
