@@ -138,7 +138,7 @@
             </div>
         </div>
     @endif
-    @if($item->category && $item->category->is_character_owned)
+    @if ($item->category && $item->category->is_character_owned)
         <div class="row">
             <div class="col-md">
                 <div class="form-group">
