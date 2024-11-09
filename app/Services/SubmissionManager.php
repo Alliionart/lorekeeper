@@ -46,10 +46,32 @@ class SubmissionManager extends Service {
             // 1. check that the prompt can be submitted at this time
             // 2. check that the characters selected exist (are visible too)
             // 3. check that the currencies selected can be attached to characters
-            if (!$isClaim && !Settings::get('is_prompts_open')) {
-                throw new \Exception('The prompt queue is closed for submissions.');
-            } elseif ($isClaim && !Settings::get('is_claims_open')) {
-                throw new \Exception('The claim queue is closed for submissions.');
+            if(!$isClaim && !Settings::get('is_prompts_open')) throw new \Exception("The prompt queue is closed for submissions.");
+            else if($isClaim && !Settings::get('is_claims_open')) throw new \Exception("The claim queue is closed for submissions.");
+            if(!$isClaim && !isset($data['prompt_id'])) throw new \Exception("Please select a prompt.");
+            if(!$isClaim) {
+                $prompt = Prompt::active()->where('id', $data['prompt_id'])->with('rewards')->first();
+                if(!$prompt) throw new \Exception("Invalid prompt selected.");
+                //check that the prompt limit hasn't been hit
+                if($prompt->limit) {
+                    //check that the user hasn't hit the prompt submission limit
+                    //filter the submissions by hour/day/week/etc and count
+                    $count['all'] = Submission::submitted($prompt->id, $user->id)->count();
+                    $count['Hour'] = Submission::submitted($prompt->id, $user->id)->where('created_at', '>=', now()->startOfHour())->count();
+                    $count['Day'] = Submission::submitted($prompt->id, $user->id)->where('created_at', '>=', now()->startOfDay())->count();
+                    $count['Week'] = Submission::submitted($prompt->id, $user->id)->where('created_at', '>=', now()->startOfWeek())->count();
+                    $count['Month'] = Submission::submitted($prompt->id, $user->id)->where('created_at', '>=', now()->startOfMonth())->count();
+                    $count['Year'] = Submission::submitted($prompt->id, $user->id)->where('created_at', '>=', now()->startOfYear())->count();
+
+                    //if limit by character is on... multiply by # of chars. otherwise, don't
+                    if($prompt->limit_character) {
+                        $limit = $prompt->limit * Character::visible()->where('is_myo_slot', 0)->where('user_id', $user->id)->count();
+                    } else { $limit = $prompt->limit; }
+                    //if limit by time period is on
+                    if($prompt->limit_period) {
+                        if($count[$prompt->limit_period] >= $limit) throw new \Exception("You have already submitted to this prompt the maximum number of times.");
+                    } else if($count['all'] >= $limit) throw new \Exception("You have already submitted to this prompt the maximum number of times.");
+                }
             }
             if (!$isClaim && !isset($data['prompt_id'])) {
                 throw new \Exception('Please select a prompt.');
