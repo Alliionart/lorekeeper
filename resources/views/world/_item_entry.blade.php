@@ -3,16 +3,17 @@
         <div class="col-md-3 world-entry-image"><a href="{{ $imageUrl }}" data-lightbox="entry" data-title="{{ $name }}"><img src="{{ $imageUrl }}" class="world-entry-image" alt="{{ $name }}" /></a></div>
     @endif
     <div class="{{ $imageUrl ? 'col-md-9' : 'col-12' }}">
-        <x-admin-edit title="Item" :object="$item" />
+    <x-admin-edit title="Item" :object="$item" />
         <h3>
             @if (!$item->is_released)
                 <i class="fas fa-eye-slash mr-1"></i>
             @endif
-            {!! $name !!}
-            @if (isset($idUrl) && $idUrl)
-                <a href="{{ $idUrl }}" class="world-entry-search text-muted">
-                    <i class="fas fa-search"></i>
-                </a>
+        <h3>{!! $name !!} 
+            @if(isset($idUrl) && $idUrl) 
+            <a href="{{ $idUrl }}" class="world-entry-search text-muted"><i class="fas fa-search"></i></a>  
+            @endif
+            @if ($item->isLocked == 1)
+                <i class="fas fa-lock text-danger" data-toggle="tooltip" title="Locked to character after attachment"></i>
             @endif
         </h3>
         <div class="row">

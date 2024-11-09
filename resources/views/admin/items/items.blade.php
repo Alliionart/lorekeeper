@@ -59,6 +59,9 @@
                                         <i class="fas fa-eye-slash mr-1"></i>
                                     @endif
                                     {{ $item->name }}
+                                    @if ($item->isLocked == 1)
+                                        <i class="fas fa-lock text-danger" data-toggle="tooltip" title="Locked to character after attachment"></i>
+                                    @endif
                                 </div>
                             </div>
                             <div class="col-4 col-md-5">

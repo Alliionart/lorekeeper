@@ -41,6 +41,9 @@
                                     <i class="fas fa-eye-slash mr-1"></i>
                                 @endif
                                 {!! $name !!}
+                                @if ($item->isLocked == 1)
+                                    <i class="fas fa-lock text-danger" data-toggle="tooltip" title="Locked to character after attachment"></i>
+                                @endif
                             </h1>
                             <div class="row">
                                 @if (isset($item->category) && $item->category)
