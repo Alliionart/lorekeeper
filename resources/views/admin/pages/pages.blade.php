@@ -24,9 +24,12 @@
                         <div class="logs-table-cell">Title</div>
                     </div>
                     <div class="col-3 col-md-3">
+                        <div class="logs-table-cell">Category</div>
+                    </div>
+                    <div class="col-3 col-md-3">
                         <div class="logs-table-cell">Key</div>
                     </div>
-                    <div class="col-6 col-md-3">
+                    <div class="col-3 col-md-3">
                         <div class="logs-table-cell">Last Edited</div>
                     </div>
                 </div>
@@ -37,6 +40,9 @@
                         <div class="row flex-wrap">
                             <div class="col-12 col-md-5">
                                 <div class="logs-table-cell"><a href="{{ $page->url }}">{{ $page->title }}</a></div>
+                            </div>
+                            <div class="col-3 col-md-3">
+                                <div class="logs-table-cell">{{ $page->category ? $page->category->name : '' }}</div>
                             </div>
                             <div class="col-3 col-md-3">
                                 <div class="logs-table-cell">{{ $page->key }}</div>

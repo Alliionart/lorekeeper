@@ -193,6 +193,7 @@ Route::get('pets/pet/{id}', 'Users\PetController@getPetDrops');
 **************************************************************************************************/
 Route::get('credits', 'PageController@getCreditsPage');
 Route::get('info/{key}', 'PageController@getPage');
+Route::get('world/info/{key}', 'PageController@getPageSection');
 
 /**************************************************************************************************
     Raffles

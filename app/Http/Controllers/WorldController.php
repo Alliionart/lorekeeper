@@ -31,6 +31,9 @@ use App\Models\Stat\Stat;
 use App\Models\User\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Prompt\PromptCategory;
+use App\Models\Prompt\Prompt;
+use App\Models\SitePageSection;
 
 class WorldController extends Controller {
     /*
@@ -48,8 +51,11 @@ class WorldController extends Controller {
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getIndex() {
-        return view('world.index');
+    public function getIndex()
+    {
+        return view('world.index', [
+            'sections' => SitePageSection::orderBy('sort', 'DESC')->get()
+        ]);
     }
 
     /**
@@ -66,6 +72,7 @@ class WorldController extends Controller {
 
         return view('world.currencies', [
             'currencies' => $query->orderBy('name')->orderBy('id')->paginate(20)->appends($request->query()),
+            'sections' => SitePageSection::orderBy('sort', 'DESC')->get(),
         ]);
     }
 
@@ -83,6 +90,7 @@ class WorldController extends Controller {
 
         return view('world.rarities', [
             'rarities' => $query->orderBy('sort', 'DESC')->orderBy('id')->paginate(20)->appends($request->query()),
+            'sections' => SitePageSection::orderBy('sort', 'DESC')->get(),
         ]);
     }
 
@@ -102,6 +110,7 @@ class WorldController extends Controller {
             'specieses' => $query->with(['subtypes' => function ($query) {
                 $query->visible(Auth::check() ? Auth::user() : null)->orderBy('sort', 'DESC');
             }])->visible(Auth::check() ? Auth::user() : null)->orderBy('sort', 'DESC')->orderBy('id')->paginate(20)->appends($request->query()),
+            'sections' => SitePageSection::orderBy('sort', 'DESC')->get()
         ]);
     }
 
@@ -119,6 +128,7 @@ class WorldController extends Controller {
 
         return view('world.subtypes', [
             'subtypes' => $query->with('species')->visible(Auth::check() ? Auth::user() : null)->orderBy('sort', 'DESC')->orderBy('id')->paginate(20)->appends($request->query()),
+            'sections' => SitePageSection::orderBy('sort', 'DESC')->get(),
         ]);
     }
 
@@ -136,6 +146,7 @@ class WorldController extends Controller {
 
         return view('world.item_categories', [
             'categories' => $query->visible(Auth::check() ? Auth::user() : null)->orderBy('sort', 'DESC')->orderBy('id')->paginate(20)->appends($request->query()),
+            'sections' => SitePageSection::orderBy('sort', 'DESC')->get(),
         ]);
     }
 
@@ -153,6 +164,7 @@ class WorldController extends Controller {
 
         return view('world.feature_categories', [
             'categories' => $query->visible(Auth::check() ? Auth::user() : null)->orderBy('sort', 'DESC')->orderBy('id')->paginate(20)->appends($request->query()),
+            'sections' => SitePageSection::orderBy('sort', 'DESC')->get(),
         ]);
     }
 
@@ -232,6 +244,7 @@ class WorldController extends Controller {
             'specieses'  => ['none' => 'Any Species'] + ['withoutOption' => 'Without Species'] + Species::visible(Auth::check() ? Auth::user() : null)->orderBy('sort', 'DESC')->pluck('name', 'id')->toArray(),
             'subtypes'   => ['none' => 'Any Subtype'] + ['withoutOption' => 'Without Subtype'] + Subtype::visible(Auth::check() ? Auth::user() : null)->orderBy('sort', 'DESC')->pluck('name', 'id')->toArray(),
             'categories' => ['none' => 'Any Category'] + ['withoutOption' => 'Without Category'] + FeatureCategory::visible(Auth::check() ? Auth::user() : null)->orderBy('sort', 'DESC')->pluck('name', 'id')->toArray(),
+            'sections' => SitePageSection::orderBy('sort', 'DESC')->get(),
         ]);
     }
 
@@ -370,6 +383,7 @@ class WorldController extends Controller {
             'categories' => ['none' => 'Any Category'] + ['withoutOption' => 'Without Category'] + ItemCategory::visible(Auth::check() ? Auth::user() : null)->orderBy('sort', 'DESC')->pluck('name', 'id')->toArray(),
             'shops'      => Shop::orderBy('sort', 'DESC')->get(),
             'artists'    => ['none' => 'Any Artist'] + User::whereIn('id', Item::whereNotNull('artist_id')->pluck('artist_id')->toArray())->pluck('name', 'id')->toArray(),
+            'sections' => SitePageSection::orderBy('sort', 'DESC')->get(),
         ]);
     }
 
@@ -634,6 +648,7 @@ class WorldController extends Controller {
 
         return view('world.weapon_categories', [
             'categories' => $query->orderBy('sort', 'DESC')->paginate(20)->appends($request->query()),
+            'sections' => SitePageSection::orderBy('sort', 'DESC')->get()
         ]);
     }
 
@@ -717,6 +732,7 @@ class WorldController extends Controller {
 
         return view('world.gear_categories', [
             'categories' => $query->orderBy('sort', 'DESC')->paginate(20)->appends($request->query()),
+            'sections' => SitePageSection::orderBy('sort', 'DESC')->get()
         ]);
     }
 
@@ -923,3 +939,7 @@ class WorldController extends Controller {
         ]);
     }
 }
+/*return view('world.prompts', [
+            'prompts' => $query->paginate(20)->appends($request->query()),
+            'categories' => ['none' => 'Any Category'] + PromptCategory::orderBy('sort', 'DESC')->pluck('name', 'id')->toArray(),
+            'sections' => SitePageSection::orderBy('sort', 'DESC')->get()*/
