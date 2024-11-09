@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Character\CharacterCategory;
 use App\Models\Character\CharacterClass;
+use App\Models\Character\CharacterTransformation as Transformation;
 use App\Models\Claymore\Gear;
 use App\Models\Claymore\GearCategory;
 use App\Models\Claymore\Weapon;
@@ -30,7 +31,6 @@ use App\Models\Stat\Stat;
 use App\Models\User\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Models\Character\CharacterTransformation as Transformation;
 
 class WorldController extends Controller {
     /*
@@ -906,7 +906,7 @@ class WorldController extends Controller {
         ]);
     }
 
-     /**
+    /**
      * Shows the Transformations page.
      *
      * @return \Illuminate\Contracts\Support\Renderable

@@ -15,12 +15,12 @@ use App\Models\Character\CharacterImage;
 use App\Models\Character\CharacterLineage;
 use App\Models\Character\CharacterStat;
 use App\Models\Character\CharacterTransfer;
-use App\Models\Sales\SalesCharacter;
-use App\Models\Species\Subtype;
-use App\Models\Rarity;
+use App\Models\Character\CharacterTransformation as Transformation;
 use App\Models\Currency\Currency;
 use App\Models\Feature\Feature;
-use App\Models\Character\CharacterTransformation as Transformation;
+use App\Models\Rarity;
+use App\Models\Sales\SalesCharacter;
+use App\Models\Species\Subtype;
 
 class CharacterManager extends Service {
     /*
@@ -2106,43 +2106,58 @@ class CharacterManager extends Service {
         } catch (\Exception $e) {
             $this->setError('error', $e->getMessage());
         }
+
         return $this->rollbackReturn(false);
     }
 
     /**
      * Saves the character features (traits) section of a character design update request.
      *
-     * @param  array                                        $data
-     * @param  \App\Models\Character\CharacterDesignUpdate  $request
-     * @return  bool
+     * @param array                 $data
+     * @param CharacterDesignUpdate $request
+     *
+     * @return bool
      */
-    public function saveRequestFeatures($data, $request)
-    {
+    public function saveRequestFeatures($data, $request) {
         DB::beginTransaction();
 
         try {
-            if(!($request->character->is_myo_slot && $request->character->image->species_id) && !isset($data['species_id'])) throw new \Exception("Please select a species.");
-            if(!($request->character->is_myo_slot && $request->character->image->rarity_id) && !isset($data['rarity_id'])) throw new \Exception("Please select a rarity.");
+            if (!($request->character->is_myo_slot && $request->character->image->species_id) && !isset($data['species_id'])) {
+                throw new \Exception('Please select a species.');
+            }
+            if (!($request->character->is_myo_slot && $request->character->image->rarity_id) && !isset($data['rarity_id'])) {
+                throw new \Exception('Please select a rarity.');
+            }
 
             $rarity = ($request->character->is_myo_slot && $request->character->image->rarity_id) ? $request->character->image->rarity : Rarity::find($data['rarity_id']);
             $species = ($request->character->is_myo_slot && $request->character->image->species_id) ? $request->character->image->species : Species::find($data['species_id']);
-            if(isset($data['subtype_id']) && $data['subtype_id'])
+            if (isset($data['subtype_id']) && $data['subtype_id']) {
                 $subtype = ($request->character->is_myo_slot && $request->character->image->subtype_id) ? $request->character->image->subtype : Subtype::find($data['subtype_id']);
-            else $subtype = null;
+            } else {
+                $subtype = null;
+            }
             if (isset($data['transformation_id']) && $data['transformation_id']) {
                 $transformation = ($request->character->is_myo_slot && $request->character->image->transformation_id) ? $request->character->image->transformation : Transformation::find($data['transformation_id']);
                 $transformation_info = ($request->character->is_myo_slot && $request->character->image->transformation_info) ? $request->character->image->transformation_info : $data['transformation_info'];
                 $transformation_description = ($request->character->is_myo_slot && $request->character->image->transformation_description) ? $request->character->image->transformation_description : $data['transformation_description'];
-            } else { 
+            } else {
                 $transformation = null;
                 $transformation_info = null;
                 $transformation_description = null;
             }
-            if(!$rarity) throw new \Exception("Invalid rarity selected.");
-            if(!$species) throw new \Exception("Invalid species selected.");
-            if($subtype && $subtype->species_id != $species->id) throw new \Exception("Subtype does not match the species.");
-            if($transformation && $transformation->species_id != null){
-                if($transformation->species_id != $species->id) throw new \Exception(ucfirst(__('transformations.transformation'))." does not match the species.");
+            if (!$rarity) {
+                throw new \Exception('Invalid rarity selected.');
+            }
+            if (!$species) {
+                throw new \Exception('Invalid species selected.');
+            }
+            if ($subtype && $subtype->species_id != $species->id) {
+                throw new \Exception('Subtype does not match the species.');
+            }
+            if ($transformation && $transformation->species_id != null) {
+                if ($transformation->species_id != $species->id) {
+                    throw new \Exception(ucfirst(__('transformations.transformation')).' does not match the species.');
+                }
             }
 
             // Clear old features
@@ -2153,15 +2168,19 @@ class CharacterManager extends Service {
 
             $features = Feature::whereIn('id', $data['feature_id'])->with('rarity')->get()->keyBy('id');
 
-            foreach($data['feature_id'] as $key => $featureId) {
-                if(!$featureId) continue;
+            foreach ($data['feature_id'] as $key => $featureId) {
+                if (!$featureId) {
+                    continue;
+                }
 
                 // Skip the feature if the rarity is too high.
                 // Comment out this check if rarities should have more berth for traits choice.
                 //if($features[$featureId]->rarity->sort > $rarity->sort) continue;
 
                 // Skip the feature if it's not the correct species.
-                if($features[$featureId]->species_id && $features[$featureId]->species_id != $species->id) continue;
+                if ($features[$featureId]->species_id && $features[$featureId]->species_id != $species->id) {
+                    continue;
+                }
 
                 $feature = CharacterFeature::create(['character_image_id' => $request->id, 'feature_id' => $featureId, 'data' => $data['feature_data'][$key], 'character_type' => 'Update']);
             }
@@ -2177,7 +2196,7 @@ class CharacterManager extends Service {
             $request->save();
 
             return $this->commitReturn(true);
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             $this->setError('error', $e->getMessage());
         }
     }
@@ -2185,39 +2204,47 @@ class CharacterManager extends Service {
     /**
      * Creates a character design update request (or a MYO design approval request).
      *
-     * @param  \App\Models\Character\Character  $character
-     * @param  \App\Models\User\User            $user
-     * @return  \App\Models\Character\CharacterDesignUpdate|bool
+     * @param Character             $character
+     * @param \App\Models\User\User $user
+     * @param mixed|null            $image
+     * @param mixed                 $isImage
+     *
+     * @return bool|CharacterDesignUpdate
      */
-    public function createDesignUpdateRequest($character, $user, $image = null, $isImage = false)
-    {
+    public function createDesignUpdateRequest($character, $user, $image = null, $isImage = false) {
         DB::beginTransaction();
 
         try {
-            if($isImage){
+            if ($isImage) {
                 $image = $image;
-            }else{
+            } else {
                 $image = $character->image;
             }
-            if($character->user_id != $user->id) throw new \Exception("You do not own this character.");
-            if(CharacterDesignUpdate::where('character_id', $character->id)->active()->exists()) throw new \Exception("This ".($character->is_myo_slot ? 'MYO slot' : 'character')." already has an existing request. Please update that one, or delete it before creating a new one.");
-            if(!$character->isAvailable) throw new \Exception("This ".($character->is_myo_slot ? 'MYO slot' : 'character')." is currently in an open trade or transfer. Please cancel the trade or transfer before creating a design update.");
+            if ($character->user_id != $user->id) {
+                throw new \Exception('You do not own this character.');
+            }
+            if (CharacterDesignUpdate::where('character_id', $character->id)->active()->exists()) {
+                throw new \Exception('This '.($character->is_myo_slot ? 'MYO slot' : 'character').' already has an existing request. Please update that one, or delete it before creating a new one.');
+            }
+            if (!$character->isAvailable) {
+                throw new \Exception('This '.($character->is_myo_slot ? 'MYO slot' : 'character').' is currently in an open trade or transfer. Please cancel the trade or transfer before creating a design update.');
+            }
 
             $data = [
-                'user_id' => $user->id,
-                'character_id' => $character->id,
-                'status' => 'Draft',
-                'hash' => randomString(10),
+                'user_id'       => $user->id,
+                'character_id'  => $character->id,
+                'status'        => 'Draft',
+                'hash'          => randomString(10),
                 'fullsize_hash' => randomString(15),
-                'update_type' => $character->is_myo_slot ? 'MYO' : 'Character',
+                'update_type'   => $character->is_myo_slot ? 'MYO' : 'Character',
 
                 // Set some data based on the character's existing stats
-                'rarity_id' => $image->rarity_id,
-                'species_id' => $image->species_id,
-                'subtype_id' => $image->subtype_id,
-                'transformation_id' => $image->transformation_id,
-                'transformation_info' => $image->transformation_info,
-                'transformation_description' => $image->transformation_description
+                'rarity_id'                  => $image->rarity_id,
+                'species_id'                 => $image->species_id,
+                'subtype_id'                 => $image->subtype_id,
+                'transformation_id'          => $image->transformation_id,
+                'transformation_info'        => $image->transformation_info,
+                'transformation_description' => $image->transformation_description,
             ];
 
             $request = CharacterDesignUpdate::create($data);
@@ -2226,23 +2253,22 @@ class CharacterManager extends Service {
             // as presumably, we will not want to make major modifications to them.
             // This is skipped for MYO slots as it complicates things later on - we don't want
             // users to edit compulsory traits, so we'll only add them when the design is approved.
-            if(!$character->is_myo_slot)
-            {
-                foreach($image->features as $feature)
-                {
+            if (!$character->is_myo_slot) {
+                foreach ($image->features as $feature) {
                     $request->features()->create([
                         'character_image_id' => $request->id,
-                        'character_type' => 'Update',
-                        'feature_id' => $feature->feature_id,
-                        'data' => $feature->data
+                        'character_type'     => 'Update',
+                        'feature_id'         => $feature->feature_id,
+                        'data'               => $feature->data,
                     ]);
                 }
             }
 
             return $this->commitReturn($request);
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             $this->setError('error', $e->getMessage());
         }
+
         return $this->rollbackReturn(false);
     }
 
@@ -2378,23 +2404,23 @@ class CharacterManager extends Service {
 
             // Create a new image with the request data
             $image = CharacterImage::create([
-                'character_id'  => $request->character_id,
-                'is_visible'    => 1,
-                'hash'          => $request->hash,
-                'fullsize_hash' => $request->fullsize_hash ? $request->fullsize_hash : randomString(15),
-                'extension'     => $extension,
-                'use_cropper'   => $request->use_cropper,
-                'x0'            => $request->x0,
-                'x1'            => $request->x1,
-                'y0'            => $request->y0,
-                'y1'            => $request->y1,
-                'species_id'    => $request->species_id,
-                'subtype_id'    => ($request->character->is_myo_slot && isset($request->character->image->subtype_id)) ? $request->character->image->subtype_id : $request->subtype_id,
-                'transformation_id' => ($request->character->is_myo_slot && isset($request->character->image->transformation_id)) ? $request->character->image->transformation_id : $request->transformation_id,
-                'transformation_info' => ($request->character->is_myo_slot && isset($request->character->image->transformation_info)) ? $request->character->image->transformation_info : $request->transformation_info,
+                'character_id'               => $request->character_id,
+                'is_visible'                 => 1,
+                'hash'                       => $request->hash,
+                'fullsize_hash'              => $request->fullsize_hash ? $request->fullsize_hash : randomString(15),
+                'extension'                  => $extension,
+                'use_cropper'                => $request->use_cropper,
+                'x0'                         => $request->x0,
+                'x1'                         => $request->x1,
+                'y0'                         => $request->y0,
+                'y1'                         => $request->y1,
+                'species_id'                 => $request->species_id,
+                'subtype_id'                 => ($request->character->is_myo_slot && isset($request->character->image->subtype_id)) ? $request->character->image->subtype_id : $request->subtype_id,
+                'transformation_id'          => ($request->character->is_myo_slot && isset($request->character->image->transformation_id)) ? $request->character->image->transformation_id : $request->transformation_id,
+                'transformation_info'        => ($request->character->is_myo_slot && isset($request->character->image->transformation_info)) ? $request->character->image->transformation_info : $request->transformation_info,
                 'transformation_description' => ($request->character->is_myo_slot && isset($request->character->image->transformation_description)) ? $request->character->image->transformation_description : $request->transformation_description,
-                'rarity_id'     => $request->rarity_id,
-                'sort'          => 0,
+                'rarity_id'                  => $request->rarity_id,
+                'sort'                       => 0,
             ]);
 
             // Shift the image credits over to the new image
@@ -3002,7 +3028,7 @@ class CharacterManager extends Service {
             }
             $imageData = Arr::only($data, [
                 'species_id', 'subtype_id', 'rarity_id', 'use_cropper',
-                'x0', 'x1', 'y0', 'y1', 'transformation_id','transformation_info','transformation_description',
+                'x0', 'x1', 'y0', 'y1', 'transformation_id', 'transformation_info', 'transformation_description',
             ]);
             $imageData['use_cropper'] = isset($data['use_cropper']);
             $imageData['description'] = $data['image_description'] ?? null;

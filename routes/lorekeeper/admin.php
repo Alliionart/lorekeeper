@@ -336,7 +336,7 @@ Route::group(['prefix' => 'data', 'namespace' => 'Data', 'middleware' => 'power:
     Route::post('prompts/edit/{id?}', 'PromptController@postCreateEditPrompt');
     Route::post('prompts/delete/{id}', 'PromptController@postDeletePrompt');
 
-    # TRANSFORMATIONS
+    // TRANSFORMATIONS
     Route::get('transformations', 'TransformationController@getTransformationIndex');
     Route::get('transformations/create', 'TransformationController@getCreateTransformation');
     Route::get('transformations/edit/{id}', 'TransformationController@getEditTransformation');
