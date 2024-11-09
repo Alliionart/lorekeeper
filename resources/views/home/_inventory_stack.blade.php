@@ -98,7 +98,7 @@
                         </a>
                         <div id="characterTransferForm" class="collapse">
                             <p>This will transfer this stack or stacks to this character's inventory.</p>
-                            @if($item->isLocked)
+                            @if ($item->isLocked)
                                 <p class="alert alert-danger my-2 text-center">
                                     This item will become bound to the selected character after it is transferred, and you will not be able to remove it afterwards. You will still be able to delete it if you wish.
                                     <br>

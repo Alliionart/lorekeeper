@@ -49,7 +49,7 @@
                             <td class="col-3">{!! $itemRow->count !!}</td>
                         @endif
                         <td class="col-1">
-                            @if(!$itemRow->isTransferrable || $itemRow->item->isLocked)
+                            @if (!$itemRow->isTransferrable || $itemRow->item->isLocked)
                                 <i class="fas fa-lock" data-toggle="tooltip" title="Character-bound items cannot be transferred but can be deleted."></i>
                             @endif
                         </td>
