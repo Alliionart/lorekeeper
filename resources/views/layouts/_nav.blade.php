@@ -133,7 +133,7 @@
                             </a>
                         @endif
                         <a class="dropdown-item" href="{{ url(__('dailies.dailies')) }}">
-                        {{__('dailies.dailies')}}
+                            {{ __('dailies.dailies') }}
                         </a>
                     </div>
                 </li>
