@@ -3,15 +3,15 @@
 namespace App\Http\Controllers\Admin\Data;
 
 use App\Http\Controllers\Controller;
+use App\Models\Currency\Currency;
+use App\Models\Item\Item;
+use App\Models\Loot\LootTable;
 use App\Models\Prompt\Prompt;
 use App\Models\Prompt\PromptCategory;
 use App\Models\Skill\Skill;
 use App\Services\PromptService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Models\Item\Item;
-use App\Models\Currency\Currency;
-use App\Models\Loot\LootTable;
 
 class PromptController extends Controller {
     /*
@@ -179,13 +179,13 @@ class PromptController extends Controller {
      */
     public function getCreatePrompt() {
         return view('admin.prompts.create_edit_prompt', [
-            'prompt'     => new Prompt,
-            'categories' => ['none' => 'No category'] + PromptCategory::orderBy('sort', 'DESC')->pluck('name', 'id')->toArray(),
-            'skills'     => Skill::pluck('name', 'id')->toArray(),
-            'items' => Item::orderBy('name')->pluck('name', 'id'),
-            'currencies' => Currency::where('is_user_owned', 1)->orderBy('name')->pluck('name', 'id'),
-            'tables' => LootTable::orderBy('name')->pluck('name', 'id'),
-            'limit_periods' => [null => 'None', 'Hour' => 'Hour', 'Day' => 'Day', 'Week' => 'Week', 'Month' => 'Month', 'Year' => 'Year']
+            'prompt'        => new Prompt,
+            'categories'    => ['none' => 'No category'] + PromptCategory::orderBy('sort', 'DESC')->pluck('name', 'id')->toArray(),
+            'skills'        => Skill::pluck('name', 'id')->toArray(),
+            'items'         => Item::orderBy('name')->pluck('name', 'id'),
+            'currencies'    => Currency::where('is_user_owned', 1)->orderBy('name')->pluck('name', 'id'),
+            'tables'        => LootTable::orderBy('name')->pluck('name', 'id'),
+            'limit_periods' => [null => 'None', 'Hour' => 'Hour', 'Day' => 'Day', 'Week' => 'Week', 'Month' => 'Month', 'Year' => 'Year'],
         ]);
     }
 
@@ -203,13 +203,13 @@ class PromptController extends Controller {
         }
 
         return view('admin.prompts.create_edit_prompt', [
-            'prompt'     => $prompt,
-            'categories' => ['none' => 'No category'] + PromptCategory::orderBy('sort', 'DESC')->pluck('name', 'id')->toArray(),
-            'skills'     => Skill::pluck('name', 'id')->toArray(),
-            'items' => Item::orderBy('name')->pluck('name', 'id'),
-            'currencies' => Currency::where('is_user_owned', 1)->orderBy('name')->pluck('name', 'id'),
-            'tables' => LootTable::orderBy('name')->pluck('name', 'id'),
-            'limit_periods' => [null => 'None', 'Hour' => 'Hour', 'Day' => 'Day', 'Week' => 'Week', 'Month' => 'Month', 'Year' => 'Year']
+            'prompt'        => $prompt,
+            'categories'    => ['none' => 'No category'] + PromptCategory::orderBy('sort', 'DESC')->pluck('name', 'id')->toArray(),
+            'skills'        => Skill::pluck('name', 'id')->toArray(),
+            'items'         => Item::orderBy('name')->pluck('name', 'id'),
+            'currencies'    => Currency::where('is_user_owned', 1)->orderBy('name')->pluck('name', 'id'),
+            'tables'        => LootTable::orderBy('name')->pluck('name', 'id'),
+            'limit_periods' => [null => 'None', 'Hour' => 'Hour', 'Day' => 'Day', 'Week' => 'Week', 'Month' => 'Month', 'Year' => 'Year'],
         ]);
     }
 

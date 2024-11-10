@@ -12,21 +12,21 @@
             {!! Form::select('species_id', $specieses, Request::get('species_id'), ['class' => 'form-control']) !!}
         </div>
         <div class="form-inline justify-content-end mb-3">
-        <div class="form-group mr-3">
-            {!! Form::label('sort', 'Sort: ', ['class' => 'mr-2']) !!}
-            @if (!$isMyo)
-                {!! Form::select(
-                    'sort',
-                    ['number_desc' => 'Number Descending', 'number_asc' => 'Number Ascending', 'id_desc' => 'Newest First', 'id_asc' => 'Oldest First', 'sale_value_desc' => 'Highest Sale Value', 'sale_value_asc' => 'Lowest Sale Value'],
-                    Request::get('sort'),
-                    ['class' => 'form-control'],
-                ) !!}
-            @else
-                {!! Form::select('sort', ['id_desc' => 'Newest First', 'id_asc' => 'Oldest First', 'sale_value_desc' => 'Highest Sale Value', 'sale_value_asc' => 'Lowest Sale Value'], Request::get('sort'), ['class' => 'form-control']) !!}
-            @endif
+            <div class="form-group mr-3">
+                {!! Form::label('sort', 'Sort: ', ['class' => 'mr-2']) !!}
+                @if (!$isMyo)
+                    {!! Form::select(
+                        'sort',
+                        ['number_desc' => 'Number Descending', 'number_asc' => 'Number Ascending', 'id_desc' => 'Newest First', 'id_asc' => 'Oldest First', 'sale_value_desc' => 'Highest Sale Value', 'sale_value_asc' => 'Lowest Sale Value'],
+                        Request::get('sort'),
+                        ['class' => 'form-control'],
+                    ) !!}
+                @else
+                    {!! Form::select('sort', ['id_desc' => 'Newest First', 'id_asc' => 'Oldest First', 'sale_value_desc' => 'Highest Sale Value', 'sale_value_asc' => 'Lowest Sale Value'], Request::get('sort'), ['class' => 'form-control']) !!}
+                @endif
+            </div>
+            {!! Form::submit('Search', ['class' => 'btn btn-primary']) !!}
         </div>
-        {!! Form::submit('Search', ['class' => 'btn btn-primary']) !!}
-    </div>
     </div>
     <div class="text-right mb-3"><a href="#advancedSearch" class="btn btn-sm btn-outline-info" data-toggle="collapse">Show Advanced Search Options <i class="fas fa-caret-down"></i></a></div>
     <div class="card bg-light mb-3 collapse" id="advancedSearch">
@@ -42,7 +42,7 @@
                 </div>
                 <hr />
             @endif
-            
+
             <div class="masterlist-search-field">
                 {!! Form::label('has_transformation', 'Has a ' . ucfirst(__('transformations.transformation')) . ': ') !!}
                 {!! Form::select('has_transformation', ['1' => 'Has a ' . __('transformations.transformation') . '.'], Request::get('has_transformation'), ['class' => 'form-control', 'placeholder' => 'Any']) !!}
@@ -135,76 +135,76 @@
     {!! Form::close() !!}
 
     <div class="hide" id="featureContent">
-    <div class="feature-block col-md-4 col-sm-6 mt-3 p-1">
-        <div class="card">
-            <div class="card-body d-flex">
-                {!! Form::select('feature_id[]', $features, null, ['class' => 'form-control feature-select selectize', 'placeholder' => 'Select Trait']) !!}
-                <a href="#" class="btn feature-remove ml-2"><i class="fas fa-times"></i></a>
+        <div class="feature-block col-md-4 col-sm-6 mt-3 p-1">
+            <div class="card">
+                <div class="card-body d-flex">
+                    {!! Form::select('feature_id[]', $features, null, ['class' => 'form-control feature-select selectize', 'placeholder' => 'Select Trait']) !!}
+                    <a href="#" class="btn feature-remove ml-2"><i class="fas fa-times"></i></a>
+                </div>
             </div>
         </div>
     </div>
-</div>
-<div class="text-right mb-3 views">
-    <div class="btn-group">
-        <button type="button" class="btn btn-secondary active grid-view-button" data-toggle="tooltip" title="Grid View" alt="Grid View"><i class="fas fa-th"></i></button>
-        <button type="button" class="btn btn-secondary list-view-button" data-toggle="tooltip" title="List View" alt="List View"><i class="fas fa-bars"></i></button>
+    <div class="text-right mb-3 views">
+        <div class="btn-group">
+            <button type="button" class="btn btn-secondary active grid-view-button" data-toggle="tooltip" title="Grid View" alt="Grid View"><i class="fas fa-th"></i></button>
+            <button type="button" class="btn btn-secondary list-view-button" data-toggle="tooltip" title="List View" alt="List View"><i class="fas fa-bars"></i></button>
+        </div>
     </div>
-</div>
 </div>
 </section>
 
 {!! $characters->render() !!}
 <!-- Normal Character Render -->
 @if (!$isMyo)
-<div id="gridView" class="hide">
-    @foreach ($characters->chunk(4) as $chunk)
-        <div class="row">
-            @foreach ($chunk as $character)
-                <div class="col-md-3 col-6 text-center">
-                    <div>                    
-                        <a href="{{ $character->url }}"><img src="{{ $character->image->thumbnailUrl }}" class="img-thumbnail" alt="Thumbnail for {{ $character->fullName }}" /></a>
+    <div id="gridView" class="hide">
+        @foreach ($characters->chunk(4) as $chunk)
+            <div class="row">
+                @foreach ($chunk as $character)
+                    <div class="col-md-3 col-6 text-center">
+                        <div>
+                            <a href="{{ $character->url }}"><img src="{{ $character->image->thumbnailUrl }}" class="img-thumbnail" alt="Thumbnail for {{ $character->fullName }}" /></a>
+                        </div>
+                        <div class="mt-1">
+                            <a href="{{ $character->url }}" class="h5 mb-0">
+                                @if (!$character->is_visible)
+                                    <i class="fas fa-eye-slash"></i>
+                                @endif {{ Illuminate\Support\Str::limit($character->fullName, 20, $end = '...') }}
+                            </a>
+                        </div>
+                        <div class="small">
+                            {!! $character->image->species_id ? $character->image->species->displayName : 'No Species' !!} ・ {!! $character->image->rarity_id ? $character->image->rarity->displayName : 'No Rarity' !!} ・ {!! $character->displayOwner !!}
+                        </div>
                     </div>
-                    <div class="mt-1">
-                        <a href="{{ $character->url }}" class="h5 mb-0">
-                            @if (!$character->is_visible)
-                                <i class="fas fa-eye-slash"></i>
-                            @endif {{ Illuminate\Support\Str::limit($character->fullName, 20, $end = '...') }}
-                        </a>
-                    </div>
-                    <div class="small">
-                        {!! $character->image->species_id ? $character->image->species->displayName : 'No Species' !!} ・ {!! $character->image->rarity_id ? $character->image->rarity->displayName : 'No Rarity' !!} ・ {!! $character->displayOwner !!}
-                    </div>
-                </div>
-            @endforeach
-        </div>
-    @endforeach
-</div>
+                @endforeach
+            </div>
+        @endforeach
+    </div>
 @endif
 <!-- Normal Character Render End -->
 
 <!-- MYO Render -->
 @if ($isMyo)
-<div id="gridView" class="hide">
-    @foreach ($characters->chunk(4) as $chunk)
-        <div class="row">
-            @foreach ($chunk as $character)
-                <div class="col-md-3 col-6 text-left card">
-                    <div class="card-body">
-                        <a href="{{ $character->url }}" class="h5 mb-0">
-                            @if (!$character->is_visible)
-                                <i class="fas fa-eye-slash"></i>
-                            @endif {{ Illuminate\Support\Str::limit($character->fullName, 20, $end = '...') }}
+    <div id="gridView" class="hide">
+        @foreach ($characters->chunk(4) as $chunk)
+            <div class="row">
+                @foreach ($chunk as $character)
+                    <div class="col-md-3 col-6 text-left card">
+                        <div class="card-body">
+                            <a href="{{ $character->url }}" class="h5 mb-0">
+                                @if (!$character->is_visible)
+                                    <i class="fas fa-eye-slash"></i>
+                                @endif {{ Illuminate\Support\Str::limit($character->fullName, 20, $end = '...') }}
 
-                            <div class="small">
-                                {!! $character->image->species_id ? $character->image->species->displayName : 'No Species' !!} ・ {!! $character->image->rarity_id ? $character->image->rarity->displayName : 'No Rarity' !!} ・ {!! $character->displayOwner !!}
-                            </div>
-                        </a>
+                                <div class="small">
+                                    {!! $character->image->species_id ? $character->image->species->displayName : 'No Species' !!} ・ {!! $character->image->rarity_id ? $character->image->rarity->displayName : 'No Rarity' !!} ・ {!! $character->displayOwner !!}
+                                </div>
+                            </a>
+                        </div>
                     </div>
-                </div>
-            @endforeach
-        </div>
-    @endforeach
-</div>
+                @endforeach
+            </div>
+        @endforeach
+    </div>
 @endif
 <!-- MYO Render End -->
 
