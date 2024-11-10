@@ -2,11 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use DB;
-use Auth;
-use App\Models\Rank\RankPower;
 use App\Facades\Settings;
-use Illuminate\Http\Request;
 use App\Models\Character\Character;
 use App\Models\Character\CharacterCategory;
 use App\Models\Character\CharacterImage;
@@ -14,10 +10,13 @@ use App\Models\Character\CharacterTransformation as Transformation;
 use App\Models\Character\Sublist;
 use App\Models\Feature\Feature;
 use App\Models\Rank\Rank;
+use App\Models\Rank\RankPower;
 use App\Models\Rarity;
 use App\Models\Species\Species;
 use App\Models\Species\Subtype;
 use App\Models\User\User;
+use Auth;
+use Illuminate\Http\Request;
 
 class BrowseController extends Controller {
     /*
@@ -118,15 +117,15 @@ class BrowseController extends Controller {
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getTeamIndex()
-    {
+    public function getTeamIndex() {
         $staffRanks = RankPower::distinct()->get(['rank_id']);
-        $staffRanks->push(User::where("id",Settings::get('admin_user'))->first()->rank_id);
+        $staffRanks->push(User::where('id', Settings::get('admin_user'))->first()->rank_id);
         $staff = User::whereIn('rank_id', $staffRanks)->get()->groupBy('rank_id');
         $ranks = Rank::orderBy('id')->get()->keyBy('id');
+
         return view('browse.team_index', [
             'staff' => $staff,
-            'ranks' => $ranks
+            'ranks' => $ranks,
         ]);
     }
 

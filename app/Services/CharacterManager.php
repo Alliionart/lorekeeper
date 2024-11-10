@@ -2,10 +2,6 @@
 
 namespace App\Services;
 
-use DB;
-use Illuminate\Support\Arr;
-use Carbon\Carbon;
-use App\Models\User\User;
 use App\Facades\Notifications;
 use App\Facades\Settings;
 use App\Models\Character\Character;
@@ -25,6 +21,10 @@ use App\Models\Feature\Feature;
 use App\Models\Rarity;
 use App\Models\Sales\SalesCharacter;
 use App\Models\Species\Subtype;
+use App\Models\User\User;
+use Carbon\Carbon;
+use DB;
+use Illuminate\Support\Arr;
 
 class CharacterManager extends Service {
     /*
@@ -2208,10 +2208,10 @@ class CharacterManager extends Service {
     /**
      * Creates a character design update request (or a MYO design approval request).
      *
-     * @param Character             $character
-     * @param \App\Models\User\User $user
-     * @param mixed|null            $image
-     * @param mixed                 $isImage
+     * @param Character  $character
+     * @param User       $user
+     * @param mixed|null $image
+     * @param mixed      $isImage
      *
      * @return bool|CharacterDesignUpdate
      */

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Character\Character;
 use App\Models\Gallery\GallerySubmission;
 use App\Models\SitePage;
+use App\Models\User\User;
 use App\Services\LinkService;
 use App\Services\UserService;
 use Auth;
@@ -12,10 +13,6 @@ use DB;
 use Illuminate\Http\Request;
 use Laravel\Socialite\Facades\Socialite;
 use Settings;
-use App\Models\User\User;
-use App\Models\User\UserAlias;
-
-
 
 class HomeController extends Controller {
     /*
