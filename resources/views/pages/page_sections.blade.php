@@ -5,13 +5,14 @@
 @endsection
 
 @section('content')
-    {!! breadcrumbs(['World' => 'world', $section->name => '/world/info' . $section->key]) !!}
+    <div class="page-header">
+        {!! breadcrumbs(['World' => 'world', $section->name => '/world/info' . $section->key]) !!}
+        <h1>{{ $section->name }}</h1>
+    </div>
 
-    <h1>{{ $section->name }}</h1>
-
-    <div class="row justify-content-center">
+    <div class="row justify-content-center main-section {{ $section->key }}">
         @foreach ($section->categories as $category)
-            <div class="col-md-4 mb-4">
+            <div class="col-md-4 mb-4 {{ $category->name }}">
                 <div class="card">
                     <div class="card-header bg-transparent text-center pb-0">
                         @if ($category->categoryImageUrl)
@@ -25,7 +26,7 @@
                             <p class=card-text>{!! $category->description !!}</p>
                         </li>
                         @foreach ($category->pages as $page)
-                            <li class="list-group-item">
+                            <li class="list-group-item'">
                                 <p class=card-text>
                                     @if ($page->is_visible)
                                         <a href='{!! $page->url !!}'>{!! $page->title !!}</a>

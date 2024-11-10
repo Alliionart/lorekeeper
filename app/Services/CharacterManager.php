@@ -25,6 +25,8 @@ use App\Models\Feature\Feature;
 use App\Models\Rarity;
 use App\Models\Sales\SalesCharacter;
 use App\Models\Species\Subtype;
+use Image;
+use Config;
 
 class CharacterManager extends Service {
     /*

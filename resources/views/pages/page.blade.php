@@ -4,6 +4,10 @@
     {{ $page->title }}
 @endsection
 
+@section('sidebar')
+    @include('pages._page_sidebar')
+@endsection
+
 @section('content')
     @if ($page->page_category_id && $page->category->section)
         {!! breadcrumbs(['World' => 'world', $page->category->section->name => '/world/info/' . $page->category->section->key, $page->title => $page->url]) !!}

@@ -251,7 +251,6 @@
         $(document).ready(function() {
             $('#ajaxsearch').keyup(function() {
                 let i = $(this).val();
-                console.log(i);
                 if (i != '' || i != null) {
                     $.ajax({
                         url:"/ajax-s-process.php",
@@ -259,6 +258,7 @@
                         data:{i:i},
                         beforeSend: function() {
                             $(".search-bar").addClass('loader');
+                            $(".dark-input").addClass('active');
                         },
                         complete: function() {
                             $(".search-bar").removeClass('loader');
@@ -273,11 +273,11 @@
                 }
             });
             $(document).on("click", function(event) {
-                console.log(event);
                 if(!$(event.target).closest("#searchResult").length && $("#searchResult").is(':visible')) {
                     $('#searchResult').fadeOut();
                     $("searchResult").hide();
                     $('#ajaxsearch').val('');
+                    $(".dark-input").removeClass('active');
                 } else {
                     $("searchResult").show();
                 }

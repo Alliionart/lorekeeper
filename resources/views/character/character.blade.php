@@ -8,7 +8,9 @@
     {{ $character->image->thumbnailUrl }}
 @endsection
 
+
 @section('profile-content')
+<div class="page-header">
     @if ($character->is_myo_slot)
         {!! breadcrumbs(['MYO Slot Masterlist' => 'myos', $character->fullName => $character->url]) !!}
     @else
@@ -19,18 +21,13 @@
     @endif
 
     @include('character._header', ['character' => $character])
+</div>
+
 
     {{-- Main Image --}}
     <div class="row mb-3" id="main-tab">
-        <div class="col-md-7">
+        <div class="col-md-8 pl-5 mt-5">
             <div class="text-center">
-                <a href="{{ $character->image->canViewFull(Auth::check() ? Auth::user() : null) && file_exists(public_path($character->image->imageDirectory . '/' . $character->image->fullsizeFileName)) ? $character->image->fullsizeUrl : $character->image->imageUrl }}"
-                    data-lightbox="entry" data-title="{{ $character->fullName }}">
-                    <img src="{{ $character->image->canViewFull(Auth::check() ? Auth::user() : null) && file_exists(public_path($character->image->imageDirectory . '/' . $character->image->fullsizeFileName)) ? $character->image->fullsizeUrl : $character->image->imageUrl }}"
-                        class="image" alt="{{ $character->fullName }}" />
-                </a>
-            </div>
-            @include('character._image_info', ['image' => $character->image])
             @if ($character->images()->where('is_valid', 1)->whereNotNull('transformation_id')->exists())
                 <div class="card-header mb-2">
                     <ul class="nav nav-tabs card-header-tabs">
@@ -47,20 +44,62 @@
                     </ul>
                 </div>
             @endif
+                <a href="{{ $character->image->canViewFull(Auth::check() ? Auth::user() : null) && file_exists(public_path($character->image->imageDirectory . '/' . $character->image->fullsizeFileName)) ? $character->image->fullsizeUrl : $character->image->imageUrl }}"
+                    data-lightbox="entry" data-title="{{ $character->fullName }}">
+                    <img src="{{ $character->image->canViewFull(Auth::check() ? Auth::user() : null) && file_exists(public_path($character->image->imageDirectory . '/' . $character->image->fullsizeFileName)) ? $character->image->fullsizeUrl : $character->image->imageUrl }}"
+                        class="image main-image rounded p-4" alt="{{ $character->fullName }}" />
+                </a>
+            </div>
+        </div>
+
+        <div class="col-md-4 character-sidebar mt-5 pr-5">
+        @if (!$character->is_myo_slot && config('lorekeeper.extensions.previous_and_next_characters.display') && isset($extPrevAndNextBtnsUrl))
+        @if ($extPrevAndNextBtns['prevCharName'] || $extPrevAndNextBtns['nextCharName'])
+            <div class="row mb-4">
+                <div class="col-md-12 text-right">
+                @if ($extPrevAndNextBtns['prevCharName'])
+                        <a class="btn prev" href="{{ $extPrevAndNextBtns['prevCharUrl'] }}{!! $extPrevAndNextBtnsUrl !!}">
+                        <i class="fas fa-caret-left"></i> PREV: {!! $extPrevAndNextBtns['prevCharName'] !!}
+                        </a>
+                @endif
+                @if ($extPrevAndNextBtns['nextCharName'])
+                        <a class="btn next" href="{{ $extPrevAndNextBtns['nextCharUrl'] }}{!! $extPrevAndNextBtnsUrl !!}">
+                            NEXT: {!! $extPrevAndNextBtns['nextCharName'] !!} <i class="fas fa-caret-right"></i><br />
+                        </a>
+                @endif
+                </div>
+            </div>
+        @endif
+        @endif
+            <!-- Tab Group -->
+            @include('character._image_info', ['image' => $character->image])
         </div>
 
         {{-- Info --}}
+    <div class="col-md-12 mt-4 character-rest">
+        <div class="px-5">
+            <!-- profile content -->
+        @if ($character->profile->parsed_text)
+        <div class="card mb-3">
+            <div class="card-body parsed-text">
+                {!! $character->profile->parsed_text !!}
+            </div>
+        </div>
+        <div class="row my-3">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">@include('character._tab_skills', ['character' => $character, 'skills' => $skills])</div>
+                </div>
+            </div>
+        </div>
+        @endif
+        <!-- Sidebar Tabs -->
         <div class="card character-bio">
             <div class="card-header">
                 <ul class="nav nav-tabs card-header-tabs">
                     <li class="nav-item">
                         <a class="nav-link active" id="statsTab" data-toggle="tab" href="#stats" role="tab">Stats</a>
                     </li>
-                    @if ($character->getLineageBlacklistLevel() < 2)
-                        <li class="nav-item">
-                            <a class="nav-link" id="lineageTab" data-toggle="tab" href="#lineage" role="tab">Lineage</a>
-                        </li>
-                    @endif
                     <li class="nav-item">
                         <a class="nav-link" id="notesTab" data-toggle="tab" href="#notes" role="tab">Description</a>
                     </li>
@@ -78,16 +117,11 @@
                 <div class="tab-pane fade show active" id="stats">
                     @include('character._tab_stats', ['character' => $character])
                 </div>
-                @if ($character->getLineageBlacklistLevel() < 2)
-                    <div class="tab-pane fade" id="lineage">
-                        @include('character._tab_lineage', ['character' => $character])
-                    </div>
-                @endif
                 <div class="tab-pane fade" id="notes">
                     @include('character._tab_notes', ['character' => $character])
                 </div>
                 <div class="tab-pane fade" id="skills">
-                    @include('character._tab_skills', ['character' => $character, 'skills' => $skills])
+                    
                 </div>
                 @if (Auth::check() && Auth::user()->hasPower('manage_characters'))
                     <div class="tab-pane fade" id="settings-{{ $character->slug }}">
@@ -108,6 +142,8 @@
                 @endif
             </div>
         </div>
+        </div>
+    </div>
     @endsection
 
     @section('scripts')
