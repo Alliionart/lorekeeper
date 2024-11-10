@@ -38,42 +38,42 @@
 
             {{-- Basic info --}}
             <div class="tab-pane fade show active" id="info-{{ $image->id }}">
-                    <p class="item">
-                        <strong>Class</strong>
-                        <span>{!! $image->character->class_id ? $image->character->class->displayName : 'None' !!}
-                            @if (Auth::check())
-                                @if (Auth::user()->isStaff || (Auth::user()->id == $image->character->user_id && $image->character->class_id == null))
-                                    <a href="#" class="btn btn-outline-info btn-sm edit-class ml-1" data-id="{{ $image->character->id }}"><i class="fas fa-cog"></i></a>
-                                @endif
+                <p class="item">
+                    <strong>Class</strong>
+                    <span>{!! $image->character->class_id ? $image->character->class->displayName : 'None' !!}
+                        @if (Auth::check())
+                            @if (Auth::user()->isStaff || (Auth::user()->id == $image->character->user_id && $image->character->class_id == null))
+                                <a href="#" class="btn btn-outline-info btn-sm edit-class ml-1" data-id="{{ $image->character->id }}"><i class="fas fa-cog"></i></a>
                             @endif
-                        </span>
-                    </p>
-                    <p class="item">
-                        <strong>Species</strong>
-                        <span>{!! $image->species_id ? $image->species->displayName : 'None' !!}</span>
-                    </p>
-                    @if ($image->subtype_id)
+                        @endif
+                    </span>
+                </p>
+                <p class="item">
+                    <strong>Species</strong>
+                    <span>{!! $image->species_id ? $image->species->displayName : 'None' !!}</span>
+                </p>
+                @if ($image->subtype_id)
                     <p class="item">
                         <strong>Subtype</strong>
                         <span>{!! $image->subtype_id ? $image->subtype->displayName : 'None' !!}</span>
                     </p>
-                    @endif
-                    @if ($image->character->homeSetting)
+                @endif
+                @if ($image->character->homeSetting)
                     <p class="item">
                         <strong>Home</strong>
                         <span>{!! $image->character->location ? $image->character->location : 'None' !!}</span>
                     </p>
-                    @endif
-                    @if ($image->character->factionSetting)
+                @endif
+                @if ($image->character->factionSetting)
                     <p class="item">
                         <strong>Faction</strong>
                         <span>{!! $image->character->faction ? $image->character->currentFaction : 'None' !!}{!! $character->factionRank ? ' (' . $character->factionRank->name . ')' : null !!}</span>
                     </p>
-                    @endif
-                
+                @endif
+
                 @if ($image->transformation_id)
                     <p class="item">
-                            <strong>{{ ucfirst(__('transformations.form')) }} {!! add_help('The main image is always the active image') !!}</strong>
+                        <strong>{{ ucfirst(__('transformations.form')) }} {!! add_help('The main image is always the active image') !!}</strong>
                         <span>
                             <a href="{{ $image->transformation->url }}">
                                 {!! $image->transformation->displayName !!}
@@ -113,9 +113,9 @@
                             {!! $type?->displayElements !!}
                             @if (Auth::check() && Auth::user()->hasPower('manage_characters'))
                                 {!! add_help('Typing is assigned on an image basis') !!}
-                                    <a href="#" class="btn btn-outline-info btn-sm edit-typing" data-id="{{ $image->id }}">
-                                        <i class="fas fa-cog"></i> {{ $type ? 'Edit' : 'Create' }}
-                                    </a>
+                                <a href="#" class="btn btn-outline-info btn-sm edit-typing" data-id="{{ $image->id }}">
+                                    <i class="fas fa-cog"></i> {{ $type ? 'Edit' : 'Create' }}
+                                </a>
                             @endif
                         </span>
                     </p>
@@ -147,203 +147,203 @@
                                                 @endif
                                             </span>
                                         @endforeach
-                                    </div>
-                                @endforeach
-                            @else
-                                <div>No traits listed.</div>
-                            @endif
                         </div>
-                    @else
-                        <div>
-                            <?php $features = $image
-                                ->features()
-                                ->with('feature.category')
-                                ->get(); ?>
-                            @if ($features->count())
-                                @foreach ($features as $feature)
-                                    <p class="item">
-                                        @if ($feature->feature->feature_category_id)
-                                        <strong>{!! $feature->feature->category->displayName !!}</strong>
-                                            @endif 
-                                            <span>{!! $feature->feature->displayName !!}
-                                            @if ($feature->data)
-                                                {{ $feature->data }}
-                                            @endif
-                                            </span>
-                                    </p>
-                                @endforeach
-                            @else
-                                <div>No traits listed.</div>
-                            @endif
-                        </div>
+                    @endforeach
+                @else
+                    <div>No traits listed.</div>
                     @endif
                 </div>
-                <p class="item">
-                    <strong>Born</strong> <span>{!! pretty_date($image->created_at) !!}</span>
-                </p>
-                <p class="item">
-                    <strong>Updated</strong> <span>{!! pretty_date($image->updated_at) !!}</span>
-                </p>
-
-                @if (Auth::check() && Auth::user()->hasPower('manage_characters'))
-                    <div class="mt-3">
-                        <a href="#" class="btn btn-outline-info btn-sm edit-features mb-3" data-id="{{ $image->id }}"><i class="fas fa-cog"></i> Edit</a>
-                    </div>
-                @endif
-
-                @if (count($image->character->pets))
-                    <div class="row justify-content-center text-center">
-                        {{-- get one random pet --}}
-                        @php
-                            $pets = $image->character
-                                ->pets()
-                                ->orderBy('sort', 'DESC')
-                                ->limit(config('lorekeeper.pets.display_pet_count'))
-                                ->get();
-                        @endphp
-                        @foreach ($pets as $pet)
-                            @if (config('lorekeeper.pets.pet_bonding_enabled'))
-                                @include('character._pet_bonding_info', ['pet' => $pet])
-                            @else
-                                <div class="ml-2 mr-3">
-                                    <img src="{{ $pet->pet->variantImage($pet->id) }}" style="max-width: 75px;" />
-                                    <br>
-                                    <span class="text-light badge badge-dark" style="font-size:95%;">{!! $pet->pet_name !!}</span>
-                                </div>
-                            @endif
-                        @endforeach
-                        <div class="ml-auto float-right mr-3">
-                            <a href="{{ $character->url . '/pets' }}" class="btn btn-outline-info btn-sm">View All</a>
-                        </div>
-                    </div>
-                @endif
-                @if (count($image->character->equipment()))
-                    <div class="mb-1 mt-4">
-                        <div class="mb-0">
-                            <h5>Equipment</h5>
-                        </div>
-                        <div class="text-center row">
-                            @foreach ($image->character->equipment()->take(5) as $equipment)
-                                <div class="col-md-2">
-                                    @if ($equipment->has_image)
-                                        <img class="rounded" src="{{ $equipment->imageUrl }}" data-toggle="tooltip" title="{{ $equipment->equipment->name }}" style="max-width: 75px;" />
-                                    @elseif($equipment->equipment->imageurl)
-                                        <img class="rounded" src="{{ $equipment->equipment->imageUrl }}" data-toggle="tooltip" title="{{ $equipment->equipment->name }}" style="max-width: 75px;" />
-                                    @else
-                                        {!! $equipment->equipment->displayName !!}
+            @else
+                <div>
+                    <?php $features = $image
+                        ->features()
+                        ->with('feature.category')
+                        ->get(); ?>
+                    @if ($features->count())
+                        @foreach ($features as $feature)
+                            <p class="item">
+                                @if ($feature->feature->feature_category_id)
+                                    <strong>{!! $feature->feature->category->displayName !!}</strong>
+                                @endif
+                                <span>{!! $feature->feature->displayName !!}
+                                    @if ($feature->data)
+                                        {{ $feature->data }}
                                     @endif
-                                </div>
-                            @endforeach
-                        </div>
-                        <div class="float-right">
-                            <a href="{{ $character->url . '/stats' }}">View All...</a>
-                        </div>
-                    </div>
-                @endif
-
-                <!-- Begin Credits -->
-                <div class="row no-gutters mb-2">
-                    <div class="col-lg-4 col-4">
-                        <h5>Design</h5>
-                    </div>
-                    <div class="col-lg-8 col-8">
-                        @foreach ($image->designers as $designer)
-                            <div>{!! $designer->displayLink() !!} {{ $designer->credit_type ? '(' . $designer->credit_type . ')' : null }}</div>
+                                </span>
+                            </p>
                         @endforeach
-                    </div>
+                    @else
+                        <div>No traits listed.</div>
+                    @endif
                 </div>
-                <div class="row no-gutters">
-                    <div class="col-lg-4 col-4">
-                        <h5>Art</h5>
-                    </div>
-                    <div class="col-lg-8 col-8">
-                        @foreach ($image->artists as $artist)
-                            <div>{!! $artist->displayLink() !!} {{ $artist->credit_type ? '(' . $artist->credit_type . ')' : null }}</div>
-                        @endforeach
-                    </div>
-                </div>
-
-                @if (Auth::check() && Auth::user()->hasPower('manage_characters'))
-                    <div class="mt-3">
-                        <a href="#" class="btn btn-outline-info btn-sm edit-credits" data-id="{{ $image->id }}"><i class="fas fa-cog"></i> Edit</a>
-                    </div>
-                @endif
-                <!-- End Credits -->
-            </div>
-            
-            <!-- Lineage -->
-            @if ($character->getLineageBlacklistLevel() < 2)
-                <div class="tab-pane fade" id="lineage">
-                    @include('character._tab_lineage', ['character' => $character])
-                </div>
-            @endif
-
-            {{-- Image notes --}}
-            <div class="tab-pane fade" id="notes-{{ $image->id }}">
-                @if ($image->parsed_description)
-                    <div class="parsed-text imagenoteseditingparse">{!! $image->parsed_description !!}</div>
-                @else
-                    <div class="imagenoteseditingparse">No additional notes given.</div>
-                @endif
-                @if (Auth::check() && Auth::user()->hasPower('manage_characters'))
-                    <div class="mt-3">
-                        <a href="#" class="btn btn-outline-info btn-sm edit-notes" data-id="{{ $image->id }}"><i class="fas fa-cog"></i> Edit</a>
-                    </div>
                 @endif
             </div>
-
-            <!-- Mention Tab -->
-            @if (isset($showMention) && $showMention)
-                {{-- Mention This tab --}}
-                <div class="tab-pane fade" id="mention-{{ $image->id }}">
-                    In the rich text editor:
-                    <div class="alert alert-secondary">
-                        [character={{ $character->slug }}]
-                    </div>
-                    In a comment:
-                    <div class="alert alert-secondary">
-                        [{{ $character->fullName }}]({{ $character->url }})
-                    </div>
-                    <hr>
-                    <div class="my-2">
-                        <strong>For Thumbnails:</strong>
-                    </div>
-                    In the rich text editor:
-                    <div class="alert alert-secondary">
-                        [charthumb={{ $character->slug }}]
-                    </div>
-                    In a comment:
-                    <div class="alert alert-secondary">
-                        [![Thumbnail of {{ $character->fullName }}]({{ $character->image->thumbnailUrl }})]({{ $character->url }})
-                    </div>
-                </div>
-            @endif
+            <p class="item">
+                <strong>Born</strong> <span>{!! pretty_date($image->created_at) !!}</span>
+            </p>
+            <p class="item">
+                <strong>Updated</strong> <span>{!! pretty_date($image->updated_at) !!}</span>
+            </p>
 
             @if (Auth::check() && Auth::user()->hasPower('manage_characters'))
-                <div class="tab-pane fade" id="settings-{{ $image->id }}">
-                    {!! Form::open(['url' => 'admin/character/image/' . $image->id . '/settings']) !!}
-                    <div class="form-group">
-                        {!! Form::checkbox('is_visible', 1, $image->is_visible, ['class' => 'form-check-input', 'data-toggle' => 'toggle']) !!}
-                        {!! Form::label('is_visible', 'Is Viewable', ['class' => 'form-check-label ml-3']) !!} {!! add_help('If this is turned off, the image will not be visible by anyone without the Manage Masterlist power.') !!}
+                <div class="mt-3">
+                    <a href="#" class="btn btn-outline-info btn-sm edit-features mb-3" data-id="{{ $image->id }}"><i class="fas fa-cog"></i> Edit</a>
+                </div>
+            @endif
+
+            @if (count($image->character->pets))
+                <div class="row justify-content-center text-center">
+                    {{-- get one random pet --}}
+                    @php
+                        $pets = $image->character
+                            ->pets()
+                            ->orderBy('sort', 'DESC')
+                            ->limit(config('lorekeeper.pets.display_pet_count'))
+                            ->get();
+                    @endphp
+                    @foreach ($pets as $pet)
+                        @if (config('lorekeeper.pets.pet_bonding_enabled'))
+                            @include('character._pet_bonding_info', ['pet' => $pet])
+                        @else
+                            <div class="ml-2 mr-3">
+                                <img src="{{ $pet->pet->variantImage($pet->id) }}" style="max-width: 75px;" />
+                                <br>
+                                <span class="text-light badge badge-dark" style="font-size:95%;">{!! $pet->pet_name !!}</span>
+                            </div>
+                        @endif
+                    @endforeach
+                    <div class="ml-auto float-right mr-3">
+                        <a href="{{ $character->url . '/pets' }}" class="btn btn-outline-info btn-sm">View All</a>
                     </div>
-                    <div class="form-group">
-                        {!! Form::checkbox('is_valid', 1, $image->is_valid, ['class' => 'form-check-input', 'data-toggle' => 'toggle']) !!}
-                        {!! Form::label('is_valid', 'Is Valid', ['class' => 'form-check-label ml-3']) !!} {!! add_help('If this is turned off, the image will still be visible, but displayed with a note that the image is not a valid reference.') !!}
+                </div>
+            @endif
+            @if (count($image->character->equipment()))
+                <div class="mb-1 mt-4">
+                    <div class="mb-0">
+                        <h5>Equipment</h5>
                     </div>
-                    <div class="text-right">
-                        {!! Form::submit('Edit', ['class' => 'btn btn-primary']) !!}
+                    <div class="text-center row">
+                        @foreach ($image->character->equipment()->take(5) as $equipment)
+                            <div class="col-md-2">
+                                @if ($equipment->has_image)
+                                    <img class="rounded" src="{{ $equipment->imageUrl }}" data-toggle="tooltip" title="{{ $equipment->equipment->name }}" style="max-width: 75px;" />
+                                @elseif($equipment->equipment->imageurl)
+                                    <img class="rounded" src="{{ $equipment->equipment->imageUrl }}" data-toggle="tooltip" title="{{ $equipment->equipment->name }}" style="max-width: 75px;" />
+                                @else
+                                    {!! $equipment->equipment->displayName !!}
+                                @endif
+                            </div>
+                        @endforeach
                     </div>
-                    {!! Form::close() !!}
-                    <hr />
-                    <div class="text-right">
-                        @if ($character->character_image_id != $image->id)
-                            <a href="#" class="btn btn-outline-info btn-sm active-image" data-id="{{ $image->id }}">Set Active</a>
-                        @endif <a href="#" class="btn btn-outline-info btn-sm reupload-image" data-id="{{ $image->id }}">Reupload Image</a> <a href="#" class="btn btn-outline-danger btn-sm delete-image"
-                            data-id="{{ $image->id }}">Delete</a>
+                    <div class="float-right">
+                        <a href="{{ $character->url . '/stats' }}">View All...</a>
                     </div>
+                </div>
+            @endif
+
+            <!-- Begin Credits -->
+            <div class="row no-gutters mb-2">
+                <div class="col-lg-4 col-4">
+                    <h5>Design</h5>
+                </div>
+                <div class="col-lg-8 col-8">
+                    @foreach ($image->designers as $designer)
+                        <div>{!! $designer->displayLink() !!} {{ $designer->credit_type ? '(' . $designer->credit_type . ')' : null }}</div>
+                    @endforeach
+                </div>
+            </div>
+            <div class="row no-gutters">
+                <div class="col-lg-4 col-4">
+                    <h5>Art</h5>
+                </div>
+                <div class="col-lg-8 col-8">
+                    @foreach ($image->artists as $artist)
+                        <div>{!! $artist->displayLink() !!} {{ $artist->credit_type ? '(' . $artist->credit_type . ')' : null }}</div>
+                    @endforeach
+                </div>
+            </div>
+
+            @if (Auth::check() && Auth::user()->hasPower('manage_characters'))
+                <div class="mt-3">
+                    <a href="#" class="btn btn-outline-info btn-sm edit-credits" data-id="{{ $image->id }}"><i class="fas fa-cog"></i> Edit</a>
+                </div>
+            @endif
+            <!-- End Credits -->
+        </div>
+
+        <!-- Lineage -->
+        @if ($character->getLineageBlacklistLevel() < 2)
+            <div class="tab-pane fade" id="lineage">
+                @include('character._tab_lineage', ['character' => $character])
+            </div>
+        @endif
+
+        {{-- Image notes --}}
+        <div class="tab-pane fade" id="notes-{{ $image->id }}">
+            @if ($image->parsed_description)
+                <div class="parsed-text imagenoteseditingparse">{!! $image->parsed_description !!}</div>
+            @else
+                <div class="imagenoteseditingparse">No additional notes given.</div>
+            @endif
+            @if (Auth::check() && Auth::user()->hasPower('manage_characters'))
+                <div class="mt-3">
+                    <a href="#" class="btn btn-outline-info btn-sm edit-notes" data-id="{{ $image->id }}"><i class="fas fa-cog"></i> Edit</a>
                 </div>
             @endif
         </div>
+
+        <!-- Mention Tab -->
+        @if (isset($showMention) && $showMention)
+            {{-- Mention This tab --}}
+            <div class="tab-pane fade" id="mention-{{ $image->id }}">
+                In the rich text editor:
+                <div class="alert alert-secondary">
+                    [character={{ $character->slug }}]
+                </div>
+                In a comment:
+                <div class="alert alert-secondary">
+                    [{{ $character->fullName }}]({{ $character->url }})
+                </div>
+                <hr>
+                <div class="my-2">
+                    <strong>For Thumbnails:</strong>
+                </div>
+                In the rich text editor:
+                <div class="alert alert-secondary">
+                    [charthumb={{ $character->slug }}]
+                </div>
+                In a comment:
+                <div class="alert alert-secondary">
+                    [![Thumbnail of {{ $character->fullName }}]({{ $character->image->thumbnailUrl }})]({{ $character->url }})
+                </div>
+            </div>
+        @endif
+
+        @if (Auth::check() && Auth::user()->hasPower('manage_characters'))
+            <div class="tab-pane fade" id="settings-{{ $image->id }}">
+                {!! Form::open(['url' => 'admin/character/image/' . $image->id . '/settings']) !!}
+                <div class="form-group">
+                    {!! Form::checkbox('is_visible', 1, $image->is_visible, ['class' => 'form-check-input', 'data-toggle' => 'toggle']) !!}
+                    {!! Form::label('is_visible', 'Is Viewable', ['class' => 'form-check-label ml-3']) !!} {!! add_help('If this is turned off, the image will not be visible by anyone without the Manage Masterlist power.') !!}
+                </div>
+                <div class="form-group">
+                    {!! Form::checkbox('is_valid', 1, $image->is_valid, ['class' => 'form-check-input', 'data-toggle' => 'toggle']) !!}
+                    {!! Form::label('is_valid', 'Is Valid', ['class' => 'form-check-label ml-3']) !!} {!! add_help('If this is turned off, the image will still be visible, but displayed with a note that the image is not a valid reference.') !!}
+                </div>
+                <div class="text-right">
+                    {!! Form::submit('Edit', ['class' => 'btn btn-primary']) !!}
+                </div>
+                {!! Form::close() !!}
+                <hr />
+                <div class="text-right">
+                    @if ($character->character_image_id != $image->id)
+                        <a href="#" class="btn btn-outline-info btn-sm active-image" data-id="{{ $image->id }}">Set Active</a>
+                    @endif <a href="#" class="btn btn-outline-info btn-sm reupload-image" data-id="{{ $image->id }}">Reupload Image</a> <a href="#" class="btn btn-outline-danger btn-sm delete-image"
+                        data-id="{{ $image->id }}">Delete</a>
+                </div>
+            </div>
+        @endif
     </div>
+</div>
 
 </div>

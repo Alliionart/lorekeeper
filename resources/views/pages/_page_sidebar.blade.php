@@ -1,7 +1,7 @@
 <ul>
     <li class="sidebar-header">Pages</li>
 
-    
+
     <li class="sidebar-section">
         <div class="sidebar-item"><a href="{{ url('world/info/design-hub') }}" class="{{ set_active('world/info/design-hub') }}">Design Hub</a></div>
         <div class="sidebar-item"><a href="{{ url('world/subtypes') }}" class="{{ set_active('world/subtypes*') }}">Breeding Rates</a></div>
@@ -13,9 +13,9 @@
 
     <li class="sidebar-header">Current Page</li>
     <li class="sidebar-section" id="currentPage">
-        
+
     </li>
-    <hr/>
+    <hr />
 </ul>
 
 <script>
@@ -26,7 +26,7 @@
             const anchor = element.textContent.toLowerCase().replaceAll(' ', '-');
 
             $(element).attr("id", anchor);
-            $('#currentPage').append('<div class="sidebar-item"><a href="#'+anchor+'">'+ element.textContent +'</a></div>');
+            $('#currentPage').append('<div class="sidebar-item"><a href="#' + anchor + '">' + element.textContent + '</a></div>');
         }
     });
 </script>
