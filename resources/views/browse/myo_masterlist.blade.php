@@ -9,9 +9,11 @@
 @endsection
 
 @section('content')
-    {!! breadcrumbs(['MYO Slot Masterlist' => 'myos']) !!}
-    <h1>MYO Slot Masterlist</h1>
-
+    <section class="masterlist-header">
+    <div class="header-s">
+        {!! breadcrumbs(['MYO Slot Masterlist' => 'myos']) !!}
+        <h1>Genotype Masterlist</h1> 
+    </div>
     @include('browse._masterlist_content', ['characters' => $slots])
 @endsection
 

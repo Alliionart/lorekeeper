@@ -9,8 +9,11 @@
 @endsection
 
 @section('content')
-    {!! breadcrumbs(['Character Masterlist' => 'masterlist']) !!}
-    <h1>Character Masterlist</h1>
+    <section class="masterlist-header">
+    <div class="header-s">
+        {!! breadcrumbs(['Character Masterlist' => 'masterlist']) !!}
+        <h1>Character Masterlist</h1>
+    </div>
 
     @include('browse._masterlist_content', ['characters' => $characters])
 @endsection

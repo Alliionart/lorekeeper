@@ -2,14 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Facades\Settings;
-use Illuminate\Http\Request;
-
 use DB;
 use Auth;
-use Settings;
 use App\Models\Rank\RankPower;
-
+use App\Facades\Settings;
+use Illuminate\Http\Request;
 use App\Models\Character\Character;
 use App\Models\Character\CharacterCategory;
 use App\Models\Character\CharacterImage;
@@ -21,8 +18,6 @@ use App\Models\Rarity;
 use App\Models\Species\Species;
 use App\Models\Species\Subtype;
 use App\Models\User\User;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class BrowseController extends Controller {
     /*

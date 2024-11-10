@@ -77,15 +77,6 @@ class AccountController extends Controller {
             5 => 'daily',
         ];
 
-        return view('account.settings', [
-            'locations'            => Location::all()->where('is_user_home')->pluck('style', 'id')->toArray(),
-            'factions'             => Faction::all()->where('is_user_faction')->pluck('style', 'id')->toArray(),
-            'user_enabled'         => Settings::get('WE_user_locations'),
-            'user_faction_enabled' => Settings::get('WE_user_factions'),
-            'char_enabled'         => Settings::get('WE_character_locations'),
-            'char_faction_enabled' => Settings::get('WE_character_factions'),
-            'location_interval'    => $interval[Settings::get('WE_change_timelimit')],
-        ]);
         $user = Auth::user();
 
         if ($user->isStaff || $user->isAdmin) {
@@ -101,9 +92,16 @@ class AccountController extends Controller {
         $links = StaffProfile::where('user_id', Auth::user()->id)->first();
             
         return view('account.settings', [
+            'locations'            => Location::all()->where('is_user_home')->pluck('style', 'id')->toArray(),
+            'factions'             => Faction::all()->where('is_user_faction')->pluck('style', 'id')->toArray(),
+            'user_enabled'         => Settings::get('WE_user_locations'),
+            'user_faction_enabled' => Settings::get('WE_user_factions'),
+            'char_enabled'         => Settings::get('WE_character_locations'),
+            'char_faction_enabled' => Settings::get('WE_character_factions'),
+            'location_interval'    => $interval[Settings::get('WE_change_timelimit')],
             'themeOptions'    => $themeOptions + Auth::user()->themes()->where('theme_type', 'base')->get()->pluck('displayName', 'id')->toArray(),
             'decoratorThemes' => $decoratorOptions + Auth::user()->themes()->where('theme_type', 'decorator')->get()->pluck('displayName', 'id')->toArray(),
-            'links' => $links ? $links : null
+            'links' => $links ? $links : null,
         ]);
     }
 

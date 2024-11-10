@@ -6,6 +6,7 @@ use App\Models\SitePage;
 use Illuminate\Support\Facades\DB;
 use App\Models\SitePageCategory;
 use App\Models\SitePageSection;
+use App\Models\User\User;
 
 class PageController extends Controller {
     /*

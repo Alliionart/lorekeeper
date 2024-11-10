@@ -10,57 +10,30 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <!-- Left Side Of Navbar -->
             <ul class="navbar-nav mr-auto">
-                <li class="nav-item">
-                    @if (Auth::check() && Auth::user()->is_news_unread && config('lorekeeper.extensions.navbar_news_notif'))
-                        <a class="nav-link d-flex text-warning" href="{{ url('news') }}"><strong>News</strong><i class="fas fa-bell"></i></a>
-                    @else
-                        <a class="nav-link" href="{{ url('news') }}">News</a>
-                    @endif
-                </li>
-                <li class="nav-item">
-                    @if (Auth::check() && Auth::user()->is_sales_unread && config('lorekeeper.extensions.navbar_news_notif'))
-                        <a class="nav-link d-flex text-warning" href="{{ url('sales') }}"><strong>Sales</strong><i class="fas fa-bell"></i></a>
-                    @else
-                        <a class="nav-link" href="{{ url('sales') }}">Sales</a>
-                    @endif
-                </li>
-                @if (Auth::check())
-                    <li class="nav-item dropdown">
+            <li class="nav-item dropdown">
                         <a id="inventoryDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
-                            Home
+                        <i class="fas fa-newspaper"></i> Feed
                         </a>
 
                         <div class="dropdown-menu" aria-labelledby="inventoryDropdown">
-                            <a class="dropdown-item" href="{{ url('characters') }}">
-                                My Characters
-                            </a>
-                            <a class="dropdown-item" href="{{ url('characters/myos') }}">
-                                My MYO Slots
-                            </a>
-                            <a class="dropdown-item" href="{{ url('pets') }}">
-                                My Pets
-                            </a>
-                            <div class="dropdown-divider"></div>
-                            <a class="dropdown-item" href="{{ url('inventory') }}">
-                                Inventory
-                            </a>
-                            <a class="dropdown-item" href="{{ url('bank') }}">
-                                Bank
-                            </a>
-                            <a class="dropdown-item" href="{{ url('userstats') }}">
-                                Stat Information
-                            </a>
-                            <div class="dropdown-divider"></div>
-                            <a class="dropdown-item" href="{{ url('comments/liked') }}">
-                                Liked Comments
-                            </a>
+                            @if (Auth::check() && Auth::user()->is_news_unread && config('lorekeeper.extensions.navbar_news_notif'))
+                                <a class="dropdown-item text-warning" href="{{ url('news') }}"><strong>News</strong><i class="fas fa-bell"></i></a>
+                            @else
+                                <a class="dropdown-item" href="{{ url('news') }}">News</a>
+                            @endif
+                            @if (Auth::check() && Auth::user()->is_sales_unread && config('lorekeeper.extensions.navbar_news_notif'))
+                                <a class="dropdown-item text-warning" href="{{ url('sales') }}"><strong>Sales</strong><i class="fas fa-bell"></i></a>
+                            @else
+                                <a class="dropdown-item" href="{{ url('sales') }}">Sales</a>
+                            @endif
                         </div>
                     </li>
+                @if (Auth::check())
                     <li class="nav-item dropdown">
-                        <a id="queueDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
-                            Activity
+                        <a id="activityDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
+                        <i class="fas fa-gamepad"></i> Activities
                         </a>
-                        <div class="dropdown-menu" aria-labelledby="queueDropdown">
+                        <div class="dropdown-menu" aria-labelledby="activityDropdown">
                             <a class="dropdown-item" href="{{ url('submissions') }}">
                                 Prompt Submissions
                             </a>
@@ -82,49 +55,82 @@
                             </a>
                         </div>
                     </li>
+                    <li class="nav-item dropdown">
+                        <a id="inventoryDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
+                        <i class="fas fa-clipboard"></i> Guides
+                        </a>
+
+                        <div class="dropdown-menu" aria-labelledby="inventoryDropdown">
+                            <a class="dropdown-item" href="{{ url('characters/transfers/incoming') }}">New Players</a>
+                            <a class="dropdown-item" href="{{ url('characters/transfers/incoming') }}">Breeding Rates</a>
+                            <a class="dropdown-item" href="{{ url('characters/transfers/incoming') }}">Point System</a>
+                            <a class="dropdown-item" href="{{ url('characters/transfers/incoming') }}">Rules</a>
+                            <a class="dropdown-item" href="{{ url('characters/transfers/incoming') }}">Suggestion Hub</a>
+                        </div>
+                    </li>
                 @endif
                 <li class="nav-item dropdown">
-                    <a id="browseDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
-                        Browse
+                    <a id="designDropdown" class="nav-link dropdown-toggle" href="{{ url('/world/info/design-hub') }}" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
+                    <i class="fas fa-paint-brush"></i> Design Hub
                     </a>
-
-                    <div class="dropdown-menu" aria-labelledby="browseDropdown">
-                        <a class="dropdown-item" href="{{ url('users') }}">
-                            Users
+                    <div class="dropdown-menu" aria-labelledby="designDropdown">
+                        <a class="dropdown-item" href="{{ url('/world/info/design-hub') }}">
+                            Markings
                         </a>
+                        <a class="dropdown-item" href="{{ url('myos') }}">
+                            Base Coats
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="{{ url('characters') }}">
+                            Layering Rules
+                        </a>
+                        <a class="dropdown-item" href="{{ url('characters/myos') }}">
+                            Eyes, Mouths & Features
+                        </a>
+                        <a class="dropdown-item" href="{{ url('characters/myos') }}">
+                            Cross Traits & Mutations
+                        </a> 
+                    </div>
+                </li>
+                <li class="nav-item dropdown">
+                    <a id="browseDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
+                    <i class="fas fa-th"></i> Masterlist
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="browseDropdown">
                         <a class="dropdown-item" href="{{ url('masterlist') }}">
                             Character Masterlist
                         </a>
                         <a class="dropdown-item" href="{{ url('myos') }}">
-                            MYO Slot Masterlist
+                            Genotype Masterlist
                         </a>
                         <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="{{ url('raffles') }}">
-                            Raffles
+                        <a class="dropdown-item" href="{{ url('characters') }}">
+                            My Characters
                         </a>
-                        <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="{{ url('reports/bug-reports') }}">
-                            Bug Reports
-                        </a>
+                        <a class="dropdown-item" href="{{ url('characters/myos') }}">
+                            My Genotypes
+                        </a> 
                     </div>
                 </li>
                 <li class="nav-item dropdown">
                     <a id="loreDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
-                        World
+                    <i class="fas fa-book"></i> Codex
                     </a>
-
                     <div class="dropdown-menu" aria-labelledby="loreDropdown">
+                    <a class="dropdown-item" href="{{ url('raffles') }}">Raffles</a>
+                        <a class="dropdown-item" href="{{ url('gallery') }}">Gallery</a>
+                        <div class="dropdown-divider"></div>
                         <a class="dropdown-item" href="{{ url('world') }}">
                             Encyclopedia
                         </a>
                         <a class="dropdown-item" href="{{ url('world/info') }}">
-                            World Expanded
-                        </a>
-                        <a class="dropdown-item" href="{{ url('prompts/prompts') }}">
-                            Prompts
+                            World
                         </a>
                         <a class="dropdown-item" href="{{ url('shops') }}">
                             Shops
+                        </a>
+                        <a class="dropdown-item" href="{{ url('users') }}">
+                            Users
                         </a>
                         @if (Auth::check())
                             <div class="dropdown-divider"></div>
@@ -137,23 +143,24 @@
                         </a>
                     </div>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ url('gallery') }}">Gallery</a>
-                </li>
             </ul>
 
             <!-- Right Side Of Navbar -->
             <ul class="navbar-nav ml-auto">
+                <li class="search-bar">
+                    <input class="dark-input" id="ajaxsearch" type="text" placeholder="Search site..." />
+                    <div class="dropdown" id="searchResult" style="display:none;"><div id="listResults"></div></div>  
+                <li>
                 <!-- Clock -->
                 {!! LiveClock('America/Boise') !!}
                 <!-- Authentication Links -->
                 @guest
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ route('login') }}">{{ __('Login') }}</a>
+                        <a class="nav-link" href="{{ route('login') }}"><i class="fas fa-sign-in-alt"></i> {{ __('Login') }}</a>
                     </li>
                     @if (Route::has('register'))
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ route('register') }}">{{ __('Register') }}</a>
+                            <a class="nav-link" href="{{ route('register') }}"><i class="fas fa-user-plus"></i> {{ __('Register') }}</a>
                         </li>
                     @endif
                 @else
@@ -170,7 +177,7 @@
 
                     <li class="nav-item dropdown">
                         <a id="browseDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
-                            Submit
+                        <i class="fas fa-plus"></i>
                         </a>
 
                         <div class="dropdown-menu" aria-labelledby="browseDropdown">
@@ -183,12 +190,17 @@
                             <a class="dropdown-item" href="{{ url('reports/new') }}">
                                 Submit Report
                             </a>
+                            <a class="dropdown-item" href="{{ url('reports/bug-reports') }}">
+                                Bug Reports
+                            </a>
                         </div>
                     </li>
 
-                    <li class="nav-item dropdown">
-                        <a id="navbarDropdown" class="nav-link dropdown-toggle" href="{{ Auth::user()->url }}" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
-                            {{ Auth::user()->name }} <span class="caret"></span>
+                    <li class="nav-item">
+                        <a id="footer" class="nav-link accountbx dropdown-toggle card d-flex flex-row" href="{{ Auth::user()->url }}" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
+                            @if (Auth::check())
+                                {{ Auth::user()->name }} 
+                            @endif
                         </a>
 
                         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
@@ -201,11 +213,28 @@
                             <a class="dropdown-item" href="{{ url('account/bookmarks') }}">
                                 Bookmarks
                             </a>
+                            <a class="dropdown-item" href="{{ url('comments/liked') }}">
+                                Liked Comments
+                            </a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="{{ url('pets') }}">
+                                Pets
+                            </a>
+                            <a class="dropdown-item" href="{{ url('inventory') }}">
+                                Inventory
+                            </a>
+                            <a class="dropdown-item" href="{{ url('bank') }}">
+                                Bank
+                            </a>
+                            <a class="dropdown-item" href="{{ url('userstats') }}">
+                                Stat Information
+                            </a>
+                            <div class="dropdown-divider"></div>
                             <a class="dropdown-item" href="{{ url('account/settings') }}">
                                 Settings
                             </a>
                             <a class="dropdown-item" href="{{ route('logout') }}" onclick="event.preventDefault();
-                                                document.getElementById('logout-form').submit();">
+                                document.getElementById('logout-form').submit();">
                                 {{ __('Logout') }}
                             </a>
 
@@ -218,4 +247,41 @@
             </ul>
         </div>
     </div>
+    <script>
+        $(document).ready(function() {
+            $('#ajaxsearch').keyup(function() {
+                let i = $(this).val();
+                console.log(i);
+                if (i != '' || i != null) {
+                    $.ajax({
+                        url:"/ajax-s-process.php",
+                        method: "POST",
+                        data:{i:i},
+                        beforeSend: function() {
+                            $(".search-bar").addClass('loader');
+                        },
+                        complete: function() {
+                            $(".search-bar").removeClass('loader');
+                        },
+                        success:function(data) {
+                            $("#searchResult").html(data);
+                            $("#searchResult").show();
+                        }
+                    })
+                } else {
+                    $("searchResult").hide();
+                }
+            });
+            $(document).on("click", function(event) {
+                console.log(event);
+                if(!$(event.target).closest("#searchResult").length && $("#searchResult").is(':visible')) {
+                    $('#searchResult').fadeOut();
+                    $("searchResult").hide();
+                    $('#ajaxsearch').val('');
+                } else {
+                    $("searchResult").show();
+                }
+            });
+        });
+    </script>
 </nav>

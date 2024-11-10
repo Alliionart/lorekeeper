@@ -7,7 +7,6 @@ use App\Models\Rank\Rank;
 use App\Models\User\User;
 use App\Models\User\UserAlias;
 use App\Models\User\StaffProfile;
-use App\Models\Rank\Rank;
 use App\Models\User\UserUpdateLog;
 use App\Models\WorldExpansion\Faction;
 use App\Models\WorldExpansion\Location;

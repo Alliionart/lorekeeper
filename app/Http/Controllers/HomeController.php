@@ -12,6 +12,10 @@ use DB;
 use Illuminate\Http\Request;
 use Laravel\Socialite\Facades\Socialite;
 use Settings;
+use App\Models\User\User;
+use App\Models\User\UserAlias;
+
+
 
 class HomeController extends Controller {
     /*
