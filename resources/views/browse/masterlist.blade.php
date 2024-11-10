@@ -10,14 +10,14 @@
 
 @section('content')
     <section class="masterlist-header">
-    <div class="header-s">
-        {!! breadcrumbs(['Character Masterlist' => 'masterlist']) !!}
-        <h1>Character Masterlist</h1>
-    </div>
+        <div class="header-s">
+            {!! breadcrumbs(['Character Masterlist' => 'masterlist']) !!}
+            <h1>Character Masterlist</h1>
+        </div>
 
-    @include('browse._masterlist_content', ['characters' => $characters])
-@endsection
+        @include('browse._masterlist_content', ['characters' => $characters])
+    @endsection
 
-@section('scripts')
-    @include('browse._masterlist_js')
-@endsection
+    @section('scripts')
+        @include('browse._masterlist_js')
+    @endsection
