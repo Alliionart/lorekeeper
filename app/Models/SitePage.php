@@ -3,9 +3,7 @@
 namespace App\Models;
 
 use App\Traits\Commentable;
-use Config;
 use DB;
-use App\Models\Model;
 
 class SitePage extends Model {
     use Commentable;
@@ -16,7 +14,7 @@ class SitePage extends Model {
      * @var array
      */
     protected $fillable = [
-        'key', 'title', 'text', 'parsed_text', 'is_visible', 'can_comment', 'allow_dislikes', 'page_category_id'
+        'key', 'title', 'text', 'parsed_text', 'is_visible', 'can_comment', 'allow_dislikes', 'page_category_id',
     ];
 
     /**
@@ -40,9 +38,9 @@ class SitePage extends Model {
      */
     public static $createRules = [
         'page_category_id' => 'nullable',
-        'key'   => 'required|unique:site_pages|between:3,25|alpha_dash',
-        'title' => 'required|between:3,100',
-        'text'  => 'nullable',
+        'key'              => 'required|unique:site_pages|between:3,25|alpha_dash',
+        'title'            => 'required|between:3,100',
+        'text'             => 'nullable',
     ];
 
     /**
@@ -52,9 +50,9 @@ class SitePage extends Model {
      */
     public static $updateRules = [
         'page_category_id' => 'nullable',
-        'key' => 'required|between:3,25|alpha_dash',
-        'title' => 'required|between:3,25',
-        'text' => 'nullable',
+        'key'              => 'required|between:3,25|alpha_dash',
+        'title'            => 'required|between:3,25',
+        'text'             => 'nullable',
     ];
 
     /**
@@ -92,49 +90,48 @@ class SitePage extends Model {
     public function getAdminPowerAttribute() {
         return 'edit_pages';
     }
-    
-     /**********************************************************************************************
-    
-        RELATIONS
+
+    /**********************************************************************************************
+
+       RELATIONS
 
     **********************************************************************************************/
-    
+
     /**
      * Get the category the page belongs to.
      */
-    public function category() 
-    {
+    public function category() {
         return $this->belongsTo('App\Models\SitePageCategory', 'page_category_id');
     }
 
     /**********************************************************************************************
-    
+
         SCOPES
 
     **********************************************************************************************/
-    
+
     /**
      * Scope a query to sort pages in alphabetical order.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @param  bool                                   $reverse
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param bool                                  $reverse
+     *
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeSortAlphabetical($query, $reverse = false)
-    {
+    public function scopeSortAlphabetical($query, $reverse = false) {
         return $query->orderBy('name', $reverse ? 'DESC' : 'ASC');
     }
-    
+
     /**
      * Scope a query to sort page in category order.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     *
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeSortCategory($query)
-    {
+    public function scopeSortCategory($query) {
         $ids = SitePageCategory::orderBy('sort', 'DESC')->pluck('id')->toArray();
+
         return count($ids) ? $query->orderByRaw(DB::raw('FIELD(page_category_id, '.implode(',', $ids).')')) : $query;
     }
-
 }

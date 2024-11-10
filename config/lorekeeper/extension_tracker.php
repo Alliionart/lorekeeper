@@ -91,11 +91,11 @@ return [
         ]),
         'version' => '2.0.1',
     ],
-    
+
     'staff-team-page' => [
-        'key' => 'staff_team_page',
+        'key'      => 'staff_team_page',
         'wiki_key' => 'Staff_Team_Page',
-            'creators' => json_encode([
+        'creators' => json_encode([
             'AnimatedCritter' => 'https://github.com/animatedcritter/',
         ]),
         'version' => '1.0.0',

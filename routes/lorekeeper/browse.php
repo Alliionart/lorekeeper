@@ -76,7 +76,7 @@ Route::group(['prefix' => 'user', 'namespace' => 'Users'], function () {
     Route::get('{name}/weapon-logs', 'UserController@getUserWeaponLogs');
 });
 
-# STAFF TEAM
+// STAFF TEAM
 Route::group(['prefix' => 'team'], function () {
     Route::get('/', 'BrowseController@getTeamIndex');
 });
