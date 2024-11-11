@@ -54,15 +54,15 @@
             </div>
         </div>
         <div class="col-md-4">
-        <div class="form-group">
-            {!! Form::label('Page Image') !!} {!! add_help('This is for the page header and parent section.') !!}
-            <div>{!! Form::file('image', ['id' => 'mainImage']) !!}</div>
-            <div class="text-muted">Recommended size: 200px x 200px</div>
+            <div class="form-group">
+                {!! Form::label('Page Image') !!} {!! add_help('This is for the page header and parent section.') !!}
+                <div>{!! Form::file('image', ['id' => 'mainImage']) !!}</div>
+                <div class="text-muted">Recommended size: 200px x 200px</div>
                 <div class="form-check">
                     {!! Form::checkbox('remove_image', 1, false, ['class' => 'form-check-input']) !!}
                     {!! Form::label('remove_image', 'Remove current image', ['class' => 'form-check-label']) !!}
                 </div>
-        </div>
+            </div>
         </div>
     </div>
 

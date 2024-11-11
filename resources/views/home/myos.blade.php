@@ -18,16 +18,26 @@
                 <div class="mt-1 h5">
                     {!! $slot->displayName !!}
                 </div>
-                <p>G: @if ($slot->genotype) {!! $slot->genotype !!} @else Unknown @endif</p>
-                <p>P: @if ($slot->phenotype) {!! $slot->phenotype !!} @else Unknown @endif</p>
+                <p>G: @if ($slot->genotype)
+                        {!! $slot->genotype !!}
+                    @else
+                        Unknown
+                    @endif
+                </p>
+                <p>P: @if ($slot->phenotype)
+                        {!! $slot->phenotype !!}
+                    @else
+                        Unknown
+                    @endif
+                </p>
                 <div class="d-flex">
                     <div class="badge badge-secondary mr-1">
                         {!! $slot->image->species_id ? $slot->image->species->displayName : 'No Species' !!}
                     </div>
                     <div class="badge badge-secondary mr-1">
-                    {!! $slot->image->rarity_id ? $slot->image->rarity->displayName : 'No Rarity' !!}
+                        {!! $slot->image->rarity_id ? $slot->image->rarity->displayName : 'No Rarity' !!}
                     </div>
-                 </div>
+                </div>
             </div>
         @endforeach
     </div>

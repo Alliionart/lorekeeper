@@ -5,11 +5,11 @@
 @endsection
 
 @section('profile-content')
-<div class="page-header">
-    {!! breadcrumbs(['Genotype Masterlist' => 'myos', $character->fullName => $character->url]) !!}
+    <div class="page-header">
+        {!! breadcrumbs(['Genotype Masterlist' => 'myos', $character->fullName => $character->url]) !!}
 
-    @include('character._header', ['character' => $character])
-</div>
+        @include('character._header', ['character' => $character])
+    </div>
 
     {{-- Main Image --}}
     <div class="row mb-3 px-4">
@@ -44,7 +44,7 @@
         <div class="card-body tab-content">
             @include('character._tab_stats', ['character' => $character])
             <div class="tab-pane fade show active" id="stats">
-                
+
             </div>
             <div class="tab-pane fade" id="lineage">
                 @include('character._tab_lineage', ['character' => $character])

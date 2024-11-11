@@ -314,31 +314,31 @@
 
     <!-- Custom Fields -->
     <div class="row">
-            <div class="col-md-3">
+        <div class="col-md-3">
             <div class="form-group">
-                        {!! Form::label('Character Sex') !!}
-                        <select name="character_sex" id="sex" class="form-control" placeholder="Select Sex">
-                            <option value="0" data-code="">Select Sex</option>
-                            <option value="1" data-code="male">Male</option>
-                            <option value="2" data-code="female">Female</option>
-                            <option value="3" data-code="asexual">Asexual</option>
-                        </select>
-                    </div>
-            </div>
-            <div class="col-md-4">
-                <div class="form-group">
-                    {!! Form::label('Genotype') !!} {!! add_help('Enter the character genotype. Example: mm+sea/oo/pn/rn') !!}
-                    {!! Form::text('genotype', old('genotype'), ['class' => 'form-control', 'id' => 'genotype']) !!}
-                </div>
-            </div>
-            <div class="col-md-5">
-                <div class="form-group">
-                    {!! Form::label('Phenotype') !!} {!! add_help('Enter the character phenotype. Example: Muted Sea with Oriental Pangare and Roan') !!}
-                    {!! Form::text('phenotype', old('phenotype'), ['class' => 'form-control', 'id' => 'phenotype']) !!}
-                </div>
+                {!! Form::label('Character Sex') !!}
+                <select name="character_sex" id="sex" class="form-control" placeholder="Select Sex">
+                    <option value="0" data-code="">Select Sex</option>
+                    <option value="1" data-code="male">Male</option>
+                    <option value="2" data-code="female">Female</option>
+                    <option value="3" data-code="asexual">Asexual</option>
+                </select>
             </div>
         </div>
-        <!-- Custom Fields END -->
+        <div class="col-md-4">
+            <div class="form-group">
+                {!! Form::label('Genotype') !!} {!! add_help('Enter the character genotype. Example: mm+sea/oo/pn/rn') !!}
+                {!! Form::text('genotype', old('genotype'), ['class' => 'form-control', 'id' => 'genotype']) !!}
+            </div>
+        </div>
+        <div class="col-md-5">
+            <div class="form-group">
+                {!! Form::label('Phenotype') !!} {!! add_help('Enter the character phenotype. Example: Muted Sea with Oriental Pangare and Roan') !!}
+                {!! Form::text('phenotype', old('phenotype'), ['class' => 'form-control', 'id' => 'phenotype']) !!}
+            </div>
+        </div>
+    </div>
+    <!-- Custom Fields END -->
 
     <hr>
     <h5>{{ ucfirst(__('transformations.transformations')) }}</h5>

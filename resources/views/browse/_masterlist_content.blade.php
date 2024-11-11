@@ -194,15 +194,25 @@
                                 @if (!$character->is_visible)
                                     <i class="fas fa-eye-slash"></i>
                                 @endif {{ Illuminate\Support\Str::limit($character->fullName, 20, $end = '...') }}
-                                </a>
-                                <div class="text-muted">
-                                    <p>G: @if ($character->genotype) {!! $character->genotype !!} @else Unknown @endif</p>
-                                    <p>P: @if ($character->phenotype) {!! $character->phenotype !!} @else Unknown @endif</p>
-                                </div>
-                                <div class="small">
-                                    {!! $character->image->species_id ? $character->image->species->displayName : 'No Species' !!} ・ {!! $character->image->rarity_id ? $character->image->rarity->displayName : 'No Rarity' !!} ・ {!! $character->displayOwner !!}
-                                </div>
-                            
+                            </a>
+                            <div class="text-muted">
+                                <p>G: @if ($character->genotype)
+                                        {!! $character->genotype !!}
+                                    @else
+                                        Unknown
+                                    @endif
+                                </p>
+                                <p>P: @if ($character->phenotype)
+                                        {!! $character->phenotype !!}
+                                    @else
+                                        Unknown
+                                    @endif
+                                </p>
+                            </div>
+                            <div class="small">
+                                {!! $character->image->species_id ? $character->image->species->displayName : 'No Species' !!} ・ {!! $character->image->rarity_id ? $character->image->rarity->displayName : 'No Rarity' !!} ・ {!! $character->displayOwner !!}
+                            </div>
+
                         </div>
                     </div>
                 @endforeach
