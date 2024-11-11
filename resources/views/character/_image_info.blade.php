@@ -178,6 +178,18 @@
                         </div>
                     @endif
                 </div>
+                
+                <h5>Genetics</h5>
+                <div class="item full">
+                    <div class="title">Genotype @if ($character->genotype)<div class="btn"><i data-toggle="tooltip" title="Click to Copy the Genotype" id="copyGenotype" style="font-size: 14px; vertical-align: middle;" class="far fa-copy text-small"></i></div>@endif</div> <span>@if ($character->genotype) {!! $character->genotype !!} @else Unknown @endif</span>
+                </div>
+                <div class="item full">
+                    <div class="title">Phenotype @if ($character->phenotype)<div class="btn"><i data-toggle="tooltip" title="Click to Copy the Phenotype" id="copyPhenotype" style="font-size: 14px; vertical-align: middle;" class="far fa-copy text-small"></i></div>@endif</div> <span>@if ($character->phenotype) {!! $character->phenotype !!} @else Unknown @endif</span>
+                </div>
+                <p class="item">
+                    <strong>Sex</strong> <span>{!! $character->sex !!}</span>
+                </p>
+
                 <p class="item">
                     <strong>Born</strong> <span>{!! pretty_date($image->created_at) !!}</span>
                 </p>
@@ -347,3 +359,26 @@
     </div>
 
 </div>
+
+<script>
+    //Copy Genotype
+    $('#copyGenotype').on('click', async (e) => {
+        await window.navigator.clipboard.writeText("{{ $character->genotype }}");
+        e.currentTarget.classList.remove('toCopy');
+        e.currentTarget.classList.add('toCheck');
+        setTimeout(() => {
+            e.currentTarget.classList.remove('toCheck');
+            e.currentTarget.classList.add('toCopy');
+        }, 2000);
+    });
+    //Copy Phenotype
+    $('#copyPhenotype').on('click', async (e) => {
+        await window.navigator.clipboard.writeText("{{ $character->phenotype }}");
+        e.currentTarget.classList.remove('toCopy');
+        e.currentTarget.classList.add('toCheck');
+        setTimeout(() => {
+            e.currentTarget.classList.remove('toCheck');
+            e.currentTarget.classList.add('toCopy');
+        }, 2000);
+    });
+</script>

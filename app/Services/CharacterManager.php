@@ -2966,12 +2966,16 @@ class CharacterManager extends Service {
                 $data['transformation_id'] = isset($data['transformation_id']) && $data['transformation_id'] ? $data['transformation_id'] : null;
                 $data['transformation_info'] = isset($data['transformation_info']) && $data['transformation_info'] ? $data['transformation_info'] : null;
                 $data['transformation_description'] = isset($data['transformation_description']) && $data['transformation_description'] ? $data['transformation_description'] : null;
+                $data['genotype'] = isset($data['genotype']) && $data['genotype'] ? $data['genotype'] : null;
+                $data['phenotype'] = isset($data['phenotype']) && $data['phenotype'] ? $data['phenotype'] : null;
+                $data['sex'] = isset($data['sex']) && $data['sex'] ? $data['sex'] : 'Asexual';
             }
 
             $characterData = Arr::only($data, [
                 'character_category_id', 'rarity_id', 'user_id',
                 'number', 'slug', 'description',
                 'sale_value', 'transferrable_at', 'is_visible',
+                'genotype', 'phenotype', 'sex',
             ]);
 
             $characterData['name'] = ($isMyo && isset($data['name'])) ? $data['name'] : null;

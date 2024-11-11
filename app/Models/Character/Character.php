@@ -42,6 +42,7 @@ class Character extends Model {
         'is_gift_art_allowed', 'is_gift_writing_allowed', 'is_trading', 'sort',
         'is_myo_slot', 'name', 'trade_id', 'owner_url', 'class_id',
         'home_id', 'home_changed', 'faction_id', 'faction_changed',
+        'genotype', 'phenotype', 'sex',
     ];
 
     /**
@@ -92,6 +93,9 @@ class Character extends Model {
         'image'                 => 'required|mimes:jpeg,jpg,gif,png|max:2048',
         'thumbnail'             => 'nullable|mimes:jpeg,jpg,gif,png|max:2048',
         'owner_url'             => 'url|nullable',
+        'genotype'              => 'nullable|between:3,300',
+        'phenotype'             => 'nullable|between:3,300',
+        'sex'                   => 'nullable|between:3,191',
     ];
 
     /**
@@ -107,6 +111,9 @@ class Character extends Model {
         'sale_value'            => 'nullable',
         'image'                 => 'nullable|mimes:jpeg,jpg,gif,png|max:2048',
         'thumbnail'             => 'nullable|mimes:jpeg,jpg,gif,png|max:2048',
+        'genotype'              => 'nullable|between:3,300',
+        'phenotype'             => 'nullable|between:3,300',
+        'sex'                   => 'nullable|between:3,191',
     ];
 
     /**
@@ -124,6 +131,9 @@ class Character extends Model {
         'name'        => 'required',
         'image'       => 'nullable|mimes:jpeg,gif,png|max:2048',
         'thumbnail'   => 'nullable|mimes:jpeg,gif,png|max:2048',
+        'genotype'              => 'nullable|between:3,300',
+        'phenotype'             => 'nullable|between:3,300',
+        'sex'                   => 'nullable|between:3,191',
     ];
 
     /**********************************************************************************************

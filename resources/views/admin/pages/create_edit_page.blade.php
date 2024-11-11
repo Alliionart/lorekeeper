@@ -35,11 +35,34 @@
             </div>
         </div>
 
-        <div class="col-md-3">
+        <div class="col-md-4">
             <div class="form-group">
                 {!! Form::label('Page Category (Optional)') !!}
-                {!! Form::select('page_category_id', $categories, $page->page_category_id, ['class' => 'form-control']) !!}
+                {!! Form::select('page_category_id', $categories, $page->page_category_id, ['class' => 'form-control page_category_id']) !!}
             </div>
+        </div>
+        <div class="col-md-4 marking-rarity-selector">
+            <div class="form-group">
+                {!! Form::label('Marking Rarity (Enter if Marking)') !!}
+                <select name="page_rarity" id="rarity" class="form-control" placeholder="Select Rarity">
+                    <option value="0" data-code="">Select Rarity</option>
+                    <option value="1" data-code="common">Common</option>
+                    <option value="2" data-code="uncommon">Uncommon</option>
+                    <option value="3" data-code="rare">Rare</option>
+                    <option value="4" data-code="legendary">Legendary</option>
+                </select>
+            </div>
+        </div>
+        <div class="col-md-4">
+        <div class="form-group">
+            {!! Form::label('Page Image') !!} {!! add_help('This is for the page header and parent section.') !!}
+            <div>{!! Form::file('image', ['id' => 'mainImage']) !!}</div>
+            <div class="text-muted">Recommended size: 200px x 200px</div>
+                <div class="form-check">
+                    {!! Form::checkbox('remove_image', 1, false, ['class' => 'form-check-input']) !!}
+                    {!! Form::label('remove_image', 'Remove current image', ['class' => 'form-check-label']) !!}
+                </div>
+        </div>
         </div>
     </div>
 
@@ -84,6 +107,16 @@
             $('.delete-page-button').on('click', function(e) {
                 e.preventDefault();
                 loadModal("{{ url('admin/pages/delete') }}/{{ $page->id }}", 'Delete Page');
+            });
+
+            $(".page_category_id").change(function() {
+                var page = $('.page_category_id').val();
+                if (page == 1) {
+                    $('.marking-rarity-selector').show();
+                } else {
+                    $('.marking-rarity-selector').hide();
+                    $('#rarity').val(0);
+                }
             });
         });
     </script>

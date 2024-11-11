@@ -21,6 +21,9 @@ use App\Services\CharacterManager;
 use App\Services\TradeManager;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Character\CharacterGenotype;
+use App\Models\Character\CharacterPhenotype;
+use App\Models\Character\CharacterSex;
 
 class CharacterController extends Controller {
     /*
@@ -60,6 +63,9 @@ class CharacterController extends Controller {
             'transformations'  => ['0' => 'Pick a Species First'],
             'isMyo'            => false,
             'stats'            => Stat::orderBy('name')->get(),
+            'genotype'         => CharacterGenotype::orderBy('name')->get(),
+            'phenotype'        => CharacterPhenotype::orderBy('name')->get(),
+            'sex'              => ['0' => 'Select Sex'] + CharacterSex::orderBy('sort', 'DESC')->pluck('name', 'id')->toArray(),
         ]);
     }
 
@@ -79,6 +85,9 @@ class CharacterController extends Controller {
             'transformations'  => ['0' => 'Pick a Species First'],
             'isMyo'            => true,
             'stats'            => Stat::orderBy('name')->get(),
+            'genotype'         => CharacterGenotype::orderBy('name')->get(),
+            'phenotype'        => CharacterPhenotype::orderBy('name')->get(),
+            'sex'              => ['0' => 'Select Sex'] + CharacterSex::orderBy('sort', 'DESC')->pluck('name', 'id')->toArray(),
         ]);
     }
 
@@ -150,6 +159,7 @@ class CharacterController extends Controller {
             'artist_id', 'artist_url', 'artist_type',
             'designer_alias', 'designer_url',
             'artist_alias', 'artist_url',
+            'genotype', 'phenotype', 'sex',
 
             // hello darkness my old friend //
             'sire_id',           'sire_name',
@@ -202,6 +212,7 @@ class CharacterController extends Controller {
             'artist_id', 'artist_url', 'artist_type',
             'designer_alias', 'designer_url',
             'artist_alias', 'artist_url',
+            'genotype', 'phenotype', 'sex',
 
             // i've come to speak with you again //
             'sire_id',           'sire_name',

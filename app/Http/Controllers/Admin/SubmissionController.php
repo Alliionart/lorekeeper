@@ -16,7 +16,6 @@ use App\Models\Submission\Submission;
 use App\Services\SubmissionManager;
 use Auth;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class SubmissionController extends Controller {
     /**

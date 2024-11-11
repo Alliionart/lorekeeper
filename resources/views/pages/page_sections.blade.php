@@ -13,18 +13,16 @@
     <div class="row justify-content-center main-section {{ $section->key }}">
         @foreach ($section->categories as $category)
             <div class="col-md-4 mb-4 {{ $category->name }}">
-                <div class="card">
-                    <div class="card-header bg-transparent text-center pb-0">
+                <div class="card h-100">
+                    <div class="card-header text-left pb-0 mb-3">
                         @if ($category->categoryImageUrl)
                             <div class="world-entry-image"><a href="{{ $category->categoryImageUrl }}" data-lightbox="entry" data-title="{{ $category->name }}">
                                     <img class="img-fluid" src="{{ $category->categoryImageUrl }}" class="world-entry-image" /></a></div>
                         @endif
-                        <h5 class="card-title">{!! $category->name !!}</h5>
+                        <h3 class="card-title mt-3">{!! $category->name !!}</h3>
+                        {!! $category->description !!}
                     </div>
-                    <ul class="list-group list-group-flush">
-                        <li class="list-group-item text-center">
-                            <p class=card-text>{!! $category->description !!}</p>
-                        </li>
+                    <ul class="list-group list-group-flush mb-3 px-4">
                         @foreach ($category->pages as $page)
                             <li class="list-group-item'">
                                 <p class=card-text>

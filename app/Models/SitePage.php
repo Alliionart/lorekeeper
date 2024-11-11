@@ -134,4 +134,50 @@ class SitePage extends Model {
 
         return count($ids) ? $query->orderByRaw(DB::raw('FIELD(page_category_id, '.implode(',', $ids).')')) : $query;
     }
+
+    /**********************************************************************************************
+
+        ACCESSORS
+
+    **********************************************************************************************/
+
+    /**
+     * Gets the file directory containing the model's image.
+     *
+     * @return string
+     */
+    public function getPageImageDirectoryAttribute() {
+        return 'images/data/pages';
+    }
+
+    /**
+     * Gets the file name of the model's image.
+     *
+     * @return string
+     */
+    public function getPageImageFileNameAttribute() {
+        return $this->id.'-image.png';
+    }
+
+    /**
+     * Gets the path to the file directory containing the model's image.
+     *
+     * @return string
+     */
+    public function getPageImagePathAttribute() {
+        return public_path($this->imageDirectory);
+    }
+
+    /**
+     * Gets the URL of the model's image.
+     *
+     * @return string
+     */
+    public function getPageImageUrlAttribute() {
+        if (!$this->has_image) {
+            return null;
+        }
+
+        return asset($this->imageDirectory.'/'.$this->categoryImageFileName);
+    }
 }

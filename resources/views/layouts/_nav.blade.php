@@ -197,11 +197,11 @@
                     </li>
 
                     <li class="nav-item">
+                        @if (Auth::check())
                         <a id="footer" class="nav-link accountbx dropdown-toggle card d-flex flex-row" href="{{ Auth::user()->url }}" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
-                            @if (Auth::check())
-                                {{ Auth::user()->name }} 
-                            @endif
-                        </a>
+                                {{ Auth::user()->name }} <img src="/images/avatars/{{ Auth::user()->avatar }}" class="img-fluid rounded" style="max-height:45px" alt="{{ Auth::user()->name }}'s Avatar" />
+                            </a>
+                        @endif
 
                         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
                             <a class="dropdown-item" href="{{ Auth::user()->url }}">

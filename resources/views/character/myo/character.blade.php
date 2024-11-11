@@ -5,12 +5,14 @@
 @endsection
 
 @section('profile-content')
-    {!! breadcrumbs(['MYO Slot Masterlist' => 'myos', $character->fullName => $character->url]) !!}
+<div class="page-header">
+    {!! breadcrumbs(['Genotype Masterlist' => 'myos', $character->fullName => $character->url]) !!}
 
     @include('character._header', ['character' => $character])
+</div>
 
     {{-- Main Image --}}
-    <div class="row mb-3">
+    <div class="row mb-3 px-4">
         <div class="text-center col-md-7">
             <a href="{{ $character->image->imageUrl }}" data-lightbox="entry" data-title="{{ $character->fullName }}">
                 <img src="{{ $character->image->imageUrl }}" class="image" alt="{{ $character->fullName }}" />
@@ -20,7 +22,7 @@
     </div>
 
     {{-- Info --}}
-    <div class="card character-bio">
+    <div class="card character-bio px-4">
         <div class="card-header">
             <ul class="nav nav-tabs card-header-tabs">
                 <li class="nav-item">
@@ -40,8 +42,9 @@
             </ul>
         </div>
         <div class="card-body tab-content">
+            @include('character._tab_stats', ['character' => $character])
             <div class="tab-pane fade show active" id="stats">
-                @include('character._tab_stats', ['character' => $character])
+                
             </div>
             <div class="tab-pane fade" id="lineage">
                 @include('character._tab_lineage', ['character' => $character])

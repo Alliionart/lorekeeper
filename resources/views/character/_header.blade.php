@@ -2,7 +2,7 @@
     @if (!$character->is_myo_slot)
         {!! $character->category->displayName !!} ・ {!! $character->image->species->displayName !!} ・ {!! $character->image->rarity->displayName !!}
     @else
-        MYO Slot @if ($character->image->species_id)
+        Genotype @if ($character->image->species_id)
             ・ {!! $character->image->species->displayName !!}
             @endif @if ($character->image->rarity_id)
                 ・ {!! $character->image->rarity->displayName !!}

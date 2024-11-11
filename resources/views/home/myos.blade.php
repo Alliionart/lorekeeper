@@ -1,26 +1,33 @@
 @extends('home.layout')
 
 @section('home-title')
-    My MYO Slots
+    Genotypes
 @endsection
 
 @section('home-content')
-    {!! breadcrumbs(['Characters' => 'characters', 'My MYO Slots' => 'myos']) !!}
+    {!! breadcrumbs(['Characters' => 'characters', 'Genotypes' => 'myos']) !!}
 
     <h1>
-        My MYO Slots
+        My Genotypes
     </h1>
 
-    <p>This is a list of MYO slots you own - click on a slot to view details about it. MYO slots can be submitted for design approval from their respective pages.</p>
+    <p>This is a list of Genomes you own - click on a genome to view details about it. Genomes can be submitted for design approval from their respective pages.</p>
     <div class="row">
         @foreach ($slots as $slot)
-            <div class="col-md-3 col-6 text-center mb-2">
-                <div>
-                    <a href="{{ $slot->url }}"><img src="{{ $slot->image->thumbnailUrl }}" class="img-thumbnail" alt="Thumbnail for {{ $slot->fullName }}" /></a>
-                </div>
+            <div class="col-md-3 card col-6 myo text-left m-2 p-3">
                 <div class="mt-1 h5">
                     {!! $slot->displayName !!}
                 </div>
+                <p>G: @if ($slot->genotype) {!! $slot->genotype !!} @else Unknown @endif</p>
+                <p>P: @if ($slot->phenotype) {!! $slot->phenotype !!} @else Unknown @endif</p>
+                <div class="d-flex">
+                    <div class="badge badge-secondary mr-1">
+                        {!! $slot->image->species_id ? $slot->image->species->displayName : 'No Species' !!}
+                    </div>
+                    <div class="badge badge-secondary mr-1">
+                    {!! $slot->image->rarity_id ? $slot->image->rarity->displayName : 'No Rarity' !!}
+                    </div>
+                 </div>
             </div>
         @endforeach
     </div>

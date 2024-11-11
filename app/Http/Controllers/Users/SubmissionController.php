@@ -17,9 +17,6 @@ use App\Models\User\UserItem;
 use App\Services\SubmissionManager;
 use Auth;
 use Illuminate\Http\Request;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Settings;
 
 class SubmissionController extends Controller {
     /*

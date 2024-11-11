@@ -188,17 +188,21 @@
         @foreach ($characters->chunk(4) as $chunk)
             <div class="row">
                 @foreach ($chunk as $character)
-                    <div class="col-md-3 col-6 text-left card">
+                    <div class="col-md-3 col-6 text-left card m-1">
                         <div class="card-body">
                             <a href="{{ $character->url }}" class="h5 mb-0">
                                 @if (!$character->is_visible)
                                     <i class="fas fa-eye-slash"></i>
                                 @endif {{ Illuminate\Support\Str::limit($character->fullName, 20, $end = '...') }}
-
+                                </a>
+                                <div class="text-muted">
+                                    <p>G: @if ($character->genotype) {!! $character->genotype !!} @else Unknown @endif</p>
+                                    <p>P: @if ($character->phenotype) {!! $character->phenotype !!} @else Unknown @endif</p>
+                                </div>
                                 <div class="small">
                                     {!! $character->image->species_id ? $character->image->species->displayName : 'No Species' !!} ・ {!! $character->image->rarity_id ? $character->image->rarity->displayName : 'No Rarity' !!} ・ {!! $character->displayOwner !!}
                                 </div>
-                            </a>
+                            
                         </div>
                     </div>
                 @endforeach
