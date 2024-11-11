@@ -6,7 +6,10 @@ use App\Facades\Settings;
 use App\Http\Controllers\Controller;
 use App\Models\Character\Character;
 use App\Models\Character\CharacterCategory;
+use App\Models\Character\CharacterGenotype;
 use App\Models\Character\CharacterLineageBlacklist;
+use App\Models\Character\CharacterPhenotype;
+use App\Models\Character\CharacterSex;
 use App\Models\Character\CharacterTransfer;
 use App\Models\Character\CharacterTransformation as Transformation;
 use App\Models\Feature\Feature;
@@ -21,9 +24,6 @@ use App\Services\CharacterManager;
 use App\Services\TradeManager;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Models\Character\CharacterGenotype;
-use App\Models\Character\CharacterPhenotype;
-use App\Models\Character\CharacterSex;
 
 class CharacterController extends Controller {
     /*

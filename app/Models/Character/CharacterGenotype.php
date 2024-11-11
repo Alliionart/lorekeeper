@@ -3,6 +3,7 @@
 namespace App\Models\Character;
 
 use App\Models\Model;
+
 //use App\Models\Stat\Stat;
 
 class CharacterGenotype extends Model {
