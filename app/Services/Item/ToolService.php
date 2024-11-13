@@ -1,12 +1,12 @@
-<?php namespace App\Services\Item;
+<?php
 
-use App\Services\Service;
+namespace App\Services\Item;
 
-use DB;
 use App\Models\Cultivation\CultivationPlot;
+use App\Services\Service;
+use DB;
 
-class ToolService extends Service
-{
+class ToolService extends Service {
     /*
     |--------------------------------------------------------------------------
     | Tool Service
@@ -21,61 +21,61 @@ class ToolService extends Service
      *
      * @return array
      */
-    public function getEditData()
-    {
+    public function getEditData() {
         return [
-             'plots' => CultivationPlot::orderBy('sort')->pluck('name', 'id'),
+            'plots' => CultivationPlot::orderBy('sort')->pluck('name', 'id'),
         ];
     }
 
     /**
      * Processes the data attribute of the tag and returns it in the preferred format.
      *
-     * @param  string  $tag
+     * @param string $tag
+     *
      * @return mixed
      */
-    public function getTagData($tag)
-    {
+    public function getTagData($tag) {
         return $tag->data;
     }
 
     /**
      * Processes the data attribute of the tag and returns it in the preferred format.
      *
-     * @param  string  $tag
-     * @param  array   $data
+     * @param string $tag
+     * @param array  $data
+     *
      * @return bool
      */
-    public function updateData($tag, $data)
-    {
+    public function updateData($tag, $data) {
         //put inputs into an array to transfer to the DB
-        if(isset($data['plot_id'])) $toolData['plot_id'] = $data['plot_id'];
+        if (isset($data['plot_id'])) {
+            $toolData['plot_id'] = $data['plot_id'];
+        }
 
         DB::beginTransaction();
-        
+
         try {
             //get pairingData array and put it into the 'data' column of the DB for this tag
             $tag->update(['data' => json_encode($toolData)]);
-        
+
             return $this->commitReturn(true);
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             $this->setError('error', $e->getMessage());
         }
+
         return $this->rollbackReturn(false);
     }
-
 
     /**
      * Acts upon the item when used from the inventory.
      *
-     * @param  \App\Models\User\UserItem  $stacks
-     * @param  \App\Models\User\User      $user
-     * @param  array                      $data
+     * @param \App\Models\User\UserItem $stacks
+     * @param \App\Models\User\User     $user
+     * @param array                     $data
+     *
      * @return bool
      */
-    public function act($stacks, $user, $data)
-    {
+    public function act($stacks, $user, $data) {
         // not needed
     }
-
 }

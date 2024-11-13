@@ -339,19 +339,19 @@ return [
             ],
         ],
     ],
-    
+
     'Cultivation' => [
         'power' => 'edit_data',
         'links' => [
             [
                 'name' => 'Areas',
-                'url' => 'admin/cultivation/areas'
+                'url'  => 'admin/cultivation/areas',
             ],
             [
                 'name' => 'Plots',
-                'url' => 'admin/cultivation/plots'
+                'url'  => 'admin/cultivation/plots',
             ],
-        ]
+        ],
     ],
 
     'Settings' => [

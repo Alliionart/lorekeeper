@@ -309,9 +309,9 @@ Route::group(['prefix' => 'comments', 'namespace' => 'Comments'], function () {
     Cultivation
 **************************************************************************************************/
 
-Route::group(['prefix' => __('cultivation.cultivation')], function() {
+Route::group(['prefix' => __('cultivation.cultivation')], function () {
     Route::get('{id}', 'CultivationController@getArea');
-    
+
     Route::get('area/delete/{id}', 'CultivationController@getDeleteAreaModal');
     Route::post('area/delete/{id}', 'CultivationController@postDeleteArea');
 
@@ -320,7 +320,6 @@ Route::group(['prefix' => __('cultivation.cultivation')], function() {
     Route::post('plots/cultivate/{plotNumber}', 'CultivationController@postCultivatePlot');
     Route::post('plots/tend/{plotId}', 'CultivationController@postTendPlot');
     Route::post('plots/harvest/{plotId}', 'CultivationController@postHarvestPlot');
-
 });
 
 Route::get('search', 'WorldController@getSiteSearch');

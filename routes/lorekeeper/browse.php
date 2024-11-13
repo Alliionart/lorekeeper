@@ -198,10 +198,9 @@ Route::group(['prefix' => __('dailies.dailies')], function () {
 /**************************************************************************************************
     Cultivation
 **************************************************************************************************/
-Route::group(['prefix' => __('cultivation.cultivation')], function() {
+Route::group(['prefix' => __('cultivation.cultivation')], function () {
     Route::get('/', 'CultivationController@getIndex');
     Route::get('/guide', 'CultivationController@getGuide');
-
 });
 
 /**************************************************************************************************

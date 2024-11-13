@@ -15,9 +15,8 @@ return [
     /
     */
 
-    'cultivation' => 'cultivation',                         // use __
+    'cultivation'  => 'cultivation',                         // use __
     'cultivations' => 'cultivations',                       // use __
     'cultivation_' => 'cultivation|cultivations',           // Use trans_choice instead of __
-
 
 ];

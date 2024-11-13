@@ -827,7 +827,7 @@ Route::group(['prefix' => 'world',  'namespace' => 'World', 'middleware' => 'pow
  * CULTIVATION
  *
  ***********************************************************************************/
-Route::group(['prefix' => 'cultivation', 'middleware' => 'power:edit_data'], function() {
+Route::group(['prefix' => 'cultivation', 'middleware' => 'power:edit_data'], function () {
     Route::get('areas', 'CultivationController@getAreaIndex');
     Route::get('plots', 'CultivationController@getPlotIndex');
 
@@ -841,7 +841,6 @@ Route::group(['prefix' => 'cultivation', 'middleware' => 'power:edit_data'], fun
     Route::get('plots/delete/{id}', 'CultivationController@getDeletePlot');
     Route::post('areas/delete/{id}', 'CultivationController@postDeleteArea');
     Route::post('plots/delete/{id}', 'CultivationController@postDeletePlot');
-
 });
 
 /***********************************************************************************

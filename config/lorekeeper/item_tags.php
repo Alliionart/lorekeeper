@@ -64,19 +64,19 @@ return [
     ],
 
     'seed' => [
-        'name' => 'Seed',
-        'text_color' => '#ffffff',
-        'background_color' => '#3E7C5D'
+        'name'             => 'Seed',
+        'text_color'       => '#ffffff',
+        'background_color' => '#3E7C5D',
     ],
- 
+
     'tool' => [
-        'name' => 'Tool',
-        'text_color' => '#ffffff',
-        'background_color' => '#332312'
+        'name'             => 'Tool',
+        'text_color'       => '#ffffff',
+        'background_color' => '#332312',
     ],
     'exploration' => [
-        'name' => 'Exploration',
-        'text_color' => '#ffffff',
-        'background_color' => '#808000'
+        'name'             => 'Exploration',
+        'text_color'       => '#ffffff',
+        'background_color' => '#808000',
     ],
 ];

@@ -2,20 +2,16 @@
 
 namespace App\Models\Cultivation;
 
-use Config;
-use DB;
 use App\Models\Model;
 
-
-class CultivationArea extends Model
-{
+class CultivationArea extends Model {
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
     protected $fillable = [
-        'name', 'description', 'parsed_description', 'background_extension', 'plot_extension', 'max_plots', 'is_active'
+        'name', 'description', 'parsed_description', 'background_extension', 'plot_extension', 'max_plots', 'is_active',
     ];
 
     /**
@@ -31,11 +27,11 @@ class CultivationArea extends Model
      * @var array
      */
     public static $createRules = [
-        'name' => 'required|unique:items|between:3,100',
-        'description' => 'nullable',
+        'name'             => 'required|unique:items|between:3,100',
+        'description'      => 'nullable',
         'background_image' => 'mimes:png,jpg',
-        'plot_image' => 'mimes:png,jpg',
-        'max_plots' => 'nullable|integer|min:1',
+        'plot_image'       => 'mimes:png,jpg',
+        'max_plots'        => 'nullable|integer|min:1',
     ];
 
     /**
@@ -44,11 +40,11 @@ class CultivationArea extends Model
      * @var array
      */
     public static $updateRules = [
-        'name' => 'required|unique:items|between:3,100',
-        'description' => 'nullable',
+        'name'             => 'required|unique:items|between:3,100',
+        'description'      => 'nullable',
         'background_image' => 'mimes:png,jpg',
-        'plot_image' => 'mimes:png,jpg',
-        'max_plots' => 'nullable|integer|min:1',
+        'plot_image'       => 'mimes:png,jpg',
+        'max_plots'        => 'nullable|integer|min:1',
     ];
 
     /**********************************************************************************************
@@ -60,17 +56,14 @@ class CultivationArea extends Model
     /**
      * Get the plots that are allowed to be created here.
      */
-    public function allowedPlots()
-    {
+    public function allowedPlots() {
         return $this->belongsToMany('App\Models\Cultivation\CultivationPlot', 'plot_area', 'area_id', 'plot_id');
     }
 
-    
     /**
      * Get the plot areas.
      */
-    public function plotAreas()
-    {
+    public function plotAreas() {
         return $this->hasMany('App\Models\Cultivation\PlotArea', 'area_id');
     }
 
@@ -83,37 +76,36 @@ class CultivationArea extends Model
     /**
      * Scope a query to sort items in alphabetical order.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @param  bool                                   $reverse
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param bool                                  $reverse
+     *
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeSortAlphabetical($query, $reverse = false)
-    {
+    public function scopeSortAlphabetical($query, $reverse = false) {
         return $query->orderBy('name', $reverse ? 'DESC' : 'ASC');
     }
 
     /**
      * Scope a query to sort items by newest first.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     *
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeSortNewest($query)
-    {
+    public function scopeSortNewest($query) {
         return $query->orderBy('id', 'DESC');
     }
 
     /**
      * Scope a query to sort features oldest first.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     *
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeSortOldest($query)
-    {
+    public function scopeSortOldest($query) {
         return $query->orderBy('id');
     }
-
 
     /**********************************************************************************************
 
@@ -126,8 +118,7 @@ class CultivationArea extends Model
      *
      * @return string
      */
-    public function getDisplayNameAttribute()
-    {
+    public function getDisplayNameAttribute() {
         return '<a href="'.$this->url.'">'.$this->name.'</a>';
     }
 
@@ -136,8 +127,7 @@ class CultivationArea extends Model
      *
      * @return string
      */
-    public function getImageDirectoryAttribute()
-    {
+    public function getImageDirectoryAttribute() {
         return 'images/data/areas';
     }
 
@@ -146,9 +136,8 @@ class CultivationArea extends Model
      *
      * @return string
      */
-    public function getBackgroundImageFileNameAttribute()
-    {
-        return $this->id . '-background.'.$this->background_extension;
+    public function getBackgroundImageFileNameAttribute() {
+        return $this->id.'-background.'.$this->background_extension;
     }
 
     /**
@@ -156,9 +145,8 @@ class CultivationArea extends Model
      *
      * @return string
      */
-    public function getPlotImageFileNameAttribute()
-    {
-        return $this->id . '-plot.'.$this->plot_extension;
+    public function getPlotImageFileNameAttribute() {
+        return $this->id.'-plot.'.$this->plot_extension;
     }
 
     /**
@@ -166,8 +154,7 @@ class CultivationArea extends Model
      *
      * @return string
      */
-    public function getImagePathAttribute()
-    {
+    public function getImagePathAttribute() {
         return public_path($this->imageDirectory);
     }
 
@@ -176,10 +163,12 @@ class CultivationArea extends Model
      *
      * @return string
      */
-    public function getBackgroundImageUrlAttribute()
-    {
-        if (!$this->background_extension) return "/images/area.png";
-        return asset($this->imageDirectory . '/' . $this->backgroundImageFileName);
+    public function getBackgroundImageUrlAttribute() {
+        if (!$this->background_extension) {
+            return '/images/area.png';
+        }
+
+        return asset($this->imageDirectory.'/'.$this->backgroundImageFileName);
     }
 
     /**
@@ -187,10 +176,12 @@ class CultivationArea extends Model
      *
      * @return string
      */
-    public function getPlotImageUrlAttribute()
-    {
-        if (!$this->plot_extension) return "/images/stage0.png";
-        return asset($this->imageDirectory . '/' . $this->plotImageFileName);
+    public function getPlotImageUrlAttribute() {
+        if (!$this->plot_extension) {
+            return '/images/stage0.png';
+        }
+
+        return asset($this->imageDirectory.'/'.$this->plotImageFileName);
     }
 
     /**
@@ -198,8 +189,7 @@ class CultivationArea extends Model
      *
      * @return string
      */
-    public function getUrlAttribute()
-    {
+    public function getUrlAttribute() {
         return url('cultivation?name='.$this->name);
     }
 
@@ -208,16 +198,13 @@ class CultivationArea extends Model
      *
      * @return string
      */
-    public function getIdUrlAttribute()
-    {
+    public function getIdUrlAttribute() {
         return url('cultivation/'.$this->id);
     }
-
 
     /**********************************************************************************************
 
         OTHER FUNCTIONS
 
     **********************************************************************************************/
-
 }
