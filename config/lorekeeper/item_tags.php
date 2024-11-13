@@ -62,4 +62,21 @@ return [
         'text_color'       => '#f5f3d3',
         'background_color' => '#468a82',
     ],
+
+    'seed' => [
+        'name' => 'Seed',
+        'text_color' => '#ffffff',
+        'background_color' => '#3E7C5D'
+    ],
+ 
+    'tool' => [
+        'name' => 'Tool',
+        'text_color' => '#ffffff',
+        'background_color' => '#332312'
+    ],
+    'exploration' => [
+        'name' => 'Exploration',
+        'text_color' => '#ffffff',
+        'background_color' => '#808000'
+    ],
 ];

@@ -95,6 +95,14 @@ class AddSiteSettings extends Command {
         $this->addSiteSetting('limited_stock_coupon_settings', 0, '0: Does not allow coupons to be used on limited stock items, 1: Allows coupons to be used on limited stock items');
 
         $this->addSiteSetting('featured_character', 1, 'ID of the currently featured character.');
+        
+        //cultivation
+        
+        $this->addSiteSetting('cultivation_plot_usability', 0, 'Do plots become unusable once an item was cultivated? 0=no / 1=yes');
+        
+        $this->addSiteSetting('cultivation_care_cooldown', 0, 'How many plots can users care for each day? 0=unlimited.');
+        
+        $this->addSiteSetting('cultivation_area_unlock', 0, 'How many areas can a user unlock at the same time? 0=unlimited.');
 
         $this->line("\nSite settings up to date!");
     }

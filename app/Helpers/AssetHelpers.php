@@ -72,7 +72,7 @@ function calculateGroupCurrency($data) {
  */
 function getAssetKeys($isCharacter = false) {
     if (!$isCharacter) {
-        return ['items', 'currencies', 'pets', 'weapons', 'gears', 'raffle_tickets', 'loot_tables', 'user_items', 'characters', 'themes', 'exp', 'points'];
+        return ['items', 'currencies', 'pets', 'weapons', 'gears', 'raffle_tickets', 'loot_tables', 'user_items', 'characters', 'themes', 'exp', 'points', 'areas'];
     } else {
         return ['currencies', 'items', 'character_items', 'loot_tables', 'elements', 'exp', 'points'];
     }
@@ -191,6 +191,10 @@ function getAssetModelString($type, $namespaced = true) {
 
         case 'points':
             return 'Points';
+            break;
+        case 'areas':
+            if($namespaced) return '\App\Models\Cultivation\CultivationArea';
+            else return 'Area';
             break;
     }
 
@@ -542,6 +546,10 @@ function fillUserAssets($assets, $sender, $recipient, $logType, $data, $isSubmis
             if (!$service->creditStat($sender, $recipient, $logType, $data['data'], 'none', $contents['quantity'])) {
                 return false;
             }
+        } elseif ($key == 'areas' && count($contents)) {
+            $service = new \App\Services\CultivationManager;
+            foreach ($contents as $asset)
+                if (!$service->unlockArea($recipient, $asset['asset'])) return false;
         }
     }
     if ($isSubmission) {

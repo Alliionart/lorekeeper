@@ -13,6 +13,15 @@ return [
     //     'version' => '1.0.0',
     // ],
 
+    'cultivation' => [
+        'key' => 'cultivation',
+        'wiki_key' => 'Cultivation',
+        'creators' => json_encode([
+            'Cylunny' => 'https://toyhou.se/cylunny',
+        ]),
+        'version' => '1.0.0',
+    ],    
+
     'theme_manager' => [
         'key'      => 'theme_manager',
         'wiki_key' => 'Theme Manager',

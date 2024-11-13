@@ -3,6 +3,10 @@
 namespace App\Models\Item;
 
 use App\Models\Model;
+use App\Models\Cultivation\CultivationPlot;
+use App\Models\Cultivation\CultivationArea;
+use DB;
+use App\Models\Item\ItemCategory;
 use App\Models\Prompt\Prompt;
 use App\Models\Shop\Shop;
 use App\Models\User\User;
@@ -434,5 +438,63 @@ class Item extends Model {
      */
     public function tag($tag) {
         return $this->tags()->where('tag', $tag)->where('is_active', 1)->first();
+    }
+
+    
+    /**
+     * Gets the rewards of the linked seed item tag if it exists.
+     *
+     */
+    public function seedRewards()
+    {
+        if($this->tag('seed')){
+            $assets = [];
+            $rewards = $this->tag('seed')->getData()['rewards'];
+            foreach($rewards as $reward) {
+                switch ($reward->rewardable_type)
+                {
+                    case 'Item':
+                        $type = 'App\Models\Item\Item';
+                        break;
+                    case 'Currency':
+                        $type = 'App\Models\Currency\Currency';
+                        break;
+                    case 'LootTable':
+                        $type = 'App\Models\Loot\LootTable';
+                        break;
+                    case 'Raffle':
+                        $type = 'App\Models\Raffle\Raffle';
+                        break;
+                }
+                $asset = $type::find($reward->rewardable_id);
+                $assets[] = ['asset' => $asset, 'quantity' => $reward->quantity ];
+            }
+            return $assets;
+        }
+        return null;
+    }
+
+    /**
+     * Gets the plot a tool item unlocks.
+     *
+     */
+    public function toolPlot()
+    {
+        if($this->tag('tool')){
+            return CultivationPlot::where('id', $this->tag('tool')->getData()['plot_id'])->first();
+        }
+        return null;
+    }
+
+    /**
+     * Gets the area a exploration item unlocks.
+     *
+     */
+    public function explorationArea()
+    {
+        if($this->tag('exploration')){
+            return CultivationArea::where('id', $this->tag('exploration')->getData()['area_id'])->first();
+        }
+        return null;
     }
 }

@@ -62,6 +62,23 @@
                     </div>
                 </div>
             </div>
+            <div class="row">
+                @if($item->seedRewards())
+                    <div class="col-md">
+                        <p><strong>Cultivates:</strong> @foreach($item->seedRewards() as $reward) {{ $reward['quantity'] }}x {!! $reward['asset']->displayName !!} @endforeach</p>
+                    </div>
+                @endif
+                @if($item->toolPlot())
+                    <div class="col-md">
+                        <p><strong>Creates Plot:</strong> {{ $item->toolPlot()->name }}</p>
+                    </div>
+                @endif
+                @if($item->explorationArea())
+                    <div class="col-md">
+                        <p><strong>Unlocks Area:</strong> {{ $item->explorationArea()->name }}</p>
+                    </div>
+                @endif
+            </div>
             <div class="world-entry-text">
                 @if (isset($item->reference) && $item->reference && config('lorekeeper.extensions.item_entry_expansion.extra_fields'))
                     <p>
