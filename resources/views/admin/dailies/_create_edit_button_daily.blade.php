@@ -16,7 +16,7 @@
         {!! Form::checkbox('is_loop', 1, $daily->id ? $daily->is_loop : 1, ['class' => 'form-check-input', 'data-toggle' => 'toggle']) !!}
         {!! Form::label('is_loop', 'Set Loop', ['class' => 'form-check-label ml-3']) !!} {!! add_help(
             'If turned off, each of
-                                                                the ' .
+                                                                        the ' .
                 __('dailies.daily') .
                 ' rewards will only be able to be claimed once.',
         ) !!}
@@ -29,7 +29,7 @@
         {!! Form::checkbox('is_active', 1, $daily->id ? $daily->is_active : 1, ['class' => 'form-check-input', 'data-toggle' => 'toggle']) !!}
         {!! Form::label('is_active', 'Set Active', ['class' => 'form-check-label ml-3']) !!} {!! add_help(
             'If turned off,
-                                                                the ' .
+                                                                        the ' .
                 __('dailies.daily') .
                 ' will not be visible to regular users.',
         ) !!}
@@ -71,7 +71,7 @@
             ' index and on the ' .
             __('dailies.daily') .
             '
-                                page as a header.',
+                                    page as a header.',
     ) !!}
     <div>{!! Form::file('image') !!}</div>
     <div class="text-muted">Recommended size: None (Choose a standard size for all {{ __('dailies.daily') }} images). File type: png.</div>
