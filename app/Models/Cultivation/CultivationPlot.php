@@ -2,13 +2,9 @@
 
 namespace App\Models\Cultivation;
 
-use Config;
-use DB;
 use App\Models\Model;
 
-
-class CultivationPlot extends Model
-{
+class CultivationPlot extends Model {
     /**
      * The attributes that are mass assignable.
      *
@@ -16,7 +12,7 @@ class CultivationPlot extends Model
      */
     protected $fillable = [
         'name', 'description', 'parsed_description', 'is_active',
-        'stage_1_extension', 'stage_2_extension', 'stage_3_extension', 'stage_4_extension', 'stage_5_extension'
+        'stage_1_extension', 'stage_2_extension', 'stage_3_extension', 'stage_4_extension', 'stage_5_extension',
     ];
 
     /**
@@ -32,8 +28,8 @@ class CultivationPlot extends Model
      * @var array
      */
     public static $createRules = [
-        'name' => 'required|unique:items|between:3,100',
-        'description' => 'nullable',
+        'name'          => 'required|unique:items|between:3,100',
+        'description'   => 'nullable',
         'stage_1_image' => 'mimes:png,jpg',
         'stage_2_image' => 'mimes:png,jpg',
         'stage_3_image' => 'mimes:png,jpg',
@@ -47,8 +43,8 @@ class CultivationPlot extends Model
      * @var array
      */
     public static $updateRules = [
-        'name' => 'required|unique:items|between:3,100',
-        'description' => 'nullable',
+        'name'          => 'required|unique:items|between:3,100',
+        'description'   => 'nullable',
         'stage_1_image' => 'mimes:png,jpg',
         'stage_2_image' => 'mimes:png,jpg',
         'stage_3_image' => 'mimes:png,jpg',
@@ -65,24 +61,21 @@ class CultivationPlot extends Model
     /**
      * Get areas that use this plot.
      */
-    public function areas()
-    {
+    public function areas() {
         return $this->belongsToMany('App\Models\Cultivation\CultivationArea', 'plot_area', 'plot_id', 'area_id');
     }
 
     /**
      * Get the items that can be planted on this plot.
      */
-    public function allowedItems()
-    {
+    public function allowedItems() {
         return $this->belongsToMany('App\Models\Item\Item', 'plot_item', 'plot_id', 'item_id');
     }
 
     /**
      * Get the plot items.
      */
-    public function plotItems()
-    {
+    public function plotItems() {
         return $this->hasMany('App\Models\Cultivation\PlotItem', 'plot_id');
     }
 
@@ -95,37 +88,36 @@ class CultivationPlot extends Model
     /**
      * Scope a query to sort items in alphabetical order.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @param  bool                                   $reverse
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param bool                                  $reverse
+     *
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeSortAlphabetical($query, $reverse = false)
-    {
+    public function scopeSortAlphabetical($query, $reverse = false) {
         return $query->orderBy('name', $reverse ? 'DESC' : 'ASC');
     }
 
     /**
      * Scope a query to sort items by newest first.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     *
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeSortNewest($query)
-    {
+    public function scopeSortNewest($query) {
         return $query->orderBy('id', 'DESC');
     }
 
     /**
      * Scope a query to sort features oldest first.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     *
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeSortOldest($query)
-    {
+    public function scopeSortOldest($query) {
         return $query->orderBy('id');
     }
-
 
     /**********************************************************************************************
 
@@ -138,8 +130,7 @@ class CultivationPlot extends Model
      *
      * @return string
      */
-    public function getDisplayNameAttribute()
-    {
+    public function getDisplayNameAttribute() {
         return '<a href="'.$this->url.'">'.$this->name.'</a>';
     }
 
@@ -148,47 +139,56 @@ class CultivationPlot extends Model
      *
      * @return string
      */
-    public function getImageDirectoryAttribute()
-    {
+    public function getImageDirectoryAttribute() {
         return 'images/data/plots';
     }
 
     /**
      * Gets the file name of the model's image.
      *
+     * @param mixed $stage
+     *
      * @return string
      */
-    public function getStageImageFileNameAttribute($stage)
-    {
-        return $this->id . '-stage-'. $stage .'.png';
+    public function getStageImageFileNameAttribute($stage) {
+        return $this->id.'-stage-'.$stage.'.png';
     }
-
 
     /**
      * Gets the path to the file directory containing the model's image.
      *
      * @return string
      */
-    public function getImagePathAttribute()
-    {
+    public function getImagePathAttribute() {
         return public_path($this->imageDirectory);
     }
 
     /**
      * Gets the URL of the model's current stage image.
      *
+     * @param mixed $stage
+     *
      * @return string
      */
-    public function getStageImage($stage)
-    {
-        //stage 1 = nothing planted 
-        if (!$this->stage_1_extension && $stage == 1) return "/images/stage1.png";
-        if (!$this->stage_2_extension && $stage == 2) return "/images/stage2.png";
-        if (!$this->stage_3_extension && $stage == 3) return "/images/stage3.png";
-        if (!$this->stage_4_extension && $stage == 4) return "/images/stage4.png";
-        if (!$this->stage_5_extension && $stage == 5) return "/images/stage5.png";
+    public function getStageImage($stage) {
+        //stage 1 = nothing planted
+        if (!$this->stage_1_extension && $stage == 1) {
+            return '/images/stage1.png';
+        }
+        if (!$this->stage_2_extension && $stage == 2) {
+            return '/images/stage2.png';
+        }
+        if (!$this->stage_3_extension && $stage == 3) {
+            return '/images/stage3.png';
+        }
+        if (!$this->stage_4_extension && $stage == 4) {
+            return '/images/stage4.png';
+        }
+        if (!$this->stage_5_extension && $stage == 5) {
+            return '/images/stage5.png';
+        }
 
-        return asset($this->imageDirectory . '/' . $this->getStageImageFileNameAttribute($stage));
+        return asset($this->imageDirectory.'/'.$this->getStageImageFileNameAttribute($stage));
     }
 
     /**
@@ -196,8 +196,7 @@ class CultivationPlot extends Model
      *
      * @return string
      */
-    public function getUrlAttribute()
-    {
+    public function getUrlAttribute() {
         return url('world/cultivation/plots?name='.$this->name);
     }
 
@@ -206,16 +205,13 @@ class CultivationPlot extends Model
      *
      * @return string
      */
-    public function getIdUrlAttribute()
-    {
+    public function getIdUrlAttribute() {
         return url('world/cultivation/plots/'.$this->id);
     }
-
 
     /**********************************************************************************************
 
         OTHER FUNCTIONS
 
     **********************************************************************************************/
-
 }

@@ -193,8 +193,11 @@ function getAssetModelString($type, $namespaced = true) {
             return 'Points';
             break;
         case 'areas':
-            if($namespaced) return '\App\Models\Cultivation\CultivationArea';
-            else return 'Area';
+            if ($namespaced) {
+                return '\App\Models\Cultivation\CultivationArea';
+            } else {
+                return 'Area';
+            }
             break;
     }
 
@@ -547,9 +550,12 @@ function fillUserAssets($assets, $sender, $recipient, $logType, $data, $isSubmis
                 return false;
             }
         } elseif ($key == 'areas' && count($contents)) {
-            $service = new \App\Services\CultivationManager;
-            foreach ($contents as $asset)
-                if (!$service->unlockArea($recipient, $asset['asset'])) return false;
+            $service = new App\Services\CultivationManager;
+            foreach ($contents as $asset) {
+                if (!$service->unlockArea($recipient, $asset['asset'])) {
+                    return false;
+                }
+            }
         }
     }
     if ($isSubmission) {
