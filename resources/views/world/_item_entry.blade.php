@@ -63,17 +63,21 @@
                 </div>
             </div>
             <div class="row">
-                @if($item->seedRewards())
+                @if ($item->seedRewards())
                     <div class="col-md">
-                        <p><strong>Cultivates:</strong> @foreach($item->seedRewards() as $reward) {{ $reward['quantity'] }}x {!! $reward['asset']->displayName !!} @endforeach</p>
+                        <p><strong>Cultivates:</strong>
+                            @foreach ($item->seedRewards() as $reward)
+                                {{ $reward['quantity'] }}x {!! $reward['asset']->displayName !!}
+                            @endforeach
+                        </p>
                     </div>
                 @endif
-                @if($item->toolPlot())
+                @if ($item->toolPlot())
                     <div class="col-md">
                         <p><strong>Creates Plot:</strong> {{ $item->toolPlot()->name }}</p>
                     </div>
                 @endif
-                @if($item->explorationArea())
+                @if ($item->explorationArea())
                     <div class="col-md">
                         <p><strong>Unlocks Area:</strong> {{ $item->explorationArea()->name }}</p>
                     </div>
