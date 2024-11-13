@@ -43,10 +43,13 @@ class HomeController extends Controller {
             $character = null;
         }
 
+        $characters = Auth::user()->characters;
+
         return view('welcome', [
             'about'               => SitePage::where('key', 'about')->first(),
             'gallerySubmissions'  => $gallerySubmissions,
             'featured'            => $character,
+            'characters'          => $characters
         ]);
     }
 

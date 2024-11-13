@@ -26,7 +26,6 @@ use App\Models\User\UserCharacterLog;
 use App\Models\WorldExpansion\FactionRankMember;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Notifications;
 use Settings;
 
 class Character extends Model {

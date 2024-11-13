@@ -12,6 +12,4 @@
     @endif
 @endsection
 
-@section('sidebar')
-    @include('pages._sidebar')
-@endsection
+
