@@ -62,6 +62,11 @@
                 if (val == 'Item') {
                     $cell.children('.character-items').addClass('show');
                     $cell.children('.character-items').removeClass('hide');
+                    $cell.children('.character-items');
+                } else if (val == 'Award') {
+                    $cell.children('.character-awards').addClass('show');
+                    $cell.children('.character-awards').removeClass('hide');
+                    $cell.children('.character-awards');
                 } else if (val == 'Currency') {
                     $cell.children('.character-currencies').addClass('show');
                     $cell.children('.character-currencies').removeClass('hide');
@@ -82,6 +87,7 @@
             node.find('.character-is-focus').attr('name', 'character_is_focus[' + id + ']');
             node.find('.character-currency-id').attr('name', 'character_rewardable_id[' + id + '][]');
             node.find('.character-item-id').attr('name', 'character_rewardable_id[' + id + '][]');
+            node.find('.character-award-id').attr('name', 'character_rewardable_id[' + id + '][]');
             node.find('.character-table-id').attr('name', 'character_rewardable_id[' + id + '][]');
             node.find('.character-claymores-id').attr('name', 'character_rewardable_id[' + id + '][]');
             node.find('.character-element-id').attr('name', 'character_rewardable_id[' + id + '][]');

@@ -41,6 +41,8 @@
                     <li class="list-group-item"><a href="{{ url('world/items') }}">All Items</a></li>
                     <li class="list-group-item"><a href="{{ url('world/skill-categories') }}">Skill Categories</a></li>
                     <li class="list-group-item"><a href="{{ url('world/skills') }}">All Skills</a></li>
+                    <li class="list-group-item"><a href="{{ url('world/' . __('awards.award') . '-categories') }}">{{ ucfirst(__('awards.award')) }} Categories</a></li>
+                    <li class="list-group-item"><a href="{{ url('world/' . __('awards.awards')) }}">All {{ ucfirst(__('awards.awards')) }}</a></li>
                     <li class="list-group-item"><a href="{{ url('world/currencies') }}">Currencies</a></li>
                     <li class="list-group-item"><a href="{{ url('world/pet-categories') }}">Pet Categories</a></li>
                     <li class="list-group-item"><a href="{{ url('world/pets') }}">All Pets</a></li>

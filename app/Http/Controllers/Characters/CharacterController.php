@@ -4,7 +4,10 @@ namespace App\Http\Controllers\Characters;
 
 use App\Facades\Settings;
 use App\Http\Controllers\Controller;
+use App\Models\Award\Award;
+use App\Models\Award\AwardCategory;
 use App\Models\Character\Character;
+use App\Models\Character\CharacterAward;
 use App\Models\Character\CharacterCurrency;
 use App\Models\Character\CharacterImage;
 use App\Models\Character\CharacterItem;
@@ -17,10 +20,12 @@ use App\Models\Item\ItemCategory;
 use App\Models\Skill\Skill;
 use App\Models\Stat\Stat;
 use App\Models\User\User;
+use App\Models\User\UserAward;
 use App\Models\User\UserCurrency;
 use App\Models\User\UserItem;
 use App\Models\WorldExpansion\Faction;
 use App\Models\WorldExpansion\Location;
+use App\Services\AwardCaseManager;
 use App\Services\CharacterManager;
 use App\Services\CurrencyManager;
 use App\Services\DesignUpdateManager;
@@ -307,6 +312,43 @@ class CharacterController extends Controller {
     }
 
     /**
+     * Shows a character's awards.
+     *
+     * @param string $slug
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function getCharacterAwards($slug) {
+        $categories = AwardCategory::orderBy('sort', 'DESC')->get();
+        $awardOptions = Award::where('is_character_owned', '1');
+
+        $awards = count($categories) ?
+            $this->character->awards()
+                ->where('count', '>', 0)
+                ->orderByRaw('FIELD(award_category_id,'.implode(',', $categories->pluck('id')->toArray()).')')
+                ->orderBy('name')
+                ->orderBy('updated_at')
+                ->get()
+                ->groupBy(['award_category_id', 'id']) :
+            $this->character->awards()
+                ->where('count', '>', 0)
+                ->orderBy('name')
+                ->orderBy('updated_at')
+                ->get()
+                ->groupBy(['award_category_id', 'id']);
+
+        return view('character.awards', [
+            'character'  => $this->character,
+            'categories' => $categories->keyBy('id'),
+            'awards'     => $awards,
+            'logs'       => $this->character->getAwardLogs(),
+        ] + (Auth::check() && (Auth::user()->hasPower('edit_inventories') || Auth::user()->id == $this->character->user_id) ? [
+            'awardOptions' => $awardOptions->pluck('name', 'id'),
+            'page'         => 'character',
+        ] : []));
+    }
+
+    /**
      * Transfers currency between the user and character.
      *
      * @param App\Services\CharacterManager $service
@@ -370,6 +412,47 @@ class CharacterController extends Controller {
                 break;
             case 'take':
                 return $this->postItemTransfer($request, $service);
+                break;
+        }
+
+        return redirect()->back();
+    }
+
+    /**
+     * Handles inventory award processing, including transferring awards between the user and character.
+     *
+     * @param App\Services\CharacterManager $service
+     * @param string                        $slug
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function postAwardEdit(Request $request, AwardCaseManager $service, $slug) {
+        // TODO: THIS
+        if (!Auth::check()) {
+            abort(404);
+        }
+        switch ($request->get('action')) {
+            default:
+                flash('Invalid action selected.')->error();
+                break;
+            case 'give':
+                $sender = Auth::user();
+                $recipient = $this->character;
+
+                if ($service->transferCharacterStack($sender, $recipient, UserAward::find($request->get('stack_id')), $request->get('stack_quantity'))) {
+                    flash(ucfirst(__('awards.award')).' transferred successfully.')->success();
+                } else {
+                    foreach ($service->errors()->getMessages()['error'] as $error) {
+                        flash($error)->error();
+                    }
+                }
+
+                break;
+            case 'delete':
+                return $this->postDeleteAward($request, $service);
+                break;
+            case 'take':
+                return $this->postAwardTransfer($request, $service);
                 break;
         }
 
@@ -505,6 +588,16 @@ class CharacterController extends Controller {
             'character'             => $this->character,
             'extPrevAndNextBtnsUrl' => '/stats/logs/count',
             'logs'                  => $this->character->getCountLogs(0),
+        ]);
+    }
+
+    /*
+    * Shows a character's award logs.
+    */
+    public function getCharacterAwardLogs($slug) {
+        return view('character.award_logs', [
+            'character' => $this->character,
+            'logs'      => $this->character->getAwardLogs(0),
         ]);
     }
 
@@ -730,6 +823,37 @@ class CharacterController extends Controller {
         }
 
         return redirect()->back();
+    }
+
+    /* Transfers inventory awards back to a user.
+     *
+     * @param App\Services\InventoryManager $service
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    private function postAwardTransfer(Request $request, AwardCaseManager $service) {
+        if ($service->transferCharacterStack($this->character, $this->character->user, CharacterAward::find($request->get('ids')), $request->get('quantities'))) {
+            flash(ucfirst(__('awards.award')).' transferred successfully.')->success();
+        } else {
+            foreach ($service->errors()->getMessages()['error'] as $error) {
+                flash($error)->error();
+            }
+        }
+
+        return redirect()->back();
+    }
+
+    /**
+     * Deletes an award stack.
+     *
+     * @param App\Services\CharacterManager $service
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    private function postDeleteAward(Request $request, AwardCaseManager $service) {
+        if ($service->deleteStack($this->character, CharacterAward::find($request->get('ids')), $request->get('quantities'))) {
+            flash(ucfirst(__('awards.award')).' deleted successfully.')->success();
+        }
     }
 
     /**

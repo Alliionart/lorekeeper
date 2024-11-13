@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Award\Award;
 use App\Models\Character\Character;
 use App\Models\Currency\Currency;
 use App\Models\Element\Element;
@@ -90,6 +91,7 @@ class SubmissionController extends Controller {
             'expanded_rewards' => config('lorekeeper.extensions.character_reward_expansion.expanded'),
             'characters'       => Character::visible(Auth::check() ? Auth::user() : null)->myo(0)->orderBy('slug', 'DESC')->get()->pluck('fullName', 'slug')->toArray(),
             'skills'           => Skill::pluck('name', 'id')->toArray(),
+            'awardsrow'        => Award::all()->keyBy('id'),
         ] + ($submission->status == 'Pending' ? [
             'characterCurrencies' => Currency::where('is_character_owned', 1)->orderBy('sort_character', 'DESC')->pluck('name', 'id'),
             'items'               => Item::orderBy('name')->pluck('name', 'id'),
@@ -100,7 +102,8 @@ class SubmissionController extends Controller {
             'elements'            => Element::orderBy('name')->pluck('name', 'id'),
             'prompt'              => $prompt,
             'limit'               => $limit,
-        ] : []));
+            'awards'              => Award::orderBy('name')->released()->where('is_user_owned', 1)->pluck('name', 'id'),
+            'characterAwards'     => Award::orderBy('name')->released()->where('is_character_owned', 1)->pluck('name', 'id'),
     }
 
     /**
@@ -153,6 +156,7 @@ class SubmissionController extends Controller {
             'expanded_rewards' => config('lorekeeper.extensions.character_reward_expansion.expanded'),
             'characters'       => Character::visible(Auth::check() ? Auth::user() : null)->myo(0)->orderBy('slug', 'DESC')->get()->pluck('fullName', 'slug')->toArray(),
             'skills'           => Skill::pluck('name', 'id')->toArray(),
+            'awardsrow'        => Award::all()->keyBy('id'),
         ] + ($submission->status == 'Pending' ? [
             'characterCurrencies' => Currency::where('is_character_owned', 1)->orderBy('sort_character', 'DESC')->pluck('name', 'id'),
             'items'               => Item::orderBy('name')->pluck('name', 'id'),
@@ -161,6 +165,8 @@ class SubmissionController extends Controller {
             'raffles'             => Raffle::where('rolled_at', null)->where('is_active', 1)->orderBy('name')->pluck('name', 'id'),
             'count'               => Submission::where('prompt_id', $id)->where('status', 'Approved')->where('user_id', $submission->user_id)->count(),
             'rewardsData'         => isset($submission->data['rewards']) ? parseAssetData($submission->data['rewards']) : null,
+            'awards'              => Award::orderBy('name')->released()->where('is_user_owned', 1)->pluck('name', 'id'),
+            'characterAwards'     => Award::orderBy('name')->released()->where('is_character_owned', 1)->pluck('name', 'id'),
         ] : []));
     }
 

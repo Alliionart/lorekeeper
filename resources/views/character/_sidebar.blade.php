@@ -12,6 +12,7 @@
             <div class="sidebar-item"><a href="{{ $character->url . '/lineage' }}" class="{{ set_active('character/' . $character->slug . '/lineage') }}">Lineage</a></div>
         @endif
         <div class="sidebar-item"><a href="{{ $character->url . '/stats' }}" class="{{ set_active('character/' . $character->slug . '/stats') }}">Stat Information</a></div>
+        <div class="sidebar-item"><a href="{{ $character->url . '/' . __('awards.awardcase') }}" class="{{ set_active('character/' . $character->slug . '/' . __('awards.awardcase')) }}">{{ ucfirst(__('awards.awards')) }}</a></div>
     </li>
     <li class="sidebar-section">
         <div class="sidebar-section-header">History</div>
@@ -23,6 +24,7 @@
         <div class="sidebar-item"><a href="{{ $character->url . '/stats/logs' }}" class="{{ set_active('character/' . $character->slug . '/stats/logs') }}">Stat Logs</a></div>
         <div class="sidebar-item"><a href="{{ $character->url . '/skill-logs' }}" class="{{ set_active('character/' . $character->slug . '/skill-logs') }}">Skill Logs</a></div>
         <div class="sidebar-item"><a href="{{ $character->url . '/submissions' }}" class="{{ set_active('character/' . $character->slug . '/submissions') }}">Submissions</a></div>
+        <div class="sidebar-item"><a href="{{ $character->url . '/' . __('awards.award') . '-logs' }}" class="{{ set_active('character/' . $character->slug . '/' . __('awards.award') . '-logs') }}">{{ ucfirst(__('awards.award')) }} Logs</a></div>
     </li>
     @if (Auth::check() && (Auth::user()->id == $character->user_id || Auth::user()->hasPower('manage_characters')))
         <li class="sidebar-section">

@@ -9,6 +9,7 @@
         var $currencySelect = $('#lootRowData').find('.currency-select');
         var $statSelect = $('#lootRowData').find('.stat-select');
         var $claymoreSelect = $('#lootRowData').find('.claymore-select');
+        var $awardSelect = $('#lootRowData').find('.award-select');
         @if ($showLootTables)
             var $tableSelect = $('#lootRowData').find('.table-select');
         @endif
@@ -42,6 +43,7 @@
             else if (val == 'Gear') $clone = $GearSelect.clone();
             else if (val == 'Points') $clone = $statSelect.clone();
             else if (val == 'Exp') $clone = $claymoreSelect.clone();
+            else if (val == 'Award') $clone = $awardSelect.clone();
             @if ($showLootTables)
                 else if (val == 'LootTable') $clone = $tableSelect.clone();
             @endif
@@ -70,6 +72,7 @@
                 else if (val == 'Gear') $clone = $GearSelect.clone();
                 else if (val == 'Points') $clone = $statSelect.clone();
                 else if (val == 'Exp') $clone = $claymoreSelect.clone();
+                else if (val == 'Award') $clone = $awardSelect.clone();
                 @if ($showLootTables)
                     else if (val == 'LootTable') $clone = $tableSelect.clone();
                 @endif

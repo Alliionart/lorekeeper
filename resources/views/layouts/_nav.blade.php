@@ -53,6 +53,9 @@
                             <a class="dropdown-item" href="{{ url('trades/open') }}">
                                 Trades
                             </a>
+                            <a class="dropdown-item" href="{{ url('awardcase') }}">
+                                {{ ucfirst(__('awards.awards')) }}
+                            </a>
                         </div>
                     </li>
                     <li class="nav-item dropdown">

@@ -27,6 +27,7 @@
             ->orderBy('name')
             ->pluck('name', 'id');
     }
+    $awards = \App\Models\Award\Award::orderBy('name')->pluck('name', 'id');
 @endphp
 
 <div id="lootRowData" class="hide">
@@ -35,7 +36,7 @@
             <tr class="loot-row">
                 <td>{!! Form::select(
                     'rewardable_type[]',
-                    ['Item' => 'Item', 'Currency' => 'Currency', 'Pet' => 'Pet', 'Gear' => 'Gear', 'Weapon' => 'Weapon', 'Exp' => 'Exp', 'Points' => 'Stat Points'] +
+                    ['Item' => 'Item', 'Currency' => 'Currency', 'Pet' => 'Pet', 'Gear' => 'Gear', 'Weapon' => 'Weapon', 'Exp' => 'Exp', 'Points' => 'Stat Points', 'Award' => ucfirst(__('awards.award'))] +
                         ($showLootTables ? ['LootTable' => 'Loot Table'] : []) +
                         ($showRaffles ? ['Raffle' => 'Raffle Ticket'] : []) +
                         (isset($showThemes) && $showThemes ? ['Theme' => 'Theme'] : []),
@@ -64,4 +65,5 @@
     @if (isset($showThemes) && $showThemes)
         {!! Form::select('rewardable_id[]', $themes, null, ['class' => 'form-control theme-select', 'placeholder' => 'Select Theme']) !!}
     @endif
+    {!! Form::select('rewardable_id[]', $awards, null, ['class' => 'form-control award-select', 'placeholder' => 'Select ' . ucfirst(__('awards.award'))]) !!}
 </div>

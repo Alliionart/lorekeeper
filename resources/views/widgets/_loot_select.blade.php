@@ -27,16 +27,17 @@
             ->orderBy('name')
             ->pluck('name', 'id');
     }
+    $awards = \App\Models\Award\Award::orderBy('name')->pluck('name', 'id');
 @endphp
 
 <div class="text-right mb-3">
-    <a href="#" class="btn btn-outline-info" id="addLoot">Add Reward</a>
+    <a href="#" class="btn btn-outline-info" id="addLoot">Add {{ isset($progression) && $progression ? 'Progression' : 'Reward' }}</a>
 </div>
 <table class="table table-sm" id="lootTable">
     <thead>
         <tr>
-            <th width="35%">Reward Type</th>
-            <th width="35%">Reward</th>
+            <th width="35%">{{ isset($progression) && $progression ? 'Progression' : 'Reward' }} Type</th>
+            <th width="35%">{{ isset($progression) && $progression ? 'Progression' : 'Reward' }}</th>
             <th width="20%">Quantity</th>
             <th width="10%"></th>
         </tr>
@@ -47,7 +48,7 @@
                 <tr class="loot-row">
                     <td>{!! Form::select(
                         'rewardable_type[]',
-                        ['Item' => 'Item', 'Currency' => 'Currency', 'Pet' => 'Pet', 'Gear' => 'Gear', 'Weapon' => 'Weapon', 'Exp' => 'Exp', 'Points' => 'Stat Points'] +
+                        ['Item' => 'Item', 'Currency' => 'Currency', 'Pet' => 'Pet', 'Gear' => 'Gear', 'Weapon' => 'Weapon', 'Exp' => 'Exp', 'Points' => 'Stat Points', 'Award' => ucfirst(__('awards.award'))] +
                             ($showLootTables ? ['LootTable' => 'Loot Table'] : []) +
                             ($showRaffles ? ['Raffle' => 'Raffle Ticket'] : []) +
                             (isset($showThemes) && $showThemes ? ['Theme' => 'Theme'] : []),
@@ -75,6 +76,8 @@
                             {!! Form::select('rewardable_id[]', $stats, $loot->rewardable_id, ['class' => 'form-control points-select selectize', 'placeholder' => 'Select Stat']) !!}
                         @elseif($loot->rewardable_type == 'Exp')
                             {!! Form::text('rewardable_id[]', null, ['class' => 'form-control hide claymore-select', 'placeholder' => 'Enter Reward']) !!}
+                        @elseif($loot->rewardable_type == 'Award')
+                            {!! Form::select('rewardable_id[]', $awards, $loot->rewardable_id, ['class' => 'form-control award-select selectize', 'placeholder' => 'Select ' . ucfirst(__('awards.award'))]) !!}
                         @endif
                     </td>
                     <td>{!! Form::text('quantity[]', $loot->quantity, ['class' => 'form-control']) !!}</td>
