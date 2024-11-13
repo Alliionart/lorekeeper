@@ -4,24 +4,24 @@
         <p class="mb-1">Welcome back, {!! Auth::user()->displayName !!}!</p>
 
         @if (isset($featured) && $featured)
-        <div class="card main mt-5 mb-4">
-            <div class="card-body">
-                <h4>Featured Character</h4>
-                <div class="row">
-                    <div class="col-md-6">
-                        <a href="{{ $featured->url }}" class="h5 mb-0">
-                            @if (!$featured->is_visible)
-                            <i class="fas fa-eye-slash"></i>
-                            @endif {{ $featured->fullName }}
-                        </a>
+            <div class="card main mt-5 mb-4">
+                <div class="card-body">
+                    <h4>Featured Character</h4>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <a href="{{ $featured->url }}" class="h5 mb-0">
+                                @if (!$featured->is_visible)
+                                    <i class="fas fa-eye-slash"></i>
+                                @endif {{ $featured->fullName }}
+                            </a>
+                        </div>
+                        <div class="col-md-6">
+                            {!! $featured->displayOwner !!}
+                        </div>
                     </div>
-                    <div class="col-md-6">
-                        {!! $featured->displayOwner !!}
-                    </div>
+                    <a href="{{ $featured->url }}"><img src="{{ $featured->image->thumbnailUrl }}" class="img-fluid" /></a>
                 </div>
-                <a href="{{ $featured->url }}"><img src="{{ $featured->image->thumbnailUrl }}" class="img-fluid" /></a>
             </div>
-        </div>
         @endif
 
         <div class="card main">
@@ -41,7 +41,7 @@
 
     </div>
     <div class="col-md-9">
-    <div class="row d-flex align-items-end">
+        <div class="row d-flex align-items-end">
             <div class="col-md-8">
                 <div class="card main dark">
                     <div class="card-body">
@@ -54,8 +54,7 @@
                                 </div>
                             </div>
                             <div class="col-md-5">
-                                <img src="https://plus.unsplash.com/premium_photo-1663937576055-a1d89f3895ca?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                                    class="img-fluid bonus-img" />
+                                <img src="https://plus.unsplash.com/premium_photo-1663937576055-a1d89f3895ca?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" class="img-fluid bonus-img" />
                             </div>
                         </div>
                     </div>
@@ -65,8 +64,7 @@
                 <div class="card main">
                     <div class="card-body">
                         <h5>Join Our Discord!</h5>
-                        <iframe src="https://discord.com/widget?id=216711510792208392&theme=dark" width="350"
-                            height="400" allowtransparency="true" frameborder="0"
+                        <iframe src="https://discord.com/widget?id=216711510792208392&theme=dark" width="350" height="400" allowtransparency="true" frameborder="0"
                             sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts"></iframe>
                     </div>
                 </div>
@@ -81,8 +79,8 @@
                     <div class="card">
                         <a href="#">
                             <div class="card-body text-center">
-                                <img src="https://plus.unsplash.com/premium_photo-1663937576055-a1d89f3895ca?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                                    style="max-width:200px" class="img-thumbnail mb-3">
+                                <img src="https://plus.unsplash.com/premium_photo-1663937576055-a1d89f3895ca?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" style="max-width:200px"
+                                    class="img-thumbnail mb-3">
                                 <h6>My Characters</h6>
                             </div>
                         </a>
@@ -90,8 +88,8 @@
                     <div class="card">
                         <a href="#">
                             <div class="card-body text-center">
-                                <img src="https://plus.unsplash.com/premium_photo-1663937576055-a1d89f3895ca?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                                    style="max-width:200px" class="img-thumbnail mb-3">
+                                <img src="https://plus.unsplash.com/premium_photo-1663937576055-a1d89f3895ca?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" style="max-width:200px"
+                                    class="img-thumbnail mb-3">
                                 <h6>My Bank</h6>
                             </div>
                         </a>
@@ -99,8 +97,8 @@
                     <div class="card">
                         <a href="#">
                             <div class="card-body text-center">
-                                <img src="https://plus.unsplash.com/premium_photo-1663937576055-a1d89f3895ca?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                                    style="max-width:200px" class="img-thumbnail mb-3">
+                                <img src="https://plus.unsplash.com/premium_photo-1663937576055-a1d89f3895ca?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" style="max-width:200px"
+                                    class="img-thumbnail mb-3">
                                 <h6>My Inventory</h6>
                             </div>
                         </a>
@@ -108,8 +106,8 @@
                     <div class="card">
                         <a href="#">
                             <div class="card-body text-center">
-                                <img src="https://plus.unsplash.com/premium_photo-1663937576055-a1d89f3895ca?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                                    style="max-width:200px" class="img-thumbnail mb-3">
+                                <img src="https://plus.unsplash.com/premium_photo-1663937576055-a1d89f3895ca?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" style="max-width:200px"
+                                    class="img-thumbnail mb-3">
                                 <h6>My Pets</h6>
                             </div>
                         </a>
@@ -117,8 +115,8 @@
                     <div class="card">
                         <a href="#">
                             <div class="card-body text-center">
-                                <img src="https://plus.unsplash.com/premium_photo-1663937576055-a1d89f3895ca?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                                    style="max-width:200px" class="img-thumbnail mb-3">
+                                <img src="https://plus.unsplash.com/premium_photo-1663937576055-a1d89f3895ca?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" style="max-width:200px"
+                                    class="img-thumbnail mb-3">
                                 <h6>My Genotypes</h6>
                             </div>
                         </a>
@@ -133,23 +131,23 @@
                 <div class="d-flex">
 
                     @foreach ($characters->chunk(1) as $chunk)
-                    <div class="card">
-                        @foreach ($chunk as $character)
-                        <div class="card-body">
-                            <a href="{{ $character->url }}"><img src="{{ $character->image->thumbnailUrl }}" class="img-thumbnail" alt="Thumbnail for {{ $character->fullName }}" /></a>
-                            <div class="d-flex justify-content-between mt-3">
-                                <a href="{{ $character->url }}" class="h5 mb-0">
-                                    @if (!$character->is_visible)
-                                    <i class="fas fa-eye-slash"></i>
-                                    @endif {{ Illuminate\Support\Str::limit($character->fullName, 20, $end = '...') }}
-                                </a>
-                                <div class="small">
-                                    {!! $character->displayOwner !!}
+                        <div class="card">
+                            @foreach ($chunk as $character)
+                                <div class="card-body">
+                                    <a href="{{ $character->url }}"><img src="{{ $character->image->thumbnailUrl }}" class="img-thumbnail" alt="Thumbnail for {{ $character->fullName }}" /></a>
+                                    <div class="d-flex justify-content-between mt-3">
+                                        <a href="{{ $character->url }}" class="h5 mb-0">
+                                            @if (!$character->is_visible)
+                                                <i class="fas fa-eye-slash"></i>
+                                            @endif {{ Illuminate\Support\Str::limit($character->fullName, 20, $end = '...') }}
+                                        </a>
+                                        <div class="small">
+                                            {!! $character->displayOwner !!}
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
+                            @endforeach
                         </div>
-                        @endforeach
-                    </div>
                     @endforeach
                 </div>
             </div>
