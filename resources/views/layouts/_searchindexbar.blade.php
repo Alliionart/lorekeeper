@@ -2,18 +2,18 @@
     <input class="dark-input" id="ajaxsearch" type="text" placeholder="Search site..." />
     <div class="dropdown" id="searchResult" style="display:none;">
         <div id="listResults">
-        @foreach ($result as $r) {
-            <div class="resultrow">
-                <a href="{{ $r->findUrlStructure() }}">
-                    <div class="title"><span class="badge badge-secondary">'.$r->api.'</span>'.$r->name.'</div>
-                </a>
-            </div>
-        }
+            @foreach ($result as $r) {
+                <div class="resultrow">
+                    <a href="{{ $r->findUrlStructure() }}">
+                        <div class="title"><span class="badge badge-secondary">'.$r->api.'</span>'.$r->name.'</div>
+                    </a>
+                </div>
+                }
         </div>
     </div>
 <li>
 
-<script>
+    <script>
         $(document).ready(function() {
             $('#ajaxsearch').keyup(function() {
                 let i = $(this).val();
