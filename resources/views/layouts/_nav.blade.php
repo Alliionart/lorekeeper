@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand-md navbar-dark bg-dark" id="headerNav">
+<nav class="navbar sitenav navbar-expand-md navbar-dark bg-dark" id="headerNav">
     <div class="container-fluid">
         <a class="navbar-brand" href="{{ url('/') }}">
             {{ config('lorekeeper.settings.site_name', 'Lorekeeper') }}
@@ -290,6 +290,16 @@
                     $(".dark-input").removeClass('active');
                 } else {
                     $("searchResult").show();
+                }
+            });
+
+            //Create Sticky Header
+            $(window).scroll(function() {
+                if ($(this).scrollTop() > 250) {
+                    $('.sitenav').slideDown(100).addClass('scrolling');
+                } else {
+
+                    $('.sitenav').removeClass('scrolling');
                 }
             });
         });
