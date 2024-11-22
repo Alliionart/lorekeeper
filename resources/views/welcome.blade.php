@@ -11,5 +11,3 @@
         @include('pages._logged_out')
     @endif
 @endsection
-
-
