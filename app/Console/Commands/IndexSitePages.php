@@ -2,9 +2,14 @@
 
 namespace App\Console\Commands;
 
+use DB;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Schema;
+
+use App\Models\Character\Character;
+use App\Models\SitePage;
+use App\Models\IndexSiteData;
 
 class IndexSitePages extends Command {
     /**
@@ -34,57 +39,116 @@ class IndexSitePages extends Command {
      * @return int
      */
     public function handle() {
+
         if (Schema::hasTable('site_temp_index')) {
+
+            //A. ------------------ Clear the temp table for extra insurance
+            DB::table('site_temp_index')->truncate();
             
+            //B. ------------------ Index types of content
             //1. FIND ALL CHARACTERS TO INDEX
-            $existingCharacters = SiteDataIndex::where('type', 'character')->pluck('id');
+            $existingCharacters = DB::table('characters')->pluck('id');
             $characters = Character::visible()->myo(0)->whereNotIn('slug', $existingCharacters)->get();
-            foreach ($character as $character) {
-                SiteDataIndex::create([
+            foreach ($characters as $character) {
+                DB::table('site_temp_index')->insert([
                     // input all neccessary fields
                     'id' => $character->id,
-                    'title' => $character->id.': '.$character->name,
+                    'title' => $character->slug.': '.$character->name,
                     'type'  => 'Character',
-                    'indentifier' => $character->slug,
-                    'desc' => $character->name
+                    'identifier' => $character->slug,
+                    'description' => $character->name,
                 ]);
             }
 
             //2. FIND ALL PAGES TO INDEX
+            $pages = DB::table('site_pages')->get();
+            foreach ($pages as $page) {
+                DB::table('site_temp_index')->insert([
+                    // input all neccessary fields
+                    'id' => $page->id,
+                    'title' => $page->title,
+                    'type'  => 'Page',
+                    'identifier' => $page->key,
+                    'description' => substr_replace(strip_tags($page->text), '...', 100),
+                ]);
+            }
 
             //3. FIND ALL USERS TO INDEX
+            $users = DB::table('users')->get();
+            foreach ($users as $user) {
+                DB::table('site_temp_index')->insert([
+                    // input all neccessary fields
+                    'id' => $user->id,
+                    'title' => $user->name,
+                    'type'  => 'User',
+                    'identifier' => $user->name,
+                    'description' => NULL,
+                ]);
+            }
 
             //4. FIND ALL ITEMS TO INDEX
+            $items = DB::table('items')->get();
+            foreach ($items as $item) {
+                DB::table('site_temp_index')->insert([
+                    // input all neccessary fields
+                    'id' => $item->id,
+                    'title' => $item->name,
+                    'type'  => 'Item',
+                    'identifier' => $item->id,
+                    'description' => substr_replace(strip_tags($item->description), '...', 100),
+                ]);
+            }
 
             //5. FIND ALL PROMPTS TO INDEX
+            $prompts = DB::table('prompts')->get();
+            foreach ($prompts as $prompt) {
+                DB::table('site_temp_index')->insert([
+                    // input all neccessary fields
+                    'id' => $prompt->id,
+                    'title' => $prompt->name,
+                    'type'  => 'Prompt',
+                    'identifier' => $prompt->id,
+                    'description' => substr_replace(strip_tags($prompt->description), '...', 100),
+                ]);
+            }
 
             //6. FIND ALL SHOPS TO INDEX
+            $shops = DB::table('shops')->get();
+            foreach ($shops as $shop) {
+                DB::table('site_temp_index')->insert([
+                    // input all neccessary fields
+                    'id' => $shop->id,
+                    'title' => $shop->name,
+                    'type'  => 'Shop',
+                    'identifier' => $shop->id,
+                    'description' => substr_replace(strip_tags($shop->description), '...', 100),
+                ]);
+            }
 
-
-            /* 
-            * After finishing the index continue to the next function 
+            /* IMPORTANT
+            * If you would like to add your own areas to search you can easily add them here! Just copy one of the sections above and replace the data as needed.
+            * note: identifier field should always match the URL parameter. (Characters use slug, pages use key, etc)
+            * Ensure if you use content for the description it does NOT go over 1024 characters.
+            * ID is not an incremental field.
             */
 
-        }
-        if (Schema::hasTable('site_index')) {
-             /* Here is where you will complete the index. Once the main index inside of the site_temp_index table is completed
-            *  1. Move all contents from the temp table to the main table (site_temp_index --> site_index)
-            *  2. Dump all contents of the site_temp_index table
-            *  3. Wait until the next schedule period, of which the index will fill temp again, before it dumps the content of main and then repeats step 1
-            */
+            // ------------------ C. Duplicate data to new table
+            DB::table('site_index')->truncate();
+            $index = DB::table('site_temp_index')->get();
+            foreach ($index as $row) {
+                DB::table('site_index')->insert([
+                    // input all neccessary fields
+                    'id' => $row->id,
+                    'title' => $row->title,
+                    'type'  => $row->type,
+                    'identifier' => $row->identifier,
+                    'description' => $row->description,
+                ]);
+            }
 
-            
-            if(!empty(DB::table('site_index')->count())){
-                // 2. Duplicate data to new table
-                DB::table('site_index')->each(function ($first) {
-                    $moved = $first->replicate();
-                    $moved->setTable('site_index');
-                    $moved->save();
-                });
+            // ------------------ D. Dump the Temp Table
+            DB::table('site_temp_index')->truncate();
 
-                // 3. Dump the Temp Table
-                DB::table('site_temp_index')->truncate();
-             }
         }
     }
 }

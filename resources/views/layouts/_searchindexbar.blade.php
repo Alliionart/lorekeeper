@@ -1,28 +1,21 @@
 <li class="search-bar">
     <input class="dark-input" id="ajaxsearch" type="text" placeholder="Search site..." />
     <div class="dropdown" id="searchResult" style="display:none;">
-        <div id="listResults">
-        @foreach ($result as $r) {
-            <div class="resultrow">
-                <a href="{{ $r->findUrlStructure() }}">
-                    <div class="title"><span class="badge badge-secondary">'.$r->api.'</span>'.$r->name.'</div>
-                </a>
-            </div>
-        }
-        </div>
+        <div id="listResults"></div>
     </div>
 <li>
 
 <script>
         $(document).ready(function() {
             $('#ajaxsearch').keyup(function() {
-                let i = $(this).val();
-                if (i != '' || i != null) {
+                let s = $(this).val();
+                if (s != '' || s != null) {
                     $.ajax({
-                        url: "/ajax-s-process.php",
-                        method: "POST",
+                        //url: "/ajax-s-process.php",
+                        url: "/asearch",
+                        method: "GET",
                         data: {
-                            i: i
+                            s: s
                         },
                         beforeSend: function() {
                             $(".search-bar").addClass('loader');
@@ -52,3 +45,4 @@
             });
         });
     </script>
+    

@@ -14,8 +14,7 @@ return new class extends Migration
         //Create the Main Index Table
         Schema::create('site_index', function (Blueprint $table) {
             $table->engine = 'InnoDB';
-            $table->increments('id');
-
+            $table->integer('id');
             $table->string('title', 1024)->nullable();
             $table->string('type', 300)->nullable();
             $table->string('identifier', 300)->nullable();
@@ -25,8 +24,7 @@ return new class extends Migration
         //Create the Temp Index Table
         Schema::create('site_temp_index', function (Blueprint $table) {
             $table->engine = 'InnoDB';
-            $table->increments('id');
-
+            $table->integer('id');
             $table->string('title', 1024)->nullable();
             $table->string('type', 300)->nullable();
             $table->string('identifier', 300)->nullable();

@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\IndexSiteData;
+
 define('DB_HOST', 'localhost');
 define('DB_USER', 'root');
 define('DB_PASS', '');
@@ -46,22 +48,20 @@ if (isset($_POST)) {
     $output = '';
     $input = $_POST['i'];
 
-    $result = $db->GetRows("SELECT * FROM index_site_data WHERE (name LIKE '%{$input}%' OR op1 LIKE '%{$input}%')");
+    $result = $db->GetRows("SELECT * FROM site_index WHERE (title LIKE '%{$input}%' OR description LIKE '%{$input}%')");
+
+    //$test = testMe();
 
     if ($result) {
         $output = '';
 
         foreach ($result as $r) {
-            $name = $r['name'];
-            $op1 = $r['op1'];
+            $name = $r['title'];
+            $key = $r['identifier'];
             $type = $r['type'];
-            $ch_name = $op1.': '.$name;
-            if ($type == 'character') {
-                $name = $ch_name;
-            }
             $output .= '
                 <div class="resultrow">
-                <a href="'.findUrlStructure($type, $op1).'">
+                <a href="'.findUrlStructure($type, $key).'">
                     <div class="title"><span class="badge badge-secondary">'.$type.'</span>'.$name.'</div>
                 </a>
                 </div>
@@ -74,14 +74,17 @@ if (isset($_POST)) {
 }
 
 function findUrlStructure($type, $key) {
+    $search = strtolower($type);
+
     $item = '/world/items?name=';
     $character = '/character/';
     $user = '/user/';
     $page = '/info/';
     $pet = '/world/pets/';
     $prompt = '/prompts/';
+    $shop = '/shops/';
 
     $domain = $_SERVER['SERVER_NAME'];
 
-    return ${$type}.$key;
+    return ${$search}.$key;
 }

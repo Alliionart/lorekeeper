@@ -1,9 +1,15 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\IndexSiteData;
 
 class IndexSiteData extends Model {
 
-    //Add Any Needed Functions Here
-
+    public function truncateDesc($string) {
+        $desc = strip_tags($string);
+        if (strlen($desc) > 1024) {
+            $truncate = substr_replace($desc, '...', 1000);
+        } else {
+            $truncate = $desc;
+        }
+    }
 }

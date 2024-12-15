@@ -170,13 +170,14 @@
                         @yield('content')
                     </div>
 
-                    <div class="site-footer mt-4" id="footer">
-                        @include('layouts._footer')
-                    </div>
+                    
                 </div>
             </div>
 
         </main>
+        <div class="site-footer" id="footer">
+            @include('layouts._footer')
+        </div>
 
 
         <div class="modal fade" id="modal" tabindex="-1" role="dialog">
