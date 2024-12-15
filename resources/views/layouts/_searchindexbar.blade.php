@@ -5,7 +5,7 @@
     </div>
 <li>
 
-<script>
+    <script>
         $(document).ready(function() {
             $('#ajaxsearch').keyup(function() {
                 let s = $(this).val();
