@@ -155,10 +155,10 @@
             <ul class="navbar-nav ml-auto">
                 @include('layouts._searchindexbar')
 
-                    <!-- Clock -->
-                    {!! LiveClock('America/Boise') !!}
-                    <!-- Authentication Links -->
-                    @guest
+                <!-- Clock -->
+                {!! LiveClock('America/Boise') !!}
+                <!-- Authentication Links -->
+                @guest
                     <li class="nav-item">
                         <a class="nav-link" href="{{ route('login') }}"><i class="fas fa-sign-in-alt"></i> {{ __('Login') }}</a>
                     </li>

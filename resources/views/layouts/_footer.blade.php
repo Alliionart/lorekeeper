@@ -27,7 +27,8 @@
         </div>
     </div>
 </nav>
-<p class="d-flex justify-content-center align-items-center"><span class="copyright">&copy; {{ config('lorekeeper.settings.site_name', 'Lorekeeper') }} v{{ config('lorekeeper.settings.version') }} {{ Carbon\Carbon::now()->year }}</span> | <a href="{{ url('info/terms') }}" class="nav-link">Terms</a> | <a href="{{ url('info/privacy') }}" class="nav-link">Privacy</a></p>
+<p class="d-flex justify-content-center align-items-center"><span class="copyright">&copy; {{ config('lorekeeper.settings.site_name', 'Lorekeeper') }} v{{ config('lorekeeper.settings.version') }} {{ Carbon\Carbon::now()->year }}</span> | <a
+        href="{{ url('info/terms') }}" class="nav-link">Terms</a> | <a href="{{ url('info/privacy') }}" class="nav-link">Privacy</a></p>
 
 @if (config('lorekeeper.extensions.scroll_to_top'))
     @include('widgets/_scroll_to_top')
