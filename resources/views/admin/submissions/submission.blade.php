@@ -153,6 +153,7 @@
         <div class="text-right">
             <a href="#" class="btn btn-danger mr-2" id="rejectionButton">Reject</a>
             <a href="#" class="btn btn-secondary mr-2" id="cancelButton">Cancel</a>
+            <a href="#" class="btn btn-secondary mr-2" id="holdButton">Hold</a>
             <a href="#" class="btn btn-success" id="approvalButton">Approve</a>
         </div>
 
@@ -253,6 +254,18 @@
                         </div>
                     </div>
                 </div>
+                <div class="modal-content hide" id="holdContent">
+                    <div class="modal-header">
+                        <span class="modal-title h5 mb-0">Confirm Hold</span>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <p><span class="text-danger">IMPORTANT: Please ensure you provide a staff comment!</span> This will retain the {{ $submission->prompt_id ? 'submission' : 'claim' }} and send it to the hold queue with a staff comment.</p>
+                        <div class="text-right">
+                            <a href="#" id="holdSubmit" class="btn btn-secondary">Confirm Hold</a>
+                        </div>
+                    </div>
+                </div>
                 <div class="modal-content hide" id="rejectionContent">
                     <div class="modal-header">
                         <span class="modal-title h5 mb-0">Confirm Rejection</span>
@@ -297,11 +310,17 @@
                 var $cancelContent = $('#cancelContent');
                 var $cancelSubmit = $('#cancelSubmit');
 
+                var $holdButton = $('#holdButton');
+                var $holdContent = $('#holdContent');
+                var $holdSubmit = $('#holdSubmit');
+                var $holdReason = $('#form-hold-reason');
+
                 $approvalButton.on('click', function(e) {
                     e.preventDefault();
                     $approvalContent.removeClass('hide');
                     $rejectionContent.addClass('hide');
                     $cancelContent.addClass('hide');
+                    $holdContent.addClass('hide');
                     $confirmationModal.modal('show');
                 });
 
@@ -310,6 +329,7 @@
                     $rejectionContent.removeClass('hide');
                     $approvalContent.addClass('hide');
                     $cancelContent.addClass('hide');
+                    $holdContent.addClass('hide');
                     $confirmationModal.modal('show');
                 });
 
@@ -318,6 +338,16 @@
                     $cancelContent.removeClass('hide');
                     $rejectionContent.addClass('hide');
                     $approvalContent.addClass('hide');
+                    $holdContent.addClass('hide');
+                    $confirmationModal.modal('show');
+                });
+
+                $holdButton.on('click', function(e) {
+                    e.preventDefault();
+                    $cancelContent.addClass('hide');
+                    $rejectionContent.addClass('hide');
+                    $approvalContent.addClass('hide');
+                    $holdContent.removeClass('hide');
                     $confirmationModal.modal('show');
                 });
 
@@ -336,6 +366,12 @@
                 $cancelSubmit.on('click', function(e) {
                     e.preventDefault();
                     $submissionForm.attr('action', '{{ url()->current() }}/cancel');
+                    $submissionForm.submit();
+                });
+
+                $holdSubmit.on('click', function(e) {
+                    e.preventDefault();
+                    $submissionForm.attr('action', '{{ url()->current() }}/hold');
                     $submissionForm.submit();
                 });
             });

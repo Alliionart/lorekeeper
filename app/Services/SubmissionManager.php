@@ -247,6 +247,67 @@ class SubmissionManager extends Service {
     }
 
     /**
+     * Holds a submission.
+     *
+     * @param mixed $data the submission data
+     * @param mixed $user the user performing the hold
+     */
+    public function holdSubmission($data, $user) {
+        DB::beginTransaction();
+
+        try {
+            // 1. check that the submission exists
+            // 2. check that the submission is pending
+            if (!isset($data['submission'])) {
+                $submission = Submission::where('status', 'Pending')->where('id', $data['id'])->first();
+            } elseif ($data['submission']->status == 'Pending') {
+                $submission = $data['submission'];
+            } else {
+                $submission = null;
+            }
+            if (!$submission) {
+                throw new \Exception('Invalid submission.');
+            }
+
+            // Set staff comments
+            if (isset($data['staff_comments']) && $data['staff_comments']) {
+                $data['parsed_staff_comments'] = parse($data['staff_comments']);
+            } else {
+                $data['parsed_staff_comments'] = null;
+            }
+
+            $assets = $submission->data;
+            $userAssets = $assets['user'];
+
+            if ($user->id != $submission->user_id) {
+                $submission->update([
+                    'staff_comments'        => $data['staff_comments'],
+                    'parsed_staff_comments' => $data['parsed_staff_comments'],
+                    'updated_at'            => Carbon::now(),
+                    'staff_id'              => $user->id,
+                    'status'                => 'Hold',
+                    'data'                  => json_encode([
+                        'user'      => $userAssets,
+                        'rewards'   => getDataReadyAssets($promptRewards),
+                    ]),
+                ]);
+
+                Notifications::create($submission->prompt_id ? 'SUBMISSION_HOLD' : 'CLAIM_HOLD', $submission->user, [
+                    'staff_url'     => $user->url,
+                    'staff_name'    => $user->name,
+                    'submission_id' => $submission->id,
+                ]);
+            }
+
+            return $this->commitReturn($submission);
+        } catch (\Exception $e) {
+            $this->setError('error', $e->getMessage());
+        }
+
+        return $this->rollbackReturn(false);
+    }
+
+    /**
      * Rejects a submission.
      *
      * @param array                 $data

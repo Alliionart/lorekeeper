@@ -26,6 +26,9 @@
         <li class="nav-item">
             <a class="nav-link {{ set_active('admin/' . ($isClaims ? 'claims' : 'submissions') . '/rejected*') }}" href="{{ url('admin/' . ($isClaims ? 'claims' : 'submissions') . '/rejected') }}">Rejected</a>
         </li>
+        <li class="nav-item">
+            <a class="nav-link {{ set_active('admin/' . ($isClaims ? 'claims' : 'submissions') . '/hold*') }}" href="{{ url('admin/' . ($isClaims ? 'claims' : 'submissions') . '/hold') }}">On Hold</a>
+        </li>
     </ul>
 
     {!! Form::open(['method' => 'GET', 'class' => 'form-inline justify-content-end']) !!}
@@ -99,7 +102,10 @@
                         </div>
                         <div class="col-3 col-md-1">
                             <div class="logs-table-cell">
-                                <span class="btn btn-{{ $submission->status == 'Pending' ? 'secondary' : ($submission->status == 'Approved' ? 'success' : 'danger') }} btn-sm py-0 px-1">{{ $submission->status }}</span>
+                                <span class="btn btn-{{ $submission->status == 'Pending' ? 'secondary' : ($submission->status == 'Approved' ? 'success' : ($submission->status == 'Hold' ? 'warning' : 'danger')) }} btn-sm py-0 px-1">{{ $submission->status }}</span>
+                                @if (!$submission->status = 'Hold')
+                                    <br><small>Hold Reason here</small>
+                                @endif
                             </div>
                         </div>
                         <div class="col-3 col-md-1">

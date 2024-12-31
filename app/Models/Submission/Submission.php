@@ -113,6 +113,17 @@ class Submission extends Model {
     }
 
     /**
+     * Scope a query to only include held submissions.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeHold($query) {
+        return $query->where('status', 'Hold');
+    }
+
+    /**
      * Scope a query to only include viewable submissions.
      *
      * @param \Illuminate\Database\Eloquent\Builder $query

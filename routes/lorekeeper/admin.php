@@ -405,17 +405,17 @@ Route::group(['prefix' => 'raffles', 'middleware' => 'power:manage_raffles'], fu
 // SUBMISSIONS
 Route::group(['prefix' => 'submissions', 'middleware' => 'power:manage_submissions'], function () {
     Route::get('/', 'SubmissionController@getSubmissionIndex');
-    Route::get('/{status}', 'SubmissionController@getSubmissionIndex')->where('status', 'pending|approved|rejected');
+    Route::get('/{status}', 'SubmissionController@getSubmissionIndex')->where('status', 'pending|approved|rejected|hold');
     Route::get('edit/{id}', 'SubmissionController@getSubmission');
-    Route::post('edit/{id}/{action}', 'SubmissionController@postSubmission')->where('action', 'approve|reject|cancel');
+    Route::post('edit/{id}/{action}', 'SubmissionController@postSubmission')->where('action', 'approve|reject|cancel|hold');
 });
 
 // CLAIMS
 Route::group(['prefix' => 'claims', 'middleware' => 'power:manage_submissions'], function () {
     Route::get('/', 'SubmissionController@getClaimIndex');
-    Route::get('/{status}', 'SubmissionController@getClaimIndex')->where('status', 'pending|approved|rejected');
+    Route::get('/{status}', 'SubmissionController@getClaimIndex')->where('status', 'pending|approved|rejected|hold');
     Route::get('edit/{id}', 'SubmissionController@getClaim');
-    Route::post('edit/{id}/{action}', 'SubmissionController@postSubmission')->where('action', 'approve|reject|cancel');
+    Route::post('edit/{id}/{action}', 'SubmissionController@postSubmission')->where('action', 'approve|reject|cancel|hold');
 });
 
 // SUBMISSIONS
