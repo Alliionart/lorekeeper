@@ -18,7 +18,6 @@ use App\Services\InventoryManager;
 use App\Services\ResearchService;
 use Auth;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class GrantController extends Controller {
     /**
