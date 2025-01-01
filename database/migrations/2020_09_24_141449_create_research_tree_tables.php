@@ -1,23 +1,19 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
-class CreateResearchTreeTables extends Migration
-{
+class CreateResearchTreeTables extends Migration {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
-    {
+    public function up() {
         Schema::create('trees', function (Blueprint $table) {
             $table->engine = 'InnoDB';
             $table->increments('id');
 
-            $table->string('name', 191); // What users and admins will see the table as. 
+            $table->string('name', 191); // What users and admins will see the table as.
             $table->string('summary', 300)->nullable()->default(null); // Summary of tree.
             $table->text('description')->nullable()->default(null); // Text description of the tree
             $table->text('parsed_description')->nullable()->default(null); // Text description of the tree, except parsed this time
@@ -30,12 +26,12 @@ class CreateResearchTreeTables extends Migration
             $table->boolean('is_active')->default(1); // Can users see/obtain research from this tree?
             $table->softDeletes();
         });
-        
+
         Schema::create('researches', function (Blueprint $table) {
             $table->engine = 'InnoDB';
             $table->increments('id');
 
-            $table->string('name', 191); // What users and admins will see the table as. 
+            $table->string('name', 191); // What users and admins will see the table as.
             $table->string('summary', 300)->nullable()->default(null); // Summary of research.
             $table->text('description')->nullable()->default(null); // Text description of the tree
             $table->text('parsed_description')->nullable()->default(null); // Text description of the tree, except parsed this time
@@ -51,7 +47,7 @@ class CreateResearchTreeTables extends Migration
             $table->boolean('is_active')->default(1); // Can users see/obtain this research?
             $table->softDeletes();
         });
-        
+
         Schema::create('user_research', function (Blueprint $table) {
             $table->engine = 'InnoDB';
             $table->increments('id');
@@ -66,8 +62,6 @@ class CreateResearchTreeTables extends Migration
 
             $table->timestamps();
             $table->softDeletes();
-            
-
         });
         Schema::create('user_research_log', function (Blueprint $table) {
             $table->engine = 'InnoDB';
@@ -81,9 +75,9 @@ class CreateResearchTreeTables extends Migration
 
             $table->integer('recipient_id')->unsigned()->index()->nullable()->default(null); // User who gained the research, from users table
             $table->integer('sender_id')->unsigned()->index()->nullable()->default(null); // Either Admin who granted or null, from users table
-            
+
             $table->integer('currency_id')->unsigned()->nullable()->default(null); // Currency, from currencies table
-            $table->integer('cost')->default(0); 
+            $table->integer('cost')->default(0);
 
             $table->timestamps();
             $table->softDeletes();
@@ -92,11 +86,8 @@ class CreateResearchTreeTables extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
-    public function down()
-    {
+    public function down() {
         Schema::dropIfExists('user_research_log');
         Schema::dropIfExists('user_research');
         Schema::dropIfExists('researches');

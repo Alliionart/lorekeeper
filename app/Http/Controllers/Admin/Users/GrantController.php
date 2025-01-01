@@ -3,27 +3,22 @@
 namespace App\Http\Controllers\Admin\Users;
 
 use App\Http\Controllers\Controller;
-use Auth;
-use Config;
-use Illuminate\Http\Request;
-
-use App\Models\User\User;
-use App\Models\Item\Item;
-use App\Models\User\UserItem;
-
-use App\Models\Currency\Currency;
-use App\Models\Research\Research;
-use App\Services\ResearchService;
-
 use App\Models\Character\Character;
-use App\Models\Character\CharacterItem;
 use App\Models\Character\CharacterDesignUpdate;
+use App\Models\Character\CharacterItem;
+use App\Models\Currency\Currency;
+use App\Models\Item\Item;
+use App\Models\Research\Research;
 use App\Models\Submission\Submission;
 use App\Models\Trade;
+use App\Models\User\User;
+use App\Models\User\UserItem;
 use App\Services\CurrencyManager;
 use App\Services\InventoryManager;
+use App\Services\ResearchService;
+use Auth;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-
 
 class GrantController extends Controller {
     /**
@@ -122,36 +117,35 @@ class GrantController extends Controller {
         return redirect()->back();
     }
 
-
     /**
      * Show the research grant page.
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getResearch()
-    {
+    public function getResearch() {
         return view('admin.grants.research', [
-            'users' => User::orderBy('id')->pluck('name', 'id'),
-            'research' => Research::orderBy('name')->pluck('name', 'id')
+            'users'    => User::orderBy('id')->pluck('name', 'id'),
+            'research' => Research::orderBy('name')->pluck('name', 'id'),
         ]);
     }
 
     /**
      * Grants or removes research from multiple users.
      *
-     * @param  \Illuminate\Http\Request        $request
-     * @param  App\Services\InventoryManager  $service
+     * @param App\Services\InventoryManager $service
+     *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function postResearch(Request $request, ResearchService $service)
-    {
+    public function postResearch(Request $request, ResearchService $service) {
         $data = $request->only(['users', 'research_ids', 'message']);
-        if($service->grantResearch($data, Auth::user())) {
+        if ($service->grantResearch($data, Auth::user())) {
             flash('Items granted successfully.')->success();
+        } else {
+            foreach ($service->errors()->getMessages()['error'] as $error) {
+                flash($error)->error();
+            }
         }
-        else {
-            foreach($service->errors()->getMessages()['error'] as $error) flash($error)->error();
-        }
+
         return redirect()->back();
     }
 

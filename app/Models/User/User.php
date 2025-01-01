@@ -17,10 +17,9 @@ use App\Models\Notification;
 use App\Models\Rank\Rank;
 use App\Models\Rank\RankPower;
 use App\Models\Recipe\Recipe;
-use App\Models\Shop\ShopLog;
 use App\Models\Research\Research;
 use App\Models\Research\ResearchLog;
-use App\Models\User\UserCharacterLog;
+use App\Models\Shop\ShopLog;
 use App\Models\Submission\Submission;
 use App\Traits\Commenter;
 use Carbon\Carbon;
@@ -210,8 +209,7 @@ class User extends Authenticatable implements MustVerifyEmail {
     /**
      * Get the research attached to this research.
      */
-    public function researches() 
-    {
+    public function researches() {
         return $this->belongsToMany('App\Models\Research\Research', 'user_research')->withPivot('updated_at', 'id')->whereNull('user_research.deleted_at');
     }
 
@@ -562,15 +560,18 @@ class User extends Authenticatable implements MustVerifyEmail {
     /**
      * Get the user's currency logs.
      *
-     * @param  int  $limit
-     * @return \Illuminate\Support\Collection|\Illuminate\Pagination\LengthAwarePaginator
+     * @param int $limit
+     *
+     * @return \Illuminate\Pagination\LengthAwarePaginator|\Illuminate\Support\Collection
      */
-    public function getResearchLogs($limit = 10)
-    {
+    public function getResearchLogs($limit = 10) {
         $user = $this;
         $query = ResearchLog::where('recipient_id', $this->id)->with('tree')->with('research')->with('currency')->orderBy('id', 'DESC');
-        if($limit) return $query->take($limit)->get();
-        else return $query->paginate(30);
+        if ($limit) {
+            return $query->take($limit)->get();
+        } else {
+            return $query->paginate(30);
+        }
     }
 
     /**
@@ -771,15 +772,14 @@ class User extends Authenticatable implements MustVerifyEmail {
         return $recipeCollection;
     }
 
-    /** 
+    /**
      * Checks if the user has a specific research unlocked and attached to its account.
-     * 
+     *
+     * @param mixed $id
+     *
      * @return bool
      */
-    public function hasResearch($id)
-    {
+    public function hasResearch($id) {
         return $this->researches->contains(Research::find($id));
     }
 }
-
-

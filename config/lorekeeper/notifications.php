@@ -320,9 +320,9 @@ return [
     ],
     // RESEARCH_GRANT
     100 => [
-        'name' => 'Research Granted',
+        'name'    => 'Research Granted',
         'message' => 'You have received a staff grant of <a href="{research_url}">{research_name}</a> (of <a href="{tree_url}">{tree_name}</a>) from <a href="{sender_url}">{sender_name}</a>. (<a href="{url}">Unlocked Research</a>)',
-        'url' => 'research/unlocked'
+        'url'     => 'research/unlocked',
     ],
     // REPORT_ASSIGNED
     220 => [

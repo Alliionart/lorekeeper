@@ -25,13 +25,12 @@ return [
     ],
 
     'research_trees' => [
-        'key' => 'research_trees',
+        'key'      => 'research_trees',
         'wiki_key' => 'Research Trees',
         'creators' => json_encode([
             'Uri' => 'https://github.com/preimpression/',
         ]),
-        'version' => '1.1.0'
+        'version' => '1.1.0',
     ],
-
 
 ];

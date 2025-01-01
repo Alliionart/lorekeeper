@@ -2,18 +2,16 @@
 
 namespace App\Models\Research;
 
-use Config;
 use App\Models\Model;
 
-class ResearchReward extends Model
-{
+class ResearchReward extends Model {
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
     protected $fillable = [
-        'research_id', 'rewardable_type', 'rewardable_id', 'quantity'
+        'research_id', 'rewardable_type', 'rewardable_id', 'quantity',
     ];
 
     /**
@@ -30,8 +28,8 @@ class ResearchReward extends Model
      */
     public static $createRules = [
         'rewardable_type' => 'required',
-        'rewardable_id' => 'required',
-        'quantity' => 'required|integer|min:1',
+        'rewardable_id'   => 'required',
+        'quantity'        => 'required|integer|min:1',
     ];
 
     /**
@@ -41,8 +39,8 @@ class ResearchReward extends Model
      */
     public static $updateRules = [
         'rewardable_type' => 'required',
-        'rewardable_id' => 'required',
-        'quantity' => 'required|integer|min:1',
+        'rewardable_id'   => 'required',
+        'quantity'        => 'required|integer|min:1',
     ];
 
     /**********************************************************************************************
@@ -54,10 +52,8 @@ class ResearchReward extends Model
     /**
      * Get the reward attached to the research reward.
      */
-    public function reward()
-    {
-        switch ($this->rewardable_type)
-        {
+    public function reward() {
+        switch ($this->rewardable_type) {
             case 'Item':
                 return $this->belongsTo('App\Models\Item\Item', 'rewardable_id');
                 break;
@@ -71,6 +67,7 @@ class ResearchReward extends Model
                 return $this->belongsTo('App\Models\Raffle\Raffle', 'rewardable_id');
                 break;
         }
+
         return null;
     }
 }
