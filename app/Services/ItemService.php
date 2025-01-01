@@ -324,6 +324,9 @@ class ItemService extends Service {
             if (DB::table('prompt_rewards')->where('rewardable_type', 'Item')->where('rewardable_id', $item->id)->exists()) {
                 throw new \Exception('A prompt currently distributes this item as a reward. Please remove the item before deleting it.');
             }
+            if(DB::table('research_rewards')->where('rewardable_type', 'Item')->where('rewardable_id', $item->id)->exists()) {
+                throw new \Exception("A research branch currently distributes this item as a reward. Please remove the item before deleting it.");
+            }
             if (DB::table('shop_stock')->where('item_id', $item->id)->exists()) {
                 throw new \Exception('A shop currently stocks this item. Please remove the item before deleting it.');
             }

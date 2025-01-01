@@ -318,7 +318,12 @@ return [
         'message' => 'Your claim (#{submission_id}) was cancelled and sent back to drafts by <a href="{staff_url}">{staff_name}</a>. (<a href="{url}">View Claim</a>)',
         'url'     => 'claims/view/{submission_id}',
     ],
-
+    // RESEARCH_GRANT
+    100 => [
+        'name' => 'Research Granted',
+        'message' => 'You have received a staff grant of <a href="{research_url}">{research_name}</a> (of <a href="{tree_url}">{tree_name}</a>) from <a href="{sender_url}">{sender_name}</a>. (<a href="{url}">Unlocked Research</a>)',
+        'url' => 'research/unlocked'
+    ],
     // REPORT_ASSIGNED
     220 => [
         'name'    => 'Report Assigned',

@@ -67,4 +67,14 @@ return [
         'name'        => 'Comment on Sales',
         'description' => 'Allow rank to comment on sales in preview mode.',
     ],
+    'manage_research' => [
+        'name' => 'Manage Research',
+        'description' => 'Allow rank to create, edit, and delete Research and Research Trees.'
+    ],
+    'manage_reports' => [
+        'name' => 'Manage Reports',
+        'description' => 'Allow rank to view the reports queue.'
+    ]
+
+
 ];

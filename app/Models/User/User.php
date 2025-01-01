@@ -18,6 +18,9 @@ use App\Models\Rank\Rank;
 use App\Models\Rank\RankPower;
 use App\Models\Recipe\Recipe;
 use App\Models\Shop\ShopLog;
+use App\Models\Research\Research;
+use App\Models\Research\ResearchLog;
+use App\Models\User\UserCharacterLog;
 use App\Models\Submission\Submission;
 use App\Traits\Commenter;
 use Carbon\Carbon;
@@ -202,6 +205,14 @@ class User extends Authenticatable implements MustVerifyEmail {
      */
     public function commentLikes() {
         return $this->hasMany(CommentLike::class);
+    }
+
+    /**
+     * Get the research attached to this research.
+     */
+    public function researches() 
+    {
+        return $this->belongsToMany('App\Models\Research\Research', 'user_research')->withPivot('updated_at', 'id')->whereNull('user_research.deleted_at');
     }
 
     /**********************************************************************************************
@@ -549,6 +560,20 @@ class User extends Authenticatable implements MustVerifyEmail {
     }
 
     /**
+     * Get the user's currency logs.
+     *
+     * @param  int  $limit
+     * @return \Illuminate\Support\Collection|\Illuminate\Pagination\LengthAwarePaginator
+     */
+    public function getResearchLogs($limit = 10)
+    {
+        $user = $this;
+        $query = ResearchLog::where('recipient_id', $this->id)->with('tree')->with('research')->with('currency')->orderBy('id', 'DESC');
+        if($limit) return $query->take($limit)->get();
+        else return $query->paginate(30);
+    }
+
+    /**
      * Get the user's item logs.
      *
      * @param int $limit
@@ -745,4 +770,16 @@ class User extends Authenticatable implements MustVerifyEmail {
 
         return $recipeCollection;
     }
+
+    /** 
+     * Checks if the user has a specific research unlocked and attached to its account.
+     * 
+     * @return bool
+     */
+    public function hasResearch($id)
+    {
+        return $this->researches->contains(Research::find($id));
+    }
 }
+
+

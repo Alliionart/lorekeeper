@@ -46,6 +46,8 @@
                             <div class="dropdown-divider"></div>
                             <a class="dropdown-item" href="{{ url('comments/liked') }}">
                                 Liked Comments
+                            <a class="dropdown-item" href="{{ url('research/unlocked') }}">
+                                My Research
                             </a>
                         </div>
                     </li>
@@ -118,6 +120,9 @@
                         </a>
                         <a class="dropdown-item" href="{{ url('shops') }}">
                             Shops
+                        </a>
+                        <a class="dropdown-item" href="{{ url('research-trees') }}">
+                            Research
                         </a>
                     </div>
                 </li>

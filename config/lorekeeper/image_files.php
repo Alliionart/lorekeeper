@@ -47,8 +47,13 @@ return [
         'description' => 'The default masterlist thumbnail used for MYO slots when no image is uploaded. PNG format, size of masterlist thumbnails.',
         'filename'    => 'myo-th.png',
     ],
-    'meta-image'      => [
-        'name'        => 'Meta Tag Image',
+    'research-tree' => [
+        'name' => 'Research Tree Icon',
+        'description' => 'The research tree graphic on the front page. PNG format, default size of 200px x 200px (no restriction)',
+        'filename' => 'research-tree.png'
+    ],
+    'meta-image' => [
+        'name' => 'Meta Tag Image',
         'description' => 'The image displayed in meta tag previews on social media, discord, and the like. PNG format, no size restriction.',
         'filename'    => 'meta-image.png',
     ],

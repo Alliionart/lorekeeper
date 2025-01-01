@@ -158,4 +158,5 @@ class Notification extends Model {
     public const GALLERY_SUBMISSION_EDITED = 514;
     public const GALLERY_SUBMISSION_PARTICIPANT = 515;
     public const RECIPE_GRANT = 600; // Draginraptor - Crafting
+    public const RESEARCH_GRANT = 100; // URI - Research Tree
 }
