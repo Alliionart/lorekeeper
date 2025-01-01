@@ -47,6 +47,14 @@
                 </div>
                 <div class="col-md-10 col-8"><a href="{{ $submission->url }}">{{ $submission->url }}</a></div>
             </div>
+            @if (config('lorekeeper.settings.allow_gallery_submissions_on_prompts') && $submission->data['gallery_submission_id'])
+                <div class="row mb-2 no-gutters">
+                    <div class="col-md-2">
+                        <h5 class="mb-0">Gallery Submission</h5>
+                    </div>
+                    <div class="col-md-10"><a href="{{ $submission->gallerySubmission->url }}">{{ $submission->gallerySubmission->title }}</a></div>
+                </div>
+            @endif
             <div class="row">
                 <div class="col-md-2 col-4">
                     <h5>Submitted</h5>
@@ -74,7 +82,7 @@
         {!! Form::open(['url' => url()->current(), 'id' => 'submissionForm']) !!}
 
         <h2>Rewards</h2>
-        @include('widgets._loot_select', ['loots' => $submission->rewards, 'showLootTables' => true, 'showRaffles' => true])
+        @include('widgets._loot_select', ['loots' => $submission->rewards, 'showLootTables' => true, 'showRaffles' => true, 'showRecipes' => true])
         @if ($submission->prompt_id)
             <div class="mb-3">
                 @include('home._prompt', ['prompt' => $submission->prompt, 'staffView' => true])
@@ -83,8 +91,7 @@
 
         <h2>Characters</h2>
         <div id="characters" class="mb-3">
-            @if (count(
-                    $submission->characters()->whereRelation('character', 'deleted_at', null)->get()) != count($submission->characters()->get()))
+            @if (count($submission->characters()->whereRelation('character', 'deleted_at', null)->get()) != count($submission->characters()->get()))
                 <div class="alert alert-warning">
                     Some characters have been deleted since this submission was created.
                 </div>
@@ -225,7 +232,7 @@
                 </tr>
             </table>
         </div>
-        @include('widgets._loot_select_row', ['showLootTables' => true, 'showRaffles' => true])
+        @include('widgets._loot_select_row', ['showLootTables' => true, 'showRaffles' => true, 'showRecipes' => true])
 
         <div class="modal fade" id="confirmationModal" tabindex="-1" role="dialog">
             <div class="modal-dialog" role="document">
@@ -277,7 +284,7 @@
 @section('scripts')
     @parent
     @if ($submission->status == 'Pending')
-        @include('js._loot_js', ['showLootTables' => true, 'showRaffles' => true])
+        @include('js._loot_js', ['showLootTables' => true, 'showRaffles' => true, 'showRecipes' => true])
         @include('js._character_select_js')
 
         <script>

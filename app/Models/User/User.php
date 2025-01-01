@@ -16,6 +16,7 @@ use App\Models\Item\ItemLog;
 use App\Models\Notification;
 use App\Models\Rank\Rank;
 use App\Models\Rank\RankPower;
+use App\Models\Recipe\Recipe;
 use App\Models\Shop\ShopLog;
 use App\Models\Submission\Submission;
 use App\Traits\Commenter;
@@ -162,6 +163,13 @@ class User extends Authenticatable implements MustVerifyEmail {
      */
     public function items() {
         return $this->belongsToMany(Item::class, 'user_items')->withPivot('count', 'data', 'updated_at', 'id')->whereNull('user_items.deleted_at');
+    }
+
+    /**
+     * Get the user's items.
+     */
+    public function recipes() {
+        return $this->belongsToMany('App\Models\Recipe\Recipe', 'user_recipes')->withPivot('id');
     }
 
     /**
@@ -448,7 +456,7 @@ class User extends Authenticatable implements MustVerifyEmail {
      */
     public function getcheckBirthdayAttribute() {
         $bday = $this->birthday;
-        if (!$bday || $bday->diffInYears(carbon::now()) < 13) {
+        if (!$bday || $bday->diffInYears(Carbon::now()) < 13) {
             return false;
         } else {
             return true;
@@ -553,6 +561,27 @@ class User extends Authenticatable implements MustVerifyEmail {
             $query->with('sender')->where('sender_type', 'User')->where('sender_id', $user->id)->whereNotIn('log_type', ['Staff Grant', 'Prompt Rewards', 'Claim Rewards']);
         })->orWhere(function ($query) use ($user) {
             $query->with('recipient')->where('recipient_type', 'User')->where('recipient_id', $user->id)->where('log_type', '!=', 'Staff Removal');
+        })->orderBy('id', 'DESC');
+        if ($limit) {
+            return $query->take($limit)->get();
+        } else {
+            return $query->paginate(30);
+        }
+    }
+
+    /**
+     * Get the user's recipe logs.
+     *
+     * @param int $limit
+     *
+     * @return \Illuminate\Pagination\LengthAwarePaginator|\Illuminate\Support\Collection
+     */
+    public function getRecipeLogs($limit = 10) {
+        $user = $this;
+        $query = UserRecipeLog::with('recipe')->where(function ($query) use ($user) {
+            $query->with('sender')->where('sender_id', $user->id)->whereNotIn('log_type', ['Staff Grant', 'Prompt Rewards', 'Claim Rewards']);
+        })->orWhere(function ($query) use ($user) {
+            $query->with('recipient')->where('recipient_id', $user->id)->where('log_type', '!=', 'Staff Removal');
         })->orderBy('id', 'DESC');
         if ($limit) {
             return $query->take($limit)->get();
@@ -669,9 +698,51 @@ class User extends Authenticatable implements MustVerifyEmail {
      *
      * @param mixed $character
      *
-     * @return \App\Models\Character\CharacterBookmark
+     * @return CharacterBookmark
      */
     public function hasBookmarked($character) {
         return CharacterBookmark::where('user_id', $this->id)->where('character_id', $character->id)->first();
+    }
+
+    /**
+     * Checks if the user has the named recipe.
+     *
+     * @param mixed $recipe_id
+     *
+     * @return bool
+     */
+    public function hasRecipe($recipe_id) {
+        $recipe = Recipe::find($recipe_id);
+        $user_has = $this->recipes->contains($recipe);
+        $default = !$recipe->needs_unlocking;
+
+        return $default ? true : $user_has;
+    }
+
+    /**
+     * Returned recipes listed that are owned
+     * Reversal simply.
+     *
+     * @param mixed $ids
+     * @param mixed $reverse
+     *
+     * @return object
+     */
+    public function ownedRecipes($ids, $reverse = false) {
+        $recipes = Recipe::find($ids);
+        $recipeCollection = [];
+        foreach ($recipes as $recipe) {
+            if ($reverse) {
+                if (!$this->recipes->contains($recipe)) {
+                    $recipeCollection[] = $recipe;
+                }
+            } else {
+                if ($this->recipes->contains($recipe)) {
+                    $recipeCollection[] = $recipe;
+                }
+            }
+        }
+
+        return $recipeCollection;
     }
 }

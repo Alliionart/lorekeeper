@@ -24,14 +24,34 @@
     </div>
 @endif
 
-<div class="form-group">
-    {!! Form::label('url', $isClaim ? 'URL (Optional)' : 'Submission URL (Optional)') !!}
-    @if ($isClaim)
-        {!! add_help('Enter a URL relevant to your claim (for example, a comment proving you may make this claim).') !!}
-    @else
-        {!! add_help('Enter the URL of your submission (whether uploaded to dA or some other hosting service).') !!}
+<div class="row">
+    <div class="col-md-{{ config('lorekeeper.settings.allow_gallery_submissions_on_prompts') && !$isClaim ? '6' : '12' }}">
+        <div class="form-group">
+            {!! Form::label('url', $isClaim ? 'URL (Optional)' : 'Submission URL ' . (config('lorekeeper.settings.allow_gallery_submissions_on_prompts') ? ' / Title' : '') . '(Optional)') !!}
+            @if ($isClaim)
+                {!! add_help('Enter a URL relevant to your claim (for example, a comment proving you may make this claim).') !!}
+            @else
+                {!! add_help(
+                    'Enter the URL of your submission (whether uploaded to dA or some other hosting service).' .
+                        (config('lorekeeper.settings.allow_gallery_submissions_on_prompts') ? ' Alternatively, if you are submitting a gallery link, you can enter the title of your submission here.' : ''),
+                ) !!}
+            @endif
+            {!! Form::text('url', isset($submission->url) ? $submission->url : old('url') ?? Request::get('url'), ['class' => 'form-control', 'required']) !!}
+        </div>
+    </div>
+    @if (config('lorekeeper.settings.allow_gallery_submissions_on_prompts') && !$isClaim)
+        <div class="col-md-6">
+            <div class="form-group">
+                {!! Form::label('gallery_submission_id', 'Gallery URL (Optional)') !!}
+                {!! add_help('Select the gallery submission this prompt is for.') !!}
+                {!! Form::select('gallery_submission_id', $userGallerySubmissions, $submission->data['gallery_submission_id'] ?? (old('gallery_submission_id') ?? Request::get('gallery_submission_id')), [
+                    'class' => 'form-control selectize',
+                    'id' => 'gallery_submission_id',
+                    'placeholder' => 'Select Your Gallery Submission',
+                ]) !!}
+            </div>
+        </div>
     @endif
-    {!! Form::text('url', isset($submission->url) ? $submission->url : old('url') ?? Request::get('url'), ['class' => 'form-control', 'required']) !!}
 </div>
 
 <div class="form-group">
@@ -73,9 +93,9 @@
             @endphp
         @endif
         @if ($isClaim)
-            @include('widgets._loot_select', ['loots' => $submission->id ? $submission->rewards : $loots ?? null, 'showLootTables' => false, 'showRaffles' => true])
+            @include('widgets._loot_select', ['loots' => $submission->id ? $submission->rewards : $loots ?? null, 'showLootTables' => false, 'showRaffles' => true, 'showRecipes' => true])
         @else
-            @include('widgets._loot_select', ['loots' => $submission->id ? $submission->rewards : $loots ?? null, 'showLootTables' => false, 'showRaffles' => false])
+            @include('widgets._loot_select', ['loots' => $submission->id ? $submission->rewards : $loots ?? null, 'showLootTables' => false, 'showRaffles' => false, 'showRecipes' => false])
         @endif
 
         @if (!$isClaim)
@@ -158,7 +178,7 @@
 
 @include('widgets._character_select', ['characterCurrencies' => $characterCurrencies, 'showLootTables' => false])
 @if ($isClaim)
-    @include('widgets._loot_select_row', ['items' => $items, 'currencies' => $currencies, 'showLootTables' => false, 'showRaffles' => true])
+    @include('widgets._loot_select_row', ['items' => $items, 'currencies' => $currencies, 'showLootTables' => false, 'showRaffles' => true, 'showRecipes' => true])
 @else
-    @include('widgets._loot_select_row', ['items' => $items, 'currencies' => $currencies, 'showLootTables' => false, 'showRaffles' => false])
+    @include('widgets._loot_select_row', ['items' => $items, 'currencies' => $currencies, 'showLootTables' => false, 'showRaffles' => false, 'showRecipes' => false])
 @endif

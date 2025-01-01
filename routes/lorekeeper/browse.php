@@ -47,6 +47,8 @@ Route::get('/deactivated-list', 'BrowseController@getDeactivated');
 // PROFILES
 Route::group(['prefix' => 'user', 'namespace' => 'Users'], function () {
     Route::get('{name}/gallery', 'UserController@getUserGallery');
+    Route::get('{name}/character-designs', 'UserController@getUserCharacterDesigns');
+    Route::get('{name}/character-art', 'UserController@getUserCharacterArt');
     Route::get('{name}/favorites', 'UserController@getUserFavorites');
     Route::get('{name}/favorites/own-characters', 'UserController@getUserOwnCharacterFavorites');
 
@@ -62,6 +64,8 @@ Route::group(['prefix' => 'user', 'namespace' => 'Users'], function () {
     Route::get('{name}/item-logs', 'UserController@getUserItemLogs');
     Route::get('{name}/ownership', 'UserController@getUserOwnershipLogs');
     Route::get('{name}/submissions', 'UserController@getUserSubmissions');
+
+    Route::get('{name}/recipe-logs', 'UserController@getUserRecipeLogs');
 });
 
 /**************************************************************************************************
@@ -104,13 +108,17 @@ Route::group(['prefix' => 'world'], function () {
     Route::get('species', 'WorldController@getSpecieses');
     Route::get('subtypes', 'WorldController@getSubtypes');
     Route::get('species/{id}/traits', 'WorldController@getSpeciesFeatures');
-    Route::get('species/{speciesId}/trait/{id}', 'WorldController@getSpeciesFeatureDetail')->where(['id' => '[0-9]+', 'speciesId' => '[0-9]+']);
+    Route::get('subtypes/{id}/traits', 'WorldController@getSubtypeFeatures');
+    Route::get('universaltraits', 'WorldController@getUniversalFeatures');
     Route::get('item-categories', 'WorldController@getItemCategories');
     Route::get('items', 'WorldController@getItems');
     Route::get('items/{id}', 'WorldController@getItem');
     Route::get('trait-categories', 'WorldController@getFeatureCategories');
     Route::get('traits', 'WorldController@getFeatures');
+    Route::get('traits/modal/{id}', 'WorldController@getFeatureDetail')->where(['id' => '[0-9]+']);
     Route::get('character-categories', 'WorldController@getCharacterCategories');
+    Route::get('recipes', 'WorldController@getRecipes');
+    Route::get('recipes/{id}', 'WorldController@getRecipe');
 });
 
 Route::group(['prefix' => 'prompts'], function () {
