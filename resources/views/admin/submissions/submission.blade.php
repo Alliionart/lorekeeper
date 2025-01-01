@@ -13,7 +13,8 @@
 
     @if (Auth::check() && $submission->staff_comments && ($submission->user_id == Auth::user()->id || Auth::user()->hasPower('manage_submissions')))
         @if ($submission->status != 'Hold')
-            <div class="alert alert-warning w-100 mb-4"><strong>This Submission is On Hold.</strong> While it may be processed by other admins, this submission was originally held by {!! $submission->staff->displayName !!}. Make sure you are free to take their submission before proceeding!</div>
+            <div class="alert alert-warning w-100 mb-4"><strong>This Submission is On Hold.</strong> While it may be processed by other admins, this submission was originally held by {!! $submission->staff->displayName !!}. Make sure you are free to take their submission
+                before proceeding!</div>
         @endif
     @endif
 

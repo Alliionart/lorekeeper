@@ -88,11 +88,11 @@
                             <div class="col-12 col-md-2">
                                 <div class="logs-table-cell">{!! $submission->prompt->displayName !!}
 
-                                @if ($submission->status = 'Hold')
-                                    @if (Auth::check() && $submission->staff_comments)
-                                    <br><small class="badge badge-warning">{!! $submission->staff->displayName !!}: {!! $submission->parsed_staff_comments !!}</small>
+                                    @if ($submission->status = 'Hold')
+                                        @if (Auth::check() && $submission->staff_comments)
+                                            <br><small class="badge badge-warning">{!! $submission->staff->displayName !!}: {!! $submission->parsed_staff_comments !!}</small>
+                                        @endif
                                     @endif
-                                @endif
                                 </div>
                             </div>
                         @endif
