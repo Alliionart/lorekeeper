@@ -11,11 +11,17 @@
         {!! breadcrumbs(['Admin Panel' => 'admin', 'Claim Queue' => 'admin/claims/pending', 'Claim (#' . $submission->id . ')' => $submission->viewUrl]) !!}
     @endif
 
+    @if (Auth::check() && $submission->staff_comments && ($submission->user_id == Auth::user()->id || Auth::user()->hasPower('manage_submissions')))
+        @if ($submission->status != 'Hold')
+            <div class="alert alert-warning w-100 mb-4"><strong>This Submission is On Hold.</strong> While it may be processed by other admins, this submission was originally held by {!! $submission->staff->displayName !!}. Make sure you are free to take their submission before proceeding!</div>
+        @endif
+    @endif
+
     @if ($submission->status == 'Pending')
 
         <h1>
             {{ $submission->prompt_id ? 'Submission' : 'Claim' }} (#{{ $submission->id }})
-            <span class="float-right badge badge-{{ $submission->status == 'Pending' || $submission->status == 'Draft' ? 'secondary' : ($submission->status == 'Approved' ? 'success' : 'danger') }}">
+            <span class="float-right badge badge-{{ $submission->status == 'Pending' || $submission->status == 'Draft' ? 'secondary' : ($submission->status == 'Approved' ? 'success' : ($submission->status == 'Hold' ? 'warning' : 'danger')) }}">
                 {{ $submission->status }}
             </span>
         </h1>

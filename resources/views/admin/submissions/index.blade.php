@@ -86,7 +86,14 @@
                     <div class="row flex-wrap">
                         @if (!$isClaims)
                             <div class="col-12 col-md-2">
-                                <div class="logs-table-cell">{!! $submission->prompt->displayName !!}</div>
+                                <div class="logs-table-cell">{!! $submission->prompt->displayName !!}
+
+                                @if ($submission->status = 'Hold')
+                                    @if (Auth::check() && $submission->staff_comments)
+                                    <br><small class="badge badge-warning">{!! $submission->staff->displayName !!}: {!! $submission->parsed_staff_comments !!}</small>
+                                    @endif
+                                @endif
+                                </div>
                             </div>
                         @endif
                         <div class="col-6 {{ !$isClaims ? 'col-md-2' : 'col-md-3' }}">
@@ -103,9 +110,6 @@
                         <div class="col-3 col-md-1">
                             <div class="logs-table-cell">
                                 <span class="btn btn-{{ $submission->status == 'Pending' ? 'secondary' : ($submission->status == 'Approved' ? 'success' : ($submission->status == 'Hold' ? 'warning' : 'danger')) }} btn-sm py-0 px-1">{{ $submission->status }}</span>
-                                @if (!$submission->status = 'Hold')
-                                    <br><small>Hold Reason here</small>
-                                @endif
                             </div>
                         </div>
                         <div class="col-3 col-md-1">
