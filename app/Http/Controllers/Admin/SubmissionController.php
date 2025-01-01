@@ -157,9 +157,11 @@ class SubmissionController extends Controller {
             flash('Submission rejected successfully.')->success();
         } elseif ($action == 'cancel' && $service->cancelSubmission($request->only(['staff_comments']) + ['id' => $id], Auth::user())) {
             flash('Submission canceled successfully.')->success();
+
             return redirect()->to('admin/submissions');
-        }  elseif ($action == 'hold' && $service->holdSubmission($request->only(['staff_comments']) + ['id' => $id], Auth::user())) {
+        } elseif ($action == 'hold' && $service->holdSubmission($request->only(['staff_comments']) + ['id' => $id], Auth::user())) {
             flash('Submission added to the On Hold queue. Make sure to check back!')->success();
+
             return redirect()->to('admin/submissions');
         } elseif ($action == 'approve' && $service->approveSubmission($data + ['id' => $id], Auth::user())) {
             flash('Submission approved successfully.')->success();

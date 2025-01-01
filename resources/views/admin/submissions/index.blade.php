@@ -109,7 +109,11 @@
                         </div>
                         <div class="col-3 col-md-1">
                             <div class="logs-table-cell">
-                                <span class="btn btn-{{ $submission->status == 'Pending' ? 'secondary' : ($submission->status == 'Approved' ? 'success' : ($submission->status == 'Hold' ? 'warning' : 'danger')) }} btn-sm py-0 px-1">{{ $submission->status }}</span>
+                                <span
+                                    class="btn btn-{{ $submission->status == 'Pending' ? 'secondary' : ($submission->status == 'Approved' ? 'success' : ($submission->status == 'Hold' ? 'warning' : 'danger')) }} btn-sm py-0 px-1">{{ $submission->status }}</span>
+                                @if (!($submission->status = 'Hold'))
+                                    <br><small>Hold Reason here</small>
+                                @endif
                             </div>
                         </div>
                         <div class="col-3 col-md-1">
