@@ -1,5 +1,5 @@
-@if($tree)
-    {!! Form::open(['url' => 'admin/data/trees/delete/'.$tree->id]) !!}
+@if ($tree)
+    {!! Form::open(['url' => 'admin/data/trees/delete/' . $tree->id]) !!}
 
     <p>
         You are about to delete the research tree <strong>{{ $tree->name }}</strong>. This is not reversible.
@@ -12,6 +12,6 @@
     </div>
 
     {!! Form::close() !!}
-@else 
+@else
     Invalid research tree selected.
 @endif

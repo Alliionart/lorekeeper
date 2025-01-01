@@ -46,9 +46,9 @@
                             <div class="dropdown-divider"></div>
                             <a class="dropdown-item" href="{{ url('comments/liked') }}">
                                 Liked Comments
-                            <a class="dropdown-item" href="{{ url('research/unlocked') }}">
-                                My Research
-                            </a>
+                                <a class="dropdown-item" href="{{ url('research/unlocked') }}">
+                                    My Research
+                                </a>
                         </div>
                     </li>
                     <li class="nav-item dropdown">

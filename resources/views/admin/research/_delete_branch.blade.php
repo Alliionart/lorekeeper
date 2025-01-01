@@ -1,5 +1,5 @@
-@if($research)
-    {!! Form::open(['url' => 'admin/data/research/delete/'.$research->id]) !!}
+@if ($research)
+    {!! Form::open(['url' => 'admin/data/research/delete/' . $research->id]) !!}
 
     <p>
         You are about to delete the research <strong>{{ $research->name }}</strong>. This is not reversible.
@@ -12,6 +12,6 @@
     </div>
 
     {!! Form::close() !!}
-@else 
+@else
     Invalid research selected.
 @endif

@@ -58,17 +58,17 @@
 </div>
 
 @include('widgets._recent_gallery_submissions', ['gallerySubmissions' => $gallerySubmissions])
-    <div class="col-md-6">
-        <div class="card">
-            <div class="card-body text-center">
-                <img src="{{ asset('images/research-tree.png') }}" />
-                <h5 class="card-title">Research</h5>
-            </div>
-            <ul class="list-group list-group-flush">
-                <li class="list-group-item"><a href="{{ url('research/unlocked') }}">My Unlocked Research</a></li>
-                <li class="list-group-item"><a href="{{ url('research-trees') }}">Research Trees</a></li>
-                <li class="list-group-item"><a href="{{ url('research/history') }}">Research Logs</a></li>
-            </ul>
+<div class="col-md-6">
+    <div class="card">
+        <div class="card-body text-center">
+            <img src="{{ asset('images/research-tree.png') }}" />
+            <h5 class="card-title">Research</h5>
         </div>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item"><a href="{{ url('research/unlocked') }}">My Unlocked Research</a></li>
+            <li class="list-group-item"><a href="{{ url('research-trees') }}">Research Trees</a></li>
+            <li class="list-group-item"><a href="{{ url('research/history') }}">Research Logs</a></li>
+        </ul>
     </div>
+</div>
 </div>
