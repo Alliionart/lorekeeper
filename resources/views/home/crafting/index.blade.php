@@ -79,30 +79,31 @@
 
     <h3>Your Unlocked Recipes</h3>
     @if (Auth::user()->recipes->count())
-    <div class="card character-bio">
-    <div class="card-header">
-        <ul class="nav nav-tabs card-header-tabs">
-            @foreach($userRecipes as $categoryId=>$categoryrecipes)
-                <li class="nav-item">
-                    <a class="nav-link {{ $loop->first ? 'active' : '' }}" id="categoryTab-{{ isset($categories[$categoryId]) ? $categoryId : 'misc'}}" data-toggle="tab" href="#category-{{ isset($categories[$categoryId]) ? $categoryId : 'misc'}}" role="tab">
-                        {!! isset($categories[$categoryId]) ? $categories[$categoryId]->name : 'Miscellaneous' !!}
-                    </a>
-                </li>
-            @endforeach
-        </ul>
-    </div>
-    <div class="card-body tab-content">
-        @foreach($userRecipes as $categoryId=>$categoryrecipes)
-            <div class="tab-pane fade {{ $loop->first ? 'show active' : '' }}" id="category-{{ isset($categories[$categoryId]) ? $categoryId : 'misc'}}">
-                @foreach($categoryrecipes->chunk(4) as $chunk)
-                @foreach($chunk as $recipe)
-                @include('home.crafting._smaller_recipe_card', ['recipe' => $recipe])
-                @endforeach
+        <div class="card character-bio">
+            <div class="card-header">
+                <ul class="nav nav-tabs card-header-tabs">
+                    @foreach ($userRecipes as $categoryId => $categoryrecipes)
+                        <li class="nav-item">
+                            <a class="nav-link {{ $loop->first ? 'active' : '' }}" id="categoryTab-{{ isset($categories[$categoryId]) ? $categoryId : 'misc' }}" data-toggle="tab"
+                                href="#category-{{ isset($categories[$categoryId]) ? $categoryId : 'misc' }}" role="tab">
+                                {!! isset($categories[$categoryId]) ? $categories[$categoryId]->name : 'Miscellaneous' !!}
+                            </a>
+                        </li>
+                    @endforeach
+                </ul>
+            </div>
+            <div class="card-body tab-content">
+                @foreach ($userRecipes as $categoryId => $categoryrecipes)
+                    <div class="tab-pane fade {{ $loop->first ? 'show active' : '' }}" id="category-{{ isset($categories[$categoryId]) ? $categoryId : 'misc' }}">
+                        @foreach ($categoryrecipes->chunk(4) as $chunk)
+                            @foreach ($chunk as $recipe)
+                                @include('home.crafting._smaller_recipe_card', ['recipe' => $recipe])
+                            @endforeach
+                        @endforeach
+                    </div>
                 @endforeach
             </div>
-        @endforeach
-    </div>
-</div>
+        </div>
     @else
         You haven't unlocked any recipes!
     @endif
