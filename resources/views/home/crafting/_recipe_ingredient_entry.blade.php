@@ -1,8 +1,9 @@
 @switch($ingredient->ingredient_type)
     @case('Item')
-        {{ $ingredient->quantity }} @if (isset($ingredient->ingredient->image_url))
+        @if (isset($ingredient->ingredient->image_url))
             <img class="small-icon" src="{{ $ingredient->ingredient->image_url }}">
         @endif
+        <span class="qty" base="{{ $ingredient->quantity }}">x{{ $ingredient->quantity }}</span>
         <span>
             {!! $ingredient->ingredient->displayName !!}</span>
     @break

@@ -10,8 +10,11 @@
     <h1>
         My Recipe Book
     </h1>
+    <div class="float-right mb-4">
+        <a href="{{ url(Auth::user()->url . '/recipe-logs') }}">View logs...</a>
+    </div>
     <p> This is a list of recipes that you have unlocked, as well as automatically unlocked recipes. </p>
-
+    
     <hr>
 
     <div class="row">
@@ -43,73 +46,53 @@
                         <div class="card-header" id="headingTwo">
                             <h5 class="mb-0">
                                 <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                                    Collapsible Group Item #2
+                                    Unlocked Recipes
                                 </button>
                             </h5>
                         </div>
                         <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
-                            <div class="card-body">
-                                Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf
-                                moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur
-                                butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+                            @if (Auth::user()->recipes->count())
+                                <div class="card nestedAccordions">
+                                        @foreach($userRecipes as $categoryId=>$categoryrecipes)
+                                            <!-- Accordion Test -->
+                                            <div class="accordion w-100" id="accordionNested">
+                                                <div class="card">
+                                                    <div class="card-header" id="heading{!! isset($categories[$categoryId]) !!}">
+                                                        <h2 class="mb-0">
+                                                            <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" data-target="#collapse{!! isset($categories[$categoryId]) ? $categories[$categoryId]->name : 'Miscellaneous' !!}" aria-expanded="true" aria-controls="collapseOne">
+                                                            {!! isset($categories[$categoryId]) ? $categories[$categoryId]->name : 'Miscellaneous' !!}
+                                                            </button>
+                                                        </h2>
+                                                    </div>
+
+                                                    <div id="collapse{!! isset($categories[$categoryId]) ? $categories[$categoryId]->name : 'Miscellaneous' !!}" class="collapse {{ $loop->first ? 'show' : '' }} pt-2" aria-labelledby="heading{!! isset($categories[$categoryId]) !!}" data-parent="#accordionNested">
+                                                        @foreach($userRecipes as $categoryId=>$categoryrecipes)
+                                                                @foreach($categoryrecipes->chunk(4) as $chunk)
+                                                                    @foreach($chunk as $recipe)
+                                                                        @include('home.crafting._smaller_recipe_card', ['recipe' => $recipe])
+                                                                    @endforeach
+                                                                @endforeach
+                                                            @endforeach
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                    <!-- Accordion Test End -->
+                                        @endforeach
+                                </div>
                             </div>
-                        </div>
-                    </div>
-                    <div class="card">
-                        <div class="card-header" id="headingThree">
-                            <h5 class="mb-0">
-                                <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-                                    Collapsible Group Item #3
-                                </button>
-                            </h5>
-                        </div>
-                        <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordion">
-                            <div class="card-body">
-                                Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf
-                                moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur
-                                butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
-                            </div>
+                                @else
+                                    You haven't unlocked any recipes!
+                                @endif
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="col-md-9">Crafting Section</div>
-    </div>
-
-    <h3>Your Unlocked Recipes</h3>
-    @if (Auth::user()->recipes->count())
-    <div class="card character-bio">
-    <div class="card-header">
-        <ul class="nav nav-tabs card-header-tabs">
-            @foreach($userRecipes as $categoryId=>$categoryrecipes)
-                <li class="nav-item">
-                    <a class="nav-link {{ $loop->first ? 'active' : '' }}" id="categoryTab-{{ isset($categories[$categoryId]) ? $categoryId : 'misc'}}" data-toggle="tab" href="#category-{{ isset($categories[$categoryId]) ? $categoryId : 'misc'}}" role="tab">
-                        {!! isset($categories[$categoryId]) ? $categories[$categoryId]->name : 'Miscellaneous' !!}
-                    </a>
-                </li>
-            @endforeach
-        </ul>
-    </div>
-    <div class="card-body tab-content">
-        @foreach($userRecipes as $categoryId=>$categoryrecipes)
-            <div class="tab-pane fade {{ $loop->first ? 'show active' : '' }}" id="category-{{ isset($categories[$categoryId]) ? $categoryId : 'misc'}}">
-                @foreach($categoryrecipes->chunk(4) as $chunk)
-                @foreach($chunk as $recipe)
-                @include('home.crafting._smaller_recipe_card', ['recipe' => $recipe])
-                @endforeach
-                @endforeach
+            <div class="col-md-9">
+                <div id="active-craft"></div>
             </div>
-        @endforeach
+        </div>
     </div>
 </div>
-    @else
-        You haven't unlocked any recipes!
-    @endif
-    <div class="text-right mb-4">
-        <a href="{{ url(Auth::user()->url . '/recipe-logs') }}">View logs...</a>
-    </div>
-
 
 @endsection
 
@@ -119,8 +102,12 @@
         $(document).ready(function() {
             $('.btn-craft').on('click', function(e) {
                 e.preventDefault();
+                var $activeSection = $('#active-craft');
                 var $parent = $(this).parent().parent().parent();
-                loadModal("{{ url('crafting/craft') }}/" + $parent.data('id'), $parent.data('name'));
+                //loadModal("{{ url('crafting/craft') }}/" + $parent.data('id'), $parent.data('name'));
+                $($activeSection).html('');
+                
+                $($activeSection).load("{{ url('crafting/craft') }}/" + $parent.data('id'), $parent.data('name'));
             });
         });
     </script>

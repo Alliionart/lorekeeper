@@ -51,10 +51,26 @@
         {{-- Check if sufficient ingredients have been selected? --}}
         {!! Form::open(['url' => 'crafting/craft/' . $recipe->id]) !!}
         @include('widgets._inventory_select', ['user' => Auth::user(), 'inventory' => $inventory, 'categories' => $categories, 'selected' => $selected, 'page' => $page])
-        <div class="text-right">
-            {!! Form::submit('Craft', ['class' => 'btn btn-primary']) !!}
+        <div class="dynamicIngredients">
+            <div class="card">
+                <div class="card-body">
+                    <h4>Current Ingredients</h4>
+                    <ul class="recipe-list">
+                        @foreach ($recipe->ingredients as $ingredient)
+                            <li>
+                                @include('home.crafting._recipe_ingredient_entry', ['ingredient' => $ingredient])
+                            </li>
+                        @endforeach
+                    </ul>
+                    <div class="text-right">
+                        <input type="number" id="craftQty" min="1" max="100" value="1"></input>
+                        {!! Form::submit('Craft', ['class' => 'btn btn-primary']) !!}
+                    </div>
+                    {!! Form::close() !!}
+                </div>
+            </div>
         </div>
-        {!! Form::close() !!}
+        
     @else
         <div class="alert alert-danger">You do not have all of the required recipe ingredients.</div>
     @endif
@@ -66,5 +82,15 @@
         var code = e.keyCode || e.which;
         if (code == 13)
             return false;
+    });
+    $('#craftQty').on('change', function() {
+        let qty = 1;
+        qty = $(this).val();
+
+        $('.dynamicIngredients .qty').each(function(index, element) {
+                let base = $(this).attr('base');
+                let newQty = base * qty;
+                $(this).text('x'+newQty);
+            });
     });
 </script>

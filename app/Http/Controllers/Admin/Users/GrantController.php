@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers\Admin\Users;
 
+use Auth;
 use App\Http\Controllers\Controller;
 use App\Models\Character\Character;
 use App\Models\Character\CharacterDesignUpdate;
 use App\Models\Character\CharacterItem;
 use App\Models\Currency\Currency;
 use App\Models\Item\Item;
-use App\Models\Recipe;
 use App\Models\Research\Research;
 use App\Models\Submission\Submission;
 use App\Models\Trade;
@@ -17,7 +17,6 @@ use App\Models\User\UserItem;
 use App\Services\CurrencyManager;
 use App\Services\InventoryManager;
 use App\Services\ResearchService;
-use Auth;
 use Illuminate\Http\Request;
 use App\Models\Recipe;
 use App\Services\RecipeService;
