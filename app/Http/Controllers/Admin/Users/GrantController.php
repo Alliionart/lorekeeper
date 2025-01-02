@@ -19,6 +19,7 @@ use App\Services\ResearchService;
 use Auth;
 use Illuminate\Http\Request;
 use App\Models\Recipe;
+use App\Services\RecipeService;
 
 class GrantController extends Controller {
     /**
