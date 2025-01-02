@@ -70,7 +70,6 @@
                 </div>
             </div>
         </div>
-        
     @else
         <div class="alert alert-danger">You do not have all of the required recipe ingredients.</div>
     @endif
@@ -88,9 +87,9 @@
         qty = $(this).val();
 
         $('.dynamicIngredients .qty').each(function(index, element) {
-                let base = $(this).attr('base');
-                let newQty = base * qty;
-                $(this).text('x'+newQty);
-            });
+            let base = $(this).attr('base');
+            let newQty = base * qty;
+            $(this).text('x' + newQty);
+        });
     });
 </script>
