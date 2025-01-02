@@ -18,8 +18,9 @@
                 <a href="{{ $idUrl }}" class="world-entry-search text-muted"><i class="fas fa-search"></i></a>
             @endif
         </h3>
-
-
+        @if($recipe->recipe_category_id)<div>
+        <div><strong>{!! $recipe->category->displayName !!}</strong></div>
+    @endif</div>
         <div class="row">
 
             @if ($recipe->is_limited)
