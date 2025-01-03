@@ -14,7 +14,7 @@
         <a href="{{ url(Auth::user()->url . '/recipe-logs') }}">View logs...</a>
     </div>
     <p> This is a list of recipes that you have unlocked, as well as automatically unlocked recipes. </p>
-    
+
     <hr>
 
     <div class="row">
@@ -53,48 +53,48 @@
                         <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
                             @if (Auth::user()->recipes->count())
                                 <div class="card nestedAccordions">
-                                        @foreach($userRecipes as $categoryId=>$categoryrecipes)
-                                            <!-- Accordion Test -->
-                                            <div class="accordion w-100" id="accordionNested">
-                                                <div class="card">
-                                                    <div class="card-header" id="heading{!! isset($categories[$categoryId]) !!}">
-                                                        <h2 class="mb-0">
-                                                            <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" data-target="#collapse{!! isset($categories[$categoryId]) ? $categories[$categoryId]->name : 'Miscellaneous' !!}" aria-expanded="true" aria-controls="collapseOne">
+                                    @foreach ($userRecipes as $categoryId => $categoryrecipes)
+                                        <!-- Accordion Test -->
+                                        <div class="accordion w-100" id="accordionNested">
+                                            <div class="card">
+                                                <div class="card-header" id="heading{!! isset($categories[$categoryId]) !!}">
+                                                    <h2 class="mb-0">
+                                                        <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" data-target="#collapse{!! isset($categories[$categoryId]) ? $categories[$categoryId]->name : 'Miscellaneous' !!}" aria-expanded="true" aria-controls="collapseOne">
                                                             {!! isset($categories[$categoryId]) ? $categories[$categoryId]->name : 'Miscellaneous' !!}
-                                                            </button>
-                                                        </h2>
-                                                    </div>
+                                                        </button>
+                                                    </h2>
+                                                </div>
 
-                                                    <div id="collapse{!! isset($categories[$categoryId]) ? $categories[$categoryId]->name : 'Miscellaneous' !!}" class="collapse {{ $loop->first ? 'show' : '' }} pt-2" aria-labelledby="heading{!! isset($categories[$categoryId]) !!}" data-parent="#accordionNested">
-                                                        @foreach($userRecipes as $categoryId=>$categoryrecipes)
-                                                            @foreach($categoryrecipes->chunk(1) as $chunk)
-                                                                @foreach($chunk as $recipe)
-                                                                    @if($recipe->recipe_category_id == ($categoryId ? $categoryId : 'NULL'))
-                                                                        @include('home.crafting._smaller_recipe_card', ['recipe' => $recipe])
-                                                                    @endif
-                                                                @endforeach
+                                                <div id="collapse{!! isset($categories[$categoryId]) ? $categories[$categoryId]->name : 'Miscellaneous' !!}" class="collapse {{ $loop->first ? 'show' : '' }} pt-2" aria-labelledby="heading{!! isset($categories[$categoryId]) !!}" data-parent="#accordionNested">
+                                                    @foreach ($userRecipes as $categoryId => $categoryrecipes)
+                                                        @foreach ($categoryrecipes->chunk(1) as $chunk)
+                                                            @foreach ($chunk as $recipe)
+                                                                @if ($recipe->recipe_category_id == ($categoryId ? $categoryId : 'NULL'))
+                                                                    @include('home.crafting._smaller_recipe_card', ['recipe' => $recipe])
+                                                                @endif
                                                             @endforeach
                                                         @endforeach
-                                                        </div>
-                                                    </div>
+                                                    @endforeach
                                                 </div>
-                                    <!-- Accordion Test End -->
-                                        @endforeach
+                                            </div>
+                                        </div>
+                                        <!-- Accordion Test End -->
+                                    @endforeach
                                 </div>
-                            </div>
-                                @else
-                                    You haven't unlocked any recipes!
-                                @endif
                         </div>
+                    @else
+                        You haven't unlocked any recipes!
+                        @endif
                     </div>
                 </div>
             </div>
-            <div class="col-md-9">
-                <div id="active-craft"></div>
-            </div>
+        </div>
+        <div class="col-md-9">
+            <div id="active-craft"></div>
         </div>
     </div>
-</div>
+    </div>
+    </div>
 
 
 @endsection
