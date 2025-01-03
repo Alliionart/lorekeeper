@@ -1,5 +1,5 @@
 <div class="col-md-12 px-1 mb-2">
-    <div class="card recipe alert-secondary rounded-3 py-0 col-form-label" data-id="{{ $recipe->id }}" data-name="{{ $recipe->name }}">
+    <div class="card recipe alert-secondary rounded-3 py-0 col-form-label" category-id="{{ $recipe->recipe_category_id }}" data-id="{{ $recipe->id }}" data-name="{{ $recipe->name }}">
         <div class="p-2 row">
             <div class="col">
                 @if (isset($recipe->image_url))

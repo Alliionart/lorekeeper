@@ -26,7 +26,7 @@ class RecipeManager extends Service {
      *
      * @return bool
      */
-    public function craftRecipe($data, $recipe, $user) {
+    public function craftRecipe($data, $recipe, $user, $qty = 1) {
         DB::beginTransaction();
 
         try {

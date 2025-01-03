@@ -18,7 +18,7 @@ use App\Services\CurrencyManager;
 use App\Services\InventoryManager;
 use App\Services\ResearchService;
 use Illuminate\Http\Request;
-use App\Models\Recipe;
+use App\Models\Recipe\Recipe;
 use App\Services\RecipeService;
 
 class GrantController extends Controller {
