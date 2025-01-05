@@ -118,25 +118,26 @@
                         var ingredientName = $(this).find('h6 a').text();
                         var ingredientQty = $(this).find('qty').attr('base');
                         ingredientList.push({
-                            [ingredientName] : parseInt(ingredientQty)
+                            [ingredientName]: parseInt(ingredientQty)
                         });
                     });
-                    
+
                     //Find out the total number of each ingredient in inventory
                     var inventoryRows = $('#userItems tbody tr');
                     var ingredientInventoryTotals = [];
                     inventoryRows.each(function() {
                         var itemName = $.trim($(this).find('td:nth-child(2)').text());
                         var rowTotal = $.trim($(this).find('td:nth-child(5) span').text());
-                        if(checkIfKeyExists(ingredientList, itemName)) {
+                        if (checkIfKeyExists(ingredientList, itemName)) {
                             ingredientInventoryTotals.push({
-                                itemN: itemName, total: parseInt(rowTotal),
+                                itemN: itemName,
+                                total: parseInt(rowTotal),
                             });
-                        } 
+                        }
                     });
                     result = {};
                     ingredientInventoryTotals.forEach(item => {
-                        if(result[item.itemN]) {
+                        if (result[item.itemN]) {
                             result[item.itemN] += item.total;
                         } else {
                             result[item.itemN] = item.total;
@@ -144,7 +145,7 @@
                     });
                 });
 
-                
+
             });
 
             $('#filterRecipes').on('keyup', function() {
@@ -154,13 +155,13 @@
                     $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
                 });
             });
-            
+
             function checkIfKeyExists(arr, key) {
                 return arr.some(function(obj) {
                     return obj.hasOwnProperty(key);
                 });
             }
-        
+
         });
     </script>
 @endsection

@@ -95,13 +95,15 @@
                                             @endif
                                         </td>
                                     @else
-                                        <td class="col-2">{!! Form::selectRange('', 1, $itemRow->availableQuantity, 1, ['class' => 'quantity-select', 'type' => 'number', 'style' => 'min-width:40px;']) !!} /<span>{{ $itemRow->availableQuantity }}</span> @if ($itemRow->getOthers())
+                                        <td class="col-2">{!! Form::selectRange('', 1, $itemRow->availableQuantity, 1, ['class' => 'quantity-select', 'type' => 'number', 'style' => 'min-width:40px;']) !!} /<span>{{ $itemRow->availableQuantity }}</span>
+                                            @if ($itemRow->getOthers())
                                                 {{ $itemRow->getOthers() }}
                                             @endif
                                         </td>
                                     @endif
                                 @else
-                                    <td class="col-2">{!! Form::selectRange('', 0, 0, 0, ['class' => 'quantity-select', 'type' => 'number', 'style' => 'min-width:40px;', 'disabled']) !!} /<span>{{ $itemRow->availableQuantity }}</span> @if ($itemRow->getOthers())
+                                    <td class="col-2">{!! Form::selectRange('', 0, 0, 0, ['class' => 'quantity-select', 'type' => 'number', 'style' => 'min-width:40px;', 'disabled']) !!} /<span>{{ $itemRow->availableQuantity }}</span>
+                                        @if ($itemRow->getOthers())
                                             {{ $itemRow->getOthers() }}
                                         @endif
                                     </td>

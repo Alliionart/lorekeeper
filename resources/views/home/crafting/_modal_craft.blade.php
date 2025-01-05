@@ -86,7 +86,7 @@
             $(this).text('x' + newQty);
             $('.reward-row .ingredient .qty').text('x' + qty);
 
-            if(newQty > result[itemName]) {
+            if (newQty > result[itemName]) {
                 //If greater than the current inventory amount
                 console.log('NOT ENOUGH!')
                 $('.reward-row .ingredient .qty').css('color', 'rgb(255 80 80)');
