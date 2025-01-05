@@ -1,11 +1,12 @@
 @switch($ingredient->ingredient_type)
     @case('Item')
-        @if (isset($ingredient->ingredient->image_url))
-            <img class="small-icon" src="{{ $ingredient->ingredient->image_url }}">
-        @endif
-        <span class="qty" base="{{ $ingredient->quantity }}">x{{ $ingredient->quantity }}</span>
-        <span>
-            {!! $ingredient->ingredient->displayName !!}</span>
+        <div class="image">
+            @if (isset($ingredient->ingredient->image_url))
+                <img class="w-100" src="{{ $ingredient->ingredient->image_url }}">
+            @endif
+            <span class="qty badge badge-secondary icon" base="{{ $ingredient->quantity }}" item="{!! $ingredient->ingredient->name !!}"><span>{{ $ingredient->quantity }}</span>/{{ $ingredient->quantity }}</span>
+        </div>
+        <h6>{!! $ingredient->ingredient->displayName !!}</h6>
     @break
 
     @case('MultiItem')

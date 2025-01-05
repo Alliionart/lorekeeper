@@ -20,8 +20,9 @@
     <div class="row">
         <div class="col-md-3">
             <div class="card recipe-scrollbox">
+                <input type="text" class="form-input text-left" placeholder="Search Recipes..." id="filterRecipes" />
                 <div id="accordion">
-                    <div class="card">
+                    <div class="card top">
                         <div class="card-header" id="headingOne">
                             <h5 class="mb-0">
                                 <button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
@@ -42,7 +43,7 @@
                             @endif
                         </div>
                     </div>
-                    <div class="card">
+                    <div class="card top">
                         <div class="card-header" id="headingTwo">
                             <h5 class="mb-0">
                                 <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
@@ -109,8 +110,57 @@
                 var $parent = $(this).parent().parent().parent();
                 //loadModal("{{ url('crafting/craft') }}/" + $parent.data('id'), $parent.data('name'));
                 $($activeSection).html('');
-                $($activeSection).load("{{ url('crafting/craft') }}/" + $parent.data('id'), $parent.data('name'));
+                $($activeSection).load("{{ url('crafting/craft') }}/" + $parent.data('id'), $parent.data('name'), function() {
+                    //Find the number of base ingredients needed for x1 qty
+                    var neededIngredients = $('.ingredient-row .ingredient');
+                    var ingredientList = [];
+                    neededIngredients.each(function() {
+                        var ingredientName = $(this).find('h6 a').text();
+                        var ingredientQty = $(this).find('qty').attr('base');
+                        ingredientList.push({
+                            [ingredientName] : parseInt(ingredientQty)
+                        });
+                    });
+                    
+                    //Find out the total number of each ingredient in inventory
+                    var inventoryRows = $('#userItems tbody tr');
+                    var ingredientInventoryTotals = [];
+                    inventoryRows.each(function() {
+                        var itemName = $.trim($(this).find('td:nth-child(2)').text());
+                        var rowTotal = $.trim($(this).find('td:nth-child(5) span').text());
+                        if(checkIfKeyExists(ingredientList, itemName)) {
+                            ingredientInventoryTotals.push({
+                                itemN: itemName, total: parseInt(rowTotal),
+                            });
+                        } 
+                    });
+                    result = {};
+                    ingredientInventoryTotals.forEach(item => {
+                        if(result[item.itemN]) {
+                            result[item.itemN] += item.total;
+                        } else {
+                            result[item.itemN] = item.total;
+                        }
+                    });
+                });
+
+                
             });
+
+            $('#filterRecipes').on('keyup', function() {
+                var value = $(this).val().toLowerCase();
+                console.log(value);
+                $('.accordion .card .recipe').children().each(function() {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+                });
+            });
+            
+            function checkIfKeyExists(arr, key) {
+                return arr.some(function(obj) {
+                    return obj.hasOwnProperty(key);
+                });
+            }
+        
         });
     </script>
 @endsection
