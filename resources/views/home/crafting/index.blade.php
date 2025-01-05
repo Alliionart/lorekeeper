@@ -21,71 +21,75 @@
         <div class="col-md-3">
             <div class="card recipe-scrollbox">
                 <input type="text" class="form-input text-left" placeholder="Search Recipes..." id="filterRecipes" />
-                <div id="accordion">
-                    <div class="card top">
-                        <div class="card-header" id="headingOne">
-                            <h5 class="mb-0">
-                                <button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                                    Free Recipes
-                                </button>
-                            </h5>
-                        </div>
+                <div class="recipe-innerscroll">
+                    <div id="accordion">
+                        <div class="card top">
+                            <div class="card-header" id="headingOne">
+                                <h5 class="mb-0">
+                                    <button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                        Free Recipes
+                                    </button>
+                                </h5>
+                            </div>
 
-                        <div id="collapseOne" class="collapse show pt-2" aria-labelledby="headingOne" data-parent="#accordion">
-                            @if ($default->count())
-                                <div class="row mx-0">
-                                    @foreach ($default as $recipe)
-                                        @include('home.crafting._smaller_recipe_card', ['recipe' => $recipe])
-                                    @endforeach
-                                </div>
-                            @else
-                                There are no free recipes.
-                            @endif
+                            <div id="collapseOne" class="collapse show py-2" aria-labelledby="headingOne" data-parent="#accordion">
+                                @if ($default->count())
+                                    <div class="d-flex align-items-stretch recipes-body justify-content-between flex-wrap">
+                                        @foreach ($default as $recipe)
+                                            @include('home.crafting._smaller_recipe_card', ['recipe' => $recipe])
+                                        @endforeach
+                                    </div>
+                                @else
+                                    There are no free recipes.
+                                @endif
+                            </div>
                         </div>
-                    </div>
-                    <div class="card top">
-                        <div class="card-header" id="headingTwo">
-                            <h5 class="mb-0">
-                                <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                                    Unlocked Recipes
-                                </button>
-                            </h5>
-                        </div>
-                        <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
-                            @if (Auth::user()->recipes->count())
-                                <div class="card nestedAccordions">
-                                    @foreach ($userRecipes as $categoryId => $categoryrecipes)
-                                        <!-- Accordion Test -->
-                                        <div class="accordion w-100" id="accordionNested">
-                                            <div class="card">
-                                                <div class="card-header" id="heading{!! isset($categories[$categoryId]) !!}">
-                                                    <h2 class="mb-0">
-                                                        <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" data-target="#collapse{!! isset($categories[$categoryId]) ? $categories[$categoryId]->name : 'Miscellaneous' !!}" aria-expanded="true" aria-controls="collapseOne">
-                                                            {!! isset($categories[$categoryId]) ? $categories[$categoryId]->name : 'Miscellaneous' !!}
-                                                        </button>
-                                                    </h2>
-                                                </div>
+                        <div class="card top">
+                            <div class="card-header" id="headingTwo">
+                                <h5 class="mb-0">
+                                    <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                        Unlocked Recipes
+                                    </button>
+                                </h5>
+                            </div>
+                            <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
+                                @if (Auth::user()->recipes->count())
+                                    <div class="card nestedAccordions">
+                                        @foreach ($userRecipes as $categoryId => $categoryrecipes)
+                                            <!-- Accordion Test -->
+                                            <div class="accordion w-100" id="accordionNested">
+                                                <div class="card">
+                                                    <div class="card-header" id="heading{!! isset($categories[$categoryId]) !!}">
+                                                        <h2 class="mb-0">
+                                                            <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" data-target="#collapse{!! isset($categories[$categoryId]) ? $categories[$categoryId]->name : 'Miscellaneous' !!}" aria-expanded="true" aria-controls="collapseOne">
+                                                                {!! isset($categories[$categoryId]) ? $categories[$categoryId]->name : 'Miscellaneous' !!}
+                                                            </button>
+                                                        </h2>
+                                                    </div>
 
-                                                <div id="collapse{!! isset($categories[$categoryId]) ? $categories[$categoryId]->name : 'Miscellaneous' !!}" class="collapse {{ $loop->first ? 'show' : '' }} pt-2" aria-labelledby="heading{!! isset($categories[$categoryId]) !!}" data-parent="#accordionNested">
-                                                    @foreach ($userRecipes as $categoryId => $categoryrecipes)
-                                                        @foreach ($categoryrecipes->chunk(1) as $chunk)
-                                                            @foreach ($chunk as $recipe)
-                                                                @if ($recipe->recipe_category_id == ($categoryId ? $categoryId : 'NULL'))
-                                                                    @include('home.crafting._smaller_recipe_card', ['recipe' => $recipe])
-                                                                @endif
+                                                    <div id="collapse{!! isset($categories[$categoryId]) ? $categories[$categoryId]->name : 'Miscellaneous' !!}" class="collapse {{ $loop->first ? 'show' : '' }} py-2" aria-labelledby="heading{!! isset($categories[$categoryId]) !!}" data-parent="#accordionNested">
+                                                        <div class="d-flex align-items-stretch recipes-body justify-content-between flex-wrap">
+                                                            @foreach ($userRecipes as $categoryId => $categoryrecipes)
+                                                                @foreach ($categoryrecipes->chunk(1) as $chunk)
+                                                                    @foreach ($chunk as $recipe)
+                                                                        @if ($recipe->recipe_category_id == ($categoryId ? $categoryId : 'NULL'))
+                                                                            @include('home.crafting._smaller_recipe_card', ['recipe' => $recipe])
+                                                                        @endif
+                                                                    @endforeach
+                                                                @endforeach
                                                             @endforeach
-                                                        @endforeach
-                                                    @endforeach
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <!-- Accordion Test End -->
-                                    @endforeach
-                                </div>
+                                            <!-- Accordion Test End -->
+                                        @endforeach
+                                    </div>
+                            </div>
+                        @else
+                            You haven't unlocked any recipes!
+                            @endif
                         </div>
-                    @else
-                        You haven't unlocked any recipes!
-                        @endif
                     </div>
                 </div>
             </div>
@@ -107,7 +111,7 @@
             $('.btn-craft').on('click', function(e) {
                 e.preventDefault();
                 var $activeSection = $('#active-craft');
-                var $parent = $(this).parent().parent().parent();
+                var $parent = $(this);
                 //loadModal("{{ url('crafting/craft') }}/" + $parent.data('id'), $parent.data('name'));
                 $($activeSection).html('');
                 $($activeSection).load("{{ url('crafting/craft') }}/" + $parent.data('id'), $parent.data('name'), function() {
@@ -150,8 +154,7 @@
 
             $('#filterRecipes').on('keyup', function() {
                 var value = $(this).val().toLowerCase();
-                console.log(value);
-                $('.accordion .card .recipe').children().each(function() {
+                $('.recipes-body').children().each(function() {
                     $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
                 });
             });

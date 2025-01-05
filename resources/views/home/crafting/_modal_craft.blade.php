@@ -1,11 +1,6 @@
 @if (!$recipe)
     <div class="text-center">Invalid recipe selected.</div>
 @else
-    @if ($recipe->imageUrl)
-        <div class="text-center">
-            <div class="mb-3"><img class="recipe-image" src="{{ $recipe->imageUrl }}" /></div>
-        </div>
-    @endif
     <div id="recipeDetails">
         <div class="row" id="recipeDetails">
             @if ($recipe->is_limited)

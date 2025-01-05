@@ -1,13 +1,8 @@
-<div class="col-md-12 px-1 mb-2">
-    <div class="card recipe alert-secondary rounded-3 py-0 col-form-label" category-id="{{ $recipe->recipe_category_id }}" data-id="{{ $recipe->id }}" data-name="{{ $recipe->name }}">
-        <div class="p-2 row">
-            <div class="col">
-                @if (isset($recipe->image_url))
-                    <img src="{{ $recipe->imageUrl }}" class="recipe-image mr-2" style="max-height:15px; width:auto;">
-                @endif
-                <h4 class="mb-0 mt-0 d-inline col-form-label">{!! $recipe->displayName !!}</h4>
-            </div>
-            <div class="col-auto mx-2 text-right"><a class="btn btn-secondary btn-sm ml-2 btn-craft w-100" style="line-height:1;" href="">View Recipe</a></div>
-        </div>
+<div class="card btn-craft recipe alert-secondary rounded-3 py-0 col-form-label" category-id="{{ $recipe->recipe_category_id }}" data-id="{{ $recipe->id }}" data-name="{{ $recipe->name }}">
+    <div class="card-body d-flex flex-column align-items-center justify-content-center">
+            @if (isset($recipe->image_url))
+                <img src="{{ $recipe->imageUrl }}" class="recipe-image mr-2" style="max-height:65px; width:auto;">
+            @endif
+            <h6 class="my-1 text-center">{!! $recipe->displayName !!}</h6>
     </div>
 </div>
