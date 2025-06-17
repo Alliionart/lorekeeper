@@ -115,7 +115,7 @@
             </div>
         </div>
     </div>
-    
+
 
     <h3>Rewards</h3>
     <p>Rewards are credited on a per-user basis. Mods are able to modify the specific rewards granted at approval time.</p>
