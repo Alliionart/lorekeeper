@@ -48,8 +48,4 @@ class QueueController extends Controller {
             'isClaims'    => false,
         ]);
     }
-
-    public function getQueue() {
-        return view('queues.queues');
-    }
 }
