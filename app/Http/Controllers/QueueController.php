@@ -2,16 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use db;
-
-use App\Models\Prompt\Prompt;
 use App\Models\Prompt\PromptCategory;
 // use App\Http\Controllers\Controller;
 use App\Models\Submission\Submission;
-use App\Services\SubmissionManager;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use App\Models\SitePage;
 
 class QueueController extends Controller {
     /**
