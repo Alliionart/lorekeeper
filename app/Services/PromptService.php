@@ -357,6 +357,9 @@ class PromptService extends Service {
         if (!isset($data['staff_only'])) {
             $data['staff_only'] = 0;
         }
+        if (!isset($data['public_queue'])) {
+            $data['public_queue'] = 0;
+        }
 
         if (isset($data['remove_image'])) {
             if ($prompt && $prompt->has_image && $data['remove_image']) {
