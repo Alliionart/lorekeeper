@@ -22,6 +22,10 @@ class QueueController extends Controller {
             $submissions->whereHas('prompt', function ($query) use ($data) {
                 $query->where('prompt_category_id', $data['prompt_category_id'])->whereNot('public_queue', '=', 0);
             });
+        } else {
+            $submissions->whereHas('prompt', function ($query) use ($data) {
+                $query->whereNot('public_queue', '=', 0);
+            });
         }
         if (isset($data['sort'])) {
             switch ($data['sort']) {

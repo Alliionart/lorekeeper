@@ -12,9 +12,6 @@
         {!! Form::open(['method' => 'GET', 'class' => '']) !!}
         <div class="form-inline justify-content-end">
             <div class="form-group ml-3 mb-3">
-                {!! Form::text('name', Request::get('name'), ['class' => 'form-control', 'placeholder' => 'Name']) !!}
-            </div>
-            <div class="form-group ml-3 mb-3">
                 {!! Form::select('prompt_category_id', $categories, Request::get('prompt_category_id'), ['class' => 'form-control']) !!}
             </div>
             <div class="form-inline justify-content-end">
@@ -56,7 +53,6 @@
                                 <div class="col-12 col-md-2">
                                     <div class="logs-table-cell">{!! $submission->prompt->displayName !!}</div>
                                 </div>
-                                {!! $submission->prompt->public_queue !!}
                                 <div class="col-6 {{ !$isClaims ? 'col-md-2' : 'col-md-3' }}">
                                     <div class="logs-table-cell">{!! $submission->user->displayName !!}</div>
                                 </div>
