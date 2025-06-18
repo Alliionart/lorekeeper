@@ -20,7 +20,7 @@ class QueueController extends Controller {
         $data = $request->only(['prompt_category_id', 'sort']);
         if (isset($data['prompt_category_id']) && $data['prompt_category_id'] != 'none') {
             $submissions->whereHas('prompt', function ($query) use ($data) {
-                $query->where('prompt_category_id', $data['prompt_category_id'])->whereNot('public', '=', 1);
+                $query->where('prompt_category_id', $data['prompt_category_id'])->whereNot('public_queue', '=', 0);
             });
         }
         if (isset($data['sort'])) {
