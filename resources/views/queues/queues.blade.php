@@ -15,7 +15,7 @@
                 {!! Form::text('name', Request::get('name'), ['class' => 'form-control', 'placeholder' => 'Name']) !!}
             </div>
             <div class="form-group ml-3 mb-3">
-               {!! Form::select('prompt_category_id', $categories, Request::get('prompt_category_id'), ['class' => 'form-control']) !!}
+                {!! Form::select('prompt_category_id', $categories, Request::get('prompt_category_id'), ['class' => 'form-control']) !!}
             </div>
             <div class="form-inline justify-content-end">
                 <div class="form-group ml-3 mb-3">
@@ -76,14 +76,12 @@
                                 <div class="col-3 col-md-1">
                                     <div class="logs-table-cell"></div>
                                 </div>
-                                @endif
+                            @endif
                         </div>
                     </div>
                 @endforeach
             </div>
         </div>
-    {!! $submissions->render() !!}
-    <div class="text-center mt-4 small text-muted">{{ $submissions->total() }} result{{ $submissions->total() == 1 ? '' : 's' }} found.</div>
-
-        
+        {!! $submissions->render() !!}
+        <div class="text-center mt-4 small text-muted">{{ $submissions->total() }} result{{ $submissions->total() == 1 ? '' : 's' }} found.</div>
     @endsection

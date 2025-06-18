@@ -7,7 +7,6 @@
 
 @section('sidebar')
     @include('prompts._sidebar')
-    
 @endsection
 
 @section('content')
