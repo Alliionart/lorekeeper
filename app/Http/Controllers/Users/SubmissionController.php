@@ -203,13 +203,13 @@ class SubmissionController extends Controller {
             return redirect()->back()->withInput();
         }
 
-        if(count($submission->multiple_users) > 0) {
-            foreach($multiple_users as $recipient) {
+        if (count($submission->multiple_users) > 0) {
+            foreach ($multiple_users as $recipient) {
                 Notifications::create('SUBMISSION_APPROVAL_NEEDED', $recipient, [
-                    'sender_url'  => $user->url,
-                    'sender_name' => $user->name,
+                    'sender_url'       => $user->url,
+                    'sender_name'      => $user->name,
                     'submission_id'    => $submission->id,
-                    'url'   => $submission->url,
+                    'url'              => $submission->url,
                 ]);
             }
         }
