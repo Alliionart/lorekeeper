@@ -41,7 +41,7 @@
 
 {{ $submission->multiple_users }}
 
-@if(!$submission->multiple_users)
+@if (!$submission->multiple_users)
     <div class="card mb-3">
         <div class="card-header h2">Add Other Users</div>
         <div class="card-body">
@@ -179,13 +179,13 @@
 @endif
 
 <script>
-    $('.user-select').selectize({ 
+    $('.user-select').selectize({
         maxItems: 3,
     });
 
     $('.user-select').on('change', function() {
         let users = $(this).val();
-        if(users.length > 0) {
+        if (users.length > 0) {
             $('#confirmButton').prop('disabled', true).hide();
             $('#draftButton').text('Save & Approve');
         } else {
