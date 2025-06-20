@@ -39,6 +39,21 @@
     {!! Form::textarea('comments', isset($submission->comments) ? $submission->comments : old('comments') ?? Request::get('comments'), ['class' => 'form-control']) !!}
 </div>
 
+{{ $submission->multiple_users }}
+
+@if(!$submission->multiple_users)
+    <div class="card mb-3">
+        <div class="card-header h2">Add Other Users</div>
+        <div class="card-body">
+            <p>Add other users to this prompt. Each user will need to approve the prompt before its added to the queue.</p>
+            <div class="form-group">
+                {!! Form::label('multiple_users', 'Other Users') !!} {!! add_help('You can select up to 3 amount of users. Each user will need to approve the prompt for it to be added to the queue.') !!}
+                {!! Form::select('multiple_users', $userOptions, null, ['class' => 'form-control user-select']) !!}
+            </div>
+        </div>
+    </div>
+@endif
+
 @if ($submission->prompt_id)
     <div class="mb-3">
         @include('home._prompt', ['prompt' => $submission->prompt, 'staffView' => false])
@@ -162,3 +177,20 @@
 @else
     @include('widgets._loot_select_row', ['items' => $items, 'currencies' => $currencies, 'showLootTables' => false, 'showRaffles' => false])
 @endif
+
+<script>
+    $('.user-select').selectize({ 
+        maxItems: 3,
+    });
+
+    $('.user-select').on('change', function() {
+        let users = $(this).val();
+        if(users.length > 0) {
+            $('#confirmButton').prop('disabled', true).hide();
+            $('#draftButton').text('Save & Approve');
+        } else {
+            $('#confirmButton').prop('disabled', false).show();
+            $('#draftButton').text('Save Draft');
+        }
+    });
+</script>

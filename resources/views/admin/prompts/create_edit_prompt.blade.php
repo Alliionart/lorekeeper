@@ -99,6 +99,12 @@
                 {!! Form::label('staff_only', 'Staff Only', ['class' => 'form-check-label ml-3']) !!} {!! add_help('If this is set, the prompt will only be visible to staff, and only they will be able to submit to it.') !!}
             </div>
         </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                {!! Form::checkbox('multiple_users', 1, $prompt->id ? $prompt->multiple_users : 1, ['class' => 'form-check-input', 'data-toggle' => 'toggle']) !!}
+                {!! Form::label('multiple_users', 'Allow Multiple Users', ['class' => 'form-check-label ml-3']) !!} {!! add_help('Allows multiple users to be added to the prompt. Each user is required to approve the prompt before it moves to pending.') !!}
+            </div>
+        </div>
     </div>
 
     <div class="form-group">

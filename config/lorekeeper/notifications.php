@@ -437,4 +437,18 @@ return [
         'message' => '<a href="{sender_url}">{sender}</a> has added you as a participant on a gallery submission. (<a href="{url}">View Submission</a>)',
         'url'     => 'gallery/view/{submission_id}',
     ],
+
+    // SUBMISSION_APPROVAL_NEEDED
+    801  => [
+        'name'    => 'Submission Approval Required',
+        'message' => '{user_name} has created submission (#{submission_id}) and requested your approval. (<a href="{url}">View Submission</a>)',
+        'url'     => 'submissions/view/{submission_id}',
+    ],
+
+    // SUBMISSION_ALL_USER_APPROVED
+    802  => [
+        'name'    => 'Submission Approved by All Users',
+        'message' => 'Submission (#{submission_id}) was approved by all users and has been added to the queue. (<a href="{url}">View Submission</a>)',
+        'url'     => 'submissions/view/{submission_id}',
+    ],
 ];
