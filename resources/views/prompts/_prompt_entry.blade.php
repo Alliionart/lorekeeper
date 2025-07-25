@@ -19,6 +19,12 @@
             @if ($prompt->end_at)
                 <div><strong>Ends: </strong>{!! format_date($prompt->end_at) !!} ({{ $prompt->end_at->diffForHumans() }})</div>
             @endif
+            @if (!is_null($prompt->user_queue_limit))
+                <div><strong>User Queue Limit at Once<i class="fas fa-question-circle help-icon" data-toggle="tooltip" title="" data-original-title="Limits how many prompt entries can be submitted at once."></i>:
+                    </strong>{{ $prompt->user_queue_limit }}</div>
+            @else
+                <div><strong>User Queue Limit at Once<i class="fas fa-question-circle help-icon" data-toggle="tooltip" title="" data-original-title="Limits how many prompt entries can be submitted at once."></i>: </strong>No limit</div>
+            @endif
         </div>
         <div class="world-entry-text">
             <p>{{ $prompt->summary }}</p>

@@ -183,6 +183,20 @@ class SubmissionController extends Controller {
      */
     public function postNewSubmission(Request $request, SubmissionManager $service, $draft = false) {
         $request->validate(Submission::$createRules);
+        $promptId = $request->get('prompt_id');
+        if ($promptId && !$draft) {
+            $prompt = Prompt::find($promptId);
+            if ($prompt && $prompt->user_queue_limit) {
+                $activeCount = Submission::where('prompt_id', $prompt->id)
+                    ->where('user_id', Auth::user()->id)
+                    ->where('status', 'Pending')
+                    ->count();
+                if ($activeCount >= $prompt->user_queue_limit) {
+                    flash('You have reached the maximum number of active submissions for this prompt.')->error();
+                    return redirect()->back()->withInput();
+                }
+            }
+        }
         if ($submission = $service->createSubmission($request->only(['url', 'prompt_id', 'comments', 'slug', 'character_rewardable_type', 'character_rewardable_id', 'character_rewardable_quantity', 'rewardable_type', 'rewardable_id', 'quantity', 'stack_id', 'stack_quantity', 'currency_id', 'currency_quantity']), Auth::user(), false, $draft)) {
             if ($submission->status == 'Draft') {
                 flash('Draft created successfully.')->success();
@@ -220,6 +234,19 @@ class SubmissionController extends Controller {
         }
 
         $request->validate(Submission::$updateRules);
+        if ($submit) {
+            $prompt = $submission->prompt;
+            if ($prompt && $prompt->user_queue_limit) {
+                $activeCount = Submission::where('prompt_id', $prompt->id)
+                    ->where('user_id', Auth::user()->id)
+                    ->where('status', 'Pending')
+                    ->count();
+                if ($activeCount >= $prompt->user_queue_limit) {
+                    flash('Oops! You have reached the maximum number of active submissions for this prompt.')->error();
+                    return redirect()->back()->withInput();
+                }
+            }
+        }
         if ($submit && $service->editSubmission($submission, $request->only(['url', 'prompt_id', 'comments', 'slug', 'character_rewardable_type', 'character_rewardable_id', 'character_rewardable_quantity', 'rewardable_type', 'rewardable_id', 'quantity', 'stack_id', 'stack_quantity', 'currency_id', 'currency_quantity']), Auth::user(), false, $submit)) {
             flash('Draft submitted successfully.')->success();
         } elseif ($service->editSubmission($submission, $request->only(['url', 'prompt_id', 'comments', 'slug', 'character_rewardable_type', 'character_rewardable_id', 'character_rewardable_quantity', 'rewardable_type', 'rewardable_id', 'quantity', 'stack_id', 'stack_quantity', 'currency_id', 'currency_quantity']), Auth::user())) {

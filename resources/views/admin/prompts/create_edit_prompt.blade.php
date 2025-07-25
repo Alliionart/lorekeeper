@@ -76,7 +76,12 @@
             </div>
         </div>
     </div>
-
+    <div class="row">
+        <div class="col-md-2 form-group">
+            {!! Form::label('User Queue Limit (Optional)') !!} {!! add_help('Limits how many prompt entries can be submitted at once. Leave blank for no limit.') !!}
+            {!! Form::number('user_queue_limit', $prompt->user_queue_limit, ['class' => 'form-control', 'min' => 1, 'placeholder' => 'No limit']) !!}
+        </div>
+    </div>
     <div class="row">
         <div class="col-md-6">
             <div class="form-group">
