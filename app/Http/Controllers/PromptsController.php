@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Prompt\Prompt;
 use App\Models\Prompt\PromptCategory;
+use App\Models\Submission\Submission;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -112,9 +113,25 @@ class PromptsController extends Controller {
             $query->sortCategory();
         }
 
+        $prompts = $query->paginate(20)->appends($request->query());
+
+        // Get user submission counts for each prompt
+        if (Auth::check()) {
+            $userSubmissionCounts = [];
+            foreach ($prompts as $prompt) {
+                $userSubmissionCounts[$prompt->id] = Submission::where('prompt_id', $prompt->id)
+                    ->where('status', 'Approved')
+                    ->where('user_id', Auth::user()->id)
+                    ->count();
+            }
+        } else {
+            $userSubmissionCounts = [];
+        }
+
         return view('prompts.prompts', [
-            'prompts'    => $query->paginate(20)->appends($request->query()),
+            'prompts'    => $prompts,
             'categories' => ['none' => 'Any Category'] + ['withoutOption' => 'Without Category'] + PromptCategory::orderBy('sort', 'DESC')->pluck('name', 'id')->toArray(),
+            'userSubmissionCounts' => $userSubmissionCounts,
         ]);
     }
 
@@ -132,8 +149,18 @@ class PromptsController extends Controller {
             abort(404);
         }
 
+        // Get user submission count for this prompt
+        $userSubmissionCount = 0;
+        if (Auth::check()) {
+            $userSubmissionCount = Submission::where('prompt_id', $prompt->id)
+                ->where('status', 'Approved')
+                ->where('user_id', Auth::user()->id)
+                ->count();
+        }
+
         return view('prompts.prompt', [
             'prompt' => $prompt,
+            'userSubmissionCount' => $userSubmissionCount,
         ]);
     }
 }

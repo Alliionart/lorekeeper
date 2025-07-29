@@ -25,6 +25,13 @@
             @else
                 <div><strong>User Queue Limit at Once<i class="fas fa-question-circle help-icon" data-toggle="tooltip" title="" data-original-title="Limits how many prompt entries can be submitted at once."></i>: </strong>No limit</div>
             @endif
+            @if (Auth::check())
+                @if (isset($userSubmissionCounts) && isset($userSubmissionCounts[$prompt->id]))
+                    <div><strong>Your Submissions<i class="fas fa-question-circle help-icon" data-toggle="tooltip" title="" data-original-title="Submissions you currently have in the queue for this prompt."></i>: </strong>{{ $userSubmissionCounts[$prompt->id] }}</div>
+                @elseif (isset($userSubmissionCount))
+                    <div><strong>Your Submissions<i class="fas fa-question-circle help-icon" data-toggle="tooltip" title="" data-original-title="Submissions you currently have in the queue for this prompt."></i>: </strong>{{ $userSubmissionCount }}</div>
+                @endif
+            @endif
         </div>
         <div class="world-entry-text">
             <p>{{ $prompt->summary }}</p>
