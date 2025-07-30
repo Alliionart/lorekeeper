@@ -120,7 +120,7 @@ class PromptsController extends Controller {
             $userSubmissionCounts = [];
             foreach ($prompts as $prompt) {
                 $userSubmissionCounts[$prompt->id] = Submission::where('prompt_id', $prompt->id)
-                    ->where('status', 'Approved')
+                    ->where('status', 'Pending')
                     ->where('user_id', Auth::user()->id)
                     ->count();
             }
@@ -153,7 +153,7 @@ class PromptsController extends Controller {
         $userSubmissionCount = 0;
         if (Auth::check()) {
             $userSubmissionCount = Submission::where('prompt_id', $prompt->id)
-                ->where('status', 'Approved')
+                ->where('status', 'Pending')
                 ->where('user_id', Auth::user()->id)
                 ->count();
         }
