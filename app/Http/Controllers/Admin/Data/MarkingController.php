@@ -102,7 +102,7 @@ class MarkingController extends Controller {
         } elseif (!$id && $marking = $service->createMarking($data, Auth::user())) {
             flash('Marking created successfully.')->success();
 
-            return redirect()->to('admin/data/marking/edit/'.$marking->id);
+            return redirect()->to('admin/data/markings/edit/'.$marking->id);
         } else {
             foreach ($service->errors()->getMessages()['error'] as $error) {
                 flash($error)->error();

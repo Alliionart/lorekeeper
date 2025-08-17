@@ -2,7 +2,7 @@
 
 
 @section('title')
-    Design Hub
+    {!! $marking->name !!}
 @endsection
 
 
