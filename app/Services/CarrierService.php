@@ -97,7 +97,7 @@ class CarrierService extends Service {
 
             MarkingCarrier::where('carrier_id', $carrier->id)->delete();
             if (isset($data['attached_markings']) && $data['attached_markings']) {
-                if(!is_array($data['attached_markings'])) {
+                if (!is_array($data['attached_markings'])) {
                     $data['attached_markings'] = [$data['attached_markings']];
                 }
                 foreach ($data['attached_markings'] as $i => $marking_id) {

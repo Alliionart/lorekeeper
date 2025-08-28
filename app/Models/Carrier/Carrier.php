@@ -2,9 +2,8 @@
 
 namespace App\Models\Carrier;
 
-use App\Models\Model;
 use App\Models\Marking\Marking;
-use App\Models\Carrier\MarkingCarrier;
+use App\Models\Model;
 
 class Carrier extends Model {
     /**
@@ -210,9 +209,10 @@ class Carrier extends Model {
         $markings = Marking::whereIn('id', $attachments)->pluck('name', 'slug')->toArray();
         $row = [];
 
-        foreach($markings as $slug => $name) {
+        foreach ($markings as $slug => $name) {
             $row[] = '<a href="'.url('design-hub/marking/'.$slug).'">'.$name.'</a>';
         }
+
         return implode(', ', $row);
     }
 }
