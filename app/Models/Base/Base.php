@@ -170,7 +170,7 @@ class Base extends Model {
      * @return string
      */
     public function getUrlAttribute() {
-        return url('design-hub/bases/'.$this->slug);
+        return url('design-hub/base-coats/'.$this->slug);
     }
 
     /**

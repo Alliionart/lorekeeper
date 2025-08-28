@@ -872,8 +872,10 @@ class Character extends Model {
 
         if (!$base) {
             return [
-                'name'  => 'Unknown',
-                'code'  => '??',
+                [
+                    'name'  => 'Unknown',
+                    'code'  => '??',
+                ]
             ];
         }
 

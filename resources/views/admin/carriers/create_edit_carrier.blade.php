@@ -50,7 +50,7 @@
 
     <div class="form-group">
         {!! Form::label('Applicable Markings') !!} {!! add_help('Select any markings that this carrier can apply to.') !!}
-        {!! Form::select('attached_markings', $markings, $active_markings, ['class' => 'form-control', 'id' => 'attached_markings', 'multiple' => true]) !!}
+        {!! Form::select('attached_markings[]', $markings, $active_markings, ['class' => 'form-control', 'id' => 'attached_markings', 'multiple' => true]) !!}
     </div>
 
     <div class="text-right">
@@ -58,15 +58,6 @@
     </div>
 
     {!! Form::close() !!}
-
-    @if ($carrier->id)
-        <h3>Preview</h3>
-        <div class="card mb-3">
-            <div class="card-body">
-                @include('world._feature_entry', ['feature' => $carrier])
-            </div>
-        </div>
-    @endif
 @endsection
 
 @section('scripts')

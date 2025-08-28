@@ -95,6 +95,19 @@ class CarrierService extends Service {
                 unset($data['image']);
             }
 
+            MarkingCarrier::where('carrier_id', $carrier->id)->delete();
+            if (isset($data['attached_markings']) && $data['attached_markings']) {
+                if(!is_array($data['attached_markings'])) {
+                    $data['attached_markings'] = [$data['attached_markings']];
+                }
+                foreach ($data['attached_markings'] as $i => $marking_id) {
+                    $relation = MarkingCarrier::create([
+                        'marking_id' => $marking_id,
+                        'carrier_id' => $carrier->id,
+                    ]);
+                }
+            }
+
             $carrier->update($data);
 
             if (!$this->logAdminAction($user, 'Updated Carrier', 'Updated '.$carrier->displayName)) {
