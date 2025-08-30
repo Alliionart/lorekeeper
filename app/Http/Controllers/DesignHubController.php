@@ -40,7 +40,7 @@ class DesignHubController extends Controller {
             'variant',
         ]);
 
-        return $query->orderBy('name', 'ASC')->paginate(20)->appends($request->query());
+        return $query->orderBy('name', 'ASC')->paginate(200)->appends($request->query());
     }
 
     public function getDesignHubTraitByCategory(Request $request, $category_id) {
