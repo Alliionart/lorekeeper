@@ -73,9 +73,19 @@
             </div>
         </div>
     </div>
-    <div class="form-group">
-        {!! Form::label('Short Description (Optional)') !!} {!! add_help('Adds a short description to any marking boxes.') !!}
-        {!! Form::text('short_description', $marking->short_description, ['class' => 'form-control']) !!}
+    <div class="row">
+        <div class="col-md-8">
+            <div class="form-group">
+                {!! Form::label('Short Description (Optional)') !!} {!! add_help('Adds a short description to any marking boxes.') !!}
+                {!! Form::text('short_description', $marking->short_description, ['class' => 'form-control']) !!}
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                {!! Form::label('Order in Genome') !!} {!! add_help('0 = Before Base, 1 = After Base, 9 = AFTER EVERYTHING') !!}
+                {!! Form::text('order_in_genome', $marking->order_in_genome, ['class' => 'form-control']) !!}
+            </div>
+        </div>
     </div>
     <div class="form-group">
         {!! Form::label('Description (Optional)') !!}

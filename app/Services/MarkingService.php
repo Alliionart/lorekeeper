@@ -171,6 +171,9 @@ class MarkingService extends Service {
         if (!isset($data['is_visible'])) {
             $data['is_visible'] = 0;
         }
+        if (!isset($data['order_in_genome'])) {
+            $data['order_in_genome'] = 0;
+        }
         if (isset($data['remove_image'])) {
             if ($marking && $marking->has_image && $data['remove_image']) {
                 $data['has_image'] = 0;

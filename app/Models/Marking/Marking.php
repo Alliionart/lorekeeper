@@ -14,7 +14,7 @@ class Marking extends Model {
      * @var array
      */
     protected $fillable = [
-        'slug', 'species_id', 'rarity_id', 'name', 'marking_image_id', 'description', 'short_description', 'is_visible', 'recessive', 'dominant',
+        'slug', 'species_id', 'rarity_id', 'name', 'marking_image_id', 'description', 'short_description', 'is_visible', 'recessive', 'dominant', 'order_in_genome',
     ];
 
     /**
@@ -40,6 +40,7 @@ class Marking extends Model {
         'recessive'           => 'nullable',
         'dominant'            => 'nullable',
         'image'               => 'mimes:png',
+        'order_in_genome'     => 'nullable|integer|min:0|max:9',
     ];
 
     /**
@@ -59,6 +60,7 @@ class Marking extends Model {
         'recessive'           => 'nullable',
         'dominant'            => 'nullable',
         'image'               => 'mimes:png',
+        'order_in_genome'     => 'nullable|integer|min:0|max:9',
     ];
 
     /**********************************************************************************************
