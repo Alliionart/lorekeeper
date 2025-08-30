@@ -180,5 +180,6 @@ Route::group(['prefix' => 'design-hub'], function () {
     Route::get('/', 'DesignHubController@getDesignHubPage');
     Route::get('marking/{slug}', 'MarkingController@getMarkingPage');
     Route::get('base-coats/', 'BaseController@getBasePage');
+    Route::get('carriers/', 'CarrierController@getCarrierPage');
     Route::get('trait/{slug}', 'FeatureController@getTraitPage');
 });
