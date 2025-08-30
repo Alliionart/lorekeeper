@@ -28,33 +28,33 @@ class CarrierController extends Controller {
 
         $carriers_by_rarity = [];
 
-        foreach($carriers as $carrier) {
+        foreach ($carriers as $carrier) {
             $markings = MarkingCarrier::where('carrier_id', $carrier->id)->pluck('marking_id')->toArray();
             $marking = [];
             $rarities = [];
-            foreach($markings as $marking_id) {
+            foreach ($markings as $marking_id) {
                 $rarities[] = Marking::where('id', $marking_id)->pluck('rarity_id')->toArray();
                 //Get the marking attributes
                 $marking_temp = Marking::where('id', $marking_id)->first();
-                if($marking_temp) {
-                    $marking[] = '<a href="' . $marking_temp->getUrlAttribute() . '">' . $marking_temp->name . '</a>';
+                if ($marking_temp) {
+                    $marking[] = '<a href="'.$marking_temp->getUrlAttribute().'">'.$marking_temp->name.'</a>';
                 }
             }
-            if(count($rarities) > 1) {
+            if (count($rarities) > 1) {
                 $rarity = 'Special';
             } else {
                 $rarity = $rarities[0][0];
             }
-            if(!isset($carriers_by_rarity[$rarity])) {
+            if (!isset($carriers_by_rarity[$rarity])) {
                 $carriers_by_rarity[$rarity] = [];
             }
 
             $carriers_by_rarity[$rarity][] = [
-                'name' => $carrier->name,
-                'id'   => $carrier->id,
+                'name'          => $carrier->name,
+                'id'            => $carrier->id,
                 'description'   => $carrier->description,
-                'rarity'    => $rarity,
-                'markings'   => $marking,
+                'rarity'        => $rarity,
+                'markings'      => $marking,
             ];
         }
 
