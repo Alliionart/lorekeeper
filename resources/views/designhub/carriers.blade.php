@@ -24,7 +24,9 @@
             @foreach ($rarities as $rarity)
                 @if (array_key_exists($rarity->id, $carriers))
                     <div class="card mb-3">
-                        <div class="card-header"><h3><span class="rarity-indicator" style="background-color:#{{ $rarity->color }}"></span> {{ $rarity->name }}</h3></div>
+                        <div class="card-header">
+                            <h3><span class="rarity-indicator" style="background-color:#{{ $rarity->color }}"></span> {{ $rarity->name }}</h3>
+                        </div>
                         <div class="card-body">
                             <div class="d-flex flex-wrap justify-content-between searchContent carrier-card-container" data-id="carrierSearch">
                                 @foreach ($carriers[$rarity->id] as $carrier)
@@ -45,7 +47,9 @@
             @endforeach
             @if ($carriers['Special'])
                 <div class="card mb-3">
-                    <div class="card-header"><h3><span class="rarity-indicator" style="background-color:yellow"></span> Special</h3></div>
+                    <div class="card-header">
+                        <h3><span class="rarity-indicator" style="background-color:yellow"></span> Special</h3>
+                    </div>
                     <div class="card-body">
                         <div class="d-flex flex-wrap justify-content-between searchContent carrier-card-container" data-id="carrierSearch">
                             @foreach ($carriers['Special'] as $carrier)
