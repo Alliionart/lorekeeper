@@ -236,3 +236,25 @@
 	margin: 0 20px;
 	cursor: pointer;
 }
+@media screen and (max-width:1200px) {
+	.searchContent .item {
+		width: calc(50% - 10px);
+	}
+	.base-card-container .card {
+		width: calc(50% - 20px);
+	}
+}
+@media screen and (max-width:567px) {
+	.base-card-container .card, .searchContent .item {
+		width: 100%;
+	}
+	.searchContent .item .row {
+		flex-direction: row;
+		.col-md-4 {
+			width: 25%;
+		}
+		.col-md-8 {
+			width: 75%;
+		}
+	}
+}
