@@ -40,7 +40,7 @@
     <script>
         $(document).ready(function() {
             $('img.pop').each(function(i, e) {
-                if(!$(this).parent().is('a')) {
+                if (!$(this).parent().is('a')) {
                     $(this).wrap('<a href="' + $(this).attr('src') + '" data-lightbox="entry" ></a>');
                 } else {
                     $a = $(this).parent('a');
@@ -57,7 +57,7 @@
             $('a').each(function() {
                 var host = this.hostname;
 
-                if(this.href && host !== currentHostname) {
+                if (this.href && host !== currentHostname) {
                     $(this).attr('target', '_blank');
                     $(this).attr('rel', 'noopener noreferrer');
                 }
