@@ -39,8 +39,28 @@
     @parent
     <script>
         $(document).ready(function() {
-            $('img').each(function(i, e) {
-                $(this).wrap('<a href="' + $(this).attr('src') + '" data-lightbox="entry" ></a>');
+            $('img.pop').each(function(i, e) {
+                if(!$(this).parent().is('a')) {
+                    $(this).wrap('<a href="' + $(this).attr('src') + '" data-lightbox="entry" ></a>');
+                } else {
+                    $a = $(this).parent('a');
+                    $a.addClass('btn-secondary');
+                    $(this).unwrap();
+                    $(this).wrap('<div class="lightbox-wrapper"></div>');
+                    $(this).parent('.lightbox-wrapper').append($a);
+                    $a.text('Open Link');
+                }
+            });
+
+            var currentHostname = window.location.hostname;
+
+            $('a').each(function() {
+                var host = this.hostname;
+
+                if(this.href && host !== currentHostname) {
+                    $(this).attr('target', '_blank');
+                    $(this).attr('rel', 'noopener noreferrer');
+                }
             });
         });
     </script>
