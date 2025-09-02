@@ -148,12 +148,16 @@
                                     <div class="card item flex-fill my-2">
                                         <div class="card-body">
                                             @if ($subtype->subtypeImageUrl)
-                                                <a href="{{ $subtype->subtypeImageUrl }}" data-lightbox="entry" data-title="{{ $subtype->name }}">
-                                                    <img src="{{ $subtype->subtypeImageUrl }}" class="world-entry-image mb-3" alt="{{ $subtype->name }}" />
-                                                </a>
+                                                <div class="col-md-3">
+                                                    <a href="{{ $subtype->subtypeImageUrl }}" data-lightbox="entry" data-title="{{ $subtype->name }}">
+                                                        <img src="{{ $subtype->subtypeImageUrl }}" class="world-entry-image mb-3" alt="{{ $subtype->name }}" />
+                                                    </a>
+                                                </div>
                                             @endif
-                                            <h3>{{ $subtype->name }}</h3>
-                                            <p>{!! $subtype->description !!}</p>
+                                            <div class="{{ $subtype->subtypeImageUrl ? 'col-md-9' : 'col-md-12' }}">
+                                                <h3>{{ $subtype->name }}</h3>
+                                                <p>{!! $subtype->description !!}</p>
+                                            </div>
                                         </div>
                                     </div>
                                 @endif
