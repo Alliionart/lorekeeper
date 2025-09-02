@@ -51,7 +51,9 @@
 .carrier-card.card h5 {
 	background-color: var(--gray-dark);
 }
-
+.world-entry-image {
+	max-height: 200px;
+}
 /* ATTRIBUTES */
 .card {
 	overflow: hidden;

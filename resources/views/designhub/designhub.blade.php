@@ -149,7 +149,7 @@
                                         <div class="card-body">
                                             @if ($subtype->subtypeImageUrl)
                                                 <a href="{{ $subtype->subtypeImageUrl }}" data-lightbox="entry" data-title="{{ $subtype->name }}">
-                                                    <img src="{{ $subtype->subtypeImageUrl }}" class="world-entry-image" alt="{{ $subtype->name }}" />
+                                                    <img src="{{ $subtype->subtypeImageUrl }}" class="world-entry-image mb-3" alt="{{ $subtype->name }}" />
                                                 </a>
                                             @endif
                                             <h3>{{ $subtype->name }}</h3>
