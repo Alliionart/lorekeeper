@@ -505,6 +505,48 @@ class SubmissionManager extends Service {
     }
 
     /**
+     * Marks a submission as claimed for a trainee.
+     * 
+     * @param array                 $data
+     * @param \App\Models\User\User $user
+     */
+    public function markAsClaimedForTrainee($data, $user) {
+        DB::beginTransaction();
+
+        try {
+            // 1. check that the submission exists
+            // 2. check that the submission is pending
+            $submission = Submission::where('status', 'Pending')->where('id', $data['id'])->first();
+            if (!$submission) {
+                throw new \Exception('Invalid submission.');
+            }
+
+            $submission->update([
+                'staff_id'              => $data['trainee_id'],
+            ]);
+
+            $trainee = User::find($data['trainee_id']);
+
+            Notifications::create($submission->prompt_id ? 'SUBMISSION_CLAIMED_FOR_TRAINEE' : 'CLAIM_CLAIMED_FOR_TRAINEE', $submission->user, [
+                'staff_url'     => $user->url,
+                'staff_name'    => $user->name,
+                'trainee_name'  => $trainee->name ?? 'trainee',
+                'submission_id' => $submission->id,
+            ]);
+
+            if (!$this->logAdminAction($user, 'Submission Marked as Claimed for Trainee', 'Marked submission <a href="'.$submission->viewurl.'">#'.$submission->id.'</a> as claimed for trainee - '.$trainee->name ?? '')) {
+                throw new \Exception('Failed to log admin action.');
+            }
+
+            return $this->commitReturn($submission);
+        } catch (\Exception $e) {
+            $this->setError('error', $e->getMessage());
+        }
+
+        return $this->rollback;
+    }
+
+    /**
      * Deletes a submission.
      *
      * @param mixed $data the data of the submission to be deleted

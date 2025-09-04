@@ -7,6 +7,8 @@ use App\Models\Character\Character;
 use App\Models\Currency\Currency;
 use App\Models\Item\Item;
 use App\Models\Loot\LootTable;
+use App\Models\User\User;
+use App\Models\User\UserTeam;
 use App\Models\Prompt\PromptCategory;
 use App\Models\Raffle\Raffle;
 use App\Models\Submission\Submission;
@@ -79,6 +81,7 @@ class SubmissionController extends Controller {
             'tables'              => LootTable::orderBy('name')->pluck('name', 'id'),
             'raffles'             => Raffle::where('rolled_at', null)->where('is_active', 1)->orderBy('name')->pluck('name', 'id'),
             'count'               => Submission::where('prompt_id', $submission->prompt_id)->where('status', 'Approved')->where('user_id', $submission->user_id)->count(),
+            'trainees'            => User::whereIn('id', UserTeam::where('type', 'Trainee')->pluck('user_id')->toArray())->orderBy('name')->pluck('name', 'id'),
         ] : []));
     }
 
@@ -152,7 +155,7 @@ class SubmissionController extends Controller {
      * @return \Illuminate\Http\RedirectResponse
      */
     public function postSubmission(Request $request, SubmissionManager $service, $id, $action) {
-        $data = $request->only(['slug',  'character_rewardable_quantity', 'character_rewardable_id',  'character_rewardable_type', 'character_currency_id', 'rewardable_type', 'rewardable_id', 'quantity', 'staff_comments']);
+        $data = $request->only(['slug',  'character_rewardable_quantity', 'character_rewardable_id',  'character_rewardable_type', 'character_currency_id', 'rewardable_type', 'rewardable_id', 'quantity', 'staff_comments', 'trainee_id']);
         if ($action == 'reject' && $service->rejectSubmission($request->only(['staff_comments']) + ['id' => $id], Auth::user())) {
             flash('Submission rejected successfully.')->success();
         } elseif ($action == 'cancel' && $service->cancelSubmission($request->only(['staff_comments']) + ['id' => $id], Auth::user())) {
@@ -161,6 +164,9 @@ class SubmissionController extends Controller {
             return redirect()->to('admin/submissions');
         } elseif ($action == 'approve' && $service->approveSubmission($data + ['id' => $id], Auth::user())) {
             flash('Submission approved successfully.')->success();
+        } elseif ($action == 'traineemark' && $service->markAsClaimedForTrainee($data + ['id' => $id], Auth::user())) {
+            $trainee_name = User::find($data['trainee_id'])->name ?? 'trainee';
+            flash('Submission marked as claimed for ' . $trainee_name . ' successfully.')->success();
         } else {
             foreach ($service->errors()->getMessages()['error'] as $error) {
                 flash($error)->error();

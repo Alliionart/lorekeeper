@@ -151,6 +151,7 @@
         </div>
 
         <div class="text-right">
+            <a href="#" class="btn btn-primary mr-2" id="traineeButton">Mark for Trainee</a>
             <a href="#" class="btn btn-danger mr-2" id="rejectionButton">Reject</a>
             <a href="#" class="btn btn-secondary mr-2" id="cancelButton">Cancel</a>
             <a href="#" class="btn btn-success" id="approvalButton">Approve</a>
@@ -265,6 +266,19 @@
                         </div>
                     </div>
                 </div>
+                <div class="modal-content hide" id="traineeContent">
+                    <div class="modal-header">
+                        <span class="modal-title h5 mb-0">Confirm Trainee Claim</span>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <p>This will mark the {{ $submission->prompt_id ? 'submission' : 'claim' }} as a trainee claim.</p>
+                        {!! Form::select('trainee_id', $trainees, null, ['class' => 'form-control', 'placeholder' => 'Select Trainee']) !!}
+                        <div class="text-right mt-2">
+                            <a href="#" id="traineeSubmit" class="btn btn-primary">Mark as Claimed for Trainee</a>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     @else
@@ -297,11 +311,16 @@
                 var $cancelContent = $('#cancelContent');
                 var $cancelSubmit = $('#cancelSubmit');
 
+                var $traineeButton = $('#traineeButton');
+                var $traineeContent = $('#traineeContent');
+                var $traineeSubmit = $('#traineeSubmit');
+
                 $approvalButton.on('click', function(e) {
                     e.preventDefault();
                     $approvalContent.removeClass('hide');
                     $rejectionContent.addClass('hide');
                     $cancelContent.addClass('hide');
+                    $traineeContent.addClass('hide');
                     $confirmationModal.modal('show');
                 });
 
@@ -310,6 +329,7 @@
                     $rejectionContent.removeClass('hide');
                     $approvalContent.addClass('hide');
                     $cancelContent.addClass('hide');
+                    $traineeContent.addClass('hide');
                     $confirmationModal.modal('show');
                 });
 
@@ -318,6 +338,16 @@
                     $cancelContent.removeClass('hide');
                     $rejectionContent.addClass('hide');
                     $approvalContent.addClass('hide');
+                    $traineeContent.addClass('hide');
+                    $confirmationModal.modal('show');
+                });
+
+                $traineeButton.on('click', function(e) {
+                    e.preventDefault();
+                    $traineeContent.removeClass('hide');
+                    $rejectionContent.addClass('hide');
+                    $approvalContent.addClass('hide');
+                    $cancelContent.addClass('hide');
                     $confirmationModal.modal('show');
                 });
 
@@ -336,6 +366,12 @@
                 $cancelSubmit.on('click', function(e) {
                     e.preventDefault();
                     $submissionForm.attr('action', '{{ url()->current() }}/cancel');
+                    $submissionForm.submit();
+                });
+
+                $traineeSubmit.on('click', function(e) {
+                    e.preventDefault();
+                    $submissionForm.attr('action', '{{ url()->current() }}/traineemark');
                     $submissionForm.submit();
                 });
             });
