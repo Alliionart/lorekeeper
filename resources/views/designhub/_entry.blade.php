@@ -1,4 +1,4 @@
-<div class="card item mb-3">
+<div class="card rounded item mb-3">
     <div class="card-body">
         <div class="row">
             <div class="col-md-4">
