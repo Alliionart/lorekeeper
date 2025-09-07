@@ -41,7 +41,7 @@
                                             @if ($marking->rarity_id === $rarity_item->id)
                                                 @include('designhub._entry', [
                                                     'imageUrl' => file_exists($marking->imageDirectory . '/' . $marking->imageFileName) ? asset($marking->imageDirectory . '/' . $marking->imageFileName) : '/images/account.png',
-                                                    'name' => $marking->name . ($marking->recessive ? ' (' . $marking->recessive . '/' . $marking->dominant . ')': ''),
+                                                    'name' => $marking->name . ($marking->recessive ? ' (' . $marking->recessive . '/' . $marking->dominant . ')' : ''),
                                                     'description' => $marking->short_description,
                                                     'url' => 'design-hub/marking/' . $marking->slug,
                                                 ])
