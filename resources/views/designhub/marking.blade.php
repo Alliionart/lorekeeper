@@ -9,7 +9,11 @@
 @section('content')
     {!! breadcrumbs(['Design Hub' => 'design-hub', $marking->name => $marking->url]) !!}
     <x-admin-edit title="Marking" :object="$marking" />
-    <h1>{{ $marking->name }} <span style="text-transform:none;">({{ $marking->recessive }}/{{ $marking->dominant }})</span></h1>
+    <h1>{{ $marking->name }} 
+        @if($marking->recessive)
+            <span style="text-transform:none;">({{ $marking->recessive }}/{{ $marking->dominant }})</span>
+        @endif
+    </h1>
     <p>{{ $marking->short_description }}</p>
 
     <div class="site-page-content parsed-text">
