@@ -14,7 +14,9 @@
         <p>To submit your breeding select both characters, and any items you'd like to use. Make sure you review before you submit!</p>
         {!! Form::open(['url' => 'submit-breeding']) !!}
         <div class="card mb-3">
-            <div class="card-header"><h4>Character #1</h4></div>
+            <div class="card-header">
+                <h4>Character #1</h4>
+            </div>
             <div class="card-body">
 
             </div>
@@ -28,7 +30,7 @@
     @parent
     <script>
         $(document).ready(function() {
-            
+
         });
     </script>
 @endsection
