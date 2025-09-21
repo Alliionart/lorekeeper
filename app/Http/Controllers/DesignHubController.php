@@ -19,11 +19,12 @@ class DesignHubController extends Controller {
 
     public function getDesignHubPage(Request $request) {
         $markings = self::getDesignHubGenetics($request);
-        $rarities = Rarity::whereIn('id', Marking::select('rarity_id')->distinct()->get())->get();
+        $rarities = Rarity::whereIn('id', $markings->keys())->get()->keyBy('id');
+        $pages = SitePage::whereIn('key', ['dh-start', 'dh-end'])->get()->keyBy('id');
 
         return view('designhub.designhub', [
-            'dh_start'          => SitePage::where('key', 'dh-start')->first(),
-            'dh_end'            => SitePage::where('key', 'dh-end')->first(),
+            'dh_start'          => $pages->where('key', 'dh-start')->first(),
+            'dh_end'            => $pages->where('key', 'dh-end')->first(),
             'specieses'         => Species::where('is_visible', 1)->orderBy('sort', 'DESC')->get(),
             'subtypes'          => Subtype::where('is_visible', 1)->orderBy('sort', 'DESC')->get(),
             'markings'          => $markings,

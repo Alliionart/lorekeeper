@@ -25,7 +25,7 @@
             Markings
         </div>
         <div class="card-body">
-            <input type="text" placeholder="Search markings by name or code..." class="searchBar bg-dark rounded border-0 mb-4 form-control" data-id="markingSearch" />
+            <input type="text" placeholder="Search markings by name or code..." class="searchBar rounded mb-4 form-control" data-id="markingSearch" />
 
             @if ($rarity_list)
                 <div class="accordion" id="markingAccordion">
@@ -62,7 +62,7 @@
             Mutations & Non-Passable Modifiers
         </div>
         <div class="card-body">
-            <input type="text" placeholder="Search mutations and modifiers..." class="searchBar bg-dark rounded border-0 mb-4 form-control" data-id="mutations" />
+            <input type="text" placeholder="Search mutations and modifiers..." class="searchBar rounded mb-4 form-control" data-id="mutations" />
             <div class="accordion" id="traitAccordion">
                 <div class="card rounded mb-4">
                     <div class="card-header p-0" id="corrupt"><button class="w-100 mb-0 p-3 border-0 h4 text-capitalize text-left bg-transparent" type="button" data-toggle="collapse" data-target="#collapse-corrupt">Corrupt Mutations</button></div>

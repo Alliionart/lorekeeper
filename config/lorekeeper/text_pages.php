@@ -28,5 +28,12 @@ return [
         'title' => 'Credits',
         'text'  => 'This page will contain credits for code, art, ect that has been used on your site!',
     ],
-
+    'dh-start' => [
+        'title' => 'Design Hub Start',
+        'text'  => 'Welcome to the Design Hub! This page is editable from the admin panel.',
+    ],
+    'dh-end' => [
+        'title' => 'Design Hub End',
+        'text'  => 'Thank you for visiting the Design Hub! This page is editable from the admin panel.',
+    ],
 ];

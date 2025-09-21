@@ -12,9 +12,6 @@
 .flex-gap {
 	gap: 20px;
 }
-.card {
-	border-color: var(--dark);
-}
 .searchContent .item {
 	width: calc(33% - 10px);
 	background-color: rgba(255,255,255,0.05);
@@ -22,7 +19,6 @@
 	border-radius: 20px;
 }
 .card-header {
-	background-color: var(--dark);
 	font-weight: 700;
 	font-size: 18px;
 }
@@ -60,9 +56,6 @@
 }
 .card.rounded {
 	border-radius: 20px !important;
-}
-.card-header {
-	background-color: var(--dark);
 }
 .flex-gap {
 	gap: 10px;

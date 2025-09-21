@@ -13,7 +13,7 @@
 
     <div class="card rounded my-4">
         <div class="card-body">
-            <input type="text" placeholder="Search base coats..." class="searchBar bg-dark rounded border-0 mb-4 form-control" data-id="baseSearch" />
+            <input type="text" placeholder="Search base coats..." class="searchBar rounded mb-4 form-control" data-id="baseSearch" />
 
             <div class="d-flex flex-wrap justify-content-between searchContent base-card-container" data-id="baseSearch">
                 @if ($bases)
