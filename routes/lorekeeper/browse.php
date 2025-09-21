@@ -183,3 +183,11 @@ Route::group(['prefix' => 'design-hub'], function () {
     Route::get('carriers/', 'CarrierController@getCarrierPage');
     Route::get('trait/{slug}', 'FeatureController@getTraitPage');
 });
+
+/**************************************************************************************************
+    Breeding
+**************************************************************************************************/
+Route::group(['prefix' => 'breeding'], function () {
+    Route::get('/', 'BreedingController@getBreedingIndex');
+    Route::get('submit', 'BreedingController@getBreedingFormEntry');
+});
