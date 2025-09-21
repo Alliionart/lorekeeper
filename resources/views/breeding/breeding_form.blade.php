@@ -13,7 +13,7 @@
     <div class="site-page-content parsed-text">
         <p>To submit your breeding select both characters, and any items you'd like to use. Make sure you review before you submit!</p>
         {!! Form::open(['url' => 'submit-breeding']) !!}
-        
+
         <div class="alert alert-warning p-2 border border-warning hide">
             <strong>Warning:</strong> You cannot select the same slot for both parents. Please choose different slots.
         </div>
@@ -21,7 +21,9 @@
         <div class="row">
             <div class="col-md-6">
                 <div class="card mb-3">
-                    <div class="card-header"><h4>Parent #1</h4></div>
+                    <div class="card-header">
+                        <h4>Parent #1</h4>
+                    </div>
                     <div class="card-body">
 
                         <pre class="hide" style="background-color:#ccc">
@@ -34,7 +36,7 @@
                         <div id="character_1_display" class="mt-3 rounded p-3 border border-secondary hide">
                             <div class="row">
                                 <div class="col-md-3">
-                                    <img src="" alt="" class="img-fluid"/>
+                                    <img src="" alt="" class="img-fluid" />
                                 </div>
                                 <div class="col-md-9 d-flex flex-column justify-content-center">
                                     <h4>Character Name</h4>
@@ -47,7 +49,9 @@
             </div>
             <div class="col-md-6">
                 <div class="card mb-3">
-                    <div class="card-header"><h4>Parent #2</h4></div>
+                    <div class="card-header">
+                        <h4>Parent #2</h4>
+                    </div>
                     <div class="card-body">
 
                         <pre class="hide" style="background-color:#ccc">
@@ -60,7 +64,7 @@
                         <div id="character_2_display" class="mt-3 rounded p-3 border border-secondary hide">
                             <div class="row">
                                 <div class="col-md-3">
-                                    <img src="" alt="" class="img-fluid"/>
+                                    <img src="" alt="" class="img-fluid" />
                                 </div>
                                 <div class="col-md-9 d-flex flex-column justify-content-center">
                                     <h4>Character Name</h4>
@@ -74,7 +78,9 @@
         </div>
 
         <div class="card">
-            <div class="card-header"><h4>Breeding Modifiers</h4></div>
+            <div class="card-header">
+                <h4>Breeding Modifiers</h4>
+            </div>
             <div class="card-body">
                 <p>Select any modifiers for your breeding. Some may require item usage.</p>
             </div>
