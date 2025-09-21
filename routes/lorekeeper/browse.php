@@ -87,7 +87,7 @@ Route::group(['prefix' => 'character', 'namespace' => 'Characters'], function ()
     Route::get('{slug}/gallery', 'CharacterController@getCharacterGallery');
 
     Route::get('{slug}/breeding-permissions', 'CharacterController@getCharacterBreedingPermissions');
-    # lineage
+    // lineage
     Route::get('{slug}/lineage', 'CharacterLineageController@getCharacterLineage');
     Route::get('{slug}/children', 'CharacterLineageController@getCharacterChildren');
     Route::get('{slug}/grandchildren', 'CharacterLineageController@getCharacterGrandChildren');
