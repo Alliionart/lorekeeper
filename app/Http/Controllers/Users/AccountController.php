@@ -6,6 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Models\Notification;
 use App\Models\User\User;
 use App\Models\User\UserAlias;
+use App\Models\Character\BreedingPermission;
+use Illuminate\Support\Facades\Storage;
+
 use App\Services\LinkService;
 use App\Services\UserService;
 use BaconQrCode\Renderer\Color\Rgb;
@@ -93,7 +96,6 @@ class AccountController extends Controller {
                 flash($error)->error();
             }
         }
-
         return redirect()->back();
     }
 
@@ -474,5 +476,24 @@ class AccountController extends Controller {
         }
 
         return redirect()->back();
+    }
+
+    /**
+     * Shows the user's owned breeding permissions.
+     *
+     * @param  \Illuminate\Http\Request       $request
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function getBreedingPermissions(Request $request)
+    {
+        $permissions = BreedingPermission::where('recipient_id', Auth::user()->id);
+        $used = $request->get('used');
+        if(!$used) $used = 0;
+
+        $permissions = $permissions->where('is_used', $used);
+
+        return view('home.breeding_permissions', [
+            'permissions' => $permissions->orderBy('id', 'DESC')->paginate(20)->appends($request->query()),
+        ]);
     }
 }

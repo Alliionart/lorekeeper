@@ -2,11 +2,12 @@
     <li class="sidebar-header"><a href="{{ $character->url }}" class="card-link">{{ $character->slug }}</a></li>
     <li class="sidebar-section">
         <div class="sidebar-section-header">Character</div>
-        <div class="sidebar-item"><a href="{{ $character->url }}" class="{{ set_active('character/' . $character->slug) }}">Information</a></div>
-        <div class="sidebar-item"><a href="{{ $character->url . '/profile' }}" class="{{ set_active('character/' . $character->slug . '/profile') }}">Profile</a></div>
-        <div class="sidebar-item"><a href="{{ $character->url . '/gallery' }}" class="{{ set_active('character/' . $character->slug . '/gallery') }}">Gallery</a></div>
-        <div class="sidebar-item"><a href="{{ $character->url . '/inventory' }}" class="{{ set_active('character/' . $character->slug . '/inventory') }}">Inventory</a></div>
-        <div class="sidebar-item"><a href="{{ $character->url . '/bank' }}" class="{{ set_active('character/' . $character->slug . '/bank') }}">Bank</a></div>
+        <div class="sidebar-item"><a href="{{ $character->url }}" class="{{ set_active('character/'.$character->slug) }}">Information</a></div>
+        <div class="sidebar-item"><a href="{{ $character->url . '/profile' }}" class="{{ set_active('character/'.$character->slug.'/profile') }}">Profile</a></div>
+        <div class="sidebar-item"><a href="{{ $character->url . '/gallery' }}" class="{{ set_active('character/'.$character->slug.'/gallery') }}">Gallery</a></div>
+        <div class="sidebar-item"><a href="{{ $character->url . '/inventory' }}" class="{{ set_active('character/'.$character->slug.'/inventory') }}">Inventory</a></div>
+        <div class="sidebar-item"><a href="{{ $character->url . '/bank' }}" class="{{ set_active('character/'.$character->slug.'/bank') }}">Bank</a></div>
+        <div class="sidebar-item"><a href="{{ $character->url . '/breeding-permissions' }}" class="{{ set_active('character/'.$character->slug.'/breeding-permissions') }}">Breeding Permissions</a></div>
     </li>
     <li class="sidebar-section">
         <div class="sidebar-section-header">History</div>
