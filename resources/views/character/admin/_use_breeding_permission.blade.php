@@ -1,5 +1,5 @@
-@if($breedingPermission)
-    {!! Form::open(['url' => 'admin/character/'.$character->slug.'/breeding-permissions/'.$breedingPermission->id.'/use']) !!}
+@if ($breedingPermission)
+    {!! Form::open(['url' => 'admin/character/' . $character->slug . '/breeding-permissions/' . $breedingPermission->id . '/use']) !!}
 
     <p>
         This will marked this breeding permission as being used. This is not reversible. Are you sure you want to mark this breeding permission as used?

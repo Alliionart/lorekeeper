@@ -1,5 +1,5 @@
-@if($breedingPermission)
-    {!! Form::open(['url' => $breedingPermission->id ? 'character/'.$character->slug.'/breeding-permissions/'.$breedingPermission->id : 'character/'.$character->slug.'/breeding-permissions/new']) !!}
+@if ($breedingPermission)
+    {!! Form::open(['url' => $breedingPermission->id ? 'character/' . $character->slug . '/breeding-permissions/' . $breedingPermission->id : 'character/' . $character->slug . '/breeding-permissions/new']) !!}
 
     <div class="form-group">
         {!! Form::label('recipient_id', 'Recipient') !!} {!! add_help('Note that breeding permissions may also be transferred by the recipient upon receipt.') !!}
