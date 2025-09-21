@@ -1,4 +1,5 @@
 <?php
+
 return [
 
     // FORMAT EXAMPLE.
@@ -13,7 +14,7 @@ return [
     // ],
 
     'breeding_permissions' => [
-        'key' => 'breeding_permissions',
+        'key'      => 'breeding_permissions',
         'wiki_key' => 'Breeding_Permissions',
         'creators' => json_encode([
             'Mercury' => 'https://github.com/itinerare/',
