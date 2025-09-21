@@ -5,28 +5,22 @@ namespace App\Models\Character;
 use App\Facades\Notifications;
 use App\Models\Base\Base;
 use App\Models\Carrier\Carrier;
-use Config;
-use DB;
-use Carbon\Carbon;
-use App\Models\Model;
-use Settings;
-use App\Models\User\User;
-use App\Models\User\UserCharacterLog;
-use App\Models\Character\CharacterCategory;
-use App\Models\Character\CharacterTransfer;
-use App\Models\Character\CharacterBookmark;
-use App\Models\Character\CharacterCurrency;
 use App\Models\Currency\Currency;
 use App\Models\Currency\CurrencyLog;
 use App\Models\Gallery\GalleryCharacter;
 use App\Models\Item\Item;
 use App\Models\Item\ItemLog;
 use App\Models\Marking\Marking;
+use App\Models\Model;
 use App\Models\Rarity;
 use App\Models\Submission\Submission;
 use App\Models\Submission\SubmissionCharacter;
 use App\Models\Trade;
+use App\Models\User\User;
+use App\Models\User\UserCharacterLog;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Settings;
 
 class Character extends Model {
     use SoftDeletes;
@@ -209,8 +203,7 @@ class Character extends Model {
     /**
      * Get the character's associated breeding permissions.
      */
-    public function breedingPermissions()
-    {
+    public function breedingPermissions() {
         return $this->hasMany('App\Models\Character\BreedingPermission', 'character_id');
     }
 
@@ -401,10 +394,12 @@ class Character extends Model {
      *
      * @return int
      */
-    public function getMaxBreedingPermissionsAttribute()
-    {
+    public function getMaxBreedingPermissionsAttribute() {
         $currencies = $this->getCurrencies(true)->where('id', Settings::get('breeding_permission_currency'))->first();
-        if(!$currencies) return 0;
+        if (!$currencies) {
+            return 0;
+        }
+
         return $currencies->quantity;
     }
 
@@ -413,8 +408,7 @@ class Character extends Model {
      *
      * @return int
      */
-    public function getAvailableBreedingPermissionsAttribute()
-    {
+    public function getAvailableBreedingPermissionsAttribute() {
         return $this->maxBreedingPermissions - $this->breedingPermissions->count();
     }
 
