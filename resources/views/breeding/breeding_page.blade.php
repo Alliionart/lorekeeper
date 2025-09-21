@@ -2,13 +2,13 @@
 
 
 @section('title')
-    Breeding (#{{$id}})
+    Breeding (#{{ $id }})
 @endsection
 
 
 @section('content')
-    {!! breadcrumbs(['Breeding' => 'breeding'], ['Breeding #'.$id => 'breeding/'.$id]) !!}
-    <h1>Breeding (#{{$id}})</h1>
+    {!! breadcrumbs(['Breeding' => 'breeding'], ['Breeding #' . $id => 'breeding/' . $id]) !!}
+    <h1>Breeding (#{{ $id }})</h1>
 
     <div class="site-page-content parsed-text">
         {{ $breeding }}
@@ -17,7 +17,5 @@
 
 @section('scripts')
     @parent
-    <script>
-        
-    </script>
+    <script></script>
 @endsection

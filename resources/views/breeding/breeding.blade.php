@@ -17,7 +17,5 @@
 
 @section('scripts')
     @parent
-    <script>
-        
-    </script>
+    <script></script>
 @endsection
