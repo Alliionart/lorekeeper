@@ -11,7 +11,7 @@ class Breeding extends Model {
      * @var array
      */
     protected $fillable = [
-        'user_id', 'staff_id', 'status', 'character_data', 'breeding_data', 'results'
+        'user_id', 'staff_id', 'status', 'character_data', 'breeding_data', 'results',
     ];
 
     /**
@@ -85,7 +85,6 @@ class Breeding extends Model {
     public function scopeSortOldest($query) {
         return $query->orderBy('id');
     }
-
 
     /**********************************************************************************************
 

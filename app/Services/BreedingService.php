@@ -15,7 +15,7 @@ class BreedingService extends Service {
     |
     */
 
-        /**
+    /**
      * Creates a new breeding.
      *
      * @param array                 $data
@@ -47,8 +47,8 @@ class BreedingService extends Service {
      * Updates a breeding.
      *
      * @param \App\Models\Breeding\Breeding $breeding
-     * @param array                 $data
-     * @param \App\Models\User\User $user
+     * @param array                         $data
+     * @param \App\Models\User\User         $user
      *
      * @return \App\Models\Breeding\Breeding|bool
      */
@@ -81,7 +81,7 @@ class BreedingService extends Service {
      * Deletes a breeding.
      *
      * @param \App\Models\Breeding\Breeding $breeding
-     * @param mixed                 $user
+     * @param mixed                         $user
      *
      * @return bool
      */
@@ -89,7 +89,6 @@ class BreedingService extends Service {
         DB::beginTransaction();
 
         try {
-
             if (!$this->logAdminAction($user, 'Deleted Breeding Request', 'Deleted '.$breeding->displayName)) {
                 throw new \Exception('Failed to log admin action.');
             }
@@ -107,7 +106,7 @@ class BreedingService extends Service {
     /**
      * Processes user input for creating/updating a base.
      *
-     * @param array                 $data
+     * @param array                         $data
      * @param \App\Models\Breeding\Breeding $breeding
      *
      * @return array

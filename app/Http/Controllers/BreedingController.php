@@ -2,9 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Base\Base;
-use App\Models\Character\BreedingPermission;
 use App\Models\Breeding\Breeding;
+use App\Models\Character\BreedingPermission;
 use App\Models\Character\Character;
 use App\Models\Character\CharacterImage;
 use App\Models\SitePage;
@@ -58,12 +57,12 @@ class BreedingController extends Controller {
     public function getBreedingPage($slug) {
         $breeding = Breeding::where('id', $slug)->first();
 
-        if(!$breeding) {
+        if (!$breeding) {
             abort(404);
         }
 
         return view('breeding.breeding_page', [
-            'id' => $slug,
+            'id'       => $slug,
             'breeding' => $breeding,
         ]);
     }
