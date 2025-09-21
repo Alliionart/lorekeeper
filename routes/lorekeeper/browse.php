@@ -193,4 +193,5 @@ Route::group(['prefix' => 'design-hub'], function () {
 Route::group(['prefix' => 'breeding'], function () {
     Route::get('/', 'BreedingController@getBreedingIndex');
     Route::get('submit', 'BreedingController@getBreedingFormEntry');
+    Route::get('permission', 'BreedingController@getBreedingCharacter');
 });
