@@ -1,9 +1,9 @@
-@if($breedingPermission)
-    {!! Form::open(['url' => 'character/'.$character->slug.'/breeding-permissions/'.$breedingPermission->id.'/transfer']) !!}
+@if ($breedingPermission)
+    {!! Form::open(['url' => 'character/' . $character->slug . '/breeding-permissions/' . $breedingPermission->id . '/transfer']) !!}
 
     <p>
         This will transfer this breeding permission to the selected user.
-        @if(Auth::user()->id != $breedingPermission->recipient_id)
+        @if (Auth::user()->id != $breedingPermission->recipient_id)
             It will also notify the original recipient ({!! $breedingPermission->recipient->displayName !!}).
         @endif
     </p>
