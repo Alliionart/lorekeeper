@@ -17,6 +17,7 @@ return new class extends Migration {
             $table->string('status', 20)->default('pending');
             $table->string('character_data', 100);
             $table->string('breeding_data', 1024);
+            $table->string('results', 1024)->nullable();
             $table->timestamps();
         });
     }

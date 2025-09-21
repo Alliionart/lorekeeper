@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Base\Base;
 use App\Models\Character\BreedingPermission;
+use App\Models\Breeding\Breeding;
 use App\Models\Character\Character;
 use App\Models\Character\CharacterImage;
+use App\Models\SitePage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -53,9 +55,22 @@ class BreedingController extends Controller {
         ]);
     }
 
-    // public function getBasePage(Request $request) {
-    //     return view('designhub.basespage', [
-    //         'bases'      => Base::where('is_visible', 1)->get(),
-    //     ]);
-    // }
+    public function getBreedingPage($slug) {
+        $breeding = Breeding::where('id', $slug)->first();
+
+        if(!$breeding) {
+            abort(404);
+        }
+
+        return view('breeding.breeding_page', [
+            'id' => $slug,
+            'breeding' => $breeding,
+        ]);
+    }
+
+    public function getBreedingIndex() {
+        return view('breeding.breeding', [
+            'info' => SitePage::where('key', 'breeding')->first() ?? null,
+        ]);
+    }
 }

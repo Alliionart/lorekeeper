@@ -199,4 +199,5 @@ Route::group(['prefix' => 'breeding'], function () {
     Route::get('/', 'BreedingController@getBreedingIndex');
     Route::get('submit', 'BreedingController@getBreedingFormEntry');
     Route::get('permission', 'BreedingController@getBreedingCharacter');
+    Route::get('/{id}', 'BreedingController@getBreedingPage');
 });

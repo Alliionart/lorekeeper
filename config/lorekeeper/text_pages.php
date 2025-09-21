@@ -28,5 +28,8 @@ return [
         'title' => 'Credits',
         'text'  => 'This page will contain credits for code, art, ect that has been used on your site!',
     ],
-
+    'breeding' => [
+        'title' => 'Breeding',
+        'text'  => 'This page will contain information about the breeding system on your site. This page is editable from the admin panel.',
+    ],
 ];
