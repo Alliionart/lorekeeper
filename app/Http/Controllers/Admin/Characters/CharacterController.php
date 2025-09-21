@@ -12,6 +12,7 @@ use App\Models\Character\CharacterMarking;
 use App\Models\Character\CharacterTransfer;
 use App\Models\Feature\Feature;
 use App\Models\Marking\Marking;
+use App\Models\Character\CharacterLineageBlacklist;
 use App\Models\Rarity;
 use App\Models\Species\Species;
 use App\Models\Species\Subtype;
@@ -53,6 +54,7 @@ class CharacterController extends Controller {
         return view('admin.masterlist.create_character', [
             'categories'  => CharacterCategory::orderBy('sort')->get(),
             'userOptions' => User::query()->orderBy('name')->pluck('name', 'id')->toArray(),
+            'characterOptions' => CharacterLineageBlacklist::getAncestorOptions(),
             'rarities'    => ['0' => 'Select Rarity'] + Rarity::orderBy('sort', 'DESC')->pluck('name', 'id')->toArray(),
             'specieses'   => ['0' => 'Select Species'] + Species::orderBy('sort', 'DESC')->pluck('name', 'id')->toArray(),
             'markings'    => ['' => 'Select Markings(s)'] + Marking::orderBy('name', 'DESC')->pluck('name', 'id')->toArray(),
@@ -71,6 +73,7 @@ class CharacterController extends Controller {
     public function getCreateMyo() {
         return view('admin.masterlist.create_character', [
             'userOptions' => User::query()->orderBy('name')->pluck('name', 'id')->toArray(),
+            'characterOptions' => CharacterLineageBlacklist::getAncestorOptions(),
             'rarities'    => ['0' => 'Select Rarity'] + Rarity::orderBy('sort', 'DESC')->pluck('name', 'id')->toArray(),
             'specieses'   => ['0' => 'Select Species'] + Species::orderBy('sort', 'DESC')->pluck('name', 'id')->toArray(),
             'markings'    => ['' => 'Select Markings(s)'] + Marking::orderBy('name', 'DESC')->pluck('name', 'id')->toArray(),
@@ -114,6 +117,21 @@ class CharacterController extends Controller {
             'species_id', 'subtype_id', 'rarity_id', 'feature_id', 'feature_data', 'marking_id', 'is_dominant', 'base', 'secondary_base', 'side_id',
             'marking_color_0', 'marking_color_1', 'is_chimera',
             'image', 'thumbnail', 'image_description',
+            'sire_id',           'sire_name',
+            'sire_sire_id',      'sire_sire_name',
+            'sire_sire_sire_id', 'sire_sire_sire_name',
+            'sire_sire_dam_id',  'sire_sire_dam_name',
+            'sire_dam_id',       'sire_dam_name',
+            'sire_dam_sire_id',  'sire_dam_sire_name',
+            'sire_dam_dam_id',   'sire_dam_dam_name',
+            'dam_id',            'dam_name',
+            'dam_sire_id',       'dam_sire_name',
+            'dam_sire_sire_id',  'dam_sire_sire_name',
+            'dam_sire_dam_id',   'dam_sire_dam_name',
+            'dam_dam_id',        'dam_dam_name',
+            'dam_dam_sire_id',   'dam_dam_sire_name',
+            'dam_dam_dam_id',    'dam_dam_dam_name',
+            'generate_ancestors',
         ]);
 
         if ($character = $service->createCharacter($data, Auth::user())) {
@@ -150,6 +168,21 @@ class CharacterController extends Controller {
             'species_id', 'subtype_id', 'rarity_id', 'feature_id', 'feature_data', 'marking_id', 'is_dominant', 'base', 'secondary_base', 'side_id',
             'marking_color_0', 'marking_color_1', 'is_chimera',
             'image', 'thumbnail',
+            'sire_id',           'sire_name',
+            'sire_sire_id',      'sire_sire_name',
+            'sire_sire_sire_id', 'sire_sire_sire_name',
+            'sire_sire_dam_id',  'sire_sire_dam_name',
+            'sire_dam_id',       'sire_dam_name',
+            'sire_dam_sire_id',  'sire_dam_sire_name',
+            'sire_dam_dam_id',   'sire_dam_dam_name',
+            'dam_id',            'dam_name',
+            'dam_sire_id',       'dam_sire_name',
+            'dam_sire_sire_id',  'dam_sire_sire_name',
+            'dam_sire_dam_id',   'dam_sire_dam_name',
+            'dam_dam_id',        'dam_dam_name',
+            'dam_dam_sire_id',   'dam_dam_sire_name',
+            'dam_dam_dam_id',    'dam_dam_dam_name',
+            'generate_ancestors',
         ]);
         if ($character = $service->createCharacter($data, Auth::user(), true)) {
             flash('MYO slot created successfully.')->success();

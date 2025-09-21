@@ -15,6 +15,10 @@ use App\Models\Character\CharacterFeature;
 use App\Models\Character\CharacterImage;
 use App\Models\Character\CharacterMarking;
 use App\Models\Character\CharacterTransfer;
+use App\Models\Character\CharacterLineage;
+use App\Models\User\UserCharacterLog;
+use App\Models\Species\Species;
+use App\Models\Rarity;
 use App\Models\Currency\Currency;
 use App\Models\Marking\Marking;
 use App\Models\Sales\SalesCharacter;
@@ -134,6 +138,9 @@ class CharacterManager extends Service {
             if (!$character) {
                 throw new \Exception('Error happened while trying to create character.');
             }
+
+            // Create character lineage
+            $lineage = $this->handleCharacterLineage($data, $character, $isMyo);
 
             // Create character image
             $data['is_valid'] = true; // New image of new characters are always valid
@@ -1556,7 +1563,151 @@ class CharacterManager extends Service {
             }
 
             return $this->commitReturn(true);
-        } catch (\Exception $e) {
+        } catch(\Exception $e) {
+            $this->setError('error', $e->getMessage());
+        }
+        return $this->rollbackReturn(false);
+    }
+
+    /**
+     * Updates a character's lineage.
+     *
+     * @param  array                            $data
+     * @param  \App\Models\Character\Character  $character
+     * @param  \App\Models\User\User            $user
+     * @param  bool                             $isAdmin
+     * @return  bool
+     */
+    public function updateCharacterLineage($data, $character, $user, $isAdmin = false)
+    {
+        DB::beginTransaction();
+
+        try {
+            if(!$user->hasPower('manage_characters')) throw new \Exception('You do not have the required permissions to do this.');
+            $roots = [
+                'sire',
+                'sire_sire', 'sire_sire_sire', 'sire_sire_dam',
+                'sire_dam',  'sire_dam_sire',  'sire_dam_dam',
+                'dam',
+                'dam_sire',  'dam_sire_sire',  'dam_sire_dam',
+                'dam_dam',   'dam_dam_sire',   'dam_dam_dam'
+            ];
+            // you don't need to look for great-great-grandparents
+            $shortlist = [
+                'sire', 'sire_sire', 'sire_dam',
+                'dam', 'dam_sire', 'dam_dam',
+            ];
+            $line = null;
+            $skipFlag = false;
+
+            // Check if we need to create a lineage bc this character doesn't have one.
+            if(!$character->lineage) {
+                $line = $this->handleCharacterLineage($data, $character, $character->is_myo_slot);
+                // tells us we don't need to calculate ancestors as handleCharacterLineage already does
+                $skipFlag = true;
+            }
+            else {
+                // Grab the character's existing lineage
+                $line = $character->lineage;
+            }
+
+            // If we have a lineage already, and didn't just create one, then update it.
+            if(!$skipFlag){
+                // Checking inputs ?
+                for ($i=0; $i < 14; $i++) {
+                    // if isset Data key_id, set Lineage key_id and check if that character exists?
+                    // else if isset Data key_name, set Lineage key_name to that.
+                    if (isset($data[$roots[$i].'_id'])) {
+                        $id = $data[$roots[$i].'_id'];
+                        $line[$roots[$i].'_id'] = $id;
+                        $char = Character::find($id);
+
+                        // TODO Set name to be the slug of the character.
+                        $line[$roots[$i].'_name'] = $char->slug;
+                    }
+                    else if (isset($data[$roots[$i].'_name'])) {
+                        $line[$roots[$i].'_name'] = $data[$roots[$i].'_name'];
+                    }
+                    else {
+                        // EG. someone deleted it, so we erase it.
+                        $line[$roots[$i].'_id'] = null;
+                        $line[$roots[$i].'_name'] = null;
+                    }
+                }
+            }
+
+            // If generate_ancestors is set and we didn't just create a new lineage ...
+            if (!$skipFlag && isset($data['generate_ancestors'])) {
+                // for each of this character's shortlist of ancestors...
+                for ($j=0; $j < 6; $j++) {
+                    $key = $shortlist[$j];
+                    $id = isset($data[$key.'_id']) ? $data[$key.'_id'] : null;
+
+                    // check if this is a character id and not null
+                    if ($id !== null) {
+                        // check if this exists and has lineage
+                        $char = Character::find($id);
+                        if($char->exists() && $char->lineage !== null) {
+                            // go through their parents and gparents
+                            for ($k=0; $k < 6; $k++) {
+                                // checks that this is a valid lineage index
+                                // eg. sire_sire_sire and not sire_sire_sire_sire
+                                $key2 = $key."_".$shortlist[$k];
+                                if (in_array($key2, $roots, true)) {
+                                    $line[$key2."_id"] = $char->lineage[$shortlist[$k]."_id"];
+                                    $line[$key2."_name"] = $char->lineage[$shortlist[$k]."_name"];
+                                }
+                            }
+                        }
+                        else {
+                            for ($k=0; $k < 6; $k++) {
+                                $key2 = $key."_".$shortlist[$k];
+                                if (in_array($key2, $roots, true)) {
+                                    $line[$key2."_id"] = null;
+                                    $line[$key2."_name"] = null;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            // if this request wants to update descendants
+            if (isset($data['update_descendants'])) {
+                // TODO: See if there's a better way to query this, because it is HELL on the database.
+
+                // find the descendants of this character
+                $children = CharacterLineage::query()
+                    ->where  ('sire_id',        $character->id)
+                    ->orWhere('sire_sire_id',   $character->id)
+                    ->orWhere('sire_dam_id',    $character->id)
+                    ->orWhere('dam_id',         $character->id)
+                    ->orWhere('dam_dam_id',     $character->id)
+                    ->orWhere('dam_sire_id',    $character->id)
+                    ->get();
+
+                // go through each descendant
+                foreach ($children as $child) {
+                    // search the lineage to find which ancestor this character is
+                    for ($k=0; $k < 6; $k++) {
+                        if ($child[$shortlist[$k]."_id"] == $character-> id) {
+                            for ($j=0; $j < 6; $j++) {
+                                $key = $shortlist[$k]."_".$shortlist[$j];
+                                if (in_array($key, $roots, true)) {
+                                    $child[$key."_id"] = $line[$shortlist[$j].'_id'];
+                                    $child[$key."_name"] = $line[$shortlist[$j].'_name'];
+                                }
+                            }
+                        }
+                    }
+                // save the changes
+                $child->save();
+                }
+            }
+            // and we're done!
+            if(!$skipFlag) $character->lineage->save();
+            return $this->commitReturn(true);
+        } catch(\Exception $e) {
             $this->setError('error', $e->getMessage());
         }
 

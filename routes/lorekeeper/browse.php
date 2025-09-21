@@ -87,6 +87,11 @@ Route::group(['prefix' => 'character', 'namespace' => 'Characters'], function ()
     Route::get('{slug}/gallery', 'CharacterController@getCharacterGallery');
 
     Route::get('{slug}/breeding-permissions', 'CharacterController@getCharacterBreedingPermissions');
+    # lineage
+    Route::get('{slug}/lineage', 'CharacterLineageController@getCharacterLineage');
+    Route::get('{slug}/children', 'CharacterLineageController@getCharacterChildren');
+    Route::get('{slug}/grandchildren', 'CharacterLineageController@getCharacterGrandChildren');
+    Route::get('{slug}/great-grandchildren', 'CharacterLineageController@getCharacterGreatGrandChildren');
 });
 Route::group(['prefix' => 'myo', 'namespace' => 'Characters'], function () {
     Route::get('{id}', 'MyoController@getCharacter');
