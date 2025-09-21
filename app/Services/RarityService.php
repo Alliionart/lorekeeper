@@ -4,9 +4,9 @@ namespace App\Services;
 
 use App\Models\Character\Character;
 use App\Models\Character\CharacterImage;
+use App\Models\Character\CharacterLineageBlacklist;
 use App\Models\Rarity;
 use Illuminate\Support\Facades\DB;
-use App\Models\Character\CharacterLineageBlacklist;
 
 class RarityService extends Service {
     /*
