@@ -106,4 +106,10 @@ return [
     // Use ReCaptcha to check new user registrations - Mercury
     // Requires site key and secret be set in your .env file!
     'use_recaptcha' => 0,
+
+    // Character Backgrounds - Uri
+    'character_backgrounds' => [
+        'enabled' => 1, // 0 for disabled
+        'profiles_enabled' => 1 // 0 to disable this effect on Character Profiles (versus their masterlist page)
+    ],
 ];
