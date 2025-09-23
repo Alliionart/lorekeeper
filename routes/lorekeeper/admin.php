@@ -493,3 +493,13 @@ Route::group(['prefix' => 'designs', 'middleware' => 'power:manage_characters'],
     Route::post('vote/{id}/{action}', 'DesignController@postVote')->where('action', 'approve|reject');
 });
 Route::get('{type}/{status}', 'DesignController@getDesignIndex')->where('type', 'myo-approvals|design-approvals')->where('status', 'pending|approved|rejected');
+
+
+// BREEDINGS
+Route::group(['prefix' => 'breedings', 'middleware' => 'power:manage_breedings'], function () {
+    Route::get('/', 'BreedingController@getBreedingIndex');
+    Route::get('/{status}', 'BreedingController@getBreedingIndex')->where('status', 'pending|approved|rejected');
+    Route::get('edit/{id}', 'BreedingController@getBreeding');
+    Route::post('edit/{id}/{action}', 'BreedingController@postBreeding')->where('action', 'approve|reject|cancel');
+    Route::get('settings', 'BreedingController@getBreedingSettings');
+});

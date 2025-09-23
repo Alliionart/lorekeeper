@@ -131,7 +131,7 @@ class CharacterController extends Controller {
             'designer_id', 'designer_url',
             'artist_id', 'artist_url',
             'species_id', 'subtype_id', 'rarity_id', 'feature_id', 'feature_data', 'marking_id', 'is_dominant', 'base', 'secondary_base', 'side_id',
-            'marking_color_0', 'marking_color_1', 'is_chimera',
+            'marking_color_0', 'marking_color_1', 'is_chimera', 'sex',
             'image', 'thumbnail', 'image_description',
             'sire_id',           'sire_name',
             'sire_sire_id',      'sire_sire_name',
@@ -183,7 +183,7 @@ class CharacterController extends Controller {
             'designer_id', 'designer_url',
             'artist_id', 'artist_url',
             'species_id', 'subtype_id', 'rarity_id', 'feature_id', 'feature_data', 'marking_id', 'is_dominant', 'base', 'secondary_base', 'side_id',
-            'marking_color_0', 'marking_color_1', 'is_chimera',
+            'marking_color_0', 'marking_color_1', 'is_chimera', 'sex',
             'image', 'thumbnail',
             'sire_id',           'sire_name',
             'sire_sire_id',      'sire_sire_name',
@@ -315,7 +315,7 @@ class CharacterController extends Controller {
             'character_category_id', 'number', 'slug',
             'is_giftable', 'is_tradeable', 'is_sellable', 'sale_value',
             'transferrable_at', 'marking_id', 'is_dominant', 'base', 'secondary_base', 'side_id',
-            'marking_color_0', 'marking_color_1',
+            'marking_color_0', 'marking_color_1', 'sex',
         ]);
         $this->character = Character::where('slug', $slug)->first();
         if (!$this->character) {

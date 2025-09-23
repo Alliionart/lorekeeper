@@ -291,6 +291,11 @@
         {!! Form::select('subtype_id', $subtypes, old('subtype_id'), ['class' => 'form-control disabled', 'id' => 'subtype']) !!}
     </div>
 
+    <div class="form-group">
+        {!! Form::label('Sex') !!}
+        {!! Form::select('sex', ['Male' => 'Male', 'Female' => 'Female', 'Genderless' => 'Genderless'], old('sex'), ['class' => 'form-control']) !!}
+    </div>
+
     <hr>
     <h5>{{ ucfirst(__('transformations.transformations')) }}</h5>
     <div class="form-group" id="transformations">

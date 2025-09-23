@@ -59,6 +59,11 @@
     <div class="collapse datepicker" id="collapsedt"></div>
 </div>
 
+<div class="form-group">
+    {!! Form::label('Sex') !!}
+    {!! Form::select('sex', ['Male' => 'Male', 'Female' => 'Female', 'Genderless' => 'Genderless'], $character->sex, ['class' => 'form-control']) !!}
+</div>
+
 <!-- Design Hub -->
 <div class="form-group">
     {!! Form::checkbox('is_chimera', 0, $is_chimera ? 1 : 0, ['class' => 'form-check-input', 'data-toggle' => 'toggle', 'id' => 'is_chimera']) !!}

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Breeding\Breeding;
 use App\Models\Character\BreedingPermission;
 use App\Models\Character\Character;
+use App\Models\Character\CharacterFeature;
 use App\Models\Character\CharacterImage;
 use App\Models\SitePage;
 use Illuminate\Http\Request;
@@ -41,15 +42,20 @@ class BreedingController extends Controller {
         }
         $character = Character::find($permission->character_id);
         $characterImage = CharacterImage::where('character_id', $character->id)->where('is_visible', 1)->first();
+        $markings = $character->getMarkingFinalArray();
+        $traits = CharacterFeature::where('character_image_id', $characterImage->id)->get()->toArray();
 
         return response()->json([
             'permission' => $permission,
             'character'  => [
                 'name'  => $character->fullName,
                 'id'    => $character->id,
+                'species' => $characterImage->species_id,
+                'subtype' => $characterImage->subtype_id,
                 'image' => $characterImage->getThumbnailUrlAttribute(),
+                'markings' => $markings,
+                'traits'    => $traits,
             ],
-            'character_image' => $characterImage,
             'slot_id'         => $slot_id,
         ]);
     }

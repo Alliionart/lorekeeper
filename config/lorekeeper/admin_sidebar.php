@@ -212,6 +212,19 @@ return [
             ],
         ],
     ],
+    'Breedings'  => [
+        'power' => 'manage_data',
+        'links' => [
+            [
+                'name' => 'Breeding Requests',
+                'url'  => 'admin/breedings/pending',
+            ],
+            [
+                'name' => 'Settings',
+                'url'  => 'admin/breedings/settings',
+            ],
+        ],
+    ],
     'Raffles'    => [
         'power' => 'manage_raffles',
         'links' => [

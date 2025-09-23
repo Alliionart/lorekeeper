@@ -1,7 +1,7 @@
 {{-- Image Data --}}
-<div class="col-md-5 d-flex">
-    <div class="card character-bio w-100">
-        <div class="card-header">
+<div class="col-md-12 d-flex">
+    <div class="character-bio w-100">
+        <div class="tab-content">
             <ul class="nav nav-tabs card-header-tabs">
                 <li class="nav-item">
                     <a class="nav-link active" id="infoTab-{{ $image->id }}" data-toggle="tab" href="#info-{{ $image->id }}" role="tab">Info</a>
@@ -12,6 +12,11 @@
                 <li class="nav-item">
                     <a class="nav-link" id="creditsTab-{{ $image->id }}" data-toggle="tab" href="#credits-{{ $image->id }}" role="tab">Credits</a>
                 </li>
+                @if ($character->getLineageBlacklistLevel() < 2)
+                    <li class="nav-item">
+                        <a class="nav-link" id="lineageTab" data-toggle="tab" href="#lineage" role="tab">Lineage</a>
+                    </li>
+                @endif
                 @if (isset($showMention) && $showMention)
                     <li class="nav-item">
                         <a class="nav-link" id="mentionTab-{{ $image->id }}" data-toggle="tab" href="#mention-{{ $image->id }}" role="tab">Mention</a>
@@ -23,8 +28,6 @@
                     </li>
                 @endif
             </ul>
-        </div>
-        <div class="card-body tab-content">
             <div class="text-right mb-1">
                 <div class="badge badge-primary">Image #{{ $image->id }}</div>
             </div>
@@ -36,6 +39,22 @@
 
             {{-- Basic info --}}
             <div class="tab-pane fade show active" id="info-{{ $image->id }}">
+                @if ($character->nickname)
+                    <div class="row no-gutters">
+                        <div class="col-lg-4 col-5">
+                            <h5>Nickname</h5>
+                        </div>
+                        <div class="col-lg-8 col-7 pl-1">{!! $character->nickname !!}</div>
+                    </div>
+                @endif
+                @if ($character->sex)
+                    <div class="row no-gutters">
+                        <div class="col-lg-4 col-5">
+                            <h5>Sex</h5>
+                        </div>
+                        <div class="col-lg-8 col-7 pl-1">{!! $character->sex !!}</div>
+                    </div>
+                @endif
                 <div class="row no-gutters">
                     <div class="col-lg-4 col-5">
                         <h5>Species</h5>
@@ -130,7 +149,9 @@
                         <h5>Phenotype</h5>
                     </div>
                     <div class="col-lg-8 col-7 pl-1">
-                        {!! $pheno !!}
+                        @if(isset($pheno))
+                            {!! $pheno !!}
+                        @endif
                     </div>
                 </div>
                 <div class="row no-gutters">
@@ -138,20 +159,26 @@
                         <h5>Genotype</h5>
                     </div>
                     <div class="col-lg-8 col-7 pl-1">
-                        {!! $geno !!}
+                        @if(isset($geno))
+                            {!! $geno !!}
+                        @endif
                     </div>
                 </div>
 
-                <div>
-                    <strong>Uploaded:</strong> {!! pretty_date($image->created_at) !!}
-                </div>
-                <div>
-                    <strong>Last Edited:</strong> {!! pretty_date($image->updated_at) !!}
+                @include('character._tab_stats', ['character' => $character])
+
+                <div class="row mt-2">
+                    <div class="col-md-6">
+                        <strong>Uploaded:</strong> {!! pretty_date($image->created_at) !!}
+                    </div>
+                    <div class="col-md-6">
+                        <strong>Last Edited:</strong> {!! pretty_date($image->updated_at) !!}
+                    </div>
                 </div>
 
                 @if (Auth::check() && Auth::user()->hasPower('manage_characters'))
                     <div class="mt-3">
-                        <a href="#" class="btn btn-outline-info btn-sm edit-features" data-id="{{ $image->id }}"><i class="fas fa-cog"></i> Edit</a>
+                        <a href="#" class="btn btn-outline-info btn-sm edit-features" data-id="{{ $image->id }}"><i class="fas fa-cog"></i> Edit Image</a>
                     </div>
                 @endif
             </div>
@@ -200,6 +227,12 @@
                     </div>
                 @endif
             </div>
+
+            @if ($character->getLineageBlacklistLevel() < 2)
+                <div class="tab-pane fade" id="lineage">
+                    @include('character._tab_lineage', ['character' => $character])
+                </div>
+            @endif
 
             @if (isset($showMention) && $showMention)
                 {{-- Mention This tab --}}

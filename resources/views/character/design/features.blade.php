@@ -37,6 +37,9 @@
                 </div>
             @endif
         </div>
+        <hr>
+        <h5>Other Fields</h5>
+        <!-- Size, Citizenship Here -->
 
         <hr>
         <h5>{{ ucfirst(__('transformations.transformations')) }}</h5>

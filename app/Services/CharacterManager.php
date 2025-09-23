@@ -1340,6 +1340,7 @@ class CharacterManager extends Service {
             $characterData = Arr::only($data, [
                 'character_category_id',
                 'number', 'slug',
+                'sex',
             ]);
             $characterData['is_sellable'] = isset($data['is_sellable']);
             $characterData['is_tradeable'] = isset($data['is_tradeable']);
@@ -1377,6 +1378,11 @@ class CharacterManager extends Service {
                     $new['name'] = $characterData['name'];
                 }
             }
+            if($characterData['sex'] != $character->sex) {
+                $result[] = 'sex';
+                $old['sex'] = $character->sex;
+                $new['sex'] = $characterData['sex'];
+            }
             if ($characterData['is_sellable'] != $character->is_sellable) {
                 $result[] = 'sellable status';
                 $old['is_sellable'] = $character->is_sellable;
@@ -1402,6 +1408,8 @@ class CharacterManager extends Service {
                 $old['transferrable_at'] = $character->transferrable_at;
                 $new['transferrable_at'] = $characterData['transferrable_at'];
             }
+
+            \Log::info($characterData);
 
             if (count($result)) {
                 $character->update($characterData);
@@ -1537,6 +1545,7 @@ class CharacterManager extends Service {
             // Update the character's profile
             if (!$character->is_myo_slot) {
                 $character->name = $data['name'];
+                $character->nickname = $data['nickname'];
             }
             $character->save();
 

@@ -118,12 +118,12 @@
                 url: "/breeding/permission/?permission_id=" + permId + "&slot_id=" + slotId,
                 dataType: "json",
             }).done(function(data) {
-                console.log('Success!');
                 console.log(data);
                 displayDiv.find('img').attr('src', data.character.image);
                 displayDiv.find('h4').text(data.character.name);
                 //displayDiv.find('.markings').text(data.character.markings);
                 displayDiv.removeClass('hide');
+                displayDiv.after('<pre style="background-color:#eee">' + JSON.stringify(data, null, 2) + '</pre>')
             }).fail(function(jqXHR, textStatus, errorThrown) {
                 alert("AJAX call failed: " + textStatus + ", " + errorThrown);
             });
