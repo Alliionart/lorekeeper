@@ -11,6 +11,7 @@ use App\Models\Character\CharacterCategory;
 use App\Models\Character\CharacterLineageBlacklist;
 use App\Models\Character\CharacterMarking;
 use App\Models\Character\CharacterTransfer;
+use App\Models\Character\CharacterTransformation as Transformation;
 use App\Models\Feature\Feature;
 use App\Models\Marking\Marking;
 use App\Models\Rarity;
@@ -23,7 +24,6 @@ use App\Services\CharacterManager;
 use App\Services\TradeManager;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Models\Character\CharacterTransformation as Transformation;
 
 class CharacterController extends Controller {
     /*
@@ -62,7 +62,7 @@ class CharacterController extends Controller {
             'bases'            => ['' => 'Select Base(s)'] + Base::orderBy('name', 'DESC')->pluck('name', 'id')->toArray(),
             'subtypes'         => ['0' => 'Pick a Species First'],
             'features'         => Feature::getDropdownItems(1),
-            'transformations' => ['0' => 'Pick a Species First'],
+            'transformations'  => ['0' => 'Pick a Species First'],
             'isMyo'            => false,
         ]);
     }
@@ -82,7 +82,7 @@ class CharacterController extends Controller {
             'bases'            => ['' => 'Select Base(s)'] + Base::orderBy('name', 'DESC')->pluck('name', 'id')->toArray(),
             'subtypes'         => ['0' => 'Pick a Species First'],
             'features'         => Feature::getDropdownItems(1),
-            'transformations' => ['0' => 'Pick a Species First'],
+            'transformations'  => ['0' => 'Pick a Species First'],
             'isMyo'            => true,
         ]);
     }
@@ -108,8 +108,9 @@ class CharacterController extends Controller {
      */
     public function getCreateCharacterMyoTransformation(Request $request) {
         $species = $request->input('species');
+
         return view('admin.masterlist._create_character_transformation', [
-            'transformations' => ['0' => 'Select '.ucfirst(__('transformations.transformation'))] + Transformation::where('species_id','=',$species)->orWhereNull('species_id')->orderBy('sort', 'DESC')->pluck('name', 'id')->toArray(),
+            'transformations' => ['0' => 'Select '.ucfirst(__('transformations.transformation'))] + Transformation::where('species_id', '=', $species)->orWhereNull('species_id')->orderBy('sort', 'DESC')->pluck('name', 'id')->toArray(),
             'isMyo'           => $request->input('myo'),
         ]);
     }
@@ -148,7 +149,7 @@ class CharacterController extends Controller {
             'dam_dam_sire_id',   'dam_dam_sire_name',
             'dam_dam_dam_id',    'dam_dam_dam_name',
             'generate_ancestors',
-            'transformation_id','transformation_info','transformation_description',
+            'transformation_id', 'transformation_info', 'transformation_description',
         ]);
 
         if ($character = $service->createCharacter($data, Auth::user())) {
@@ -200,7 +201,7 @@ class CharacterController extends Controller {
             'dam_dam_sire_id',   'dam_dam_sire_name',
             'dam_dam_dam_id',    'dam_dam_dam_name',
             'generate_ancestors',
-            'transformation_id','transformation_info','transformation_description',
+            'transformation_id', 'transformation_info', 'transformation_description',
         ]);
         if ($character = $service->createCharacter($data, Auth::user(), true)) {
             flash('MYO slot created successfully.')->success();
