@@ -115,7 +115,6 @@ class CharacterController extends Controller {
      * @return \Illuminate\Contracts\Support\Renderable
      */
     public function getCharacter($slug) {
-
         $background = new \App\Services\Item\BackgroundService;
         $bg = $background->checkBackground($this->character);
 
@@ -123,7 +122,7 @@ class CharacterController extends Controller {
             'character'             => $this->character,
             'showMention'           => true,
             'extPrevAndNextBtnsUrl' => '',
-            'background'            => $bg
+            'background'            => $bg,
         ]);
     }
 
@@ -135,14 +134,13 @@ class CharacterController extends Controller {
      * @return \Illuminate\Contracts\Support\Renderable
      */
     public function getCharacterProfile($slug) {
-
         $background = new \App\Services\Item\BackgroundService;
         $bg = $background->checkBackground($this->character);
 
         return view('character.profile', [
             'character'             => $this->character,
             'extPrevAndNextBtnsUrl' => '/profile',
-            'background'            => $bg
+            'background'            => $bg,
         ]);
     }
 

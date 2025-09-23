@@ -26,8 +26,8 @@ return [
     ],
 
     'background' => [
-        'name' => 'Background',
-        'text_color' => 'antiquewhite',
-        'background_color' => 'slategrey'
+        'name'             => 'Background',
+        'text_color'       => 'antiquewhite',
+        'background_color' => 'slategrey',
     ],
 ];
