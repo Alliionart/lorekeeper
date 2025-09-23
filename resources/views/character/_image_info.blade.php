@@ -151,7 +151,7 @@
                         <h5>Phenotype</h5>
                     </div>
                     <div class="col-lg-8 col-7 pl-1">
-                        @if(isset($pheno))
+                        @if (isset($pheno))
                             {!! $pheno !!}
                         @endif
                     </div>
@@ -161,7 +161,7 @@
                         <h5>Genotype</h5>
                     </div>
                     <div class="col-lg-8 col-7 pl-1">
-                        @if(isset($geno))
+                        @if (isset($geno))
                             {!! $geno !!}
                         @endif
                     </div>

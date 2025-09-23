@@ -20,8 +20,8 @@
 
     @include('character._header', ['character' => $character])
 
-{{-- Main Image --}}
-<div class="row mb-3" id="main-tab">
+    {{-- Main Image --}}
+    <div class="row mb-3" id="main-tab">
         <div class="col-md-9">
             <div class="text-center">
                 <a href="{{ $character->image->canViewFull(Auth::check() ? Auth::user() : null) && file_exists(public_path($character->image->imageDirectory . '/' . $character->image->fullsizeFileName)) ? $character->image->fullsizeUrl : $character->image->imageUrl }}"
@@ -48,15 +48,15 @@
                 <div class="card mb-3 character-states text-center">
                     <div class="card-header d-flex align-items-center justify-content-center">
                         <h3 class="mb-0">Edits</h3>
-                        {!! add_help('Click on a '.__('transformations.transformation').' to view the image. If you don\'t see the '.__('transformations.transformation').' you\'re looking for, it may not have been uploaded yet.') !!}
+                        {!! add_help('Click on a ' . __('transformations.transformation') . ' to view the image. If you don\'t see the ' . __('transformations.transformation') . ' you\'re looking for, it may not have been uploaded yet.') !!}
                     </div>
                     <div class="card-body">
                         <ul class="nav nav-tabs card-header-tabs">
                             @foreach ($character->images()->where('is_valid', 1)->get() as $image)
                                 <li class="nav-item mb-2">
                                     <a class="rounded form-data-button {{ $image->id == $character->image->id ? 'active' : '' }}" data-toggle="tab" role="tab" data-id="{{ $image->id }}">
-                                        <span class="h4">{{ $image->transformation_id ? $image->transformation->name : 'Main' }} {{ $image->transformation_info ? ' ('.$image->transformation_info.')' : '' }}</span>
-                                        <img src="{{ $image->imageUrl }}" class="img-fluid"/>
+                                        <span class="h4">{{ $image->transformation_id ? $image->transformation->name : 'Main' }} {{ $image->transformation_info ? ' (' . $image->transformation_info . ')' : '' }}</span>
+                                        <img src="{{ $image->imageUrl }}" class="img-fluid" />
                                     </a>
                                 </li>
                             @endforeach
@@ -68,14 +68,18 @@
     </div>
 
     <div class="my-3 card">
-        <div class="card-header"><h3>Cores</h3></div>
+        <div class="card-header">
+            <h3>Cores</h3>
+        </div>
         <div class="card-body">
             Badges here
         </div>
     </div>
 
     <div class="card mb-3">
-        <div class="card-header"><h3>Information</h3></div>
+        <div class="card-header">
+            <h3>Information</h3>
+        </div>
         <div class="card-body">
             <div class="row">
                 <div class="col-md-6">
@@ -83,19 +87,25 @@
                 </div>
                 <div class="col-md-6">
                     <div class="card mb-2">
-                        <div class="card-header"><h4>Familiars</h4></div>
+                        <div class="card-header">
+                            <h4>Familiars</h4>
+                        </div>
                         <div class="card-body">
                             Placeholder
                         </div>
                     </div>
                     <div class="card mb-2">
-                        <div class="card-header"><h4>Gear</h4></div>
+                        <div class="card-header">
+                            <h4>Gear</h4>
+                        </div>
                         <div class="card-body">
                             Placeholder
                         </div>
                     </div>
                     <div class="card mb-2">
-                        <div class="card-header"><h4>Skills</h4></div>
+                        <div class="card-header">
+                            <h4>Skills</h4>
+                        </div>
                         <div class="card-body">
                             Placeholder
                         </div>
@@ -106,7 +116,9 @@
     </div>
 
     <div class="card">
-        <div class="card-header"><h3>Personality</h3></div>
+        <div class="card-header">
+            <h3>Personality</h3>
+        </div>
         <div class="card-body">
             @include('character._tab_notes', ['character' => $character])
         </div>
