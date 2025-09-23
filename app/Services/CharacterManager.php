@@ -1376,7 +1376,7 @@ class CharacterManager extends Service {
                     $new['name'] = $characterData['name'];
                 }
             }
-            if($characterData['sex'] != $character->sex) {
+            if ($characterData['sex'] != $character->sex) {
                 $result[] = 'sex';
                 $old['sex'] = $character->sex;
                 $new['sex'] = $characterData['sex'];

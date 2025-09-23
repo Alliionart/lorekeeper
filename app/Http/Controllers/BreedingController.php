@@ -48,12 +48,12 @@ class BreedingController extends Controller {
         return response()->json([
             'permission' => $permission,
             'character'  => [
-                'name'  => $character->fullName,
-                'id'    => $character->id,
-                'species' => $characterImage->species_id,
-                'subtype' => $characterImage->subtype_id,
-                'image' => $characterImage->getThumbnailUrlAttribute(),
-                'markings' => $markings,
+                'name'      => $character->fullName,
+                'id'        => $character->id,
+                'species'   => $characterImage->species_id,
+                'subtype'   => $characterImage->subtype_id,
+                'image'     => $characterImage->getThumbnailUrlAttribute(),
+                'markings'  => $markings,
                 'traits'    => $traits,
             ],
             'slot_id'         => $slot_id,
