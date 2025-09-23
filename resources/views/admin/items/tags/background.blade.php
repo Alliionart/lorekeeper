@@ -1,4 +1,3 @@
-
 <h3>
     {!! Form::label('Image') !!}
 </h3>
@@ -11,11 +10,11 @@
     In fact, it may not work if you allow otherwise and users have their characters holding multiple items with this tag.
 </p>
 <div class="col-8 mx-auto">
-    @if($tag->data && isset($tag->getData()['background-image']))
-        <img src="{{ url($tag->getData()['background-image']) }}" class="img-fluid mb-2"/>
+    @if ($tag->data && isset($tag->getData()['background-image']))
+        <img src="{{ url($tag->getData()['background-image']) }}" class="img-fluid mb-2" />
         {!! Form::file('image') !!}
     @else
-        {!! Form::file('image', ['required'=>'required']) !!}
+        {!! Form::file('image', ['required' => 'required']) !!}
     @endif
 </div>
 

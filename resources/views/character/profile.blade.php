@@ -9,7 +9,7 @@
 @endsection
 
 @section('profile-content')
-    
+
     @if ($character->is_myo_slot)
         {!! breadcrumbs(['MYO Slot Masterlist' => 'myos', $character->fullName => $character->url, 'Profile' => $character->url . '/profile']) !!}
     @else
@@ -22,25 +22,29 @@
 
     @include('character._header', ['character' => $character])
 
-<div class="mb-3">
-    @if(isset($background) && Config::get('lorekeeper.extensions.character_backgrounds.enabled') && Config::get('lorekeeper.extensions.character_backgrounds.profiles_enabled'))
-        <div class="text-center" style="{{ implode('; ',$background) }}; background-size: cover; background-repeat:no-repeat;">
-            <a href="{{ $character->image->canViewFull(Auth::check() ? Auth::user() : null) && file_exists( public_path($character->image->imageDirectory.'/'.$character->image->fullsizeFileName)) ? $character->image->fullsizeUrl : $character->image->imageUrl }}" data-lightbox="entry" data-title="{{ $character->fullName }}">
-                <img src="{{ $character->image->canViewFull(Auth::check() ? Auth::user() : null) && file_exists( public_path($character->image->imageDirectory.'/'.$character->image->fullsizeFileName)) ? $character->image->fullsizeUrl : $character->image->imageUrl }}" class="image img-fluid" style="max-height:700px;" alt="{{ $character->fullName }}"/>
-            </a>
-        </div>
-    @else
-        <div class="text-center">
-            <a href="{{ $character->image->canViewFull(Auth::check() ? Auth::user() : null) && file_exists( public_path($character->image->imageDirectory.'/'.$character->image->fullsizeFileName)) ? $character->image->fullsizeUrl : $character->image->imageUrl }}" data-lightbox="entry" data-title="{{ $character->fullName }}">
-                <img src="{{ $character->image->canViewFull(Auth::check() ? Auth::user() : null) && file_exists( public_path($character->image->imageDirectory.'/'.$character->image->fullsizeFileName)) ? $character->image->fullsizeUrl : $character->image->imageUrl }}" class="image img-fluid" style="max-height:700px;" alt="{{ $character->fullName }}"/>
-            </a>
-        </div>
-    @endif
+    <div class="mb-3">
+        @if (isset($background) && Config::get('lorekeeper.extensions.character_backgrounds.enabled') && Config::get('lorekeeper.extensions.character_backgrounds.profiles_enabled'))
+            <div class="text-center" style="{{ implode('; ', $background) }}; background-size: cover; background-repeat:no-repeat;">
+                <a href="{{ $character->image->canViewFull(Auth::check() ? Auth::user() : null) && file_exists(public_path($character->image->imageDirectory . '/' . $character->image->fullsizeFileName)) ? $character->image->fullsizeUrl : $character->image->imageUrl }}"
+                    data-lightbox="entry" data-title="{{ $character->fullName }}">
+                    <img src="{{ $character->image->canViewFull(Auth::check() ? Auth::user() : null) && file_exists(public_path($character->image->imageDirectory . '/' . $character->image->fullsizeFileName)) ? $character->image->fullsizeUrl : $character->image->imageUrl }}"
+                        class="image img-fluid" style="max-height:700px;" alt="{{ $character->fullName }}" />
+                </a>
+            </div>
+        @else
+            <div class="text-center">
+                <a href="{{ $character->image->canViewFull(Auth::check() ? Auth::user() : null) && file_exists(public_path($character->image->imageDirectory . '/' . $character->image->fullsizeFileName)) ? $character->image->fullsizeUrl : $character->image->imageUrl }}"
+                    data-lightbox="entry" data-title="{{ $character->fullName }}">
+                    <img src="{{ $character->image->canViewFull(Auth::check() ? Auth::user() : null) && file_exists(public_path($character->image->imageDirectory . '/' . $character->image->fullsizeFileName)) ? $character->image->fullsizeUrl : $character->image->imageUrl }}"
+                        class="image img-fluid" style="max-height:700px;" alt="{{ $character->fullName }}" />
+                </a>
+            </div>
+        @endif
 
-    @if($character->image->canViewFull(Auth::check() ? Auth::user() : null) && file_exists( public_path($character->image->imageDirectory.'/'.$character->image->fullsizeFileName)))
-        <div class="text-right">You are viewing the full-size image. <a href="{{ $character->image->imageUrl }}">View watermarked image</a>?</div>
-    @endif
-</div>
+        @if ($character->image->canViewFull(Auth::check() ? Auth::user() : null) && file_exists(public_path($character->image->imageDirectory . '/' . $character->image->fullsizeFileName)))
+            <div class="text-right">You are viewing the full-size image. <a href="{{ $character->image->imageUrl }}">View watermarked image</a>?</div>
+        @endif
+    </div>
 
     {{-- Bio --}}
     <a class="float-left" href="{{ url('reports/new?url=') . $character->url . '/profile' }}"><i class="fas fa-exclamation-triangle" data-toggle="tooltip" title="Click here to report this character's profile." style="opacity: 50%;"></i></a>
