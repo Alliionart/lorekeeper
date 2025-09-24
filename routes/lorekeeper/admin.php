@@ -501,4 +501,5 @@ Route::group(['prefix' => 'breedings', 'middleware' => 'power:manage_breedings']
     Route::get('edit/{id}', 'BreedingController@getBreeding');
     Route::post('edit/{id}/{action}', 'BreedingController@postBreeding')->where('action', 'approve|reject|cancel');
     Route::get('settings', 'BreedingController@getBreedingSettings');
+    Route::post('settings/save', 'BreedingController@postBreedingSettings');
 });

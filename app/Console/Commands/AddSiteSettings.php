@@ -89,6 +89,8 @@ class AddSiteSettings extends Command {
 
         $this->addSiteSetting('magical_mutation_id', 0, 'Enter the ID for Magical Mutation Trait Category.');
 
+        $this->addSiteSetting('breeding_item_category_id', 0, 'Enter the ID for Breeding Item Category.');
+
         $this->line("\nSite settings up to date!");
     }
 
