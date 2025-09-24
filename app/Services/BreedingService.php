@@ -104,29 +104,10 @@ class BreedingService extends Service {
     }
 
     /**
-     * Processes user input for creating/updating a base.
-     *
-     * @param array                         $data
-     * @param \App\Models\Breeding\Breeding $breeding
-     *
-     * @return array
-     */
-    private function populateData($data, $breeding = null) {
-        //Set up the character_data column
-        if (!isset($data['parent_1_id']) || $data['parent_1_id'] == 0) {
-            //Parent 1
-            //Parent 2
-        }
-        //Set up breeding data with modifiers and images
-
-        return $data;
-    }
-
-    /**
      * Update the breeding settings.
      *
-     * @param array                         $data
-     * @param \App\Models\User\User         $user
+     * @param array                 $data
+     * @param \App\Models\User\User $user
      *
      * @return bool
      */
@@ -147,9 +128,9 @@ class BreedingService extends Service {
             $db_keys = [
                 'marking_rates' => DB::table('site_settings')->where('key', 'marking_rates'),
             ];
-            
+
             //Loop through all of the data and use a switch/case to move it into the correct setting
-            foreach($data as $key => $value) {
+            foreach ($data as $key => $value) {
                 switch (true) {
                     case str_contains($key, 'litter_size'):
                         $full_id = str_replace('litter_size_', '', $key);
@@ -170,8 +151,8 @@ class BreedingService extends Service {
                         //Stuff
                         break;
                     case str_contains($key, 'marking_rate'):
-                        if($value !== null) {
-                            if(str_contains($key, 'marking_rate_dom')) {
+                        if ($value !== null) {
+                            if (str_contains($key, 'marking_rate_dom')) {
                                 //Dom Rate
                                 $full_id = str_replace('marking_rate_dom_', '', $key);
                                 $name = 'roll_dom';
@@ -194,12 +175,12 @@ class BreedingService extends Service {
                 }
             }
 
-           if($litter_config) {
+            if ($litter_config) {
                 $exists = DB::table('site_settings')->where('key', 'litter_config')->first();
                 $litter_config = json_encode($litter_config);
-                if($exists) {
+                if ($exists) {
                     //Update
-                    if($exists->value !== $litter_config) {
+                    if ($exists->value !== $litter_config) {
                         DB::table('site_settings')->where('key', 'litter_config')->update(['value' => $litter_config]);
                     }
                 } else {
@@ -207,12 +188,12 @@ class BreedingService extends Service {
                     DB::table('site_settings')->insert(['key' => 'litter_config', 'value' => $litter_config, 'description' => 'Auto-Generated']);
                 }
             }
-            if($marking_rates) {
+            if ($marking_rates) {
                 $exists = DB::table('site_settings')->where('key', 'marking_rates')->first();
                 $marking_rates = json_encode($marking_rates);
-                if($exists) {
+                if ($exists) {
                     //Update
-                    if($exists->value !== $marking_rates) {
+                    if ($exists->value !== $marking_rates) {
                         DB::table('site_settings')->where('key', 'marking_rates')->update(['value' => $marking_rates]);
                     }
                 } else {
@@ -220,7 +201,6 @@ class BreedingService extends Service {
                     DB::table('site_settings')->insert(['key' => 'marking_rates', 'value' => $marking_rates, 'description' => 'Auto-Generated']);
                 }
             }
-            
 
             if (!$this->logAdminAction($user, 'Updated Breeding Settings', 'Updated breeding settings')) {
                 throw new \Exception('Failed to log admin action.');
@@ -234,4 +214,22 @@ class BreedingService extends Service {
         return $this->rollbackReturn(false);
     }
 
+    /**
+     * Processes user input for creating/updating a base.
+     *
+     * @param array                         $data
+     * @param \App\Models\Breeding\Breeding $breeding
+     *
+     * @return array
+     */
+    private function populateData($data, $breeding = null) {
+        //Set up the character_data column
+        if (!isset($data['parent_1_id']) || $data['parent_1_id'] == 0) {
+            //Parent 1
+            //Parent 2
+        }
+        //Set up breeding data with modifiers and images
+
+        return $data;
+    }
 }
