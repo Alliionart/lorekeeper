@@ -78,8 +78,8 @@
                                     <div class="col-md-2">Species #2 Rate (%)</div>
                                 </div>
                                 <div class="repeaterBody">
-                                    @if($currentSettings['species_rates'])
-                                        @foreach($currentSettings['species_rates'] as $row) 
+                                    @if ($currentSettings['species_rates'])
+                                        @foreach ($currentSettings['species_rates'] as $row)
                                             <div class="row species-row mb-2" type="species" data="row-start">
                                                 <div class="col-md-3 form-group mb-0">
                                                     {!! Form::select('species_id_0[]', $species, $row->species_id_0, ['class' => 'form-control', 'id' => 'species']) !!}
@@ -455,7 +455,7 @@
                 var parent = $(this).parents('.subRepeater').first();
                 var newRow = $row_templates[parent.attr('type')].clone();
 
-                console.log( newRow.find('select').first() )
+                console.log(newRow.find('select').first())
 
                 var field_id = newRow.find('select').first().attr(id);
                 var new_field_id = field_id.replace('0', $count);
