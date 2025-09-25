@@ -14,7 +14,7 @@
     {!! Form::open(['url' => 'admin/breedings/settings/save']) !!}
 
     <pre style="background-color:#eee;" class="hide">
-        {{ print_r($currentSettings, true) }}
+        {{ print_r($currentSettings['mutation_rates'], true) }}
     </pre>
 
     <div class="card mb-3">
@@ -76,23 +76,45 @@
                                     <div class="col-md-2">Species #2 Rate (%)</div>
                                 </div>
                                 <div class="repeaterBody">
-                                    <div class="row species-row mb-2" type="species" data="row-start">
-                                        <div class="col-md-3 form-group mb-0">
-                                            {!! Form::select('species_id_0[]', $species, null, ['class' => 'form-control', 'id' => 'species']) !!}
+                                    @if($currentSettings['species_rates'])
+                                        @foreach($currentSettings['species_rates'] as $row) 
+                                            <div class="row species-row mb-2" type="species" data="row-start">
+                                                <div class="col-md-3 form-group mb-0">
+                                                    {!! Form::select('species_id_0[]', $species, $row->species_id_0, ['class' => 'form-control', 'id' => 'species']) !!}
+                                                </div>
+                                                <div class="col-md-2 form-group mb-0">
+                                                    {!! Form::number('species_id_0_rate[]', $row->species_id_0_rate, ['class' => 'form-control', 'id' => 'species', 'min' => 0, 'max' => 100]) !!}
+                                                </div>
+                                                <div class="col-md-3 form-group mb-0">
+                                                    {!! Form::select('species_id_1[]', $species, $row->species_id_1, ['class' => 'form-control', 'id' => 'species']) !!}
+                                                </div>
+                                                <div class="col-md-2 form-group mb-0">
+                                                    {!! Form::number('species_id_1_rate[]', $row->species_id_1_rate, ['class' => 'form-control', 'id' => 'species', 'min' => 0, 'max' => 100]) !!}
+                                                </div>
+                                                <div class="col-md-2 d-flex align-items-center justify-content-end">
+                                                    <a class="btn btn-danger remove-row">-</a>
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                    @else
+                                        <div class="row species-row mb-2" type="species" data="row-start">
+                                            <div class="col-md-3 form-group mb-0">
+                                                {!! Form::select('species_id_0[]', $species, null, ['class' => 'form-control', 'id' => 'species']) !!}
+                                            </div>
+                                            <div class="col-md-2 form-group mb-0">
+                                                {!! Form::number('species_id_0_rate[]', null, ['class' => 'form-control', 'id' => 'species', 'min' => 0, 'max' => 100]) !!}
+                                            </div>
+                                            <div class="col-md-3 form-group mb-0">
+                                                {!! Form::select('species_id_1[]', $species, null, ['class' => 'form-control', 'id' => 'species']) !!}
+                                            </div>
+                                            <div class="col-md-2 form-group mb-0">
+                                                {!! Form::number('species_id_1_rate[]', null, ['class' => 'form-control', 'id' => 'species', 'min' => 0, 'max' => 100]) !!}
+                                            </div>
+                                            <div class="col-md-2 d-flex align-items-center justify-content-end">
+                                                <a class="btn btn-danger remove-row">-</a>
+                                            </div>
                                         </div>
-                                        <div class="col-md-2 form-group mb-0">
-                                            {!! Form::number('species_id_0_rate[]', null, ['class' => 'form-control', 'id' => 'species', 'min' => 0, 'max' => 100]) !!}
-                                        </div>
-                                        <div class="col-md-3 form-group mb-0">
-                                            {!! Form::select('species_id_1[]', $species, null, ['class' => 'form-control', 'id' => 'species']) !!}
-                                        </div>
-                                        <div class="col-md-2 form-group mb-0">
-                                            {!! Form::number('species_id_1_rate[]', null, ['class' => 'form-control', 'id' => 'species', 'min' => 0, 'max' => 100]) !!}
-                                        </div>
-                                        <div class="col-md-2 d-flex align-items-center justify-content-end">
-                                            <a class="btn btn-danger remove-row">-</a>
-                                        </div>
-                                    </div>
+                                    @endif
                                 </div>
                                 <div class="text-right">
                                     <a class="btn btn-primary add-row">Add Row</a>
@@ -126,14 +148,14 @@
                                         <hr class="w-100 my-3" />
                                         <h5>Results In...</h5>
                                         <div class="col-md-12">
-                                            <div class="subtypeRepeater subRepeater" type="subtype">
+                                            <div class="subtypeRepeater subRepeater" type="subtypeSub">
                                                 <div class="repeaterBody subgroup">
-                                                    <div class="row mb-2" type="subtype" data="row-start">
+                                                    <div class="row mb-2" type="subtypeSub" data="row-start">
                                                         <div class="col-md-4 form-group mb-0">
-                                                            {!! Form::select('subtype_result[]', $subtypes, null, ['class' => 'form-control', 'id' => 'subtype_result']) !!}
+                                                            {!! Form::select('subtype_result_0[]', $subtypes, null, ['class' => 'form-control', 'id' => 'subtype_result']) !!}
                                                         </div>
                                                         <div class="col-md-4 form-group mb-0">
-                                                            {!! Form::number('subtype_result_rate[]', null, ['class' => 'form-control', 'id' => 'subtype_result_rate', 'placeholder' => 'Rate (%)', 'min' => 0, 'max' => 100]) !!}
+                                                            {!! Form::number('subtype_result_rate_0[]', null, ['class' => 'form-control', 'id' => 'subtype_result_rate', 'placeholder' => 'Rate (%)', 'min' => 0, 'max' => 100]) !!}
                                                         </div>
                                                         <div class="col-md-4 d-flex align-items-center justify-content-end">
                                                             <a class="btn btn-danger remove-row">-</a>
@@ -185,9 +207,9 @@
                                         <hr class="w-100 my-3" />
                                         <h5>Results In...</h5>
                                         <div class="col-md-12">
-                                            <div class="traitrarityRepeater subRepeater" type="traitrarity">
+                                            <div class="traitrarityRepeater subRepeater" type="traitraritySub">
                                                 <div class="repeaterBody subgroup">
-                                                    <div class="row mb-2" type="traitrarity" data="row-start">
+                                                    <div class="row mb-2" type="traitraritySub" data="row-start">
                                                         <div class="col-md-4 form-group mb-0">
                                                             {!! Form::select('trait_rarity_result[]', $rarities, null, ['class' => 'form-control', 'id' => 'trait_rarity_result']) !!}
                                                         </div>
@@ -276,20 +298,39 @@
                                     <div class="col-md-2">Drop Rate (%)</div>
                                 </div>
                                 <div class="repeaterBody">
-                                    <div class="row mutation-row mb-2" type="mutation" data="row-start">
-                                        <div class="col-md-4 form-group mb-0">
-                                            {!! Form::select('mutation_category[]', $featureCategories, null, ['class' => 'form-control', 'id' => 'mutation']) !!}
+                                    @if ($currentSettings['mutation_rates'])
+                                        @foreach ($currentSettings['mutation_rates'] as $row)
+                                            <div class="row mutation-row mb-2" type="mutation" data="row-start">
+                                                <div class="col-md-4 form-group mb-0">
+                                                    {!! Form::select('mutation_category[]', $featureCategories, $row->category, ['class' => 'form-control', 'id' => 'mutation']) !!}
+                                                </div>
+                                                <div class="col-md-4 form-group mb-0">
+                                                    {!! Form::select('mutation_rarity[]', $rarities, $row->rarity, ['class' => 'form-control', 'id' => 'mutation']) !!}
+                                                </div>
+                                                <div class="col-md-2 form-group mb-0">
+                                                    {!! Form::number('mutation_rate[]', $row->rate, ['class' => 'form-control', 'id' => 'mutation', 'min' => 0, 'step' => 'any', 'max' => 100]) !!}
+                                                </div>
+                                                <div class="col-md-2 d-flex align-items-center justify-content-end">
+                                                    <a class="btn btn-danger remove-row">-</a>
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                    @else
+                                        <div class="row mutation-row mb-2" type="mutation" data="row-start">
+                                            <div class="col-md-4 form-group mb-0">
+                                                {!! Form::select('mutation_category[]', $featureCategories, null, ['class' => 'form-control', 'id' => 'mutation']) !!}
+                                            </div>
+                                            <div class="col-md-4 form-group mb-0">
+                                                {!! Form::select('mutation_rarity[]', $rarities, null, ['class' => 'form-control', 'id' => 'mutation']) !!}
+                                            </div>
+                                            <div class="col-md-2 form-group mb-0">
+                                                {!! Form::number('mutation_rate[]', null, ['class' => 'form-control', 'id' => 'mutation', 'min' => 0, 'step' => 'any', 'max' => 100]) !!}
+                                            </div>
+                                            <div class="col-md-2 d-flex align-items-center justify-content-end">
+                                                <a class="btn btn-danger remove-row">-</a>
+                                            </div>
                                         </div>
-                                        <div class="col-md-4 form-group mb-0">
-                                            {!! Form::select('mutation_rarity[]', $rarities, null, ['class' => 'form-control', 'id' => 'mutation']) !!}
-                                        </div>
-                                        <div class="col-md-2 form-group mb-0">
-                                            {!! Form::number('mutation_rate[]', null, ['class' => 'form-control', 'id' => 'mutation', 'min' => 0, 'max' => 100]) !!}
-                                        </div>
-                                        <div class="col-md-2 d-flex align-items-center justify-content-end">
-                                            <a class="btn btn-danger remove-row">-</a>
-                                        </div>
-                                    </div>
+                                    @endif
                                 </div>
                                 <div class="text-right">
                                     <a class="btn btn-primary add-row">Add Row</a>
@@ -371,6 +412,7 @@
         $(document).ready(function() {
 
             $row_templates = {};
+            $counts = {};
 
             $('.selectize').selectize({
                 multiple: true,
@@ -378,7 +420,14 @@
 
             $('[data="row-start"]').each(function() {
                 var key = $(this).attr('type');
-                $row_templates[key] = $(this).clone();
+                var $row = $(this).clone();
+                $row.find('input, select').val('');
+                $row_templates[key] = $row;
+            });
+
+            $('[id$="Repeater"]:has(.subRepeater)').each(function() {
+                var key = $(this).attr('type');
+                $counts[key] = $(this).find('.subRepeater .row').length;
             });
 
             console.log($row_templates);
@@ -391,12 +440,22 @@
                 newRow.find('.selectize').selectize({
                     multiple: true,
                 });
+                $counts[parent.attr('type')] = parent.find('.subRepeater .row').length;
+                newRow.find('.subRepeater input, .subRepeater select').each(function() {
+                    var s = $(this).attr('id');
+                    $(this).attr('name', s + '_' + $counts[parent.attr('type')] + '[]');
+                });
             });
 
             $('body').on('click', '.add-sub-row', function(e) {
                 e.preventDefault();
                 var parent = $(this).parents('.subRepeater').first();
                 var newRow = $row_templates[parent.attr('type')].clone();
+
+                console.log( newRow.find('select').first() )
+
+                var field_id = newRow.find('select').first().attr(id);
+                var new_field_id = field_id.replace('0', $count);
                 parent.find('.repeaterBody').first().append(newRow);
             });
 

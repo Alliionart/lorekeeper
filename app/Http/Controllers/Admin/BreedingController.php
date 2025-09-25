@@ -42,8 +42,10 @@ class BreedingController extends Controller {
                 'convert_split' => 'Convert Split Slot', //Overrides the base of the offspring to a specific base
             ],
             'currentSettings'   => [
+                'species_rates' => $this->getBreedingSetting('species_rates'),
                 'marking_rates' => $this->getBreedingSetting('marking_rates'),
                 'litter_config' => $this->getBreedingSetting('litter_config'),
+                'mutation_rates' => $this->getBreedingSetting('mutation_rates'),
             ]
         ]);
     }

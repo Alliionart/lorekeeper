@@ -3,6 +3,11 @@
 namespace App\Services;
 
 use App\Models\Breeding\Breeding;
+use App\Models\Species\Species;
+use App\Models\Species\Subtype;
+use App\Models\Feature\Feature;
+use App\Models\Feature\FeatureCategory;
+use App\Models\Rarity;
 use Illuminate\Support\Facades\DB;
 
 class BreedingService extends Service {
@@ -155,16 +160,17 @@ class BreedingService extends Service {
                         $full_id = str_replace('litter_size_', '', $key);
                         $range = explode('_', $full_id)[0]; // min or max
                         $species_id = explode('_', $full_id)[1];
-                        $litter_config[$species_id] = [
-                            'min'   => $value ?? 1,
-                            'max'   => $value ?? 5,
-                        ];
+                        $litter_config[$species_id][$range] = ($range === 'max' ? ($value ?? 5) : ($value ?? 1));
                         break;
                     case str_contains($key, 'species_id'):
-                        //Stuff
+                        foreach($value as $i => $val) {
+                            $species_rates[$i][$key] = $val;
+                        }
                         break;
                     case str_contains($key, 'subtype'):
-                        //Stuff
+                        foreach($value as $i => $val) {
+                            $subtype_rates[$i][$key] = $val;
+                        }
                         break;
                     case str_contains($key, 'trait_rarity'):
                         //Stuff
@@ -186,7 +192,10 @@ class BreedingService extends Service {
                         }
                         break;
                     case str_contains($key, 'mutation_'):
-                        //Stuff
+                        $field = str_replace('mutation_', '', $key);
+                        foreach($value as $i => $val) {
+                            $mutation_rates[$i][$field] = $val;
+                        }
                         break;
                     case str_contains($key, 'mod_'):
                         //Stuff
@@ -194,32 +203,51 @@ class BreedingService extends Service {
                 }
             }
 
-           if($litter_config) {
-                $exists = DB::table('site_settings')->where('key', 'litter_config')->first();
-                $litter_config = json_encode($litter_config);
-                if($exists) {
-                    //Update
-                    if($exists->value !== $litter_config) {
-                        DB::table('site_settings')->where('key', 'litter_config')->update(['value' => $litter_config]);
-                    }
-                } else {
-                    //Create
-                    DB::table('site_settings')->insert(['key' => 'litter_config', 'value' => $litter_config, 'description' => 'Auto-Generated']);
+            
+
+            if($species_rates) {
+                //Refactor the array BEFORE saving
+                foreach($species_rates as $i => $row) {
+                    $species_name_0 = Species::where('id', $row['species_id_0'])->pluck('name')[0];
+                    $species_name_1 = Species::where('id', $row['species_id_1'])->pluck('name')[0];
+                    $temp = $row;
+                    unset($species_rates[$i]);
+                    $species_rates[$species_name_0 . '|' . $species_name_1] = $row;
                 }
+                //Save the info in the DB
+                $this->saveBreedingSetting('species_rates', $species_rates);
             }
-            if($marking_rates) {
-                $exists = DB::table('site_settings')->where('key', 'marking_rates')->first();
-                $marking_rates = json_encode($marking_rates);
-                if($exists) {
-                    //Update
-                    if($exists->value !== $marking_rates) {
-                        DB::table('site_settings')->where('key', 'marking_rates')->update(['value' => $marking_rates]);
-                    }
-                } else {
-                    //Create
-                    DB::table('site_settings')->insert(['key' => 'marking_rates', 'value' => $marking_rates, 'description' => 'Auto-Generated']);
+
+            // if($subtype_rates) {
+            //     //Refactor the array BEFORE saving
+            //     foreach($subtype_rates as $i => $row) {
+            //         $subtype_name_0 = Subtype::where('id', $row['subtype_0'])->pluck('name')[0];
+            //         $subtype_name_1 = Subtype::where('id', $row['subtype_1'])->pluck('name')[0];
+            //         $temp = $row;
+            //         unset($subtype_rates[$i]);
+            //         $subtype_rates[$subtype_name_0 . '|' . $subtype_name_1] = $row;
+            //     }
+            //     //Save the info in the DB
+            //     //$this->saveBreedingSetting('species_rates', $species_rates);
+            // }
+            //\Log::info($subtype_rates);
+
+            
+            if($mutation_rates) {
+                //Refactor the array BEFORE saving
+                foreach($mutation_rates as $i => $row) {
+                    $trait_category_name = FeatureCategory::where('id', $row['category'])->pluck('name')[0];
+                    $rarity_name = Rarity::where('id', $row['rarity'])->pluck('name')[0];
+                    $temp = $row;
+                    unset($mutation_rates[$i]);
+                    $mutation_rates[$trait_category_name.'|'.$rarity_name] = $row;
                 }
+                $this->saveBreedingSetting('mutation_rates', $mutation_rates);
             }
+            \Log::info($mutation_rates);
+
+           $this->saveBreedingSetting('litter_config', $litter_config);
+           $this->saveBreedingSetting('marking_rates', $marking_rates);
             
 
             if (!$this->logAdminAction($user, 'Updated Breeding Settings', 'Updated breeding settings')) {
@@ -232,6 +260,22 @@ class BreedingService extends Service {
         }
 
         return $this->rollbackReturn(false);
+    }
+
+    public function saveBreedingSetting($key, $value) {
+        if($value) {
+            $exists = DB::table('site_settings')->where('key', $key)->first();
+            $value = json_encode($value);
+            if($exists) {
+                //Update
+                if($exists->value !== $value) {
+                    DB::table('site_settings')->where('key', $key)->update(['value' => $value]);
+                }
+            } else {
+                //Create
+                DB::table('site_settings')->insert(['key' => $key, 'value' => $value, 'description' => 'Auto-Generated']);
+            }
+        }
     }
 
 }
