@@ -3,11 +3,10 @@
 namespace App\Services;
 
 use App\Models\Breeding\Breeding;
-use App\Models\Species\Species;
-use App\Models\Species\Subtype;
-use App\Models\Feature\Feature;
 use App\Models\Feature\FeatureCategory;
 use App\Models\Rarity;
+use App\Models\Species\Species;
+use App\Models\Species\Subtype;
 use Illuminate\Support\Facades\DB;
 
 class BreedingService extends Service {
@@ -144,12 +143,12 @@ class BreedingService extends Service {
                         $litter_config[$species_id][$range] = ($range === 'max' ? ($value ?? 5) : ($value ?? 1));
                         break;
                     case str_contains($key, 'species_id'):
-                        foreach($value as $i => $val) {
+                        foreach ($value as $i => $val) {
                             $species_rates[$i][$key] = $val;
                         }
                         break;
                     case str_contains($key, 'subtype'):
-                        foreach($value as $i => $val) {
+                        foreach ($value as $i => $val) {
                             $subtype_rates[$i][$key] = $val;
                         }
                         break;
@@ -174,7 +173,7 @@ class BreedingService extends Service {
                         break;
                     case str_contains($key, 'mutation_'):
                         $field = str_replace('mutation_', '', $key);
-                        foreach($value as $i => $val) {
+                        foreach ($value as $i => $val) {
                             $mutation_rates[$i][$field] = $val;
                         }
                         break;
@@ -184,16 +183,14 @@ class BreedingService extends Service {
                 }
             }
 
-            
-
-            if($species_rates) {
+            if ($species_rates) {
                 //Refactor the array BEFORE saving
-                foreach($species_rates as $i => $row) {
+                foreach ($species_rates as $i => $row) {
                     $species_name_0 = Species::where('id', $row['species_id_0'])->pluck('name')[0];
                     $species_name_1 = Species::where('id', $row['species_id_1'])->pluck('name')[0];
                     $temp = $row;
                     unset($species_rates[$i]);
-                    $species_rates[$species_name_0 . '|' . $species_name_1] = $row;
+                    $species_rates[$species_name_0.'|'.$species_name_1] = $row;
                 }
                 //Save the info in the DB
                 $this->saveBreedingSetting('species_rates', $species_rates);
@@ -213,10 +210,9 @@ class BreedingService extends Service {
             // }
             //\Log::info($subtype_rates);
 
-            
-            if($mutation_rates) {
+            if ($mutation_rates) {
                 //Refactor the array BEFORE saving
-                foreach($mutation_rates as $i => $row) {
+                foreach ($mutation_rates as $i => $row) {
                     $trait_category_name = FeatureCategory::where('id', $row['category'])->pluck('name')[0];
                     $rarity_name = Rarity::where('id', $row['rarity'])->pluck('name')[0];
                     $temp = $row;
@@ -227,9 +223,8 @@ class BreedingService extends Service {
             }
             \Log::info($mutation_rates);
 
-           $this->saveBreedingSetting('litter_config', $litter_config);
-           $this->saveBreedingSetting('marking_rates', $marking_rates);
-            
+            $this->saveBreedingSetting('litter_config', $litter_config);
+            $this->saveBreedingSetting('marking_rates', $marking_rates);
 
             if (!$this->logAdminAction($user, 'Updated Breeding Settings', 'Updated breeding settings')) {
                 throw new \Exception('Failed to log admin action.');
@@ -244,12 +239,12 @@ class BreedingService extends Service {
     }
 
     public function saveBreedingSetting($key, $value) {
-        if($value) {
+        if ($value) {
             $exists = DB::table('site_settings')->where('key', $key)->first();
             $value = json_encode($value);
-            if($exists) {
+            if ($exists) {
                 //Update
-                if($exists->value !== $value) {
+                if ($exists->value !== $value) {
                     DB::table('site_settings')->where('key', $key)->update(['value' => $value]);
                 }
             } else {
@@ -258,5 +253,4 @@ class BreedingService extends Service {
             }
         }
     }
-
 }
