@@ -109,29 +109,10 @@ class BreedingService extends Service {
     }
 
     /**
-     * Processes user input for creating/updating a base.
-     *
-     * @param array                         $data
-     * @param \App\Models\Breeding\Breeding $breeding
-     *
-     * @return array
-     */
-    private function populateData($data, $breeding = null) {
-        //Set up the character_data column
-        if (!isset($data['parent_1_id']) || $data['parent_1_id'] == 0) {
-            //Parent 1
-            //Parent 2
-        }
-        //Set up breeding data with modifiers and images
-
-        return $data;
-    }
-
-    /**
      * Update the breeding settings.
      *
-     * @param array                         $data
-     * @param \App\Models\User\User         $user
+     * @param array                 $data
+     * @param \App\Models\User\User $user
      *
      * @return bool
      */
@@ -152,9 +133,9 @@ class BreedingService extends Service {
             $db_keys = [
                 'marking_rates' => DB::table('site_settings')->where('key', 'marking_rates'),
             ];
-            
+
             //Loop through all of the data and use a switch/case to move it into the correct setting
-            foreach($data as $key => $value) {
+            foreach ($data as $key => $value) {
                 switch (true) {
                     case str_contains($key, 'litter_size'):
                         $full_id = str_replace('litter_size_', '', $key);
@@ -176,8 +157,8 @@ class BreedingService extends Service {
                         //Stuff
                         break;
                     case str_contains($key, 'marking_rate'):
-                        if($value !== null) {
-                            if(str_contains($key, 'marking_rate_dom')) {
+                        if ($value !== null) {
+                            if (str_contains($key, 'marking_rate_dom')) {
                                 //Dom Rate
                                 $full_id = str_replace('marking_rate_dom_', '', $key);
                                 $name = 'roll_dom';

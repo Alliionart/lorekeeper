@@ -26,10 +26,12 @@
             <div class="form-group">
 
                 <h5>Litter Sizes</h5>
-                @foreach($species as $id => $name)
-                    @if($id == 0) @continue @endif
+                @foreach ($species as $id => $name)
+                    @if ($id == 0)
+                        @continue
+                    @endif
                     <?php
-                        $currentConfig = $currentSettings['litter_config']->$id;
+                    $currentConfig = $currentSettings['litter_config']->$id;
                     ?>
                     <div class="row mb-2">
                         <div class="col-md-4">
@@ -244,22 +246,23 @@
                         <h2 class="mb-0">
                             <button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#collapseMarkings" aria-expanded="false" aria-controls="collapseMarkings">
                                 <h5 class="mb-0 text-secondary text-decoration-none">Markings</h5>
-                                <p class="mb-0 text-secondary text-decoration-none">Fill out the rates for each marking rarity. Note that these are automatically found. If you would like to include multiplication use an 'x' in your equation. E.g. 50x2 to roll twice.</p>
+                                <p class="mb-0 text-secondary text-decoration-none">Fill out the rates for each marking rarity. Note that these are automatically found. If you would like to include multiplication use an 'x' in your equation. E.g. 50x2
+                                    to roll twice.</p>
                             </button>
                         </h2>
                     </div>
                     <div id="collapseMarkings" class="collapse" aria-labelledby="headingMarkings" data-parent="#breedingRatesAccordion">
                         <div class="card-body">
-                            
-                            @foreach($markingRarities as $rarity_id => $rarity_name)
+
+                            @foreach ($markingRarities as $rarity_id => $rarity_name)
                                 <h5>{{ $rarity_name }}</h5>
-                                @foreach($markingConfig as $row)
-                                <?php
+                                @foreach ($markingConfig as $row)
+                                    <?php
                                     $id = strtolower($rarity_name) . '__' . substr(array_key_first($row), 0, 3) . 'X' . (array_values($row)[0] ? substr(array_values($row)[0], 0, 3) : 'non');
                                     $type = explode('__', $id)[1];
                                     $currentConfig = property_exists($currentSettings['marking_rates'], $rarity_name) ? $currentSettings['marking_rates']->$rarity_name : null;
                                     $current = $currentConfig->$type ?? null;
-                                ?>
+                                    ?>
 
                                     <div class="row mb-2">
                                         <div class="col-md-4">
@@ -273,7 +276,7 @@
                                         </div>
                                     </div>
                                 @endforeach
-                                <hr/>
+                                <hr />
                             @endforeach
 
                         </div>
