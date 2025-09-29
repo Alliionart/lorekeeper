@@ -1103,7 +1103,7 @@ class CharacterManager extends Service {
             $characterData = Arr::only($data, [
                 'character_category_id',
                 'number', 'slug',
-                'is_chimera', 'base', 'secondary_base'
+                'is_chimera', 'base', 'secondary_base',
             ]);
             $characterData['is_sellable'] = isset($data['is_sellable']);
             $characterData['is_tradeable'] = isset($data['is_tradeable']);
