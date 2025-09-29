@@ -1103,12 +1103,14 @@ class CharacterManager extends Service {
             $characterData = Arr::only($data, [
                 'character_category_id',
                 'number', 'slug',
+                'is_chimera', 'base', 'secondary_base'
             ]);
             $characterData['is_sellable'] = isset($data['is_sellable']);
             $characterData['is_tradeable'] = isset($data['is_tradeable']);
             $characterData['is_giftable'] = isset($data['is_giftable']);
             $characterData['sale_value'] = $data['sale_value'] ?? 0;
             $characterData['transferrable_at'] = $data['transferrable_at'] ?? null;
+            $characterData['base'] = (issset($data['is_chimera']) ? $data['base'].'|'.$data['secondary_base'] : $data['base']);
             if ($character->is_myo_slot) {
                 $characterData['name'] = (isset($data['name']) && $data['name']) ? $data['name'] : null;
             }
@@ -1164,6 +1166,11 @@ class CharacterManager extends Service {
                 $result[] = 'transfer cooldown';
                 $old['transferrable_at'] = $character->transferrable_at;
                 $new['transferrable_at'] = $characterData['transferrable_at'];
+            }
+            if ($characterData['base'] != $character->base) {
+                $result[] = 'base';
+                $old['base'] = $character->base;
+                $new['base'] = $characterData['base'];
             }
 
             if (count($result)) {
