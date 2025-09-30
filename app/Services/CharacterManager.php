@@ -2490,13 +2490,14 @@ class CharacterManager extends Service {
     /**
      * Handles character lineage data.
      *
-     * @param  array                            $data
-     * @return \App\Models\Character\Character  $character
-     * @param  bool                             $isMyo
+     * @param array $data
+     * @param bool  $isMyo
+     * @param mixed $character
+     *
+     * @return \App\Models\Character\Character             $character
      * @return \App\Models\Character\CharacterLineage|bool
      */
-    private function handleCharacterLineage($data, $character, $isMyo = false)
-    {
+    private function handleCharacterLineage($data, $character, $isMyo = false) {
         try {
             // TODO take values from $data
             $lineageData = [
@@ -2544,7 +2545,7 @@ class CharacterManager extends Service {
                 'dam_sire_dam',
                 'dam_dam',
                 'dam_dam_sire',
-                'dam_dam_dam'
+                'dam_dam_dam',
             ];
             // you don't need to look for great-great-grandparents
             $shortlist = [
@@ -2560,7 +2561,7 @@ class CharacterManager extends Service {
             $isEmpty = true;
 
             // Checking inputs ?
-            for ($i=0; $i < 14; $i++) {
+            for ($i = 0; $i < 14; $i++) {
                 // if isset Data key_id, set Lineage key_id and check if that character exists?
                 // else if isset Data key_name, set Lineage key_name to that.
                 if (isset($data[$roots[$i].'_id'])) {
@@ -2571,37 +2572,31 @@ class CharacterManager extends Service {
                     // TODO Set name to be the slug of the character.
                     $lineageData[$roots[$i].'_name'] = $char->slug;
                     $isEmpty = false;
-                }
-                else if (isset($data[$roots[$i].'_name'])) {
+                } elseif (isset($data[$roots[$i].'_name'])) {
                     $lineageData[$roots[$i].'_name'] = $data[$roots[$i].'_name'];
-                    $isEmpty = $data[$roots[$i].'_name'] == "" ? $isEmpty : false;
+                    $isEmpty = $data[$roots[$i].'_name'] == '' ? $isEmpty : false;
                 }
             }
 
             //TODO: Fill from ancestor(s) IF ancestor fill is checked.
-            if (isset($data['generate_ancestors']) && !$isEmpty)
-            {
-                for ($j=0; $j < 6; $j++) {
+            if (isset($data['generate_ancestors']) && !$isEmpty) {
+                for ($j = 0; $j < 6; $j++) {
                     $key = $shortlist[$j];
                     $id = $data[$key.'_id'];
 
                     // check if this is a character id and not null
-                    if ($id !== null)
-                    {
+                    if ($id !== null) {
                         // check if this exists and has lineage
                         $char = Character::find($id);
-                        if($char->exists() && $char->lineage !== null)
-                        {
+                        if ($char->exists() && $char->lineage !== null) {
                             // go through their parents and gparents
-                            for ($k=0; $k < 6; $k++)
-                            {
+                            for ($k = 0; $k < 6; $k++) {
                                 // checks that this is a valid lineage index
                                 // eg. sire_sire_sire and not sire_sire_sire_sire
-                                $key2 = $key."_".$shortlist[$k];
-                                if (in_array($key2, $roots, true))
-                                {
-                                    $lineageData[$key2."_id"] = $char->lineage[$shortlist[$k]."_id"];
-                                    $lineageData[$key2."_name"] = $char->lineage[$shortlist[$k]."_name"];
+                                $key2 = $key.'_'.$shortlist[$k];
+                                if (in_array($key2, $roots, true)) {
+                                    $lineageData[$key2.'_id'] = $char->lineage[$shortlist[$k].'_id'];
+                                    $lineageData[$key2.'_name'] = $char->lineage[$shortlist[$k].'_name'];
                                 }
                             }
                         }
@@ -2611,12 +2606,13 @@ class CharacterManager extends Service {
             // throw new \Exception('Everything went right, we hope.');
 
             $lineage = $isEmpty ? null : CharacterLineage::create($lineageData);
+
             return $lineage;
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             $this->setError('error', $e->getMessage());
         }
-        return false;
 
+        return false;
     }
 
     /**

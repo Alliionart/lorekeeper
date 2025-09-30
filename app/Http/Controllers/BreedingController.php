@@ -5,9 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Breeding\Breeding;
 use App\Models\Character\BreedingPermission;
 use App\Models\Character\Character;
-use App\Models\Character\CharacterFeature;
 use App\Models\Character\CharacterImage;
-use App\Models\Character\CharacterLineage;
 use App\Models\SitePage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -46,7 +44,7 @@ class BreedingController extends Controller {
         $markings = $character->getMarkingFinalArray();
         $traits = $characterImage->features()->with('feature.category')->get();
         $trait_display = [];
-        foreach($traits as $feature) {
+        foreach ($traits as $feature) {
             $trait_display[$feature->feature->category->displayName] = $feature->feature->displayName;
         }
 
@@ -76,11 +74,12 @@ class BreedingController extends Controller {
             'dam_dam_id'    => $character->lineage->dam_dam_id,
         ];
         $final_ids = [];
-        foreach($lineage as $id) {
-            if(!in_array($id, $final_ids) && $id) {
+        foreach ($lineage as $id) {
+            if (!in_array($id, $final_ids) && $id) {
                 $final_ids[$id] = Character::find($id)->displayName;
             }
         }
+
         return $final_ids;
     }
 
@@ -102,6 +101,4 @@ class BreedingController extends Controller {
             'info' => SitePage::where('key', 'breeding')->first() ?? null,
         ]);
     }
-    
-    
 }
