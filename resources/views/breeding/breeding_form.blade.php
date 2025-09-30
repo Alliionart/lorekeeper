@@ -47,7 +47,9 @@
                                         <li><strong>Species: </strong><span class="species">Species</span></li>
                                         <li><strong>Subtype: </strong><span class="subtype">Subtype</span></li>
                                         <li><strong>Markings: </strong><span class="markings">Markings</span></li>
-                                        <li><strong>Traits: </strong><ul class="traits"></ul></li>
+                                        <li><strong>Traits: </strong>
+                                            <ul class="traits"></ul>
+                                        </li>
                                     </ul>
                                 </div>
                             </div>
@@ -80,7 +82,9 @@
                                         <li><strong>Species: </strong><span class="species">Species</span></li>
                                         <li><strong>Subtype: </strong><span class="subtype">Subtype</span></li>
                                         <li><strong>Markings: </strong><span class="markings">Markings</span></li>
-                                        <li><strong>Traits: </strong><ul class="traits"></ul></li>
+                                        <li><strong>Traits: </strong>
+                                            <ul class="traits"></ul>
+                                        </li>
                                     </ul>
                                 </div>
                             </div>
@@ -142,7 +146,7 @@
                 displayDiv.find('.markings').text(data.character.markings);
                 handleCharacterLineage(data.character.lineage);
                 $.each(data.character.traits, function(i, val) {
-                    displayDiv.find('.traits').append('<li><strong>'+ i +': </strong>'+ val +'</li>');
+                    displayDiv.find('.traits').append('<li><strong>' + i + ': </strong>' + val + '</li>');
                 });
                 displayDiv.removeClass('hide');
                 //displayDiv.after('<pre style="background-color:#eee">' + JSON.stringify(data, null, 2) + '</pre>')
@@ -153,7 +157,7 @@
 
         function handleCharacterLineage(obj) {
             Object.keys(obj).forEach(key => {
-                if( lineage.includes(key) ) {
+                if (lineage.includes(key)) {
                     inbreeding = true;
                     $('.alert.inbreeding span').html(obj[key]);
                     $('.alert.inbreeding').removeClass('hide');
