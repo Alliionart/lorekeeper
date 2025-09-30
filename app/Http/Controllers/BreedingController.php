@@ -7,6 +7,7 @@ use App\Models\Character\BreedingPermission;
 use App\Models\Character\Character;
 use App\Models\Character\CharacterFeature;
 use App\Models\Character\CharacterImage;
+use App\Models\Character\CharacterLineage;
 use App\Models\SitePage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -43,21 +44,44 @@ class BreedingController extends Controller {
         $character = Character::find($permission->character_id);
         $characterImage = CharacterImage::where('character_id', $character->id)->where('is_visible', 1)->first();
         $markings = $character->getMarkingFinalArray();
-        $traits = CharacterFeature::where('character_image_id', $characterImage->id)->get()->toArray();
+        $traits = $characterImage->features()->with('feature.category')->get();
+        $trait_display = [];
+        foreach($traits as $feature) {
+            $trait_display[$feature->feature->category->displayName] = $feature->feature->displayName;
+        }
 
         return response()->json([
             'permission' => $permission,
             'character'  => [
                 'name'      => $character->fullName,
                 'id'        => $character->id,
-                'species'   => $characterImage->species_id,
+                'species'   => $characterImage->species->displayName,
                 'subtype'   => $characterImage->subtype_id,
                 'image'     => $characterImage->getThumbnailUrlAttribute(),
-                'markings'  => $markings,
-                'traits'    => $traits,
+                'markings'  => strip_tags($character->getMarkingLinkedArray($markings)),
+                'traits'    => $trait_display,
+                'lineage'   => $this->getViableLineageIds($character),
             ],
             'slot_id'         => $slot_id,
         ]);
+    }
+
+    public function getViableLineageIds($character) {
+        $lineage = [
+            'sire_id'       => $character->lineage->sire_id,
+            'sire_sire_id'  => $character->lineage->sire_sire_id,
+            'sire_dam_id'   => $character->lineage->sire_dam_id,
+            'dam_id'        => $character->lineage->dam_id,
+            'dam_sire_id'   => $character->lineage->dam_sire_id,
+            'dam_dam_id'    => $character->lineage->dam_dam_id,
+        ];
+        $final_ids = [];
+        foreach($lineage as $id) {
+            if(!in_array($id, $final_ids) && $id) {
+                $final_ids[$id] = Character::find($id)->displayName;
+            }
+        }
+        return $final_ids;
     }
 
     public function getBreedingPage($slug) {
@@ -78,4 +102,6 @@ class BreedingController extends Controller {
             'info' => SitePage::where('key', 'breeding')->first() ?? null,
         ]);
     }
+    
+    
 }

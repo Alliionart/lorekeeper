@@ -2488,6 +2488,138 @@ class CharacterManager extends Service {
     }
 
     /**
+     * Handles character lineage data.
+     *
+     * @param  array                            $data
+     * @return \App\Models\Character\Character  $character
+     * @param  bool                             $isMyo
+     * @return \App\Models\Character\CharacterLineage|bool
+     */
+    private function handleCharacterLineage($data, $character, $isMyo = false)
+    {
+        try {
+            // TODO take values from $data
+            $lineageData = [
+                'character_id'          => $character->id,
+                'sire_id'               => null,
+                'sire_name'             => null,
+                'sire_sire_id'          => null,
+                'sire_sire_name'        => null,
+                'sire_sire_sire_id'     => null,
+                'sire_sire_sire_name'   => null,
+                'sire_sire_dam_id'      => null,
+                'sire_sire_dam_name'    => null,
+                'sire_dam_id'           => null,
+                'sire_dam_name'         => null,
+                'sire_dam_sire_id'      => null,
+                'sire_dam_sire_name'    => null,
+                'sire_dam_dam_id'       => null,
+                'sire_dam_dam_name'     => null,
+                'dam_id'                => null,
+                'dam_name'              => null,
+                'dam_sire_id'           => null,
+                'dam_sire_name'         => null,
+                'dam_sire_sire_id'      => null,
+                'dam_sire_sire_name'    => null,
+                'dam_sire_dam_id'       => null,
+                'dam_sire_dam_name'     => null,
+                'dam_dam_id'            => null,
+                'dam_dam_name'          => null,
+                'dam_dam_sire_id'       => null,
+                'dam_dam_sire_name'     => null,
+                'dam_dam_dam_id'        => null,
+                'dam_dam_dam_name'      => null,
+            ];
+            $roots = [
+                'sire',
+                'sire_sire',
+                'sire_sire_sire',
+                'sire_sire_dam',
+                'sire_dam',
+                'sire_dam_sire',
+                'sire_dam_dam',
+                'dam',
+                'dam_sire',
+                'dam_sire_sire',
+                'dam_sire_dam',
+                'dam_dam',
+                'dam_dam_sire',
+                'dam_dam_dam'
+            ];
+            // you don't need to look for great-great-grandparents
+            $shortlist = [
+                'sire',
+                'sire_sire',
+                'sire_dam',
+                'dam',
+                'dam_sire',
+                'dam_dam',
+            ];
+
+            // check if lineage is empty ...
+            $isEmpty = true;
+
+            // Checking inputs ?
+            for ($i=0; $i < 14; $i++) {
+                // if isset Data key_id, set Lineage key_id and check if that character exists?
+                // else if isset Data key_name, set Lineage key_name to that.
+                if (isset($data[$roots[$i].'_id'])) {
+                    $id = $data[$roots[$i].'_id'];
+                    $lineageData[$roots[$i].'_id'] = $id;
+                    $char = Character::find($id);
+
+                    // TODO Set name to be the slug of the character.
+                    $lineageData[$roots[$i].'_name'] = $char->slug;
+                    $isEmpty = false;
+                }
+                else if (isset($data[$roots[$i].'_name'])) {
+                    $lineageData[$roots[$i].'_name'] = $data[$roots[$i].'_name'];
+                    $isEmpty = $data[$roots[$i].'_name'] == "" ? $isEmpty : false;
+                }
+            }
+
+            //TODO: Fill from ancestor(s) IF ancestor fill is checked.
+            if (isset($data['generate_ancestors']) && !$isEmpty)
+            {
+                for ($j=0; $j < 6; $j++) {
+                    $key = $shortlist[$j];
+                    $id = $data[$key.'_id'];
+
+                    // check if this is a character id and not null
+                    if ($id !== null)
+                    {
+                        // check if this exists and has lineage
+                        $char = Character::find($id);
+                        if($char->exists() && $char->lineage !== null)
+                        {
+                            // go through their parents and gparents
+                            for ($k=0; $k < 6; $k++)
+                            {
+                                // checks that this is a valid lineage index
+                                // eg. sire_sire_sire and not sire_sire_sire_sire
+                                $key2 = $key."_".$shortlist[$k];
+                                if (in_array($key2, $roots, true))
+                                {
+                                    $lineageData[$key2."_id"] = $char->lineage[$shortlist[$k]."_id"];
+                                    $lineageData[$key2."_name"] = $char->lineage[$shortlist[$k]."_name"];
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            // throw new \Exception('Everything went right, we hope.');
+
+            $lineage = $isEmpty ? null : CharacterLineage::create($lineageData);
+            return $lineage;
+        } catch(\Exception $e) {
+            $this->setError('error', $e->getMessage());
+        }
+        return false;
+
+    }
+
+    /**
      * Generates a list of features for displaying.
      *
      * @param \App\Models\Character\CharacterImage $image

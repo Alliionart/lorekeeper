@@ -14,8 +14,11 @@
         <p>To submit your breeding select both characters, and any items you'd like to use. Make sure you review before you submit!</p>
         {!! Form::open(['url' => 'submit-breeding']) !!}
 
-        <div class="alert alert-warning p-2 border border-warning hide">
+        <div class="alert warning alert-warning p-2 border border-warning hide">
             <strong>Warning:</strong> You cannot select the same slot for both parents. Please choose different slots.
+        </div>
+        <div class="alert inbreeding alert-danger p-2 border border-danger hide">
+            <strong>Inbreeding:</strong> There is inbreeding through <span></span>, ensure you are ok with breeding this pair.
         </div>
 
         <div class="row">
@@ -40,7 +43,12 @@
                                 </div>
                                 <div class="col-md-9 d-flex flex-column justify-content-center">
                                     <h4>Character Name</h4>
-                                    <p class="markings">Markings</p>
+                                    <ul class="p-0 list-unstyled">
+                                        <li><strong>Species: </strong><span class="species">Species</span></li>
+                                        <li><strong>Subtype: </strong><span class="subtype">Subtype</span></li>
+                                        <li><strong>Markings: </strong><span class="markings">Markings</span></li>
+                                        <li><strong>Traits: </strong><ul class="traits"></ul></li>
+                                    </ul>
                                 </div>
                             </div>
                         </div>
@@ -68,7 +76,12 @@
                                 </div>
                                 <div class="col-md-9 d-flex flex-column justify-content-center">
                                     <h4>Character Name</h4>
-                                    <p class="markings">Markings</p>
+                                    <ul class="p-0 list-unstyled">
+                                        <li><strong>Species: </strong><span class="species">Species</span></li>
+                                        <li><strong>Subtype: </strong><span class="subtype">Subtype</span></li>
+                                        <li><strong>Markings: </strong><span class="markings">Markings</span></li>
+                                        <li><strong>Traits: </strong><ul class="traits"></ul></li>
+                                    </ul>
                                 </div>
                             </div>
                         </div>
@@ -109,6 +122,9 @@
             checkSlots();
         });
 
+        var lineage = [];
+        var inbreeding = false;
+
         function getCharacter($selector) {
             var permId = $($selector).val();
             var slotId = $($selector).attr('slot_id');
@@ -121,11 +137,29 @@
                 console.log(data);
                 displayDiv.find('img').attr('src', data.character.image);
                 displayDiv.find('h4').text(data.character.name);
-                //displayDiv.find('.markings').text(data.character.markings);
+                displayDiv.find('.species').html(data.character.species);
+                displayDiv.find('.subtype').html(data.character.subtype);
+                displayDiv.find('.markings').text(data.character.markings);
+                handleCharacterLineage(data.character.lineage);
+                $.each(data.character.traits, function(i, val) {
+                    displayDiv.find('.traits').append('<li><strong>'+ i +': </strong>'+ val +'</li>');
+                });
                 displayDiv.removeClass('hide');
-                displayDiv.after('<pre style="background-color:#eee">' + JSON.stringify(data, null, 2) + '</pre>')
+                //displayDiv.after('<pre style="background-color:#eee">' + JSON.stringify(data, null, 2) + '</pre>')
             }).fail(function(jqXHR, textStatus, errorThrown) {
                 alert("AJAX call failed: " + textStatus + ", " + errorThrown);
+            });
+        }
+
+        function handleCharacterLineage(obj) {
+            Object.keys(obj).forEach(key => {
+                if( lineage.includes(key) ) {
+                    inbreeding = true;
+                    $('.alert.inbreeding span').html(obj[key]);
+                    $('.alert.inbreeding').removeClass('hide');
+                } else {
+                    lineage.push(key);
+                }
             });
         }
 
@@ -134,10 +168,10 @@
             var slot2 = $('#permission_2').val();
             if (slot1 != 0 && slot2 != 0 && slot1 != slot2) {
                 $(':input[type="submit"]').prop('disabled', false);
-                $('.alert').addClass('hide');
+                $('.alert.warning').addClass('hide');
             } else {
                 $(':input[type="submit"]').prop('disabled', true);
-                $('.alert').removeClass('hide');
+                $('.alert.warning').removeClass('hide');
             }
         }
     </script>
