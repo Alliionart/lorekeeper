@@ -253,6 +253,10 @@ return [
                 'name' => 'Elements',
                 'url'  => 'admin/data/elements',
             ],
+            [
+                'name' => 'Abilities',
+                'url'  => 'admin/abilities',
+            ],
         ],
     ],
     'Raffles'    => [

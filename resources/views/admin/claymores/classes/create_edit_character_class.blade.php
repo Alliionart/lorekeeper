@@ -39,10 +39,36 @@
         {!! Form::textarea('description', $class->description, ['class' => 'form-control wysiwyg']) !!}
     </div>
 
-    <div class="form-group">
-        {!! Form::checkbox('is_visible', 1, $class->id ? $class->is_visible : 1, ['class' => 'form-check-input', 'data-toggle' => 'toggle']) !!}
-        {!! Form::label('is_visible', 'Is Visible', ['class' => 'form-check-label ml-3']) !!} {!! add_help('If this is turned off, this class will not be visible on world pages.') !!}
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-group">
+                {!! Form::checkbox('is_visible', 1, $class->id ? $class->is_visible : 1, ['class' => 'form-check-input', 'data-toggle' => 'toggle']) !!}
+                {!! Form::label('is_visible', 'Is Visible', ['class' => 'form-check-label ml-3']) !!} {!! add_help('If this is turned off, this class will not be visible on world pages.') !!}
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                {!! Form::label('Prerequisite') !!} {!! add_help('If linked to another class this will be a class further in the class tree.') !!}
+                {!! Form::select('parent_class_id', $classes, $class->parent_class_id, ['class' => 'form-control']) !!}
+            </div>
+        </div>
     </div>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-group">
+                {!! Form::label('Class Type') !!}
+                {!! Form::select('class_type', $classes, $class->parent_class_id, ['class' => 'form-control']) !!}
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                {!! Form::label('abilities', 'Linked Abilities') !!} {!! add_help('Select applicable abilities for this class. If there are multiple options you may select up to 5. Note that if there ARE multiple options, characters will be required to choose one.') !!}
+                {!! Form::select('abilities', $abilities, $class->ability_id, ['class' => 'form-control', 'id' => 'abilities', 'multiple']) !!}
+            </div>
+        </div>
+    </div>
+
+    
 
     <div class="text-right">
         {!! Form::submit($class->id ? 'Edit' : 'Create', ['class' => 'btn btn-primary']) !!}
@@ -67,6 +93,10 @@
             $('.delete-class-button').on('click', function(e) {
                 e.preventDefault();
                 loadModal("{{ url('admin/character-classes/delete') }}/{{ $class->id }}", 'Delete Class');
+            });
+            $('#abilities').selectize({
+                multiple: true,
+                maxItems: 5,
             });
         });
     </script>

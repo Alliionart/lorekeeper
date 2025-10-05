@@ -11,7 +11,7 @@ class CharacterClass extends Model {
      * @var array
      */
     protected $fillable = [
-        'name', 'has_image', 'description', 'parsed_description', 'is_visible',
+        'name', 'has_image', 'description', 'parsed_description', 'is_visible', 'class_type', 'parent_class_id', 'ability_id'
     ];
 
     /**

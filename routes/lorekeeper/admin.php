@@ -667,3 +667,22 @@ Route::group(['prefix' => 'typing', 'middleware' => 'power:edit_data', 'namespac
     Route::get('delete/{id}', 'ElementController@getDeleteTyping');
     Route::post('delete/{id}', 'ElementController@postDeleteTyping');
 });
+
+// ABILITIES
+Route::group(['prefix' => 'abilities', 'namespace' => 'Claymores', 'middleware' => 'power:edit_claymores'], function () {
+    Route::get('/', 'AbilityController@getIndex');
+    Route::get('create', 'AbilityController@getCreateAbility');
+    Route::get('edit/{id}', 'AbilityController@getEditAbility');
+    Route::get('delete/{id}', 'AbilityController@getDeleteAbility');
+    Route::post('create', 'AbilityController@postCreateEditAbility');
+    Route::post('edit/{id?}', 'AbilityController@postCreateEditAbility');
+    Route::post('delete/{id}', 'AbilityController@postDeleteAbility');
+
+    Route::get('types', 'AbilityController@getTypeIndex');
+    Route::get('types/create', 'AbilityController@getCreateAbilityType');
+    Route::get('types/edit/{id}', 'AbilityController@getEditAbilityType');
+    Route::get('types/delete/{id}', 'AbilityController@getDeleteAbilityType');
+    Route::post('types/create', 'AbilityController@postCreateEditAbilityType');
+    Route::post('types/edit/{id?}', 'AbilityController@postCreateEditAbilityType');
+    Route::post('types/delete/{id}', 'AbilityController@postDeleteAbilityType');
+});
