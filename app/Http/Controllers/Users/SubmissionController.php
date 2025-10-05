@@ -14,6 +14,7 @@ use App\Models\Submission\Submission;
 use App\Models\User\User;
 use App\Models\User\UserItem;
 use App\Services\SubmissionManager;
+use App\Models\Status\StatusEffect;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -99,6 +100,7 @@ class SubmissionController extends Controller {
             'character_items'     => Item::whereIn('item_category_id', ItemCategory::where('is_character_owned', 1)->pluck('id')->toArray())->orderBy('name')->released()->pluck('name', 'id'),
             'currencies'          => Currency::where('is_user_owned', 1)->orderBy('name')->pluck('name', 'id'),
             'inventory'           => $inventory,
+            'statuses'            => StatusEffect::orderBy('name')->pluck('name', 'id'),
             'page'                => 'submission',
             'expanded_rewards'    => config('lorekeeper.extensions.character_reward_expansion.expanded'),
         ]));
@@ -363,6 +365,7 @@ class SubmissionController extends Controller {
             'currencies'          => Currency::where('is_user_owned', 1)->orderBy('name')->pluck('name', 'id'),
             'raffles'             => Raffle::where('rolled_at', null)->where('is_active', 1)->orderBy('name')->pluck('name', 'id'),
             'page'                => 'submission',
+            'statuses'            => StatusEffect::orderBy('name')->pluck('name', 'id'),
             'expanded_rewards'    => config('lorekeeper.extensions.character_reward_expansion.expanded'),
         ]));
     }

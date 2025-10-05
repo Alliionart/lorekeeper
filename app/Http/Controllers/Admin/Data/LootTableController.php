@@ -8,6 +8,7 @@ use App\Models\Item\Item;
 use App\Models\Item\ItemCategory;
 use App\Models\Loot\LootTable;
 use App\Services\LootService;
+use App\Models\Status\StatusEffect;
 use Illuminate\Http\Request;
 
 class LootTableController extends Controller {
@@ -45,8 +46,9 @@ class LootTableController extends Controller {
             'items'      => Item::orderBy('name')->pluck('name', 'id'),
             'categories' => ItemCategory::orderBy('sort', 'DESC')->pluck('name', 'id'),
             'currencies' => Currency::orderBy('name')->pluck('name', 'id'),
-            'tables'     => LootTable::orderBy('name')->pluck('name', 'id'),
-            'rarities'   => array_filter($rarities),
+            'statuses' => StatusEffect::orderBy('name')->pluck('name', 'id'),
+            'tables' => LootTable::orderBy('name')->pluck('name', 'id'),
+            'rarities' => array_filter($rarities),
         ]);
     }
 
@@ -71,8 +73,9 @@ class LootTableController extends Controller {
             'items'      => Item::orderBy('name')->pluck('name', 'id'),
             'categories' => ItemCategory::orderBy('sort', 'DESC')->pluck('name', 'id'),
             'currencies' => Currency::orderBy('name')->pluck('name', 'id'),
-            'tables'     => LootTable::orderBy('name')->pluck('name', 'id'),
-            'rarities'   => array_filter($rarities),
+            'statuses' => StatusEffect::orderBy('name')->pluck('name', 'id'),
+            'tables' => LootTable::orderBy('name')->pluck('name', 'id'),
+            'rarities' => array_filter($rarities),
         ]);
     }
 

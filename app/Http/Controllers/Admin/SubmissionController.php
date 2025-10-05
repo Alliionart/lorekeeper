@@ -11,6 +11,7 @@ use App\Models\Prompt\PromptCategory;
 use App\Models\Raffle\Raffle;
 use App\Models\Submission\Submission;
 use App\Services\SubmissionManager;
+use App\Models\Status\StatusEffect;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -79,6 +80,7 @@ class SubmissionController extends Controller {
             'tables'              => LootTable::orderBy('name')->pluck('name', 'id'),
             'raffles'             => Raffle::where('rolled_at', null)->where('is_active', 1)->orderBy('name')->pluck('name', 'id'),
             'count'               => Submission::where('prompt_id', $submission->prompt_id)->where('status', 'Approved')->where('user_id', $submission->user_id)->count(),
+            'statuses'            => StatusEffect::orderBy('name')->pluck('name', 'id'),
         ] : []));
     }
 
@@ -139,6 +141,7 @@ class SubmissionController extends Controller {
             'raffles'             => Raffle::where('rolled_at', null)->where('is_active', 1)->orderBy('name')->pluck('name', 'id'),
             'count'               => Submission::where('prompt_id', $id)->where('status', 'Approved')->where('user_id', $submission->user_id)->count(),
             'rewardsData'         => isset($submission->data['rewards']) ? parseAssetData($submission->data['rewards']) : null,
+            'statuses'            => StatusEffect::orderBy('name')->pluck('name', 'id'),
         ] : []));
     }
 
