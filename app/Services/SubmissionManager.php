@@ -10,6 +10,7 @@ use App\Models\Item\Item;
 use App\Models\Loot\LootTable;
 use App\Models\Prompt\Prompt;
 use App\Models\Raffle\Raffle;
+use App\Models\Status\StatusEffect;
 use App\Models\Submission\Submission;
 use App\Models\Submission\SubmissionCharacter;
 use App\Models\User\User;
@@ -17,7 +18,6 @@ use App\Models\User\UserItem;
 use Carbon\Carbon;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
-use App\Models\Status\StatusEffect;
 
 class SubmissionManager extends Service {
     /*
@@ -599,7 +599,7 @@ class SubmissionManager extends Service {
                         case 'LootTable': if ($data['character_rewardable_quantity'][$data['character_id']][$key]) {
                             addAsset($assets, $data['tables'][$reward], $data['character_rewardable_quantity'][$data['character_id']][$key]);
                         } break;
-                        case 'StatusEffect': if($data['character_rewardable_quantity'][$data['character_id']][$key]) {
+                        case 'StatusEffect': if ($data['character_rewardable_quantity'][$data['character_id']][$key]) {
                             addAsset($assets, $data['statuses'][$reward], $data['character_rewardable_quantity'][$data['character_id']][$key]);
                         } break;
                     }
@@ -784,7 +784,7 @@ class SubmissionManager extends Service {
                             break;
                         case 'LootTable': $tableIds[] = $id;
                             break;
-                        case 'StatusEffect': $statusIds[] = $id; 
+                        case 'StatusEffect': $statusIds[] = $id;
                             break;
                     }
                 }

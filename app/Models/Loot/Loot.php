@@ -5,8 +5,8 @@ namespace App\Models\Loot;
 use App\Models\Currency\Currency;
 use App\Models\Item\Item;
 use App\Models\Item\ItemCategory;
-use App\Models\Status\StatusEffect;
 use App\Models\Model;
+use App\Models\Status\StatusEffect;
 
 class Loot extends Model {
     /**
@@ -16,7 +16,7 @@ class Loot extends Model {
      */
     protected $fillable = [
         'loot_table_id', 'rewardable_type', 'rewardable_id',
-        'quantity', 'weight', 'data', 'subtable_id'
+        'quantity', 'weight', 'data', 'subtable_id',
     ];
 
     /**
