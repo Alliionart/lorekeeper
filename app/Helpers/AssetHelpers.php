@@ -74,7 +74,7 @@ function getAssetKeys($isCharacter = false) {
     if (!$isCharacter) {
         return ['items', 'currencies', 'raffle_tickets', 'loot_tables', 'user_items', 'characters'];
     } else {
-        return ['currencies', 'items', 'character_items', 'loot_tables'];
+        return ['currencies', 'items', 'character_items', 'loot_tables', 'statuses'];
     }
 }
 
@@ -143,6 +143,11 @@ function getAssetModelString($type, $namespaced = true) {
             } else {
                 return 'CharacterItem';
             }
+            break;
+
+        case 'statuses':
+            if($namespaced) return '\App\Models\Status\StatusEffect';
+            else return 'StatusEffect';
             break;
     }
 
@@ -357,9 +362,9 @@ function fillCharacterAssets($assets, $sender, $recipient, $logType, $data, $sub
     }
 
     // Roll on any loot tables
-    if (isset($assets['loot_tables'])) {
-        foreach ($assets['loot_tables'] as $table) {
-            $assets = mergeAssetsArrays($assets, $table['asset']->roll($table['quantity']));
+    if(isset($assets['loot_tables'])) {
+        foreach($assets['loot_tables'] as $table) {
+            $assets = mergeAssetsArrays($assets, $table['asset']->roll($table['quantity'], true, $recipient), true);
         }
         unset($assets['loot_tables']);
     }
@@ -379,6 +384,12 @@ function fillCharacterAssets($assets, $sender, $recipient, $logType, $data, $sub
                     return false;
                 }
             }
+        }
+        elseif($key == 'statuses' && count($contents))
+        {
+            $service = new \App\Services\StatusEffectManager;
+            foreach($contents as $asset)
+                if(!$service->creditStatusEffect($sender, $recipient, $logType, $data['data'], $asset['asset'], $asset['quantity'])) return false;
         }
     }
 

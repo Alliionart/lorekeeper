@@ -16,6 +16,7 @@ use App\Models\Item\ItemCategory;
 use App\Models\User\User;
 use App\Models\User\UserCurrency;
 use App\Models\User\UserItem;
+use App\Models\Status\StatusEffect;
 use App\Services\CharacterManager;
 use App\Services\CurrencyManager;
 use App\Services\DesignUpdateManager;
@@ -287,6 +288,24 @@ class CharacterController extends Controller {
     }
 
     /**
+     * Shows a character's status effects.
+     *
+     * @param  string  $slug
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function getCharacterStatusEffects($slug)
+    {
+        $character = $this->character;
+        return view('character.status_effects', [
+            'character' => $this->character,
+            'statuses' => $character->getStatusEffects(),
+            'logs' => $this->character->getStatusEffectLogs(),
+        ] + (Auth::check() && (Auth::user()->hasPower('edit_inventories') || Auth::user()->id == $this->character->user_id) ? [
+            'statusOptions' => StatusEffect::orderBy('name', 'DESC')->pluck('name', 'id')->toArray(),
+        ] : []));
+    }
+
+    /**
      * Transfers currency between the user and character.
      *
      * @param App\Services\CharacterManager $service
@@ -368,6 +387,20 @@ class CharacterController extends Controller {
             'character'             => $this->character,
             'extPrevAndNextBtnsUrl' => '/currency-logs',
             'logs'                  => $this->character->getCurrencyLogs(0),
+        ]);
+    }
+
+    /**
+     * Shows a character's status effect logs.
+     *
+     * @param  string  $slug
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function getCharacterStatusEffectLogs($slug)
+    {
+        return view('character.status_effect_logs', [
+            'character' => $this->character,
+            'logs' => $this->character->getStatusEffectLogs(0)
         ]);
     }
 

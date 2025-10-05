@@ -9,6 +9,7 @@ use App\Services\CurrencyManager;
 use App\Services\InventoryManager;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Services\StatusEffectManager;
 
 class GrantController extends Controller {
     /**
@@ -50,6 +51,26 @@ class GrantController extends Controller {
             }
         }
 
+        return redirect()->back();
+    }
+
+    /**
+     * Grants or removes status effect(s) from a character.
+     *
+     * @param  string                            $slug
+     * @param  \Illuminate\Http\Request          $request
+     * @param  App\Services\StatusEffectManager  $service
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function postCharacterStatusEffect($slug, Request $request, StatusEffectManager $service)
+    {
+        $data = $request->only(['status_id', 'quantity', 'data']);
+        if($service->grantCharacterStatusEffects($data, Character::where('slug', $slug)->first(), Auth::user())) {
+            flash('Status effect granted successfully.')->success();
+        }
+        else {
+            foreach($service->errors()->getMessages()['error'] as $error) flash($error)->error();
+        }
         return redirect()->back();
     }
 }
