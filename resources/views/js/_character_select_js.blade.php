@@ -63,12 +63,10 @@
                 } else if (val == 'Currency') {
                     $cell.children('.character-currencies').addClass('show');
                     $cell.children('.character-currencies').removeClass('hide');
-                }
-                else if (val == 'StatusEffect'){
+                } else if (val == 'StatusEffect') {
                     $cell.children('.character-statuses').addClass('show');
                     $cell.children('.character-statuses').removeClass('hide');
-                }
-                else if (val == 'LootTable'){
+                } else if (val == 'LootTable') {
                     $cell.children('.character-tables').addClass('show');
                     $cell.children('.character-tables').addClass('show');
                     $cell.children('.character-tables').removeClass('hide');
