@@ -435,8 +435,7 @@ class Character extends Model {
      *
      * @return \Illuminate\Support\Collection
      */
-    public function getStatusEffects()
-    {
+    public function getStatusEffects() {
         // Get a list of status effects that need to be displayed
 
         $owned = CharacterStatusEffect::where('character_id', $this->id)->pluck('quantity', 'status_effect_id')->toArray();
@@ -445,11 +444,11 @@ class Character extends Model {
 
         $statuses = $statuses->orderBy('name', 'DESC')->get();
 
-        foreach($statuses as $status) {
-            $status->quantity = isset($owned[$status->id]) ? $owned[$status->id] : 0;
+        foreach ($statuses as $status) {
+            $status->quantity = $owned[$status->id] ?? 0;
         }
 
-        $statuses = $statuses->filter(function($status) {
+        $statuses = $statuses->filter(function ($status) {
             return $status->quantity > 0;
         });
 
@@ -480,19 +479,22 @@ class Character extends Model {
     /**
      * Get the character's status effect logs.
      *
-     * @param  int  $limit
-     * @return \Illuminate\Support\Collection|\Illuminate\Pagination\LengthAwarePaginator
+     * @param int $limit
+     *
+     * @return \Illuminate\Pagination\LengthAwarePaginator|\Illuminate\Support\Collection
      */
-    public function getStatusEffectLogs($limit = 10)
-    {
+    public function getStatusEffectLogs($limit = 10) {
         $character = $this;
-        $query = StatusEffectLog::with('status')->where(function($query) use ($character) {
+        $query = StatusEffectLog::with('status')->where(function ($query) use ($character) {
             $query->with('recipient.rank')->where('sender_type', 'Character')->where('sender_id', $character->id)->where('log_type', '!=', 'Staff Grant');
-        })->orWhere(function($query) use ($character) {
+        })->orWhere(function ($query) use ($character) {
             $query->with('recipient.rank')->where('recipient_type', 'Character')->where('recipient_id', $character->id)->where('log_type', '!=', 'Staff Removal');
         })->orderBy('id', 'DESC');
-        if($limit) return $query->take($limit)->get();
-        else return $query->paginate(30);
+        if ($limit) {
+            return $query->take($limit)->get();
+        } else {
+            return $query->paginate(30);
+        }
     }
 
     /**
