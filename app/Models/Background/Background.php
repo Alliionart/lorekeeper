@@ -2,11 +2,8 @@
 
 namespace App\Models\Background;
 
-use App\Models\Model;
-use App\Models\Background\BackgroundCondition;
-use App\Models\User\User;
-use App\Models\Item\Item;
 use App\Models\Character\Character;
+use App\Models\Model;
 
 class Background extends Model {
     /**
@@ -58,10 +55,10 @@ class Background extends Model {
 
     public function groupedConditions() {
         return $this->conditions()->get()->groupBy('type')
-        ->map(function ($group) {
-            return $group->pluck('value')->all();
-        })
-        ->toArray();
+            ->map(function ($group) {
+                return $group->pluck('value')->all();
+            })
+            ->toArray();
     }
 
     public function getConditionTypeListAttribute() {
@@ -128,19 +125,19 @@ class Background extends Model {
         return $query->where('is_visible', 1);
     }
 
-     /**
+    /**
      * Scope a query to show all unique values of a specific column.
      *
      * @param \Illuminate\Database\Eloquent\Builder $query
-     * @param string                                $column
+     * @param mixed                                 $column_type
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
     public function scopeUniqueColumn($query, $column_type) {
         return BackgroundCondition::select('value')
-        ->where('type', $column_type)
-        ->distinct()
-        ->pluck('value');
+            ->where('type', $column_type)
+            ->distinct()
+            ->pluck('value');
     }
 
     /**
@@ -153,7 +150,7 @@ class Background extends Model {
      * @return \Illuminate\Database\Eloquent\Builder
      */
     public function scopeWithCondition($query, $key, $value) {
-        return $query->whereHas('conditions', function($q) use ($key, $value) {
+        return $query->whereHas('conditions', function ($q) use ($key, $value) {
             $q->where($key, $value);
         });
     }
@@ -162,23 +159,20 @@ class Background extends Model {
      * Scope a query to show only visible bases.
      *
      * @param \Illuminate\Database\Eloquent\Builder $query
-     * @param mixed|null                            $key
-     * @param mixed|null                            $value
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
     public function scopeApplicableCharacterBackgrounds($query, Character $character) {
-        
         $background_items = $this->scopeUniqueColumn($query, 'Item');
-        
-        return $query->whereHas('conditions', function($q) use ($character) {
-            $q->where(function($sub) use ($character) {
+
+        return $query->whereHas('conditions', function ($q) use ($character) {
+            $q->where(function ($sub) use ($character) {
                 $sub->where('user_id', $character->user_id)
                     ->orWhere('location', $character->location)
                     ->orWhere('status', $character->status);
 
-                    // Add more condition checks here as needed, e.g.:
-                    // ->orWhere('award_id', $character->award_id);
+                // Add more condition checks here as needed, e.g.:
+                // ->orWhere('award_id', $character->award_id);
             });
         });
     }

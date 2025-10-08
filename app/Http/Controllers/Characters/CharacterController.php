@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Characters;
 
 use App\Facades\Settings;
 use App\Http\Controllers\Controller;
+use App\Models\Background\Background;
 use App\Models\Character\BreedingPermission;
 use App\Models\Character\Character;
 use App\Models\Character\CharacterCurrency;
@@ -18,7 +19,6 @@ use App\Models\Item\ItemCategory;
 use App\Models\User\User;
 use App\Models\User\UserCurrency;
 use App\Models\User\UserItem;
-use App\Models\Background\Background;
 use App\Services\CharacterManager;
 use App\Services\CurrencyManager;
 use App\Services\DesignUpdateManager;
@@ -212,17 +212,14 @@ class CharacterController extends Controller {
 
     /**
      * Refresh's a character's background options via AJAX.
-     * 
-     * @param int $id
-     * @param string $location
-     * 
+     *
      * @return array
      */
     public function getRefreshCharacterBgOptions(Request $request) {
         $location = $request->input('location');
         $id = $request->input('id');
         $character = Character::find($id);
-        
+
         //return $character->applicableBackgrounds($location);
         return view('character._background_refresh', [
             'character' => $character,

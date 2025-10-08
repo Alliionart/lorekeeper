@@ -3,6 +3,8 @@
 namespace App\Models\Character;
 
 use App\Facades\Notifications;
+use App\Models\Background\Background;
+use App\Models\Background\BackgroundCondition;
 use App\Models\Base\Base;
 use App\Models\Carrier\Carrier;
 use App\Models\Currency\Currency;
@@ -18,8 +20,6 @@ use App\Models\Submission\SubmissionCharacter;
 use App\Models\Trade;
 use App\Models\User\User;
 use App\Models\User\UserCharacterLog;
-use App\Models\Background\Background;
-use App\Models\Background\BackgroundCondition;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Settings;
@@ -314,51 +314,52 @@ class Character extends Model {
 
     /**
      * Scope a query to include all relevant backgrounds.
-     * 
+     *
      * @param \Illuminate\Database\Eloquent\Builder $query
-     * 
+     * @param mixed|null                            $location
+     *
      * @return \Illuminate\Database\Eloquent\Builder
      */
     public function scopeApplicableBackgrounds($query, $location = null) {
         $applicable_bgs_raw = [];
         $applicable_bgs = [];
-        if(!$location) {
+        if (!$location) {
             $location = $this->location;
         }
-        
+
         //Free to Use BGs
         $Free_bgs = BackgroundCondition::where('type', null)->where('value', null)->where('location', $location)->pluck('background_id')->toArray();
-        
+
         //Personal BGs
         $User_bgs = BackgroundCondition::where('type', 'User')->where('value', $this->user_id)->where('location', $location)->pluck('background_id')->toArray();
-        
+
         //Character Status BGs
         $Status_bgs = BackgroundCondition::where('type', 'Status')->where('value', $this->status)->where('location', $location)->pluck('background_id')->toArray();
-        
+
         //Character has Item BGs
         $unique_bg_items = BackgroundCondition::where('type', 'Item')->where('location', $location)->distinct()->pluck('value', 'background_id')->toArray();
         $item_ids = array_values($unique_bg_items);
         $characters_bg_items = $this->items()->whereIn('items.id', $item_ids)->pluck('items.id')->toArray();
         $Item_bgs = BackgroundCondition::where('type', 'Item')->whereIn('value', $characters_bg_items)->pluck('background_id')->toArray();
-        
+
         //Character Award BGs
 
         //Character Guild BGs
 
-        if($Item_bgs) {
+        if ($Item_bgs) {
             $applicable_bgs_raw['Items'] = $Item_bgs;
         }
-        if($Status_bgs) {
+        if ($Status_bgs) {
             $applicable_bgs_raw['Status'] = $Status_bgs;
         }
-        if($User_bgs) {
+        if ($User_bgs) {
             $applicable_bgs_raw['Personal'] = $User_bgs;
         }
-        if($Free_bgs) {
+        if ($Free_bgs) {
             $applicable_bgs_raw['Free to Use'] = $Free_bgs;
         }
-        foreach($applicable_bgs_raw as $cat => $bgs) {
-            foreach($bgs as $i => $bg_id) {
+        foreach ($applicable_bgs_raw as $cat => $bgs) {
+            foreach ($bgs as $i => $bg_id) {
                 $applicable_bgs[$cat][$bg_id] = Background::find($bg_id)?->name;
             }
         }
