@@ -5,7 +5,11 @@
 @endsection
 
 @section('admin-content')
-    {!! breadcrumbs(['Admin Panel' => 'admin', 'Backgrounds' => 'admin/data/backgrounds', ($background->id ? 'Edit' : 'Create') . ' Background' => $background->id ? 'admin/data/background/edit/' . $background->id : 'admin/data/background/create']) !!}
+    {!! breadcrumbs([
+        'Admin Panel' => 'admin',
+        'Backgrounds' => 'admin/data/backgrounds',
+        ($background->id ? 'Edit' : 'Create') . ' Background' => $background->id ? 'admin/data/background/edit/' . $background->id : 'admin/data/background/create',
+    ]) !!}
 
     <h1>{{ $background->id ? 'Edit' : 'Create' }} Background
         @if ($background->id)
@@ -46,31 +50,32 @@
         </div>
         <h5 class="mt-3">Select a Preview Image using the cropper</h5>
         <div class="form-group mt-2 hide">
-                {!! Form::checkbox('use_cropper', 1, 1, ['class' => 'form-check-input', 'data-toggle' => 'toggle', 'id' => 'useCropper']) !!}
-                {!! Form::label('use_cropper', 'Use Image Cropper', ['class' => 'form-check-label ml-3']) !!} {!! add_help('A thumbnail is required for the upload (used for the masterlist). You can use the image cropper (crop dimensions can be adjusted in the site code), or upload a custom thumbnail.') !!}
-            </div>
-            <div class="card mb-3" id="thumbnailCrop">
-                <div class="card-body">
-                    <div id="cropSelect">Select an image to use the thumbnail cropper.</div>
-                    <img src="#" id="cropper" class="hide" alt="" />
-                    {!! Form::hidden('x0', null, ['id' => 'cropX0']) !!}
-                    {!! Form::hidden('x1', null, ['id' => 'cropX1']) !!}
-                    {!! Form::hidden('y0', null, ['id' => 'cropY0']) !!}
-                    {!! Form::hidden('y1', null, ['id' => 'cropY1']) !!}
-                </div>
+            {!! Form::checkbox('use_cropper', 1, 1, ['class' => 'form-check-input', 'data-toggle' => 'toggle', 'id' => 'useCropper']) !!}
+            {!! Form::label('use_cropper', 'Use Image Cropper', ['class' => 'form-check-label ml-3']) !!} {!! add_help('A thumbnail is required for the upload (used for the masterlist). You can use the image cropper (crop dimensions can be adjusted in the site code), or upload a custom thumbnail.') !!}
+        </div>
+        <div class="card mb-3" id="thumbnailCrop">
+            <div class="card-body">
+                <div id="cropSelect">Select an image to use the thumbnail cropper.</div>
+                <img src="#" id="cropper" class="hide" alt="" />
+                {!! Form::hidden('x0', null, ['id' => 'cropX0']) !!}
+                {!! Form::hidden('x1', null, ['id' => 'cropX1']) !!}
+                {!! Form::hidden('y0', null, ['id' => 'cropY0']) !!}
+                {!! Form::hidden('y1', null, ['id' => 'cropY1']) !!}
             </div>
         </div>
     </div>
+    </div>
 
     <h3>Conditional Options</h3>
-    <p>How this background is accessible to a character. Leave these conditions blank if this background is free to use within the location. Note that all of these conditions are "OR" conditions. If the background starts as a personal background and then also moves to a award-based background you'll want to enter the player so they can always use it, AND the applicable award so that any character with that award can also use the background.</p>
+    <p>How this background is accessible to a character. Leave these conditions blank if this background is free to use within the location. Note that all of these conditions are "OR" conditions. If the background starts as a personal background and then
+        also moves to a award-based background you'll want to enter the player so they can always use it, AND the applicable award so that any character with that award can also use the background.</p>
 
     <pre style="background:#ccc">
         {!! print_r($background->groupedConditions(), true) !!}
     </pre>
 
-    <?php 
-        $conditions = $background->groupedConditions();
+    <?php
+    $conditions = $background->groupedConditions();
     ?>
 
     <div class="form-group">

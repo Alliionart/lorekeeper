@@ -40,7 +40,8 @@
         <div class="form-group location-form">
             {!! Form::label('location', 'Location') !!}
             {!! Form::select('location', $locations, $character->location ?? null, ['class' => 'form-control selectize', 'required']) !!}
-            <div class="alert mt-2 p-2 border-warning alert-warning" style="display:none;">Changing your character's location requires x1 {!! $lItem->displayName !!}. You currently have {{ $user_item_amount }} available. Upon editing your character it will be automatically removed from your inventory.</div>
+            <div class="alert mt-2 p-2 border-warning alert-warning" style="display:none;">Changing your character's location requires x1 {!! $lItem->displayName !!}. You currently have {{ $user_item_amount }} available. Upon editing your character it will be
+                automatically removed from your inventory.</div>
         </div>
         <div class="form-group background-refresh">
             {!! Form::label('background', 'Background') !!}
@@ -112,7 +113,7 @@
 
             $('#location').on('change', function() {
                 refreshBackgroundOptions();
-                if(currentLocation !== $(this).val()) {
+                if (currentLocation !== $(this).val()) {
                     $('.location-form .alert').show();
                 } else {
                     $('.location-form .alert').hide();
@@ -120,7 +121,7 @@
             });
 
             $('#background').on('change', function() {
-                if(currentBg !== $(this).val() && currentLocation === $('#location').val()) {
+                if (currentBg !== $(this).val() && currentLocation === $('#location').val()) {
                     $('.background-refresh .alert').show();
                 } else {
                     $('.background-refresh .alert').hide();
@@ -133,7 +134,7 @@
                 var id = {{ $character->id }};
                 $.ajax({
                     type: 'GET',
-                    url: "{{ url('character/'.$character->slug.'/get-bg-options') }}?id=" + id + '&location=' + location,
+                    url: "{{ url('character/' . $character->slug . '/get-bg-options') }}?id=" + id + '&location=' + location,
                     dataType: 'text',
                 }).done(function(res) {
                     $('.background-refresh').html(res);
