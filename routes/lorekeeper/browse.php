@@ -93,6 +93,8 @@ Route::group(['prefix' => 'character', 'namespace' => 'Characters'], function ()
     Route::get('{slug}/grandchildren', 'CharacterLineageController@getCharacterGrandChildren');
     Route::get('{slug}/great-grandchildren', 'CharacterLineageController@getCharacterGreatGrandChildren');
     Route::get('{slug}/image/{id}', 'CharacterController@getCharacterImage');
+    Route::get('{slug}/image-single/{id}', 'CharacterController@getCharacterSingleImage');
+    Route::get('{slug}/get-bg-options', 'CharacterController@getRefreshCharacterBgOptions');
 });
 Route::group(['prefix' => 'myo', 'namespace' => 'Characters'], function () {
     Route::get('{id}', 'MyoController@getCharacter');

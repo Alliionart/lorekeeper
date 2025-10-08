@@ -5,12 +5,12 @@
         // ajax get
         $.ajax({
             type: "GET",
-            url: "{{ url('character/' . $character->slug . '/image') }}/" + id,
+            url: "{{ url('character/' . $character->slug . '/image-single') }}/" + id,
             dataType: "text"
         }).done(function(res) {
-            $("#main-tab").fadeOut(500, function() {
-                $("#main-tab").html(res);
-                $('#main-tab').find('[data-toggle="toggle"]').bootstrapToggle();
+            $("#active-image").fadeOut(500, function() {
+                $("#active-image").html(res);
+                $('#active-image').find('[data-toggle="toggle"]').bootstrapToggle();
                 $('.reupload-image').on('click', function(e) {
                     e.preventDefault();
                     loadModal("{{ url('admin/character/image') }}/" + $(this).data('id') + "/reupload", 'Reupload Image');
@@ -55,7 +55,7 @@
                     e.preventDefault();
                     loadModal("{{ url('admin/character/image') }}/" + $(this).data('id') + "/credits", 'Edit Image Credits');
                 });
-                $("#main-tab").fadeIn(500);
+                $("#active-image").fadeIn(500);
             });
         }).fail(function(jqXHR, textStatus, errorThrown) {
             alert("AJAX call failed: " + textStatus + ", " + errorThrown);

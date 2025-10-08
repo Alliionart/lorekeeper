@@ -91,6 +91,14 @@ class AddSiteSettings extends Command {
 
         $this->addSiteSetting('breeding_item_category_id', 0, 'Enter the ID for Breeding Item Category.');
 
+        $this->addSiteSetting('character_locations', '', 'Enter names for any locations applicable to characters. Seperate via commas.');
+
+        $this->addSiteSetting('background_location_change_item_id', 0, 'Enter the ID for the item required to change locations.');
+
+        $this->addSiteSetting('background_location_change_currency', 0, 'Enter the ID of the currency required to change backgrounds in the same location.');
+
+        $this->addSiteSetting('background_location_change_amount', 0, 'Enter the amount of the chosen currency required to change backgrounds in the same location.');
+
         $this->line("\nSite settings up to date!");
     }
 

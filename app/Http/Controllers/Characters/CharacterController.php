@@ -18,6 +18,7 @@ use App\Models\Item\ItemCategory;
 use App\Models\User\User;
 use App\Models\User\UserCurrency;
 use App\Models\User\UserItem;
+use App\Models\Background\Background;
 use App\Services\CharacterManager;
 use App\Services\CurrencyManager;
 use App\Services\DesignUpdateManager;
@@ -161,8 +162,19 @@ class CharacterController extends Controller {
             abort(404);
         }
 
+        $raw_location = Settings::get('character_locations');
+        $locations = explode(',', $raw_location);
+        $location_change_item_id = Settings::get('background_location_change_item_id');
+        $bg_change_currency_id = Settings::get('background_location_change_currency');
+
         return view('character.edit_profile', [
-            'character' => $this->character,
+            'character'         => $this->character,
+            'locations'         => array_combine($locations, $locations),
+            'bg_currency'       => Currency::find($bg_change_currency_id),
+            'bg_amount'         => Settings::get('background_location_change_amount'),
+            'lItem'             => Item::find($location_change_item_id),
+            'user_item_amount'  => UserItem::where('user_id', $this->character->user_id)->where('item_id', $location_change_item_id)->count(),
+            'user_cur_amount'   => UserCurrency::where('user_id', $this->character->user_id)->where('currency_id', $bg_change_currency_id)->sum('quantity'),
         ]);
     }
 
@@ -187,7 +199,7 @@ class CharacterController extends Controller {
 
         $request->validate(CharacterProfile::$rules);
 
-        if ($service->updateCharacterProfile($request->only(['name', 'nickname', 'link', 'text', 'is_gift_art_allowed', 'is_gift_writing_allowed', 'is_trading', 'alert_user']), $this->character, Auth::user(), !$isOwner)) {
+        if ($service->updateCharacterProfile($request->only(['name', 'nickname', 'link', 'text', 'is_gift_art_allowed', 'is_gift_writing_allowed', 'is_trading', 'alert_user', 'location', 'background']), $this->character, Auth::user(), !$isOwner)) {
             flash('Profile edited successfully.')->success();
         } else {
             foreach ($service->errors()->getMessages()['error'] as $error) {
@@ -196,6 +208,27 @@ class CharacterController extends Controller {
         }
 
         return redirect()->back();
+    }
+
+    /**
+     * Refresh's a character's background options via AJAX.
+     * 
+     * @param int $id
+     * @param string $location
+     * 
+     * @return array
+     */
+    public function getRefreshCharacterBgOptions(Request $request) {
+        $location = $request->input('location');
+        $id = $request->input('id');
+        $character = Character::find($id);
+        
+        //return $character->applicableBackgrounds($location);
+        return view('character._background_refresh', [
+            'character' => $character,
+            'location'  => $location,
+            'ajax'      => true,
+        ]);
     }
 
     /**
@@ -674,6 +707,25 @@ class CharacterController extends Controller {
         $image = CharacterImage::where('character_id', $this->character->id)->where('id', $id)->first();
 
         return view('character.image', [
+            'user'      => Auth::check() ? Auth::user() : null,
+            'character' => $this->character,
+            'image'     => $image,
+            'ajax'      => true,
+        ]);
+    }
+
+    /**
+     * Shows a character's SINGLE image (for transformations).
+     *
+     * @param string $slug
+     * @param mixed  $id
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function getCharacterSingleImage($slug, $id) {
+        $image = CharacterImage::where('character_id', $this->character->id)->where('id', $id)->first();
+
+        return view('character.image_single', [
             'user'      => Auth::check() ? Auth::user() : null,
             'character' => $this->character,
             'image'     => $image,

@@ -210,6 +210,10 @@ return [
                 'name' => 'Transformations',
                 'url'  => 'admin/data/transformations',
             ],
+            [
+                'name' => 'Backgrounds',
+                'url'  => 'admin/data/backgrounds',
+            ],
         ],
     ],
     'Breedings'  => [

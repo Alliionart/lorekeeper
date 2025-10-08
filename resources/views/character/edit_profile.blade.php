@@ -37,6 +37,17 @@
             {!! Form::label('nickname', 'Nickname(s)') !!}
             {!! Form::text('nickname', $character->nickname, ['class' => 'form-control']) !!}
         </div>
+        <div class="form-group location-form">
+            {!! Form::label('location', 'Location') !!}
+            {!! Form::select('location', $locations, $character->location ?? null, ['class' => 'form-control selectize', 'required']) !!}
+            <div class="alert mt-2 p-2 border-warning alert-warning" style="display:none;">Changing your character's location requires x1 {!! $lItem->displayName !!}. You currently have {{ $user_item_amount }} available. Upon editing your character it will be automatically removed from your inventory.</div>
+        </div>
+        <div class="form-group background-refresh">
+            {!! Form::label('background', 'Background') !!}
+            {!! Form::select('background', $character->applicableBackgrounds(), null, ['class' => 'form-control selectize', 'required']) !!}
+            <div class="alert mt-2 p-2 border-warning alert-warning" style="display:none;">Changing your character's background requires {{ $bg_amount }} {!! $bg_currency->displayName !!}. You currently have {{ $user_cur_amount }} available.</div>
+        </div>
+
         @if (config('lorekeeper.extensions.character_TH_profile_link'))
             <div class="form-group">
                 {!! Form::label('link', 'Profile Link') !!}
@@ -84,4 +95,56 @@
     </div>
     {!! Form::close() !!}
 
+@endsection
+
+@section('scripts')
+    @parent
+    <script>
+        $(document).ready(function() {
+            var currentLocation = '{{ $character->location }}';
+            var currentBg = {{ $character->background_id }};
+            var $bgSelect = $('#background').selectize({
+                allowClear: true,
+            });
+            $('#location').selectize({
+                allowClear: true,
+            });
+
+            $('#location').on('change', function() {
+                refreshBackgroundOptions();
+                if(currentLocation !== $(this).val()) {
+                    $('.location-form .alert').show();
+                } else {
+                    $('.location-form .alert').hide();
+                }
+            });
+
+            $('#background').on('change', function() {
+                if(currentBg !== $(this).val() && currentLocation === $('#location').val()) {
+                    $('.background-refresh .alert').show();
+                } else {
+                    $('.background-refresh .alert').hide();
+                }
+            });
+
+            //On change location prop the alerts and refresh the background list
+            function refreshBackgroundOptions() {
+                var location = $('#location').val();
+                var id = {{ $character->id }};
+                $.ajax({
+                    type: 'GET',
+                    url: "{{ url('character/'.$character->slug.'/get-bg-options') }}?id=" + id + '&location=' + location,
+                    dataType: 'text',
+                }).done(function(res) {
+                    $('.background-refresh').html(res);
+                    $('.background-refresh .selectize').selectize({
+                        allowClear: true,
+                    });
+
+                }).fail(function(jqXHR, textStatus, errorThrown) {
+                    alert("AJAX call failed: " + textStatus + ", " + errorThrown);
+                });
+            }
+        });
+    </script>
 @endsection

@@ -553,6 +553,12 @@ tr.accountbound {
 
 /* CHARACTERS ************************************************************************************/
 
+.character-bg {
+	background-size: 100%;
+	border: 2px solid var(--gray-900);
+	border-radius: 5px;
+}
+
 .image-nav .nav-item a {
     border: 5px solid transparent;
     border-radius: .25rem;

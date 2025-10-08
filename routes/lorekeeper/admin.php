@@ -209,7 +209,7 @@ Route::group(['prefix' => 'data', 'namespace' => 'Data', 'middleware' => 'power:
     Route::post('base/edit/{id}', 'BaseController@postCreateEditBase');
     Route::post('base/delete/{id}', 'BaseController@postDeleteBase');
 
-    // BASES
+    // CARRIERS
     Route::get('carriers', 'CarrierController@getCarriersIndex');
     Route::get('carrier/create', 'CarrierController@getCreateCarrier');
     Route::get('carrier/edit/{id}', 'CarrierController@getEditCarrier');
@@ -227,6 +227,15 @@ Route::group(['prefix' => 'data', 'namespace' => 'Data', 'middleware' => 'power:
     Route::post('character-categories/edit/{id?}', 'CharacterCategoryController@postCreateEditCharacterCategory');
     Route::post('character-categories/delete/{id}', 'CharacterCategoryController@postDeleteCharacterCategory');
     Route::post('character-categories/sort', 'CharacterCategoryController@postSortCharacterCategory');
+
+    // CHARACTER BACKGROUNDS
+    Route::get('backgrounds', 'BackgroundController@getBackgroundsIndex');
+    Route::get('background/create', 'BackgroundController@getCreateBackground');
+    Route::get('background/edit/{id}', 'BackgroundController@getEditBackground');
+    Route::get('background/delete/{id}', 'BackgroundController@getDeleteBackground');
+    Route::post('background/create', 'BackgroundController@postCreateEditBackground');
+    Route::post('background/edit/{id}', 'BackgroundController@postCreateEditBackground');
+    Route::post('background/delete/{id}', 'BackgroundController@postDeleteBackground');
 
     // SUB MASTERLISTS
     Route::get('sublists', 'SublistController@getIndex');
