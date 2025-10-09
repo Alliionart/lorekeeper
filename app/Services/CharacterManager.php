@@ -22,7 +22,6 @@ use App\Models\Marking\Marking;
 use App\Models\Sales\SalesCharacter;
 use App\Models\Species\Subtype;
 use App\Models\User\User;
-use App\Models\User\UserCurrency;
 use Carbon\Carbon;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Config;
@@ -1551,13 +1550,13 @@ class CharacterManager extends Service {
 
                 $owner = User::find($character->user_id);
 
-                if($owner->isStaff) {
+                if ($owner->isStaff) {
                     // Staff get free BG changes
                     $takeBgCurrency = false;
                 }
 
-                if($character->background_id !== $data['background']) {
-                    if($takeBgCurrency) {
+                if ($character->background_id !== $data['background']) {
+                    if ($takeBgCurrency) {
                         //Remove the currency required here then update.
                         $bg = Background::find($data['background']);
                         $currency = Currency::find(Settings::get('background_location_change_currency'));

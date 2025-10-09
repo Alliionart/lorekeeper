@@ -63,6 +63,7 @@ class Background extends Model {
 
     public function getConditionTypeListAttribute() {
         $list = $this->conditions()->whereNotNull('value')->pluck('type')->unique()->values()->toArray();
+
         return count($list) > 0 ? implode(', ', $list) : 'Free to use';
     }
 
@@ -171,7 +172,7 @@ class Background extends Model {
                 $sub->where('user_id', $character->user_id)
                     ->orWhere('location', $character->location)
                     ->orWhere('status', $character->status);
-                    // ->orWhere('award_id', $character->award_id);
+                // ->orWhere('award_id', $character->award_id);
             });
         });
     }
