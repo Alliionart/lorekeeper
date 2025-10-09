@@ -24,6 +24,7 @@ use App\Models\Marking\Marking;
 use App\Models\Sales\SalesCharacter;
 use App\Models\Species\Subtype;
 use App\Models\User\User;
+use App\Models\User\UserCurrency;
 use App\Models\Background\Background;
 use Carbon\Carbon;
 use Illuminate\Support\Arr;
@@ -1542,7 +1543,7 @@ class CharacterManager extends Service {
                 if($character->location !== $data['location']) {
                     //Remove the item required here then update.
                     $takeBgCurrency = false;
-                    $item_id = Settings::get('background_location_change_currency');
+                    $item_id = Settings::get('background_location_change_item_id');
                     $stack = UserItem::where('user_id', $character->user_id)->where('item_id', $item_id)->whereRaw('count > submission_count')->first();
 
                     if (!(new InventoryManager)->debitStack($user, 'Character Location Update', ['data' => 'Item used in character background change ('.$character->displayName.')'], $stack, 1)) {
@@ -1551,20 +1552,21 @@ class CharacterManager extends Service {
                     $character->location = $data['location'];
                 }
 
-                if($user->isStaff) {
+                $owner = User::find($character->user_id);
+
+                if($owner->isStaff) {
                     // Staff get free BG changes
                     $takeBgCurrency = false;
                 }
 
                 if($character->background_id !== $data['background']) {
-                    $bg = Background::find($data['background']);
-
                     if($takeBgCurrency) {
                         //Remove the currency required here then update.
-                        $currency = Currency::find(Settings::get('background_location_change_item_id'));
+                        $bg = Background::find($data['background']);
+                        $currency = Currency::find(Settings::get('background_location_change_currency'));
                         $cur_amount = Settings::get('background_location_change_amount');
 
-                        if (!(new CurrencyManager)->debitCurrency($user, null, 'Character Background Update', 'Changed '.$character->displayName.' to '.$bg->name, $currency, $cur_amount)) {
+                        if (!(new CurrencyManager)->debitCurrency($owner, null, 'Character Background Update', 'Changed '.$character->displayName.' to '.$bg->name, $currency, $cur_amount)) {
                             throw new \Exception('Not enough currency to change the background.');
                         }
                         $character->background_id = $data['background'];

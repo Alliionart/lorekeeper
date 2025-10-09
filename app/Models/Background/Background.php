@@ -65,7 +65,8 @@ class Background extends Model {
     }
 
     public function getConditionTypeListAttribute() {
-        return implode(', ', $this->conditions()->pluck('type')->unique()->values()->toArray());
+        $list = $this->conditions()->whereNotNull('value')->pluck('type')->unique()->values()->toArray();
+        return count($list) > 0 ? implode(', ', $list) : 'Free to use';
     }
 
     public function location() {
@@ -176,8 +177,6 @@ class Background extends Model {
                 $sub->where('user_id', $character->user_id)
                     ->orWhere('location', $character->location)
                     ->orWhere('status', $character->status);
-
-                    // Add more condition checks here as needed, e.g.:
                     // ->orWhere('award_id', $character->award_id);
             });
         });

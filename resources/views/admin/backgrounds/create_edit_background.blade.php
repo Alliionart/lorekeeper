@@ -48,26 +48,21 @@
         <div class="form-group mt-2 hide">
                 {!! Form::checkbox('use_cropper', 1, 1, ['class' => 'form-check-input', 'data-toggle' => 'toggle', 'id' => 'useCropper']) !!}
                 {!! Form::label('use_cropper', 'Use Image Cropper', ['class' => 'form-check-label ml-3']) !!} {!! add_help('A thumbnail is required for the upload (used for the masterlist). You can use the image cropper (crop dimensions can be adjusted in the site code), or upload a custom thumbnail.') !!}
-            </div>
-            <div class="card mb-3" id="thumbnailCrop">
-                <div class="card-body">
-                    <div id="cropSelect">Select an image to use the thumbnail cropper.</div>
-                    <img src="#" id="cropper" class="hide" alt="" />
-                    {!! Form::hidden('x0', null, ['id' => 'cropX0']) !!}
-                    {!! Form::hidden('x1', null, ['id' => 'cropX1']) !!}
-                    {!! Form::hidden('y0', null, ['id' => 'cropY0']) !!}
-                    {!! Form::hidden('y1', null, ['id' => 'cropY1']) !!}
-                </div>
+        </div>
+        <div class="card mb-3" id="thumbnailCrop">
+            <div class="card-body">
+                <div id="cropSelect">Select an image to use the thumbnail cropper.</div>
+                <img src="#" id="cropper" class="hide" alt="" />
+                {!! Form::hidden('x0', null, ['id' => 'cropX0']) !!}
+                {!! Form::hidden('x1', null, ['id' => 'cropX1']) !!}
+                {!! Form::hidden('y0', null, ['id' => 'cropY0']) !!}
+                {!! Form::hidden('y1', null, ['id' => 'cropY1']) !!}
             </div>
         </div>
     </div>
-
+    
     <h3>Conditional Options</h3>
     <p>How this background is accessible to a character. Leave these conditions blank if this background is free to use within the location. Note that all of these conditions are "OR" conditions. If the background starts as a personal background and then also moves to a award-based background you'll want to enter the player so they can always use it, AND the applicable award so that any character with that award can also use the background.</p>
-
-    <pre style="background:#ccc">
-        {!! print_r($background->groupedConditions(), true) !!}
-    </pre>
 
     <?php 
         $conditions = $background->groupedConditions();
@@ -104,14 +99,6 @@
 
     {!! Form::close() !!}
 
-    @if ($background->id)
-        <h3>Preview</h3>
-        <div class="card mb-3">
-            <div class="card-body">
-                @include('world._feature_entry', ['feature' => $background])
-            </div>
-        </div>
-    @endif
 @endsection
 
 @section('scripts')

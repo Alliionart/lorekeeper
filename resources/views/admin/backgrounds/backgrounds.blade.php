@@ -79,7 +79,7 @@
                             </div>
                             <div class="col-12 col-md-4">
                                 <div class="logs-table-cell">
-                                    {{ $background->getConditionTypeListAttribute() }}
+                                    {{ print_r($background->getConditionTypeListAttribute(), true)}}
                                 </div>
                             </div>
                             <div class="col-12 col-md-1">
