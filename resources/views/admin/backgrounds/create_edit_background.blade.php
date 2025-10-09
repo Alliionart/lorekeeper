@@ -5,7 +5,11 @@
 @endsection
 
 @section('admin-content')
-    {!! breadcrumbs(['Admin Panel' => 'admin', 'Backgrounds' => 'admin/data/backgrounds', ($background->id ? 'Edit' : 'Create') . ' Background' => $background->id ? 'admin/data/background/edit/' . $background->id : 'admin/data/background/create']) !!}
+    {!! breadcrumbs([
+        'Admin Panel' => 'admin',
+        'Backgrounds' => 'admin/data/backgrounds',
+        ($background->id ? 'Edit' : 'Create') . ' Background' => $background->id ? 'admin/data/background/edit/' . $background->id : 'admin/data/background/create',
+    ]) !!}
 
     <h1>{{ $background->id ? 'Edit' : 'Create' }} Background
         @if ($background->id)
@@ -62,7 +66,8 @@
     </div>
     
     <h3>Conditional Options</h3>
-    <p>How this background is accessible to a character. Leave these conditions blank if this background is free to use within the location. Note that all of these conditions are "OR" conditions. If the background starts as a personal background and then also moves to a award-based background you'll want to enter the player so they can always use it, AND the applicable award so that any character with that award can also use the background.</p>
+    <p>How this background is accessible to a character. Leave these conditions blank if this background is free to use within the location. Note that all of these conditions are "OR" conditions. If the background starts as a personal background and then
+        also moves to a award-based background you'll want to enter the player so they can always use it, AND the applicable award so that any character with that award can also use the background.</p>
 
     <?php 
         $conditions = $background->groupedConditions();

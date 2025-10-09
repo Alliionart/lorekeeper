@@ -5,9 +5,9 @@ namespace App\Http\Controllers\Admin\Data;
 use App\Facades\Settings;
 use App\Http\Controllers\Controller;
 use App\Models\Background\Background;
-use App\Services\BackgroundService;
-use App\Models\User\User;
 use App\Models\Item\Item;
+use App\Models\User\User;
+use App\Services\BackgroundService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -45,7 +45,6 @@ class BackgroundController extends Controller {
      * @return \Illuminate\Contracts\Support\Renderable
      */
     public function getCreateBackground() {
-
         $raw_location = Settings::get('character_locations');
         $locations = explode(',', $raw_location);
 
@@ -85,7 +84,7 @@ class BackgroundController extends Controller {
      * Creates or edits a background.
      *
      * @param App\Services\BackgroundService $service
-     * @param int|null                 $id
+     * @param int|null                       $id
      *
      * @return \Illuminate\Http\RedirectResponse
      */
@@ -94,7 +93,7 @@ class BackgroundController extends Controller {
         $data = $request->only([
             'name', 'image', 'is_visible', 'use_cropper',
             'user_id', 'guild_id', 'award_id', 'location', 'status', 'item_id',
-            'x0', 'x1', 'y0', 'y1'
+            'x0', 'x1', 'y0', 'y1',
         ]);
 
         if ($id && $service->updateBackground(Background::find($id), $data, Auth::user())) {
@@ -131,7 +130,7 @@ class BackgroundController extends Controller {
      * Deletes a background.
      *
      * @param App\Services\BackgroundService $service
-     * @param int                      $id
+     * @param int                            $id
      *
      * @return \Illuminate\Http\RedirectResponse
      */

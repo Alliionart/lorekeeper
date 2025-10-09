@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Facades\Notifications;
 use App\Facades\Settings;
+use App\Models\Background\Background;
 use App\Models\Character\BreedingPermission;
 use App\Models\Character\BreedingPermissionLog;
 use App\Models\Character\Character;
@@ -17,15 +18,11 @@ use App\Models\Character\CharacterLineage;
 use App\Models\Character\CharacterMarking;
 use App\Models\Character\CharacterTransfer;
 use App\Models\Currency\Currency;
-use App\Services\CurrencyManager;
-use App\Services\InventoryManager;
-use App\Models\User\UserItem;
 use App\Models\Marking\Marking;
 use App\Models\Sales\SalesCharacter;
 use App\Models\Species\Subtype;
 use App\Models\User\User;
 use App\Models\User\UserCurrency;
-use App\Models\Background\Background;
 use Carbon\Carbon;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Config;
@@ -1540,7 +1537,7 @@ class CharacterManager extends Service {
                 $character->is_trading = isset($data['is_trading']);
 
                 $takeBgCurrency = true;
-                if($character->location !== $data['location']) {
+                if ($character->location !== $data['location']) {
                     //Remove the item required here then update.
                     $takeBgCurrency = false;
                     $item_id = Settings::get('background_location_change_item_id');
@@ -1574,7 +1571,7 @@ class CharacterManager extends Service {
                         //Ignore and update
                         $character->background_id = $data['background'];
                     }
-                }  
+                }
                 $character->save();
             } else {
                 if (!$this->logAdminAction($user, 'Updated Character Profile', 'Updated character profile on '.$character->displayname)) {

@@ -4,8 +4,8 @@ namespace App\Services;
 
 use App\Models\Background\Background;
 use App\Models\Background\BackgroundCondition;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
 use Intervention\Image\Facades\Image;
 
 class BackgroundService extends Service {
@@ -64,8 +64,8 @@ class BackgroundService extends Service {
      * Updates a background.
      *
      * @param \App\Models\Background\Background $background
-     * @param array                 $data
-     * @param \App\Models\User\User $user
+     * @param array                             $data
+     * @param \App\Models\User\User             $user
      *
      * @return \App\Models\Background\Background|bool
      */
@@ -114,7 +114,7 @@ class BackgroundService extends Service {
      * Deletes a background.
      *
      * @param \App\Models\Background\Background $background
-     * @param mixed                 $user
+     * @param mixed                             $user
      *
      * @return bool
      */
@@ -145,130 +145,11 @@ class BackgroundService extends Service {
     }
 
     /**
-     * Processes user input for creating/updating a background.
-     *
-     * @param array                 $data
-     * @param \App\Models\Background\Background $background
-     *
-     * @return array
-     */
-    private function populateData($data, $background = null) {
-        if (!isset($data['is_visible'])) {
-            $data['is_visible'] = 0;
-        }
-        if (isset($data['remove_image'])) {
-            if ($background && $background->has_image && $data['remove_image']) {
-                $data['has_image'] = 0;
-                $this->deleteImage($background->imagePath, $background->imageFileName);
-            }
-            unset($data['remove_image']);
-        }
-
-        return $data;
-    }
-
-    /**
-     * Updates the background conditions.
-     *
-     * @param array                 $data
-     * @param \App\Models\Background\Background $background
-     *
-     * @return array
-     */
-    private function createConditions($data, $background) {
-
-        //Delete the old conditions
-        BackgroundCondition::where('background_id', $background->id)->delete();
-        $row_values = [
-            'background_id' => $background->id,
-            'location'  => $data['location'],
-            'type'      => null,
-            'value'     => null
-        ];
-        $results = [];
-
-        //If nothing is set then process as a "location-only" background
-        if ( !isset($data['user_id']) && !isset($data['status']) && !isset($data['item_id']) && !isset($data['guild_id']) && !isset($data['award_id']) ) {
-            $row = $this->processCondition($row_values);
-            $results[] = $row;
-        }
-
-        //Process the new conditions
-        if(isset($data['user_id'])) {
-            $row_values['type'] = 'User';
-            foreach( $data['user_id'] as $u_id ) {
-                if($u_id) {
-                    $row_values['value'] = $u_id;
-
-                    $row = $this->processCondition($row_values);
-                    $results[] = $row;
-                }
-            }
-        }
-        if(isset($data['status'])) {
-            $row_values['type'] = 'Status';
-            $row_values['value'] = $data['status'];
-
-            $row = $this->processCondition($row_values);
-            $results[] = $row;
-        }
-        if(isset($data['item_id'])) {
-            $row_values['type'] = 'Item';
-            $row_values['value'] = $data['item_id'];
-
-            $row = $this->processCondition($row_values);
-            $results[] = $row;
-        }
-        if(isset($data['guild_id'])) {
-            $row_values['type'] = 'Guild';
-            foreach( $data['guild_id'] as $g_id ) {
-                if($g_id) {
-                    $row_values['value'] = $g_id;
-
-                    $row = $this->processCondition($row_values);
-                    $results[] = $row;
-                }
-            }
-        }
-        if(isset($data['award_id'])) {
-            $row_values['type'] = 'Award';
-            foreach( $data['award_id'] as $a_id ) {
-                if($a_id) {
-                    $row_values['value'] = $a_id;
-
-                    $row = $this->processCondition($row_values);
-                    $results[] = $row;
-                }
-            }
-        }
-
-        \Log::info($results);
-
-        return $results;
-    }
-
-    /**
-     * Updates the background conditions.
-     *
-     * @param array                 $data
-     * @return array
-     */
-    private function processCondition($data) {
-        $condition = BackgroundCondition::create([
-            'background_id' => $data['background_id'],
-            'location'      => $data['location'],
-            'type'          => $data['type'] ?? null,
-            'value'         => $data['value'] ?? null
-        ]);
-
-        return $condition;
-    }
-
-    /**
      * Crops a thumbnail for the given image.
      *
-     * @param array                                $points
-     * @param array                                 $image
+     * @param array $points
+     * @param array $image
+     * @param mixed $background
      */
     public function cropThumbnail($points, $image, $background) {
         $imageProperties = getimagesize($background->imageUrl);
@@ -291,8 +172,127 @@ class BackgroundService extends Service {
         // Resize to fit the thumbnail size
         $image->resize(config('lorekeeper.settings.masterlist_thumbnails.width'), config('lorekeeper.settings.masterlist_thumbnails.height'));
 
-
         // Save the thumbnail
         $image->save($this->imageDirectory.'/'.$this->thumbnailFileName, 100, config('lorekeeper.settings.masterlist_image_format'));
+    }
+
+    /**
+     * Processes user input for creating/updating a background.
+     *
+     * @param array                             $data
+     * @param \App\Models\Background\Background $background
+     *
+     * @return array
+     */
+    private function populateData($data, $background = null) {
+        if (!isset($data['is_visible'])) {
+            $data['is_visible'] = 0;
+        }
+        if (isset($data['remove_image'])) {
+            if ($background && $background->has_image && $data['remove_image']) {
+                $data['has_image'] = 0;
+                $this->deleteImage($background->imagePath, $background->imageFileName);
+            }
+            unset($data['remove_image']);
+        }
+
+        return $data;
+    }
+
+    /**
+     * Updates the background conditions.
+     *
+     * @param array                             $data
+     * @param \App\Models\Background\Background $background
+     *
+     * @return array
+     */
+    private function createConditions($data, $background) {
+        //Delete the old conditions
+        BackgroundCondition::where('background_id', $background->id)->delete();
+        $row_values = [
+            'background_id' => $background->id,
+            'location'      => $data['location'],
+            'type'          => null,
+            'value'         => null,
+        ];
+        $results = [];
+
+        //If nothing is set then process as a "location-only" background
+        if (!isset($data['user_id']) && !isset($data['status']) && !isset($data['item_id']) && !isset($data['guild_id']) && !isset($data['award_id'])) {
+            $row = $this->processCondition($row_values);
+            $results[] = $row;
+        }
+
+        //Process the new conditions
+        if (isset($data['user_id'])) {
+            $row_values['type'] = 'User';
+            foreach ($data['user_id'] as $u_id) {
+                if ($u_id) {
+                    $row_values['value'] = $u_id;
+
+                    $row = $this->processCondition($row_values);
+                    $results[] = $row;
+                }
+            }
+        }
+        if (isset($data['status'])) {
+            $row_values['type'] = 'Status';
+            $row_values['value'] = $data['status'];
+
+            $row = $this->processCondition($row_values);
+            $results[] = $row;
+        }
+        if (isset($data['item_id'])) {
+            $row_values['type'] = 'Item';
+            $row_values['value'] = $data['item_id'];
+
+            $row = $this->processCondition($row_values);
+            $results[] = $row;
+        }
+        if (isset($data['guild_id'])) {
+            $row_values['type'] = 'Guild';
+            foreach ($data['guild_id'] as $g_id) {
+                if ($g_id) {
+                    $row_values['value'] = $g_id;
+
+                    $row = $this->processCondition($row_values);
+                    $results[] = $row;
+                }
+            }
+        }
+        if (isset($data['award_id'])) {
+            $row_values['type'] = 'Award';
+            foreach ($data['award_id'] as $a_id) {
+                if ($a_id) {
+                    $row_values['value'] = $a_id;
+
+                    $row = $this->processCondition($row_values);
+                    $results[] = $row;
+                }
+            }
+        }
+
+        \Log::info($results);
+
+        return $results;
+    }
+
+    /**
+     * Updates the background conditions.
+     *
+     * @param array $data
+     *
+     * @return array
+     */
+    private function processCondition($data) {
+        $condition = BackgroundCondition::create([
+            'background_id' => $data['background_id'],
+            'location'      => $data['location'],
+            'type'          => $data['type'] ?? null,
+            'value'         => $data['value'] ?? null,
+        ]);
+
+        return $condition;
     }
 }

@@ -29,7 +29,7 @@ class BackgroundCondition extends Model {
         'background_id'       => 'required',
         'location'            => 'required',
         'type'                => 'nullable',
-        'value'               => 'nullable'
+        'value'               => 'nullable',
     ];
 
     /**
@@ -41,9 +41,8 @@ class BackgroundCondition extends Model {
         'background_id'       => 'required',
         'location'            => 'required',
         'type'                => 'nullable',
-        'value'               => 'nullable'
+        'value'               => 'nullable',
     ];
-    
 
     /**********************************************************************************************
 

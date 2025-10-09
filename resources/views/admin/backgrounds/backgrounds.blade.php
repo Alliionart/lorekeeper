@@ -58,9 +58,9 @@
                         <div class="row flex-wrap">
                             <div class="col-12 col-md-1">
                                 <div class="logs-table-cell">
-                                    @if($background->imageUrl)
+                                    @if ($background->imageUrl)
                                         <!-- $background->image->thumbnailUrl -->
-                                        <img src="{{ $background->imageUrl }}" style="max-width:50px;" alt="{{ $background->name }}" class="img-fluid"/>
+                                        <img src="{{ $background->imageUrl }}" style="max-width:50px;" alt="{{ $background->name }}" class="img-fluid" />
                                     @endif
                                 </div>
                             </div>
