@@ -104,7 +104,7 @@
     <script>
         $(document).ready(function() {
             var currentLocation = '{{ $character->location }}';
-            var currentBg = {{ $character->background_id }};
+            var currentBg = {{ $character->background_id ? $character->background_id : 'null' }};
             var $bgSelect = $('#background').selectize({
                 allowClear: true,
             });
@@ -141,7 +141,7 @@
                     $('.background-refresh').html(res);
                     $('.background-refresh .selectize').selectize({
                         allowClear: true,
-                    });
+                    })
 
                 }).fail(function(jqXHR, textStatus, errorThrown) {
                     alert("AJAX call failed: " + textStatus + ", " + errorThrown);

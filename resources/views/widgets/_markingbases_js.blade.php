@@ -1,6 +1,7 @@
 <script>
     $(document).on('ready', function() {
         $('#markings').selectize();
+        $('.selectize').selectize();
     });
 
     $('#add-marking').on('click', function(e) {
@@ -22,13 +23,11 @@
             removeMarkingRow($(this));
         })
         @if (config('lorekeeper.extensions.organised_traits_dropdown'))
-            $clone.find('.marking-select').selectize({
-                render: {
-                    item: featureSelectedRender
-                }
-            });
+            $clone.find('.marking-select').selectize();
+            $clone.find('.glint-select').selectize();
         @else
             $clone.find('.marking-select').selectize();
+            $clone.find('.glint-select').selectize();
         @endif
     }
 

@@ -344,13 +344,13 @@
         <div class="col-md-6">
             <div class="form-group">
                 {!! Form::label('Base Color') !!}
-                {!! Form::select('base', $bases, old('base_id'), ['class' => 'form-control']) !!}
+                {!! Form::select('base', $bases, old('base_id'), ['class' => 'form-control selectize']) !!}
             </div>
         </div>
         <div class="col-md-6">
             <div class="form-group" connect="is_chimera" style="display:none">
                 {!! Form::label('Secondary Base Color') !!}
-                {!! Form::select('secondary_base', $bases, old('base_id'), ['class' => 'form-control']) !!}
+                {!! Form::select('secondary_base', $bases, old('base_id'), ['class' => 'form-control selectize']) !!}
             </div>
         </div>
     </div>
@@ -379,11 +379,11 @@
             </div>
             <div class="form-group mb-0 mx-2" connect="Glint" style="min-width: 10vw; display:none;">
                 {!! Form::label('Marking Color') !!}
-                {!! Form::select('marking_color_0[]', $bases, old('marking_color_0'), ['class' => 'form-control']) !!}
+                {!! Form::select('marking_color_0[]', $bases, null, ['class' => 'form-control glint-select']) !!}
             </div>
             <div class="form-group mb-0 mx-2 dominant" connect="Glint" style="min-width: 10vw; display:none;">
                 {!! Form::label('Secondary Marking Color') !!}
-                {!! Form::select('marking_color_1[]', $bases, old('marking_color_1'), ['class' => 'form-control']) !!}
+                {!! Form::select('marking_color_1[]', $bases, null, ['class' => 'form-control glint-select']) !!}
             </div>
             <a href="#" class="remove-marking btn btn-danger mb-2">×</a>
         </div>

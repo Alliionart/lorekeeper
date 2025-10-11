@@ -568,6 +568,10 @@ tr.accountbound {
     border: 5px solid #ddd;
 }
 
+.trait-row {
+    gap: 2px 5px;
+}
+
 @keyframes copy-to-check {
     from {
         opacity: 1;

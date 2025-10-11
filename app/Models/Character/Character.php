@@ -632,6 +632,13 @@ class Character extends Model {
     }
 
     /**
+     * Get the Phenotype/Genotype of the character.
+     */
+    public function getMarkings($type = 'phenotype') {
+        return $this->getMarkingLinkedArray($this->getMarkingFinalArray(), $type);
+    }
+
+    /**
      * Get submissions that the character has been included in.
      *
      * @return \Illuminate\Pagination\LengthAwarePaginator

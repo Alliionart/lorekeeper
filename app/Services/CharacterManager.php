@@ -22,6 +22,7 @@ use App\Models\Marking\Marking;
 use App\Models\Sales\SalesCharacter;
 use App\Models\Species\Subtype;
 use App\Models\User\User;
+use App\Models\User\UserItem;
 use Carbon\Carbon;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Config;
@@ -210,23 +211,23 @@ class CharacterManager extends Service {
             Config::set('image.driver', 'imagick');
         }
 
-        // Trim transparent parts of image.
-        $image = Image::make($characterImage->imagePath.'/'.$characterImage->imageFileName)->trim('transparent');
+        // Trim transparent parts of image. -- Disabled: ->trim('transparent')
+        $image = Image::make($characterImage->imagePath.'/'.$characterImage->imageFileName);
 
         if (config('lorekeeper.settings.masterlist_image_automation') == 1) {
-            // Make the image be square
-            $imageWidth = $image->width();
-            $imageHeight = $image->height();
+            // Make the image be square - DISABLE
+            // $imageWidth = $image->width();
+            // $imageHeight = $image->height();
 
-            if ($imageWidth > $imageHeight) {
-                // Landscape
-                $canvas = Image::canvas($image->width(), $image->width());
-                $image = $canvas->insert($image, 'center');
-            } else {
-                // Portrait
-                $canvas = Image::canvas($image->height(), $image->height());
-                $image = $canvas->insert($image, 'center');
-            }
+            // if ($imageWidth > $imageHeight) {
+            //     // Landscape
+            //     $canvas = Image::canvas($image->width(), $image->width());
+            //     $image = $canvas->insert($image, 'center');
+            // } else {
+            //     // Portrait
+            //     $canvas = Image::canvas($image->height(), $image->height());
+            //     $image = $canvas->insert($image, 'center');
+            // }
         }
 
         // Add background fill if destination format is not transparent
@@ -366,19 +367,20 @@ class CharacterManager extends Service {
 
         if (config('lorekeeper.settings.watermark_masterlist_thumbnails') == 1 && !$isMyo) {
             // Trim transparent parts of image.
-            $image->trim(isset($trimColor) && $trimColor ? 'top-left' : 'transparent');
+            //$image->trim(isset($trimColor) && $trimColor ? 'top-left' : 'transparent');
 
             if (config('lorekeeper.settings.masterlist_image_automation') == 1) {
-                // Make the image be square
-                if ($image->width() > $image->height()) {
-                    // Landscape
-                    $canvas = Image::canvas($image->width(), $image->width());
-                    $image = $canvas->insert($image, 'center');
-                } else {
-                    // Portrait
-                    $canvas = Image::canvas($image->height(), $image->height());
-                    $image = $canvas->insert($image, 'center');
-                }
+                // $ratio = [1,2];
+                // // Make the image be square
+                // if ($image->width() > $image->height()) {
+                //     // Landscape
+                //     $canvas = Image::canvas($image->width(), $image->width());
+                //     $image = $canvas->insert($image, 'center');
+                // } else {
+                //     // Portrait
+                //     $canvas = Image::canvas($image->height(), $image->height());
+                //     $image = $canvas->insert($image, 'center');
+                // }
             }
 
             $cropWidth = config('lorekeeper.settings.masterlist_thumbnails.width');
@@ -2224,6 +2226,18 @@ class CharacterManager extends Service {
                 $character->transferrable_at = Carbon::now()->addDays($cooldown);
             }
         }
+        //Remove the background from the character on transfer if personal background
+        $background = Background::find($character->background_id);
+        if($background) {
+            foreach($background->conditions as $condition) {
+                if($condition->type === 'User') {
+                    $location = $character->location;
+                    $next_free_bg = BackgroundCondition::where('location', $location)->where('type', null)->pluck('background_id')->first();
+                    $character->background_id = $next_free_bg;
+                }
+            }
+        }
+
         $character->save();
 
         // Notify bookmarkers
@@ -2290,7 +2304,6 @@ class CharacterManager extends Service {
 
                     $glint = null;
                     if ($markingId == $glintID) {
-                        $glint = 'got here';
                         if ($is_dominant) {
                             $glint = $data['marking_color_0'][$i].'|'.$data['marking_color_1'][$i];
                         } else {
@@ -2699,15 +2712,18 @@ class CharacterManager extends Service {
      */
     private function handleCharacterMarkings($data, $character) {
         try {
+
+            \Log::info($data);
+
             $markingData = Arr::only($data, [
-                'marking_id', 'is_dominant', 'side_id', 'glint_1', 'glint_2',
+                'marking_id', 'is_dominant', 'side_id', 'marking_color_0', 'marking_color_1',
             ]);
 
             $all_data = [];
             $glintID = Settings::get('glint_id');
 
-            $glint_1 = $data['glint_1'] ?? null;
-            $glint_2 = $data['glint_2'] ?? null;
+            $glint_1 = $data['marking_color_0'] ?? null;
+            $glint_2 = $data['marking_color_1'] ?? null;
 
             // Attach markings
             foreach ($data['marking_id'] as $key => $markingId) {
@@ -2721,7 +2737,7 @@ class CharacterManager extends Service {
 
                     $glint = null;
                     if ($markingId === $glintID) {
-                        $glint = ($is_dominant ? $data['glint_1'].'|'.$data['glint_2'] : $data['glint_1']);
+                        $glint = ($is_dominant ? $data['marking_color_0'].'|'.$data['marking_color_1'] : $data['marking_color_0']);
                     }
 
                     $marking = CharacterMarking::create([

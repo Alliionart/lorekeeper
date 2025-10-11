@@ -24,7 +24,7 @@
     <div class="row mb-3" id="main-tab">
         <div class="col-md-9">
             <div class="text-center">
-                <div class="character-bg" style="background-image:url({{ $character->background->imageUrl }})">
+                <div class="character-bg" style="{{ $character->background ? 'background-image:url( '.$character->background->imageUrl.' )' : 'background-image:none' }}">
                     <div id="active-image">
                         <a href="{{ $character->image->canViewFull(Auth::check() ? Auth::user() : null) && file_exists(public_path($character->image->imageDirectory . '/' . $character->image->fullsizeFileName)) ? $character->image->fullsizeUrl : $character->image->imageUrl }}"
                             data-lightbox="entry" data-title="{{ $character->fullName }}">
@@ -57,10 +57,10 @@
                     <div class="card-body">
                         <ul class="nav nav-tabs card-header-tabs">
                             @foreach ($character->images()->where('is_valid', 1)->get() as $image)
-                                <li class="nav-item mb-2">
+                                <li class="nav-item mb-2 w-100">
                                     <a class="rounded form-data-button {{ $image->id == $character->image->id ? 'active' : '' }}" data-toggle="tab" role="tab" data-id="{{ $image->id }}">
                                         <span class="h4">{{ $image->transformation_id ? $image->transformation->name : 'Main' }} {{ $image->transformation_info ? ' (' . $image->transformation_info . ')' : '' }}</span>
-                                        <img src="{{ $image->imageUrl }}" class="img-fluid" />
+                                        <img src="{{ $image->thumbnailUrl }}" class="img-fluid" />
                                     </a>
                                 </li>
                             @endforeach

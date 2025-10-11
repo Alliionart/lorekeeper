@@ -197,8 +197,8 @@ return [
     |
     */
     'masterlist_thumbnails'                             => [
-        'width'  => 200,
-        'height' => 200,
+        'width'  => 300,
+        'height' => 212,
     ],
 
     'watermark_masterlist_thumbnails'                   => 0,
@@ -242,7 +242,7 @@ return [
     | Simply change to "1" to enable, or keep at "0" to disable.
     |
     */
-    'masterlist_image_automation'                       => 0,
+    'masterlist_image_automation'                       => 1,
 
     /*
     |--------------------------------------------------------------------------
