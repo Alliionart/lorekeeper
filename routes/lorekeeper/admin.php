@@ -341,14 +341,14 @@ Route::group(['prefix' => 'data', 'namespace' => 'Data', 'middleware' => 'power:
     Route::post('skill-categories/edit/{id?}', 'SkillController@postCreateEditSkillCategory');
     Route::post('skill-categories/delete/{id}', 'SkillController@postDeleteSkillCategory');
 
-    // ELEMENTS
-    Route::get('elements', 'ElementController@getIndex');
-    Route::get('elements/create', 'ElementController@getCreateElement');
-    Route::get('elements/edit/{id}', 'ElementController@getEditElement');
-    Route::get('elements/delete/{id}', 'ElementController@getDeleteElement');
-    Route::post('elements/create', 'ElementController@postCreateEditElement');
-    Route::post('elements/edit/{id?}', 'ElementController@postCreateEditElement');
-    Route::post('elements/delete/{id}', 'ElementController@postDeleteElement');
+    // ELEMENTS - NOT IN USE
+    // Route::get('elements', 'ElementController@getIndex');
+    // Route::get('elements/create', 'ElementController@getCreateElement');
+    // Route::get('elements/edit/{id}', 'ElementController@getEditElement');
+    // Route::get('elements/delete/{id}', 'ElementController@getDeleteElement');
+    // Route::post('elements/create', 'ElementController@postCreateEditElement');
+    // Route::post('elements/edit/{id?}', 'ElementController@postCreateEditElement');
+    // Route::post('elements/delete/{id}', 'ElementController@postDeleteElement');
 });
 
 // PAGES
