@@ -2228,9 +2228,9 @@ class CharacterManager extends Service {
         }
         //Remove the background from the character on transfer if personal background
         $background = Background::find($character->background_id);
-        if($background) {
-            foreach($background->conditions as $condition) {
-                if($condition->type === 'User') {
+        if ($background) {
+            foreach ($background->conditions as $condition) {
+                if ($condition->type === 'User') {
                     $location = $character->location;
                     $next_free_bg = BackgroundCondition::where('location', $location)->where('type', null)->pluck('background_id')->first();
                     $character->background_id = $next_free_bg;
@@ -2712,7 +2712,6 @@ class CharacterManager extends Service {
      */
     private function handleCharacterMarkings($data, $character) {
         try {
-
             \Log::info($data);
 
             $markingData = Arr::only($data, [

@@ -633,6 +633,8 @@ class Character extends Model {
 
     /**
      * Get the Phenotype/Genotype of the character.
+     *
+     * @param mixed $type
      */
     public function getMarkings($type = 'phenotype') {
         return $this->getMarkingLinkedArray($this->getMarkingFinalArray(), $type);
