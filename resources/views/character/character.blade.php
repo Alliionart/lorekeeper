@@ -24,7 +24,7 @@
     <div class="row mb-3" id="main-tab">
         <div class="col-md-9">
             <div class="text-center">
-                <div class="character-bg" style="{{ $character->background ? 'background-image:url( '.$character->background->imageUrl.' )' : 'background-image:none' }}">
+                <div class="character-bg" style="{{ $character->background ? 'background-image:url( ' . $character->background->imageUrl . ' )' : 'background-image:none' }}">
                     <div id="active-image">
                         <a href="{{ $character->image->canViewFull(Auth::check() ? Auth::user() : null) && file_exists(public_path($character->image->imageDirectory . '/' . $character->image->fullsizeFileName)) ? $character->image->fullsizeUrl : $character->image->imageUrl }}"
                             data-lightbox="entry" data-title="{{ $character->fullName }}">

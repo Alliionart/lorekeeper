@@ -193,10 +193,12 @@
     @foreach ($characters->chunk(4) as $chunk)
         <div class="row">
             @foreach ($chunk as $character)
-                @if(!$isMyo)
+                @if (!$isMyo)
                     <div class="col-md-3 col-6 text-center">
                         <div class="">
-                            <a href="{{ $character->url }}"><img src="{{ $character->image->thumbnailUrl }}" style="{{ $character->background ? 'background-image:url( '.$character->background->imageUrl.' );' : 'background-image:none;' }}background-size:cover;" class="img-thumbnail character-bg" alt="Thumbnail for {{ $character->fullName }}" /></a>
+                            <a href="{{ $character->url }}"><img src="{{ $character->image->thumbnailUrl }}"
+                                    style="{{ $character->background ? 'background-image:url( ' . $character->background->imageUrl . ' );' : 'background-image:none;' }}background-size:cover;" class="img-thumbnail character-bg"
+                                    alt="Thumbnail for {{ $character->fullName }}" /></a>
                         </div>
                         <div class="mt-1">
                             <a href="{{ $character->url }}" class="h5 mb-0">
@@ -222,23 +224,26 @@
                             </div>
                             <div class="mt-1 card-body pt-2">
                                 {!! $character->image->species_id ? $character->image->species->displayName : 'No Species' !!} ・ {!! $character->image->subtype_id ? $character->image->subtype->displayName : 'No Subtype' !!}
-                                <?php $features = $character->image->features()->with('feature.category')->get(); ?>
+                                <?php $features = $character->image
+                                    ->features()
+                                    ->with('feature.category')
+                                    ->get(); ?>
                                 <div class="trait-row my-2 d-flex flex-wrap">
                                     @if ($features->count())
                                         @foreach ($features as $feature)
                                             <div class="p-1 rounded" style="border: 1px solid #{{ $feature->feature->rarity->color }}">
                                                 @if ($feature->feature->feature_category_id)
                                                     <strong>{!! $feature->feature->category->name !!}:</strong>
-                                                    @endif {!! $feature->feature->name !!}
+                                                @endif {!! $feature->feature->name !!}
                                             </div>
                                         @endforeach
                                     @endif
                                 </div>
-                                @if ( $character->getMarkings() )
+                                @if ($character->getMarkings())
                                     <p class="mb-0"><strong>P: </strong>{!! $character->getMarkings() !!}</p>
                                 @endif
-                                @if ( $character->getMarkings() )
-                                    <p  class="mb-0"><strong>G: </strong>{!! $character->getMarkings('genotype') !!}</p>
+                                @if ($character->getMarkings())
+                                    <p class="mb-0"><strong>G: </strong>{!! $character->getMarkings('genotype') !!}</p>
                                 @endif
                             </div>
                         </div>

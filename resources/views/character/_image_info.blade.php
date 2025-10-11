@@ -56,20 +56,20 @@
                     </div>
                 @endif
                 @if ($character->age)
-                <div class="row no-gutters">
-                    <div class="col-lg-4 col-5">
-                        <h5>Age</h5>
+                    <div class="row no-gutters">
+                        <div class="col-lg-4 col-5">
+                            <h5>Age</h5>
+                        </div>
+                        <div class="col-lg-8 col-7 pl-1">{!! $character->age !!}</div>
                     </div>
-                    <div class="col-lg-8 col-7 pl-1">{!! $character->age !!}</div>
-                </div>
                 @endif
                 @if ($character->size)
-                <div class="row no-gutters">
-                    <div class="col-lg-4 col-5">
-                        <h5>Size</h5>
+                    <div class="row no-gutters">
+                        <div class="col-lg-4 col-5">
+                            <h5>Size</h5>
+                        </div>
+                        <div class="col-lg-8 col-7 pl-1">{!! $character->size !!}</div>
                     </div>
-                    <div class="col-lg-8 col-7 pl-1">{!! $character->size !!}</div>
-                </div>
                 @endif
                 <div class="row no-gutters">
                     <div class="col-lg-4 col-5">
