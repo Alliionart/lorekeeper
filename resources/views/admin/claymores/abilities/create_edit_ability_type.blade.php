@@ -5,7 +5,7 @@
 @endsection
 
 @section('admin-content')
-    {!! breadcrumbs(['Admin Panel' => 'admin', 'Abilities' => 'admin/abilities', 'Types' => 'admin/abilities/types' ]) !!}
+    {!! breadcrumbs(['Admin Panel' => 'admin', 'Abilities' => 'admin/abilities', 'Types' => 'admin/abilities/types']) !!}
 
     <h1>{{ $ability_type->id ? 'Edit' : 'Create' }} Ability Type
         @if ($ability_type->id)

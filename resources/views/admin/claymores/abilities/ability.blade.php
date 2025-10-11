@@ -11,7 +11,8 @@
 
     <p>This is a list of abilities that Character Classes can inherit.</p>
 
-    <div class="text-right mb-3"><a class="btn btn-primary mr-3" href="{{ url('admin/abilities/types') }}"><i class="fas fa-folder mr-2"></i>Ability Types</a><a class="btn btn-primary" href="{{ url('admin/abilities/create') }}"><i class="fas fa-plus"></i> Create New Ability</a></div>
+    <div class="text-right mb-3"><a class="btn btn-primary mr-3" href="{{ url('admin/abilities/types') }}"><i class="fas fa-folder mr-2"></i>Ability Types</a><a class="btn btn-primary" href="{{ url('admin/abilities/create') }}"><i class="fas fa-plus"></i>
+            Create New Ability</a></div>
     @if (!count($abilities))
         <p>No abilities found.</p>
     @else

@@ -68,7 +68,7 @@
         </div>
     </div>
 
-    
+
 
     <div class="text-right">
         {!! Form::submit($class->id ? 'Edit' : 'Create', ['class' => 'btn btn-primary']) !!}
