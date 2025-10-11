@@ -5,8 +5,8 @@ namespace App\Http\Controllers\Admin\Claymores;
 use App\Http\Controllers\Controller;
 use App\Models\Claymore\Ability;
 use App\Models\Claymore\AbilityType;
-use App\Services\Claymore\AbilityService;
 use App\Models\Stat\Stat;
+use App\Services\Claymore\AbilityService;
 use Illuminate\Http\Request;
 
 class AbilityController extends Controller {
@@ -38,8 +38,8 @@ class AbilityController extends Controller {
     public function getCreateAbility() {
         return view('admin.claymores.abilities.create_edit_ability', [
             'ability' => new Ability,
-            'types' => ['none' => 'None'] + AbilityType::orderBy('name', 'DESC')->pluck('name', 'id')->toArray(),
-            'stats' => Stat::pluck('name', 'id')->toArray(),
+            'types'   => ['none' => 'None'] + AbilityType::orderBy('name', 'DESC')->pluck('name', 'id')->toArray(),
+            'stats'   => Stat::pluck('name', 'id')->toArray(),
         ]);
     }
 
@@ -58,7 +58,7 @@ class AbilityController extends Controller {
 
         return view('admin.claymores.abilities.create_edit_ability', [
             'ability' => $ability,
-            'types' => ['none' => 'None'] + AbilityType::orderBy('name', 'DESC')->pluck('name', 'id')->toArray(),
+            'types'   => ['none' => 'None'] + AbilityType::orderBy('name', 'DESC')->pluck('name', 'id')->toArray(),
         ]);
     }
 
@@ -66,14 +66,14 @@ class AbilityController extends Controller {
      * Creates or edits a character class.
      *
      * @param App\Services\AbilityService $service
-     * @param int|null                           $id
+     * @param int|null                    $id
      *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function postCreateEditAbility(Request $request, AbilityService $service, $id = null) {
         $id ? $request->validate(Ability::$updateRules) : $request->validate(Ability::$createRules);
         $data = $request->only([
-            'type_id', 'name', 'description', 'data'
+            'type_id', 'name', 'description', 'data',
         ]);
         if ($id && $service->updateAbility(Ability::find($id), $data)) {
             flash('Class updated successfully.')->success();
@@ -109,7 +109,7 @@ class AbilityController extends Controller {
      * Deletes a character class.
      *
      * @param App\Services\AbilityService $service
-     * @param int                                $id
+     * @param int                         $id
      *
      * @return \Illuminate\Http\RedirectResponse
      */
@@ -150,5 +150,4 @@ class AbilityController extends Controller {
             'ability_type' => new AbilityType,
         ]);
     }
-
 }

@@ -22,7 +22,7 @@ class StatusEffectService extends Service {
      * @param array                 $data
      * @param \App\Models\User\User $user
      *
-     * @return \App\Models\Status\StatusEffect|bool
+     * @return bool|StatusEffect
      */
     public function createStatusEffect($data, $user) {
         DB::beginTransaction();
@@ -56,11 +56,11 @@ class StatusEffectService extends Service {
     /**
      * Updates a status effect.
      *
-     * @param \App\Models\Status\StatusEffect $status
-     * @param array                           $data
-     * @param \App\Models\User\User           $user
+     * @param StatusEffect          $status
+     * @param array                 $data
+     * @param \App\Models\User\User $user
      *
-     * @return \App\Models\Status\StatusEffect|bool
+     * @return bool|StatusEffect
      */
     public function updateStatusEffect($status, $data, $user) {
         DB::beginTransaction();
@@ -99,7 +99,7 @@ class StatusEffectService extends Service {
     /**
      * Deletes a status effect.
      *
-     * @param \App\Models\Status\StatusEffect $status
+     * @param StatusEffect $status
      *
      * @return bool
      */
@@ -134,8 +134,8 @@ class StatusEffectService extends Service {
     /**
      * Processes user input for creating/updating a status effect.
      *
-     * @param array                           $data
-     * @param \App\Models\Status\StatusEffect $status
+     * @param array        $data
+     * @param StatusEffect $status
      *
      * @return array
      */

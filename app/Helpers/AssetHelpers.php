@@ -577,7 +577,7 @@ function fillCharacterAssets($assets, $sender, $recipient, $logType, $data, $sub
                 return false;
             }
         } elseif ($key == 'statuses' && count($contents)) {
-            $service = new \App\Services\StatusEffectManager;
+            $service = new App\Services\StatusEffectManager;
             foreach ($contents as $asset) {
                 if (!$service->creditStatusEffect($sender, $recipient, $logType, $data['data'], $asset['asset'], $asset['quantity'])) {
                     return false;

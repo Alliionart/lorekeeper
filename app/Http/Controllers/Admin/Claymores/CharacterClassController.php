@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Admin\Claymores;
 
 use App\Http\Controllers\Controller;
 use App\Models\Character\CharacterClass;
-use App\Services\Claymore\CharacterClassService;
 use App\Models\Claymore\Ability;
+use App\Services\Claymore\CharacterClassService;
 use Illuminate\Http\Request;
 
 class CharacterClassController extends Controller {
@@ -36,8 +36,8 @@ class CharacterClassController extends Controller {
      */
     public function getCreateCharacterClass() {
         return view('admin.claymores.classes.create_edit_character_class', [
-            'class' => new CharacterClass,
-            'abilities' => [ 0 => 'None'] + Ability::pluck('name', 'id')->toArray(),
+            'class'     => new CharacterClass,
+            'abilities' => [0 => 'None'] + Ability::pluck('name', 'id')->toArray(),
         ]);
     }
 
@@ -55,9 +55,9 @@ class CharacterClassController extends Controller {
         }
 
         return view('admin.claymores.classes.create_edit_character_class', [
-            'class' => $class,
-            'classes' => [ 0 => 'None'] + CharacterClass::pluck('name', 'id')->toArray(),
-            'abilities' => [ 0 => 'None'] + Ability::pluck('name', 'id')->toArray()
+            'class'     => $class,
+            'classes'   => [0 => 'None'] + CharacterClass::pluck('name', 'id')->toArray(),
+            'abilities' => [0 => 'None'] + Ability::pluck('name', 'id')->toArray(),
         ]);
     }
 

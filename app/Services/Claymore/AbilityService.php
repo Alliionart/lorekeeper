@@ -21,7 +21,7 @@ class AbilityService extends Service {
      *
      * @param array $data
      *
-     * @return bool|Ability
+     * @return Ability|bool
      */
     public function createAbility($data) {
         DB::beginTransaction();
@@ -43,9 +43,9 @@ class AbilityService extends Service {
      * Update a ability.
      *
      * @param Ability $ability
-     * @param array          $data
+     * @param array   $data
      *
-     * @return bool|Ability
+     * @return Ability|bool
      */
     public function updateAbility($ability, $data) {
         DB::beginTransaction();
@@ -56,7 +56,6 @@ class AbilityService extends Service {
             }
 
             $data = $this->populateAbilityData($data, $ability);
-
 
             $ability->update($data);
 
@@ -97,7 +96,7 @@ class AbilityService extends Service {
     /**
      * Handle ability data.
      *
-     * @param array               $data
+     * @param array        $data
      * @param Ability|null $ability
      *
      * @return array

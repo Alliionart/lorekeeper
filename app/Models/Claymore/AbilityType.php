@@ -11,7 +11,7 @@ class AbilityType extends Model {
      * @var array
      */
     protected $fillable = [
-        'name', 'action'
+        'name', 'action',
     ];
 
     /**
@@ -59,8 +59,6 @@ class AbilityType extends Model {
         SCOPES
 
     **********************************************************************************************/
-
-
 
     /**********************************************************************************************
 

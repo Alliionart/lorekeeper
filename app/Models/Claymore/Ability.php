@@ -3,8 +3,6 @@
 namespace App\Models\Claymore;
 
 use App\Models\Model;
-use App\Models\Character\CharacterClass;
-use App\Models\Claymore\AbilityType;
 
 class Ability extends Model {
     /**
@@ -66,7 +64,6 @@ class Ability extends Model {
     public function stats() {
         return $this->hasMany(AbilityStat::class);
     }
-
 
     /**********************************************************************************************
 

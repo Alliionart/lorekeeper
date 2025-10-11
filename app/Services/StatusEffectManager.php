@@ -93,7 +93,7 @@ class StatusEffectManager extends Service {
      * @param \App\Models\Character\Character $recipient
      * @param string                          $type
      * @param string                          $data
-     * @param \App\Models\Status\StatusEffect $status
+     * @param StatusEffect                    $status
      * @param int                             $quantity
      *
      * @return bool
@@ -141,7 +141,7 @@ class StatusEffectManager extends Service {
      * @param \App\Models\Character\Character $recipient
      * @param string                          $type
      * @param string                          $data
-     * @param \App\Models\Status\StatusEffect $status
+     * @param StatusEffect                    $status
      * @param int                             $quantity
      *
      * @return bool
