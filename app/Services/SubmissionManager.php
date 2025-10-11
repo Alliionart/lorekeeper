@@ -11,6 +11,7 @@ use App\Models\Item\Item;
 use App\Models\Loot\LootTable;
 use App\Models\Prompt\Prompt;
 use App\Models\Raffle\Raffle;
+use App\Models\Status\StatusEffect;
 use App\Models\Submission\Submission;
 use App\Models\Submission\SubmissionCharacter;
 use App\Models\User\User;
@@ -420,6 +421,7 @@ class SubmissionManager extends Service {
             $itemIds = [];
             $tableIds = [];
             $elementIds = [];
+            $statusIds = [];
             if (isset($data['character_currency_id'])) {
                 foreach ($data['character_currency_id'] as $c) {
                     foreach ($c as $currencyId) {
@@ -429,7 +431,7 @@ class SubmissionManager extends Service {
             } elseif (isset($data['character_rewardable_id'])) {
                 $data['character_rewardable_id'] = array_map([$this, 'innerNull'], $data['character_rewardable_id']);
                 foreach ($data['character_rewardable_id'] as $ckey => $c) {
-                    foreach ($c as $key                            => $id) {
+                    foreach ($c as $key => $id) {
                         switch ($data['character_rewardable_type'][$ckey][$key]) {
                             case 'Currency': $currencyIds[] = $id;
                                 break;
@@ -438,6 +440,8 @@ class SubmissionManager extends Service {
                             case 'LootTable': $tableIds[] = $id;
                                 break;
                             case 'Element': $elementIds[] = $id;
+                                break;
+                            case 'StatusEffect': $statusIds[] = $id;
                                 break;
                         }
                     }
@@ -451,6 +455,7 @@ class SubmissionManager extends Service {
             $items = Item::whereIn('id', $itemIds)->get()->keyBy('id');
             $tables = LootTable::whereIn('id', $tableIds)->get()->keyBy('id');
             $elements = Element::whereIn('id', $elementIds)->get()->keyBy('id');
+            $statuses = StatusEffect::whereIn('id', $statusIds)->get()->keyBy('id');
 
             // We're going to remove all characters from the submission and reattach them with the updated data
             $submission->characters()->delete();
@@ -464,6 +469,7 @@ class SubmissionManager extends Service {
                     'items'        => $items,
                     'tables'       => $tables,
                     'elements'     => $elements,
+                    'statuses'     => $statuses
                 ], true);
 
                 if (!$assets = fillCharacterAssets($assets, $user, $c, $promptLogType, $promptData, $submission->user)) {
@@ -651,6 +657,9 @@ class SubmissionManager extends Service {
                         case 'Element': // we don't check for quantity here
                             addAsset($assets, $data['elements'][$reward], 1);
                             break;
+                        case 'StatusEffect': if ($data['character_rewardable_quantity'][$data['character_id']][$key]) {
+                            addAsset($assets, $data['statuses'][$reward], $data['character_rewardable_quantity'][$data['character_id']][$key]);
+                        } break;
                     }
                 }
             }
@@ -837,6 +846,7 @@ class SubmissionManager extends Service {
         $itemIds = [];
         $tableIds = [];
         $elementIds = [];
+        $statusIds = [];
         if (isset($data['character_currency_id'])) {
             foreach ($data['character_currency_id'] as $c) {
                 foreach ($c as $currencyId) {
@@ -855,6 +865,8 @@ class SubmissionManager extends Service {
                             break;
                         case 'Item': $itemIds[] = $id;
                             break;
+                        case 'StatusEffect': $statusIds[] = $id;
+                            break;
                         case 'LootTable': $tableIds[] = $id;
                             break;
                         case 'Element': $elementIds[] = $id;
@@ -871,6 +883,7 @@ class SubmissionManager extends Service {
         $items = Item::whereIn('id', $itemIds)->get()->keyBy('id');
         $tables = LootTable::whereIn('id', $tableIds)->get()->keyBy('id');
         $elements = Element::whereIn('id', $elementIds)->get()->keyBy('id');
+        $statuses = StatusEffect::whereIn('id', $statusIds)->get()->keyBy('id');
 
         // Attach characters
         foreach ($characters as $key => $c) {
@@ -899,7 +912,7 @@ class SubmissionManager extends Service {
             }
 
             // Users might not pass in clean arrays (may contain redundant data) so we need to clean that up
-            $assets = $this->processRewards($data + ['character_id' => $c->id, 'currencies' => $currencies, 'items' => $items, 'tables' => $tables, 'elements' => $elements], true);
+            $assets = $this->processRewards($data + ['character_id' => $c->id, 'currencies' => $currencies, 'items' => $items, 'tables' => $tables, 'elements' => $elements, 'statuses' => $statuses], true);
 
             // Now we have a clean set of assets (redundant data is gone, duplicate entries are merged)
             // so we can attach the character to the submission

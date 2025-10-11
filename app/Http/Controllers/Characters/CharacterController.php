@@ -15,6 +15,7 @@ use App\Models\Item\Item;
 use App\Models\Item\ItemCategory;
 use App\Models\Skill\Skill;
 use App\Models\Stat\Stat;
+use App\Models\Status\StatusEffect;
 use App\Models\User\User;
 use App\Models\User\UserCurrency;
 use App\Models\User\UserItem;
@@ -213,7 +214,7 @@ class CharacterController extends Controller {
         return view('character.gallery', [
             'character'             => $this->character,
             'extPrevAndNextBtnsUrl' => '/gallery',
-            'submissions'           => GallerySubmission::whereIn('id', $this->character->gallerySubmissions->pluck('gallery_submission_id')->toArray())->visible()->accepted()->orderBy('created_at', 'DESC')->paginate(20)->appends($request->query()),
+            'submissions'           => GallerySubmission::whereIn('id', $this->character->gallerySubmissions->pluck('gallery_submission_id')->toArray())->visible(Auth::user() ?? null)->orderBy('created_at', 'DESC')->paginate(20),
         ]);
     }
 
@@ -294,6 +295,25 @@ class CharacterController extends Controller {
 
         ] : []) + (Auth::check() && (Auth::user()->hasPower('edit_inventories') || Auth::user()->id == $this->character->user_id) ? [
             'currencyOptions' => Currency::where('is_character_owned', 1)->orderBy('sort_character', 'DESC')->pluck('name', 'id')->toArray(),
+        ] : []));
+    }
+
+    /**
+     * Shows a character's status effects.
+     *
+     * @param string $slug
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function getCharacterStatusEffects($slug) {
+        $character = $this->character;
+
+        return view('character.status_effects', [
+            'character' => $this->character,
+            'statuses'  => $character->getStatusEffects(),
+            'logs'      => $this->character->getStatusEffectLogs(),
+        ] + (Auth::check() && (Auth::user()->hasPower('edit_inventories') || Auth::user()->id == $this->character->user_id) ? [
+            'statusOptions' => StatusEffect::orderBy('name', 'DESC')->pluck('name', 'id')->toArray(),
         ] : []));
     }
 
@@ -379,6 +399,20 @@ class CharacterController extends Controller {
             'character'             => $this->character,
             'extPrevAndNextBtnsUrl' => '/currency-logs',
             'logs'                  => $this->character->getCurrencyLogs(0),
+        ]);
+    }
+
+    /**
+     * Shows a character's status effect logs.
+     *
+     * @param string $slug
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function getCharacterStatusEffectLogs($slug) {
+        return view('character.status_effect_logs', [
+            'character' => $this->character,
+            'logs'      => $this->character->getStatusEffectLogs(0),
         ]);
     }
 

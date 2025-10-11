@@ -491,7 +491,7 @@ return [
     508 => [
         'name'    => 'Gallery Submission Rejected',
         'message' => 'Your submission <strong>{submission_title}</strong> (#{submission_id}) was rejected. (<a href="{url}">View Submission</a>)',
-        'url'     => 'submissions/queue/{submission_id}',
+        'url'     => 'gallery/queue/{submission_id}',
     ],
 
     // GALLERY_SUBMISSION_VALUED
@@ -541,5 +541,19 @@ return [
         'name'    => 'Gallery Submission Participant',
         'message' => '<a href="{sender_url}">{sender}</a> has added you as a participant on a gallery submission. (<a href="{url}">View Submission</a>)',
         'url'     => 'gallery/view/{submission_id}',
+    ],
+
+    // CHARACTER_STATUS_GRANT
+    521 => [
+        'name'    => 'Character Status Effect Grant',
+        'message' => '{character_name} has been given the status effect {status_name} (×{status_quantity}) by <a href="{sender_url}">{sender_name}</a>. (<a href="{url}">View Status Effects</a>)',
+        'url'     => 'character/{character_slug}/status-effects',
+    ],
+
+    // CHARACTER_STATUS_REMOVAL
+    522 => [
+        'name'    => 'Character Status Effect Removal',
+        'message' => '{status_name} (×{status_quantity})  was removed from {character_name} by <a href="{sender_url}">{sender_name}</a>. (<a href="{url}">View Status Effects</a>)',
+        'url'     => 'character/{character_slug}/status-effects',
     ],
 ];

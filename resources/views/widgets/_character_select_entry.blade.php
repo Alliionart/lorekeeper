@@ -22,7 +22,6 @@
                 </div>
             </div>
             <div class="col-md-10">
-                <a href="#" class="float-right fas fa-close"></a>
                 <div class="form-group">
                     {!! Form::label('slug[]', 'Character Code') !!}
                     {!! Form::select('slug[]', $characters, $character->character ? $character->character->slug : $character->slug, ['class' => 'form-control character-code', 'placeholder' => 'Select Character']) !!}
@@ -54,7 +53,7 @@
                                         <td>
                                             {!! Form::select(
                                                 'character_rewardable_type[' . $character->character_id . '][]',
-                                                ['Item' => 'Item', 'Currency' => 'Currency', 'LootTable' => 'Loot Table', 'Exp' => 'Exp', 'Points' => 'Stat Points', 'Element' => 'Element'],
+                                                ['Item' => 'Item', 'Currency' => 'Currency', 'LootTable' => 'Loot Table', 'Exp' => 'Exp', 'Points' => 'Stat Points', 'Element' => 'Element', 'StatusEffect' => 'Status Effect'],
                                                 $reward->rewardable_type,
                                                 [
                                                     'class' => 'form-control character-rewardable-type',
@@ -76,6 +75,10 @@
                                             <div class="character-elements {{ $reward->rewardable_type == 'Element' ? 'show' : 'hide' }}">{!! Form::select('character_rewardable_id[' . $character->character_id . '][]', $elements, $reward->rewardable_type == 'Element' ? $reward->rewardable_id : null, [
                                                 'class' => 'form-control character-element-id',
                                                 'placeholder' => 'Select Element',
+                                            ]) !!}</div>
+                                            <div class="character-statuses  {{ $reward->rewardable_type == 'StatusEffect' ? 'show' : 'hide' }}">{!! Form::select('character_rewardable_id[' . $character->character_id . '][]', $statuses, $reward->rewardable_type == 'StatusEffect' ? $reward->rewardable_id : null, [
+                                                'class' => 'form-control character-status-id',
+                                                'placeholder' => 'Select Status Effect',
                                             ]) !!}</div>
                                         </td>
                                     @else

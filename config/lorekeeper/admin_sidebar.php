@@ -40,17 +40,27 @@ return [
             ],
         ],
     ],
-    'Site'       => [
-        'power' => 'edit_pages',
+    'News' => [
+        'power' => 'manage_news',
         'links' => [
             [
                 'name' => 'News',
                 'url'  => 'admin/news',
             ],
+        ],
+    ],
+    'Sales' => [
+        'power' => 'manage_sales',
+        'links' => [
             [
                 'name' => 'Sales',
                 'url'  => 'admin/sales',
             ],
+        ],
+    ],
+    'Pages'       => [
+        'power' => 'edit_pages',
+        'links' => [
             [
                 'name' => 'Pages',
                 'url'  => 'admin/pages',
@@ -187,6 +197,10 @@ return [
             [
                 'name' => 'Traits',
                 'url'  => 'admin/data/traits',
+            ],
+            [
+                'name' => 'Status Effects',
+                'url'  => 'admin/data/status-effects',
             ],
             [
                 'name' => 'Shops',

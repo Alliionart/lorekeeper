@@ -16,6 +16,8 @@ use App\Models\Stat\ExpLog;
 use App\Models\Stat\Stat;
 use App\Models\Stat\StatLog;
 use App\Models\Stat\StatTransferLog;
+use App\Models\Status\StatusEffect;
+use App\Models\Status\StatusEffectLog;
 use App\Models\Submission\Submission;
 use App\Models\Submission\SubmissionCharacter;
 use App\Models\Trade;
@@ -87,8 +89,8 @@ class Character extends Model {
         'slug'                  => 'required|alpha_dash',
         'description'           => 'nullable',
         'sale_value'            => 'nullable',
-        'image'                 => 'required|mimes:jpeg,jpg,gif,png|max:20000',
-        'thumbnail'             => 'nullable|mimes:jpeg,jpg,gif,png|max:20000',
+        'image'                 => 'required|mimes:jpeg,jpg,gif,png|max:2048',
+        'thumbnail'             => 'nullable|mimes:jpeg,jpg,gif,png|max:2048',
         'owner_url'             => 'url|nullable',
     ];
 
@@ -103,6 +105,8 @@ class Character extends Model {
         'slug'                  => 'required',
         'description'           => 'nullable',
         'sale_value'            => 'nullable',
+        'image'                 => 'nullable|mimes:jpeg,jpg,gif,png|max:2048',
+        'thumbnail'             => 'nullable|mimes:jpeg,jpg,gif,png|max:2048',
     ];
 
     /**
@@ -118,8 +122,8 @@ class Character extends Model {
         'description' => 'nullable',
         'sale_value'  => 'nullable',
         'name'        => 'required',
-        'image'       => 'nullable|mimes:jpeg,gif,png|max:20000',
-        'thumbnail'   => 'nullable|mimes:jpeg,gif,png|max:20000',
+        'image'       => 'nullable|mimes:jpeg,gif,png|max:2048',
+        'thumbnail'   => 'nullable|mimes:jpeg,gif,png|max:2048',
     ];
 
     /**********************************************************************************************
@@ -279,10 +283,15 @@ class Character extends Model {
      * Scope a query to only include visible characters.
      *
      * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param mixed|null                            $user
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeVisible($query) {
+    public function scopeVisible($query, $user = null) {
+        if ($user && $user->hasPower('manage_characters')) {
+            return $query;
+        }
+
         return $query->where('is_visible', 1);
     }
 
@@ -589,6 +598,31 @@ class Character extends Model {
     }
 
     /**
+     * Get the character's current status effects.
+     *
+     * @return \Illuminate\Support\Collection
+     */
+    public function getStatusEffects() {
+        // Get a list of status effects that need to be displayed
+
+        $owned = CharacterStatusEffect::where('character_id', $this->id)->pluck('quantity', 'status_effect_id')->toArray();
+
+        $statuses = StatusEffect::query();
+
+        $statuses = $statuses->orderBy('name', 'DESC')->get();
+
+        foreach ($statuses as $status) {
+            $status->quantity = $owned[$status->id] ?? 0;
+        }
+
+        $statuses = $statuses->filter(function ($status) {
+            return $status->quantity > 0;
+        });
+
+        return $statuses;
+    }
+
+    /**
      * Get the character's currency logs.
      *
      * @param int $limit
@@ -599,6 +633,27 @@ class Character extends Model {
         $character = $this;
         $query = CurrencyLog::with('currency')->where(function ($query) use ($character) {
             $query->with('sender.rank')->where('sender_type', 'Character')->where('sender_id', $character->id)->where('log_type', '!=', 'Staff Grant');
+        })->orWhere(function ($query) use ($character) {
+            $query->with('recipient.rank')->where('recipient_type', 'Character')->where('recipient_id', $character->id)->where('log_type', '!=', 'Staff Removal');
+        })->orderBy('id', 'DESC');
+        if ($limit) {
+            return $query->take($limit)->get();
+        } else {
+            return $query->paginate(30);
+        }
+    }
+
+    /**
+     * Get the character's status effect logs.
+     *
+     * @param int $limit
+     *
+     * @return \Illuminate\Pagination\LengthAwarePaginator|\Illuminate\Support\Collection
+     */
+    public function getStatusEffectLogs($limit = 10) {
+        $character = $this;
+        $query = StatusEffectLog::with('status')->where(function ($query) use ($character) {
+            $query->with('recipient.rank')->where('sender_type', 'Character')->where('sender_id', $character->id)->where('log_type', '!=', 'Staff Grant');
         })->orWhere(function ($query) use ($character) {
             $query->with('recipient.rank')->where('recipient_type', 'Character')->where('recipient_id', $character->id)->where('log_type', '!=', 'Staff Removal');
         })->orderBy('id', 'DESC');
