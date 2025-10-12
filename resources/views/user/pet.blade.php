@@ -44,16 +44,16 @@
                             <img src="{{ $pet->character->image->thumbnailUrl }}" class="rounded img-thumbnail mb-2" alt="Thumbnail for {{ $pet->character->fullName }}" />
                         </a>
                         <!-- @if ($namespace)
-                            @if (Auth::check() && Auth::user()->id == $pet->character->user_id && $pet->canBond())
-                                <div class="form-group mb-0">
-                                    {!! Form::open(['url' => 'pets/bond/' . $pet->id]) !!}
-                                    {!! Form::submit('Bond', ['class' => 'btn btn-primary']) !!}
-                                    {!! Form::close() !!}
-                                </div>
-                            @else
-                                <div class="alert alert-warning mb-0">{{ $pet->canBond(true) }}</div>
-                            @endif
-                        @endif -->
+    @if (Auth::check() && Auth::user()->id == $pet->character->user_id && $pet->canBond())
+    <div class="form-group mb-0">
+                                        {!! Form::open(['url' => 'pets/bond/' . $pet->id]) !!}
+                                        {!! Form::submit('Bond', ['class' => 'btn btn-primary']) !!}
+                                        {!! Form::close() !!}
+                                    </div>
+@else
+    <div class="alert alert-warning mb-0">{{ $pet->canBond(true) }}</div>
+    @endif
+    @endif -->
                     @endif
                     @if ($pet->evolution)
                         <h2 class="h5">Evolved</h2>

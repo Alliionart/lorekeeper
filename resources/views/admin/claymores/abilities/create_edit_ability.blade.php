@@ -80,30 +80,30 @@
             </div>
 
             <!-- Effects to Add:
-                 https://docs.google.com/document/d/1_gIk1XvX0vIbRsOiw-XkG3OPELqkBFKeRW2NFfpgHGw/edit?usp=sharing
-                    - Stat modifications (pull dynamically from C&C)
-                    - Damage modifiers
-                    - Health modifiers
-                    - Other modifiers (dodge, others?)
-                    - Immunities
-                    - Status effects
-                    - Summons
+                     https://docs.google.com/document/d/1_gIk1XvX0vIbRsOiw-XkG3OPELqkBFKeRW2NFfpgHGw/edit?usp=sharing
+                        - Stat modifications (pull dynamically from C&C)
+                        - Damage modifiers
+                        - Health modifiers
+                        - Other modifiers (dodge, others?)
+                        - Immunities
+                        - Status effects
+                        - Summons
 
-                    Other fields to add:
-                    - Target
-                        - All (Excluding Self)
-                        - All (Including Self)
-                        - Single Target
-                        - Multi-Target (Needs a counter)
-                        - All Enemies
-                        - All Allies
-                    - Chance ✓
-                    - Type (aka Inflict, Cure, etc.)
-                    - Check (if the ability has either a Pass/Fail effect) ✓
-                        -- Success effects
-                        -- Fail effects
-                    - Duration of the effects
-                -->
+                        Other fields to add:
+                        - Target
+                            - All (Excluding Self)
+                            - All (Including Self)
+                            - Single Target
+                            - Multi-Target (Needs a counter)
+                            - All Enemies
+                            - All Allies
+                        - Chance ✓
+                        - Type (aka Inflict, Cure, etc.)
+                        - Check (if the ability has either a Pass/Fail effect) ✓
+                            -- Success effects
+                            -- Fail effects
+                        - Duration of the effects
+                    -->
         </div>
     </div>
 
