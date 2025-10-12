@@ -75,7 +75,7 @@
                 <p>When this ability is successful.</p>
                 <div class="ability-form px-2" data-type="success">
                     <div class="text-right">
-                        <a href="#" class="add-effect btn btn-primary mt-3" >Add Effect</a>
+                        <a href="#" class="add-effect btn btn-primary mt-3">Add Effect</a>
                     </div>
                 </div>
             </div>
@@ -84,36 +84,36 @@
                 <p>When this ability fails. If there is no failure affect, leave this section blank.</p>
                 <div class="ability-form px-2" data-type="failure">
                     <div class="text-right">
-                        <a href="#" class="add-effect btn btn-primary mt-3" >Add Effect</a>
+                        <a href="#" class="add-effect btn btn-primary mt-3">Add Effect</a>
                     </div>
                 </div>
             </div>
 
             <!-- Effects to Add:
-                 https://docs.google.com/document/d/1_gIk1XvX0vIbRsOiw-XkG3OPELqkBFKeRW2NFfpgHGw/edit?usp=sharing
-                    - Stat modifications (pull dynamically from C&C)
-                    - Damage modifiers
-                    - Health modifiers
-                    - Other modifiers (dodge, others?)
-                    - Immunities
-                    - Status effects
-                        - Type (aka Inflict, Cure, etc.)
-                    - Summons
+                     https://docs.google.com/document/d/1_gIk1XvX0vIbRsOiw-XkG3OPELqkBFKeRW2NFfpgHGw/edit?usp=sharing
+                        - Stat modifications (pull dynamically from C&C)
+                        - Damage modifiers
+                        - Health modifiers
+                        - Other modifiers (dodge, others?)
+                        - Immunities
+                        - Status effects
+                            - Type (aka Inflict, Cure, etc.)
+                        - Summons
 
-                    Other fields to add:
-                    - Target ✓
-                        - All (Excluding Self)
-                        - All (Including Self)
-                        - Single Target
-                        - Multi-Target (Needs a counter)
-                        - All Enemies
-                        - All Allies
-                    - Chance ✓
-                    - Check (if the ability has either a Pass/Fail effect) ✓
-                        -- Success effects
-                        -- Fail effects
-                    - Duration of the effects
-                -->
+                        Other fields to add:
+                        - Target ✓
+                            - All (Excluding Self)
+                            - All (Including Self)
+                            - Single Target
+                            - Multi-Target (Needs a counter)
+                            - All Enemies
+                            - All Allies
+                        - Chance ✓
+                        - Check (if the ability has either a Pass/Fail effect) ✓
+                            -- Success effects
+                            -- Fail effects
+                        - Duration of the effects
+                    -->
         </div>
     </div>
 
@@ -154,7 +154,7 @@
                 var $type = $(this).val();
                 console.log($(this));
                 $(this).parents('.row[data-index]').children('[data-type]').hide().addClass('hide');
-                $(this).parents('.row[data-index]').children('[data-type="'+$type+'"]').show().removeClass('hide');
+                $(this).parents('.row[data-index]').children('[data-type="' + $type + '"]').show().removeClass('hide');
             });
 
             $('.add-effect').click(function(e) {
@@ -167,7 +167,7 @@
                 $newRow.html($newRow.html().replace(/\[__INDEX__\]/g, $index));
 
                 $newRow.find('.selectize').selectize();
-                
+
                 $(this).parents('.ability-form').append($newRow);
             });
 
