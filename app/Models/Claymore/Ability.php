@@ -40,7 +40,7 @@ class Ability extends Model {
      */
     public static $updateRules = [
         'type_id'          => 'nullable',
-        'name'             => 'required|unique:abilities|between:3,100',
+        'name'             => 'required|between:3,100',
         'description'      => 'nullable',
         'data'             => 'nullable',
     ];

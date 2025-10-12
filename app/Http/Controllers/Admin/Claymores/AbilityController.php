@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Claymore\Ability;
 use App\Models\Claymore\AbilityType;
 use App\Models\Stat\Stat;
+use App\Models\Status\StatusEffect;
 use App\Services\Claymore\AbilityService;
 use Illuminate\Http\Request;
 
@@ -38,8 +39,9 @@ class AbilityController extends Controller {
     public function getCreateAbility() {
         return view('admin.claymores.abilities.create_edit_ability', [
             'ability' => new Ability,
-            'types'   => ['none' => 'None'] + AbilityType::orderBy('name', 'DESC')->pluck('name', 'id')->toArray(),
+            'types'   => [0 => 'None'] + AbilityType::orderBy('name', 'DESC')->pluck('name', 'id')->toArray(),
             'stats'   => Stat::pluck('name', 'id')->toArray(),
+            'status_effects'    => [0 => 'None'] + StatusEffect::pluck('name', 'id')->toArray(),
         ]);
     }
 
@@ -58,7 +60,9 @@ class AbilityController extends Controller {
 
         return view('admin.claymores.abilities.create_edit_ability', [
             'ability' => $ability,
-            'types'   => ['none' => 'None'] + AbilityType::orderBy('name', 'DESC')->pluck('name', 'id')->toArray(),
+            'types'   => [0 => 'None'] + AbilityType::orderBy('name', 'DESC')->pluck('name', 'id')->toArray(),
+            'stats'   => Stat::pluck('name', 'id')->toArray(),
+            'status_effects'    => [0 => 'None'] + StatusEffect::pluck('name', 'id')->toArray(),
         ]);
     }
 
@@ -72,13 +76,14 @@ class AbilityController extends Controller {
      */
     public function postCreateEditAbility(Request $request, AbilityService $service, $id = null) {
         $id ? $request->validate(Ability::$updateRules) : $request->validate(Ability::$createRules);
-        $data = $request->only([
-            'type_id', 'name', 'description', 'data',
-        ]);
+        $data = $request->except(['_token']);
+
+        \Log::info($data);
+
         if ($id && $service->updateAbility(Ability::find($id), $data)) {
-            flash('Class updated successfully.')->success();
+            flash('Ability updated successfully.')->success();
         } elseif (!$id && $ability = $service->createAbility($data)) {
-            flash('Class created successfully.')->success();
+            flash('Ability created successfully.')->success();
 
             return redirect()->to('admin/abilities/edit/'.$ability->id);
         } else {
@@ -101,7 +106,7 @@ class AbilityController extends Controller {
         $ability = Ability::find($id);
 
         return view('admin.claymores.abilities._delete_ability', [
-            'class' => $ability,
+            'ability' => $ability,
         ]);
     }
 

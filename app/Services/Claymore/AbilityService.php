@@ -102,9 +102,65 @@ class AbilityService extends Service {
      * @return array
      */
     private function populateAbilityData($data, $ability = null) {
+        unset($data['name']);
+        unset($data['type_id']);
+
         if (isset($data['description']) && $data['description']) {
-            $data['parsed_description'] = parse($data['description']);
+            $description = parse($data['description']);
         }
+
+        $ability_data = [
+            'cooldown'      => $data['cooldown'] ?? 0,
+            'free_action'   => $data['free_action'] ?? 0,
+            'chance'        => $data['chance'] ?? 0,
+            'success'       => [],
+            'failure'       => []
+        ];
+
+        /**
+         * cooldown
+         * free_action
+         * chance
+         * success
+         *      -
+         * failure
+         *      - 
+         */
+
+        unset($data['cooldown']);
+        unset($data['free_action']);
+        unset($data['chance']);
+
+        foreach($data as $key => $value) {
+            if ($value) {
+                switch (true) {
+                    case (str_contains($key, 'success')):
+                        //Is part of the success key
+                        $key = str_replace('success_', '', $key);
+                        if(!str_contains($key, '__')) {
+                            $ability_data['success'][$key] = $value;
+                        } else {
+                            $i = explode('__', $key)[0];
+                            $nKey = explode('__', $key)[1];
+                            $ability_data['success']['effects'][$i][$nKey] = $value;
+                        }
+                        break;
+                    case (str_contains($key, 'failure')):
+                        //Is part of the failure key
+                        $key = str_replace('failure_', '', $key);
+                        if(!str_contains($key, '__')) {
+                            $ability_data['failure'][$key] = $value;
+                        } else {
+                            $i = explode('__', $key)[0];
+                            $nKey = explode('__', $key)[1];
+                            $ability_data['failure']['effects'][$i][$nKey] = $value;
+                        }
+                        break;
+                }
+            }
+        }
+        \Log::info($ability_data);
+        
 
         return $data;
     }

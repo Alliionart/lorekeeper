@@ -73,10 +73,20 @@
             <div class="p-3 mb-3 border border-success">
                 <h5>Success Effects</h5>
                 <p>When this ability is successful.</p>
+                <div class="ability-form px-2" data-type="success">
+                    <div class="text-right">
+                        <a href="#" class="add-effect btn btn-primary mt-3" >Add Effect</a>
+                    </div>
+                </div>
             </div>
             <div class="p-3 border border-danger">
                 <h5>Failure Effects</h5>
                 <p>When this ability fails. If there is no failure affect, leave this section blank.</p>
+                <div class="ability-form px-2" data-type="failure">
+                    <div class="text-right">
+                        <a href="#" class="add-effect btn btn-primary mt-3" >Add Effect</a>
+                    </div>
+                </div>
             </div>
 
             <!-- Effects to Add:
@@ -87,10 +97,11 @@
                     - Other modifiers (dodge, others?)
                     - Immunities
                     - Status effects
+                        - Type (aka Inflict, Cure, etc.)
                     - Summons
 
                     Other fields to add:
-                    - Target
+                    - Target ✓
                         - All (Excluding Self)
                         - All (Including Self)
                         - Single Target
@@ -98,7 +109,6 @@
                         - All Enemies
                         - All Allies
                     - Chance ✓
-                    - Type (aka Inflict, Cure, etc.)
                     - Check (if the ability has either a Pass/Fail effect) ✓
                         -- Success effects
                         -- Fail effects
@@ -112,6 +122,9 @@
     </div>
 
     {!! Form::close() !!}
+
+
+    @include('admin.claymores.abilities._ability_effects', ['class' => 'hide'])
 
     @if ($ability->id)
         <h3>Preview</h3>
@@ -131,6 +144,38 @@
                 e.preventDefault();
                 loadModal("{{ url('admin/abilities/delete') }}/{{ $ability->id }}", 'Delete Class');
             });
+
+            $effect_row = $('.ability_info.template').clone().removeClass('template').removeClass('hide');
+            $index = 0;
+
+            $('.selectize').selectize();
+
+            $('body').on('change', '.effect-type', function() {
+                var $type = $(this).val();
+                console.log($(this));
+                $(this).parents('.row[data-index]').children('[data-type]').hide().addClass('hide');
+                $(this).parents('.row[data-index]').children('[data-type="'+$type+'"]').show().removeClass('hide');
+            });
+
+            $('.add-effect').click(function(e) {
+                e.preventDefault();
+
+                var $group_type = $(this).parents('.ability-form').attr('data-type');
+                var $newRow = $effect_row.clone();
+
+                $newRow.html($newRow.html().replace(/\[type\]/g, $group_type));
+                $newRow.html($newRow.html().replace(/\[__INDEX__\]/g, $index));
+
+                $newRow.find('.selectize').selectize();
+                
+                $(this).parents('.ability-form').append($newRow);
+            });
+
+            $('body').on('click', '.remove-row', function(e) {
+                e.preventDefault();
+                $(this).parents('.ability_info').remove();
+            });
+
         });
     </script>
 @endsection

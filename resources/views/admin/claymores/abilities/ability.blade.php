@@ -27,10 +27,10 @@
                 @foreach ($abilities as $ability)
                     <tr>
                         <td>
-                            {!! $category->displayName !!}
+                            {!! $ability->name !!}
                         </td>
                         <td class="text-right">
-                            <a href="{{ url('admin/ability/edit/' . $ability->id) }}" class="btn btn-primary">Edit</a>
+                            <a href="{{ url('admin/abilities/edit/' . $ability->id) }}" class="btn btn-primary">Edit</a>
                         </td>
                     </tr>
                 @endforeach
