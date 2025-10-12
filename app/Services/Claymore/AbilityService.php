@@ -102,17 +102,15 @@ class AbilityService extends Service {
      * @return array
      */
     private function populateAbilityData($data, $ability = null) {
-        unset($data['name']);
-        unset($data['type_id']);
-
         if (isset($data['description']) && $data['description']) {
             $description = parse($data['description']);
         }
 
         $ability_data = [
-            'cooldown'      => $data['cooldown'] ?? 0,
-            'free_action'   => $data['free_action'] ?? 0,
+            'cooldown'      => intval($data['cooldown']) ?? 0,
+            'free_action'   => isset($data['free_action']) ? boolval($data['free_action']) : 0,
             'chance'        => $data['chance'] ?? 0,
+            'passive'       => isset($data['passive']) ? boolval($data['passive']) : 0,
             'success'       => [],
             'failure'       => []
         ];
@@ -142,7 +140,15 @@ class AbilityService extends Service {
                         } else {
                             $i = explode('__', $key)[0];
                             $nKey = explode('__', $key)[1];
-                            $ability_data['success']['effects'][$i][$nKey] = $value;
+                            if(str_contains($nKey, 'stat_mod_')) {
+                                $nKey = str_replace('stat_mod_', '', $nKey);
+                                $ability_data['success']['effects'][$i]['stat_mod'][$nKey] = $value;
+                            } else if (str_contains($nKey, 'summon_stat_')) {
+                                $nKey = str_replace('summon_stat_', '', $nKey);
+                                $ability_data['success']['effects'][$i]['summon_stats'][$nKey] = $value;
+                            } else {
+                                $ability_data['success']['effects'][$i][$nKey] = $value;
+                            }
                         }
                         break;
                     case (str_contains($key, 'failure')):
@@ -153,13 +159,22 @@ class AbilityService extends Service {
                         } else {
                             $i = explode('__', $key)[0];
                             $nKey = explode('__', $key)[1];
-                            $ability_data['failure']['effects'][$i][$nKey] = $value;
+                            if(str_contains($nKey, 'stat_mod_')) {
+                                $nKey = str_replace('stat_mod_', '', $nKey);
+                                 $ability_data['failure']['effects'][$i]['stat_mod'][$nKey] = $value;
+                            } else if (str_contains($nKey, 'summon_stat_')) {
+                                $nKey = str_replace('summon_stat_', '', $nKey);
+                                $ability_data['failure']['effects'][$i]['summon_stats'][$nKey] = $value;
+                            } else {
+                                $ability_data['failure']['effects'][$i][$nKey] = $value;
+                            }
                         }
                         break;
                 }
             }
         }
         \Log::info($ability_data);
+        $data['data'] = serialize($ability_data);
         
 
         return $data;

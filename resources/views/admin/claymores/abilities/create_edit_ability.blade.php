@@ -17,6 +17,13 @@
 
     <h3>Basic Information</h3>
 
+    <?php
+        $effects = $effects ?? [];
+        $new = $effects ? unserialize($effects): null; //Idk why I have to do this, its stupid
+        $success = isset($new['success']) && count($new['success']) > 0 ? $new['success']['effects'] : null;
+        $failure = isset($new['failure']) && count($new['failure']) > 0 ? $new['failure']['effects'] : null;
+    ?>
+
     <div class="row">
         <div class="col-md-6">
             <div class="form-group">
@@ -47,18 +54,18 @@
                 <div class="col-md-6">
                     <div class="form-group">
                         {!! Form::label('Cooldown Duration') !!} {!! add_help('The amount of turns this ability cannot be activated after being used.') !!}
-                        {!! Form::number('cooldown', null, ['class' => 'form-control', 'min' => 0, 'max' => 99]) !!}
+                        {!! Form::number('cooldown', $new['cooldown'] ?? null, ['class' => 'form-control', 'min' => 0, 'max' => 99]) !!}
                     </div>
                 </div>
                 <div class="col-md-3">
                     <div class="form-group">
-                        {!! Form::checkbox('free_action', 1, 0, ['class' => 'form-check-input', 'data-toggle' => 'toggle']) !!}
+                        {!! Form::checkbox('free_action', 1, $new['free_action'] ?? null, ['class' => 'form-check-input', 'data-toggle' => 'toggle']) !!}
                         {!! Form::label('free_action', 'Free Action', ['class' => 'form-check-label ml-3']) !!} {!! add_help('Free Action ensures this does not use an action for a round. Therefore it can be combined with an attack or item usage.') !!}
                     </div>
                 </div>
                 <div class="col-md-3">
                     <div class="form-group">
-                        {!! Form::checkbox('passive', 1, 0, ['class' => 'form-check-input', 'data-toggle' => 'toggle']) !!}
+                        {!! Form::checkbox('passive', 1, $new['passive'] ?? null, ['class' => 'form-check-input', 'data-toggle' => 'toggle']) !!}
                         {!! Form::label('passive', 'Passive (Automatically On)', ['class' => 'form-check-label ml-3']) !!} {!! add_help('If on, this ability will function constantly so long as the character brings it into battle.') !!}
                     </div>
                 </div>
@@ -67,53 +74,39 @@
             <p>After this ability is activated, what this will do to the target(s), or the user. Ensure this matches the description above. Write all "chances" in a DnD format or percentage format. (1D20 or 5%)</p>
             <div class="form-group">
                 {!! Form::label('Chance to Hit') !!}
-                {!! Form::text('chance', null, ['class' => 'form-control']) !!}
+                {!! Form::text('chance', $new['chance'] ?? null, ['class' => 'form-control']) !!}
             </div>
 
             <div class="p-3 mb-3 border border-success">
                 <h5>Success Effects</h5>
                 <p>When this ability is successful.</p>
+
                 <div class="ability-form px-2" data-type="success">
-                    <div class="text-right">
-                        <a href="#" class="add-effect btn btn-primary mt-3" >Add Effect</a>
-                    </div>
+                    @if ($success)
+                        @foreach($success as $i => $effect)
+                            @include('admin.claymores.abilities._ability_effects', ['type' =>  'success', 'index' => $i, 'fields' => $effect])
+                        @endforeach
+                    @endif
+                </div>
+                <div class="text-right">
+                    <a href="#" class="add-effect btn btn-primary mt-3" >Add Effect</a>
                 </div>
             </div>
             <div class="p-3 border border-danger">
                 <h5>Failure Effects</h5>
                 <p>When this ability fails. If there is no failure affect, leave this section blank.</p>
+
                 <div class="ability-form px-2" data-type="failure">
-                    <div class="text-right">
-                        <a href="#" class="add-effect btn btn-primary mt-3" >Add Effect</a>
-                    </div>
+                     @if ($failure)
+                        @foreach($failure as $i => $effect)
+                            @include('admin.claymores.abilities._ability_effects', ['type' =>  'failure', 'index' => $i, 'fields' => $effect])
+                        @endforeach
+                    @endif
+                </div>
+                <div class="text-right">
+                    <a href="#" class="add-effect btn btn-primary mt-3" >Add Effect</a>
                 </div>
             </div>
-
-            <!-- Effects to Add:
-                 https://docs.google.com/document/d/1_gIk1XvX0vIbRsOiw-XkG3OPELqkBFKeRW2NFfpgHGw/edit?usp=sharing
-                    - Stat modifications (pull dynamically from C&C)
-                    - Damage modifiers
-                    - Health modifiers
-                    - Other modifiers (dodge, others?)
-                    - Immunities
-                    - Status effects
-                        - Type (aka Inflict, Cure, etc.)
-                    - Summons
-
-                    Other fields to add:
-                    - Target ✓
-                        - All (Excluding Self)
-                        - All (Including Self)
-                        - Single Target
-                        - Multi-Target (Needs a counter)
-                        - All Enemies
-                        - All Allies
-                    - Chance ✓
-                    - Check (if the ability has either a Pass/Fail effect) ✓
-                        -- Success effects
-                        -- Fail effects
-                    - Duration of the effects
-                -->
         </div>
     </div>
 
@@ -124,7 +117,7 @@
     {!! Form::close() !!}
 
 
-    @include('admin.claymores.abilities._ability_effects', ['class' => 'hide'])
+    @include('admin.claymores.abilities._ability_effects', ['class' => 'hide template'])
 
     @if ($ability->id)
         <h3>Preview</h3>
@@ -146,7 +139,10 @@
             });
 
             $effect_row = $('.ability_info.template').clone().removeClass('template').removeClass('hide');
-            $index = 0;
+            $index = {
+                'success': 0,
+                'failure': 0,
+            };
 
             $('.selectize').selectize();
 
@@ -164,16 +160,27 @@
                 var $newRow = $effect_row.clone();
 
                 $newRow.html($newRow.html().replace(/\[type\]/g, $group_type));
-                $newRow.html($newRow.html().replace(/\[__INDEX__\]/g, $index));
+                $newRow.html($newRow.html().replace(/\[__INDEX__\]/g, $index[$group_type]));
 
                 $newRow.find('.selectize').selectize();
                 
-                $(this).parents('.ability-form').append($newRow);
+                $(this).parent().prev('.ability-form').append($newRow);
+                $index[$group_type]++;
             });
 
             $('body').on('click', '.remove-row', function(e) {
                 e.preventDefault();
                 $(this).parents('.ability_info').remove();
+            });
+
+            $('body').on('change', '.target_selector', function() {
+                var val = $(this).val();
+                if (val === 'multi-target') {
+                    $(this).parents('.row').first().find('.multi-target').show().removeClass('hide');
+                } else {
+                    $(this).parents('.row').first().find('.multi-target').hide().addClass('hide');
+                    $(this).parents('.row').first().find('.multi-target').val('');
+                }
             });
 
         });

@@ -38,10 +38,11 @@ class AbilityController extends Controller {
      */
     public function getCreateAbility() {
         return view('admin.claymores.abilities.create_edit_ability', [
-            'ability' => new Ability,
-            'types'   => [0 => 'None'] + AbilityType::orderBy('name', 'DESC')->pluck('name', 'id')->toArray(),
-            'stats'   => Stat::pluck('name', 'id')->toArray(),
-            'status_effects'    => [0 => 'None'] + StatusEffect::pluck('name', 'id')->toArray(),
+            'ability'           => new Ability,
+            'effects'           => [],
+            'types'             => [0 => 'None'] + AbilityType::orderBy('name', 'DESC')->pluck('name', 'id')->toArray(),
+            'stats'             => Stat::pluck('name', 'id')->toArray(),
+            'status_effects'    => ['' => 'None'] + StatusEffect::pluck('name', 'id')->toArray(),
         ]);
     }
 
@@ -59,10 +60,11 @@ class AbilityController extends Controller {
         }
 
         return view('admin.claymores.abilities.create_edit_ability', [
-            'ability' => $ability,
-            'types'   => [0 => 'None'] + AbilityType::orderBy('name', 'DESC')->pluck('name', 'id')->toArray(),
-            'stats'   => Stat::pluck('name', 'id')->toArray(),
-            'status_effects'    => [0 => 'None'] + StatusEffect::pluck('name', 'id')->toArray(),
+            'ability'           => $ability,
+            'effects'           => $ability->data,
+            'types'             => [0 => 'None'] + AbilityType::orderBy('name', 'DESC')->pluck('name', 'id')->toArray(),
+            'stats'             => Stat::pluck('name', 'id')->toArray(),
+            'status_effects'    => ['' => 'None'] + StatusEffect::pluck('name', 'id')->toArray(),
         ]);
     }
 
