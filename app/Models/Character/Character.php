@@ -258,7 +258,7 @@ class Character extends Model {
      * Get the character's skills.
      */
     public function skills() {
-        return $this->hasMany(CharacterSkill::class, 'character_id');
+        return $this->hasMany(CharacterSkill::class, 'character_id')->with('skill');
     }
 
     /**********************************************************************************************

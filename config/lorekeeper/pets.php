@@ -3,7 +3,7 @@
 return [
 
     // number of pets to display on character profile
-    'display_pet_count' => 2,
+    'display_pet_count' => 5,
 
     /*
     |--------------------------------------------------------------------------

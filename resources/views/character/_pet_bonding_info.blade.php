@@ -9,7 +9,9 @@
                     {!! $pet->pet_name !!}
                 </span> the
             @endif
-            {!! $pet->pet->displayName !!} ({{ $pet->level?->levelName }})
+            {!! $pet->pet->displayName !!} {!!  $pet->level ? '('.$pet->level->levelName.')' : '' !!}
+
+            @if ($pet->pet->category->name === 'Legendary')
             <div class="progress mb-2">
                 <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar"
                     style="width: {{ ($pet->level?->nextLevel?->bonding_required ? ($pet->level?->bonding / $pet->level?->nextLevel?->bonding_required) * 100 : 100) . '%' }}" aria-valuenow="{{ $pet->level?->bonding }}" aria-valuemin="0"
@@ -17,6 +19,7 @@
                     {{ $pet->level?->nextLevel?->bonding_required ? $pet->level?->bonding . '/' . $pet->level?->nextLevel?->bonding_required : 'Max' }}
                 </div>
             </div>
+            @endif
         </div>
     </div>
 </div>

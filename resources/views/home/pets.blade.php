@@ -1,17 +1,15 @@
 @extends('home.layout')
 
 @section('home-title')
-    Pets
+    Familiars
 @endsection
 
 @section('home-content')
-    {!! breadcrumbs(['Pets' => 'pets']) !!}
+    {!! breadcrumbs(['Familiars' => 'pets']) !!}
 
-    <h1>
-        Pets
-    </h1>
+    <h1>Familiars</h1>
 
-    <p>These are your pets. Click on a pet to view more details and actions you can perform on it.</p>
+    <p>These are your familiars. Click on a pet to view more details and actions you can perform on it.</p>
 
     <div class="text-right">
         {!! Form::open(['url' => 'pets/collect-all']) !!}

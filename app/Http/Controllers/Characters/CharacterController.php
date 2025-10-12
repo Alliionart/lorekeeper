@@ -15,6 +15,8 @@ use App\Models\Item\Item;
 use App\Models\Item\ItemCategory;
 use App\Models\Skill\Skill;
 use App\Models\Stat\Stat;
+use App\Models\Pet\Pet;
+use App\Models\Pet\PetCategory;
 use App\Models\Status\StatusEffect;
 use App\Models\User\User;
 use App\Models\User\UserCurrency;
@@ -128,7 +130,7 @@ class CharacterController extends Controller {
     public function getCharacter($slug) {
         return view('character.character', [
             'character'             => $this->character,
-            'skills'                => Skill::where('parent_id', null)->orderBy('name', 'ASC')->get(),
+            'skills'                => $this->character->skills,
             'showMention'           => true,
             'extPrevAndNextBtnsUrl' => '',
         ]);
