@@ -112,30 +112,30 @@ class AbilityService extends Service {
             'chance'        => $data['chance'] ?? 0,
             'passive'       => isset($data['passive']) ? boolval($data['passive']) : 0,
             'success'       => [],
-            'failure'       => []
+            'failure'       => [],
         ];
 
-        /**
+        /*
          * cooldown
          * free_action
          * chance
          * success
          *      -
          * failure
-         *      - 
+         *      -
          */
 
         unset($data['cooldown']);
         unset($data['free_action']);
         unset($data['chance']);
 
-        foreach($data as $key => $value) {
+        foreach ($data as $key => $value) {
             if ($value) {
                 switch (true) {
-                    case (str_contains($key, 'success')):
+                    case str_contains($key, 'success'):
                         //Is part of the success key
                         $key = str_replace('success_', '', $key);
-                        if(!str_contains($key, '__')) {
+                        if (!str_contains($key, '__')) {
                             $ability_data['success'][$key] = $value;
                         } else {
                             $i = explode('__', $key)[0];
@@ -151,10 +151,10 @@ class AbilityService extends Service {
                             }
                         }
                         break;
-                    case (str_contains($key, 'failure')):
+                    case str_contains($key, 'failure'):
                         //Is part of the failure key
                         $key = str_replace('failure_', '', $key);
-                        if(!str_contains($key, '__')) {
+                        if (!str_contains($key, '__')) {
                             $ability_data['failure'][$key] = $value;
                         } else {
                             $i = explode('__', $key)[0];

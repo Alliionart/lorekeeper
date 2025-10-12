@@ -150,7 +150,7 @@
                 var $type = $(this).val();
                 console.log($(this));
                 $(this).parents('.row[data-index]').children('[data-type]').hide().addClass('hide');
-                $(this).parents('.row[data-index]').children('[data-type="'+$type+'"]').show().removeClass('hide');
+                $(this).parents('.row[data-index]').children('[data-type="' + $type + '"]').show().removeClass('hide');
             });
 
             $('.add-effect').click(function(e) {

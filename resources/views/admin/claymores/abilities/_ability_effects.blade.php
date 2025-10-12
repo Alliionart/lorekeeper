@@ -40,7 +40,7 @@
             <a href="#" class="remove-row btn btn-danger ml-auto align-self-start mt-2">Remove Effect Row</a>
         </div>
     </div>
-    <hr/>
+    <hr />
     <div class="effects-repeater">
         <div class="row" data-index="0">
             <div class="col-md-3">
@@ -117,7 +117,8 @@
             </div>
             <div class="col-md-9 border border-secondary p-2 {{ $effect_type === 'summon' ? '' : 'hide' }}" data-type="summon">
                 <h5>Let's Build a Summon!</h5>
-                <p>Reoseans may only have 1 summon active at a time. Summons require HP, even if it is a summon that goes away with 1 hit, set its HP to 1. Summons may have their own sub-effects so long as they are in play. Shields are a type of summon that sits in front of the Reosean always.</p>
+                <p>Reoseans may only have 1 summon active at a time. Summons require HP, even if it is a summon that goes away with 1 hit, set its HP to 1. Summons may have their own sub-effects so long as they are in play. Shields are a type of
+                    summon that sits in front of the Reosean always.</p>
                 <div class="row">
                     <div class="col-md-3">
                         {!! Form::label('Summon Type') !!}
