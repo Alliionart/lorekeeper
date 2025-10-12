@@ -140,10 +140,10 @@ class AbilityService extends Service {
                         } else {
                             $i = explode('__', $key)[0];
                             $nKey = explode('__', $key)[1];
-                            if(str_contains($nKey, 'stat_mod_')) {
+                            if (str_contains($nKey, 'stat_mod_')) {
                                 $nKey = str_replace('stat_mod_', '', $nKey);
                                 $ability_data['success']['effects'][$i]['stat_mod'][$nKey] = $value;
-                            } else if (str_contains($nKey, 'summon_stat_')) {
+                            } elseif (str_contains($nKey, 'summon_stat_')) {
                                 $nKey = str_replace('summon_stat_', '', $nKey);
                                 $ability_data['success']['effects'][$i]['summon_stats'][$nKey] = $value;
                             } else {
@@ -159,10 +159,10 @@ class AbilityService extends Service {
                         } else {
                             $i = explode('__', $key)[0];
                             $nKey = explode('__', $key)[1];
-                            if(str_contains($nKey, 'stat_mod_')) {
+                            if (str_contains($nKey, 'stat_mod_')) {
                                 $nKey = str_replace('stat_mod_', '', $nKey);
-                                 $ability_data['failure']['effects'][$i]['stat_mod'][$nKey] = $value;
-                            } else if (str_contains($nKey, 'summon_stat_')) {
+                                $ability_data['failure']['effects'][$i]['stat_mod'][$nKey] = $value;
+                            } elseif (str_contains($nKey, 'summon_stat_')) {
                                 $nKey = str_replace('summon_stat_', '', $nKey);
                                 $ability_data['failure']['effects'][$i]['summon_stats'][$nKey] = $value;
                             } else {
@@ -175,7 +175,6 @@ class AbilityService extends Service {
         }
         \Log::info($ability_data);
         $data['data'] = serialize($ability_data);
-        
 
         return $data;
     }
