@@ -15,8 +15,6 @@ use App\Models\Item\Item;
 use App\Models\Item\ItemCategory;
 use App\Models\Skill\Skill;
 use App\Models\Stat\Stat;
-use App\Models\Pet\Pet;
-use App\Models\Pet\PetCategory;
 use App\Models\Status\StatusEffect;
 use App\Models\User\User;
 use App\Models\User\UserCurrency;

@@ -1,6 +1,6 @@
 @if ($skills)
     <div class="row">
-        @foreach($skills as $skill)
+        @foreach ($skills as $skill)
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-header">

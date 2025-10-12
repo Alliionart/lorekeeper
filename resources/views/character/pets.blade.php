@@ -50,13 +50,13 @@
                             <div class="col-md-9">
                                 @if ($pet->pet->category)
                                     <p>{!! $pet->pet->category->displayName !!}</p>
-                                    <hr/>
+                                    <hr />
                                 @endif
                                 <div class="mb-2 h4">
                                     @if ($pet->pet_name)
                                         <a href="{{ $pet->pageUrl() }}">{!! $pet->pet_name !!}</a> the
                                     @endif
-                                    {!! $pet->pet->displayName !!} {!!  $pet->level ? '('.$pet->level->levelName.')' : '' !!}
+                                    {!! $pet->pet->displayName !!} {!! $pet->level ? '(' . $pet->level->levelName . ')' : '' !!}
                                 </div>
                                 <p><strong>Bonded on: </strong> {{ date('M jS, Y', strtotime($pet->attached_at)) }}</p>
                                 @if ($pet->pet->variant)
@@ -67,8 +67,8 @@
                                     @if ($pet->pet->category->name === 'Legendary')
                                         <div class="progress mb-2">
                                             <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar"
-                                                style="width: {{ ($pet->level?->nextLevel?->bonding_required ? ($pet->level?->bonding / $pet->level?->nextLevel?->bonding_required) * 100 : 100) . '%' }}" aria-valuenow="{{ $pet->level?->bonding }}" aria-valuemin="0"
-                                                aria-valuemax="{{ $pet->level?->nextLevel?->bonding_required ?? 100 }}">
+                                                style="width: {{ ($pet->level?->nextLevel?->bonding_required ? ($pet->level?->bonding / $pet->level?->nextLevel?->bonding_required) * 100 : 100) . '%' }}" aria-valuenow="{{ $pet->level?->bonding }}"
+                                                aria-valuemin="0" aria-valuemax="{{ $pet->level?->nextLevel?->bonding_required ?? 100 }}">
                                                 {{ $pet->level?->nextLevel?->bonding_required ? $pet->level?->bonding . '/' . $pet->level?->nextLevel?->bonding_required : $pet->level?->levelName }}
                                             </div>
                                         </div>
@@ -76,7 +76,7 @@
                                 @endif
                                 {{ $pet->level?->bonding_required }}
                             </div>
-                        </div>                   
+                        </div>
                     </div>
                 </div>
             </div>
