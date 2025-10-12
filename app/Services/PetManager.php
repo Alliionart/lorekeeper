@@ -279,19 +279,17 @@ class PetManager extends Service {
             }
             //Check if character has the Hoarder Skill (up to 5 pets) & how many pets they have
             $current_pet_count = $character->pets->count();
-            $hasHoarderSkill = $character->skills()->where('skill', function($query) {
+            $hasHoarderSkill = $character->skills()->where('skill', function ($query) {
                 $query->where('name', 'Hoarder');
             })->exists();
-            if($hasHoarderSkill && $current_pet_count < 5) {
+            if ($hasHoarderSkill && $current_pet_count < 5) {
                 //Throw exception if the character w/ Hoarder has 5 pets.
                 throw new \Exception('This character already has 5 familiars.');
             }
-            if(!$hasHoarderSkill && $current_pet_count < 3) {
+            if (!$hasHoarderSkill && $current_pet_count < 3) {
                 //Throw exception if the character w/o Hoarder has 3 pets.
                 throw new \Exception('This character already has 3 familiars.');
             }
-
-            
 
             // Finally, compare character and limits based on pet and pet category.
             $allPets = $character->pets;
