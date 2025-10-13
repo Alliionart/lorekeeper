@@ -292,7 +292,7 @@ Route::group(['prefix' => 'data', 'namespace' => 'Data', 'middleware' => 'power:
     Route::post('carrier/create', 'CarrierController@postCreateEditCarrier');
     Route::post('carrier/edit/{id}', 'CarrierController@postCreateEditCarrier');
     Route::post('carrier/delete/{id}', 'CarrierController@postDeleteCarrier');
-    
+
     // STATUS EFFECTS
     Route::get('status-effects', 'StatusController@getIndex');
     Route::get('status-effects/create', 'StatusController@getCreateStatusEffect');

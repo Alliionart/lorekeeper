@@ -28,7 +28,7 @@ class CarrierService extends Service {
      * @param array                 $data
      * @param \App\Models\User\User $user
      *
-     * @return \App\Models\Carrier\Carrier|bool
+     * @return bool|Carrier
      */
     public function createCarrier($data, $user) {
         DB::beginTransaction();
@@ -72,11 +72,11 @@ class CarrierService extends Service {
     /**
      * Updates a carrier.
      *
-     * @param \App\Models\Carrier\Carrier $carrier
-     * @param array                       $data
-     * @param \App\Models\User\User       $user
+     * @param Carrier               $carrier
+     * @param array                 $data
+     * @param \App\Models\User\User $user
      *
-     * @return \App\Models\Carrier\Carrier|bool
+     * @return bool|Carrier
      */
     public function updateCarrier($carrier, $data, $user) {
         DB::beginTransaction();
@@ -129,8 +129,8 @@ class CarrierService extends Service {
     /**
      * Deletes a carrier.
      *
-     * @param \App\Models\Carrier\Carrier $carrier
-     * @param mixed                       $user
+     * @param Carrier $carrier
+     * @param mixed   $user
      *
      * @return bool
      */
@@ -163,8 +163,8 @@ class CarrierService extends Service {
     /**
      * Processes user input for creating/updating a carrier.
      *
-     * @param array                       $data
-     * @param \App\Models\Carrier\Carrier $carrier
+     * @param array   $data
+     * @param Carrier $carrier
      *
      * @return array
      */

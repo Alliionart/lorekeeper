@@ -390,7 +390,7 @@ class CharacterController extends Controller {
     }
 
     /**
-    * Shows a character's status effects.
+     * Shows a character's status effects.
      *
      * @param string $slug
      *
@@ -857,9 +857,9 @@ class CharacterController extends Controller {
             'ajax'      => true,
         ]);
     }
-    
-    /** 
-    * Shows the characters pets.
+
+    /**
+     * Shows the characters pets.
      *
      * @param string $slug
      */

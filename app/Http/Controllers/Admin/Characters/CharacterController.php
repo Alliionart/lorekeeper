@@ -65,7 +65,7 @@ class CharacterController extends Controller {
             'features'         => Feature::getDropdownItems(1),
             'transformations'  => ['0' => 'Pick a Species First'],
             'isMyo'            => false,
-            'stats'       => Stat::orderBy('name')->get(),
+            'stats'            => Stat::orderBy('name')->get(),
         ]);
     }
 
@@ -86,7 +86,7 @@ class CharacterController extends Controller {
             'features'         => Feature::getDropdownItems(1),
             'transformations'  => ['0' => 'Pick a Species First'],
             'isMyo'            => true,
-            'stats'       => Stat::orderBy('name')->get(),
+            'stats'            => Stat::orderBy('name')->get(),
         ]);
     }
 

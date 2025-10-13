@@ -3,7 +3,6 @@
 namespace App\Services\Item;
 
 use App\Models\Character\Character;
-use App\Models\Pet\Pet;
 use App\Models\Pet\PetCategory;
 use App\Models\User\UserItem;
 use App\Services\InventoryManager;
@@ -58,7 +57,6 @@ class TrapService extends Service {
         DB::beginTransaction();
 
         try {
-
             $trapData['pet_category'] = $data['pet_category'];
             $trapData['chance'] = $data['chance'];
             $tag->update(['data' => json_encode($trapData)]);
@@ -74,9 +72,9 @@ class TrapService extends Service {
     /**
      * Acts upon the item when used from the inventory.
      *
-     * @param \App\Models\User\UserItem $stacks
-     * @param \App\Models\User\User     $user
-     * @param array                     $data
+     * @param UserItem              $stacks
+     * @param \App\Models\User\User $user
+     * @param array                 $data
      *
      * @return bool
      */

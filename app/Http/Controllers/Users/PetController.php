@@ -78,6 +78,7 @@ class PetController extends Controller {
         $trap_rules = ItemTag::where('tag', 'trap')->where('is_active', 1)->pluck('data', 'item_id')->toArray();
         $filtered_traps = collect($trap_rules)->filter(function ($data) use ($stack) {
             $rule = is_array($data) ? $data : json_decode($data, true);
+
             return isset($rule['pet_category']) && $rule['pet_category'] == $stack->pet->pet_category_id;
         })->keys()->toArray();
         $traps = UserItem::where('user_id', $stack->user_id)->whereIn('item_id', $filtered_traps)->where('count', '>', 0)->with('item')->get();

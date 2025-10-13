@@ -24,7 +24,7 @@ class BackgroundService extends Service {
      * @param array                 $data
      * @param \App\Models\User\User $user
      *
-     * @return \App\Models\Background\Background|bool
+     * @return Background|bool
      */
     public function createBackground($data, $user) {
         DB::beginTransaction();
@@ -63,11 +63,11 @@ class BackgroundService extends Service {
     /**
      * Updates a background.
      *
-     * @param \App\Models\Background\Background $background
-     * @param array                             $data
-     * @param \App\Models\User\User             $user
+     * @param Background            $background
+     * @param array                 $data
+     * @param \App\Models\User\User $user
      *
-     * @return \App\Models\Background\Background|bool
+     * @return Background|bool
      */
     public function updateBackground($background, $data, $user) {
         DB::beginTransaction();
@@ -113,8 +113,8 @@ class BackgroundService extends Service {
     /**
      * Deletes a background.
      *
-     * @param \App\Models\Background\Background $background
-     * @param mixed                             $user
+     * @param Background $background
+     * @param mixed      $user
      *
      * @return bool
      */
@@ -179,8 +179,8 @@ class BackgroundService extends Service {
     /**
      * Processes user input for creating/updating a background.
      *
-     * @param array                             $data
-     * @param \App\Models\Background\Background $background
+     * @param array      $data
+     * @param Background $background
      *
      * @return array
      */
@@ -202,8 +202,8 @@ class BackgroundService extends Service {
     /**
      * Updates the background conditions.
      *
-     * @param array                             $data
-     * @param \App\Models\Background\Background $background
+     * @param array      $data
+     * @param Background $background
      *
      * @return array
      */

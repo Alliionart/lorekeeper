@@ -12,8 +12,8 @@ use App\Models\Currency\CurrencyLog;
 use App\Models\Gallery\GalleryCharacter;
 use App\Models\Item\Item;
 use App\Models\Item\ItemLog;
-use App\Models\Marking\Marking;
 use App\Models\Level\LevelLog;
+use App\Models\Marking\Marking;
 use App\Models\Model;
 use App\Models\Rarity;
 use App\Models\Stat\CountLog;
@@ -292,8 +292,8 @@ class Character extends Model {
     }
 
     /**
-    * Get the character's class.
-    */
+     * Get the character's class.
+     */
     public function class() {
         return $this->belongsTo(CharacterClass::class, 'class_id');
     }
@@ -1236,7 +1236,6 @@ class Character extends Model {
         ]];
     }
 
-
     /**********************************************************************************************
 
         ADDITIONAL CHARACTER FUNCTIONS
@@ -1256,7 +1255,7 @@ class Character extends Model {
     public function getLineageBlacklistLevel($maxLevel = 2) {
         return CharacterLineageBlacklist::getBlacklistLevel($this, $maxLevel);
     }
-    
+
     /**
      * Gets the characters stats, but only those that apply to the character's species / subtype.
      */

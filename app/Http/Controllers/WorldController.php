@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Character\CharacterCategory;
-use App\Models\Character\CharacterTransformation as Transformation;
 use App\Models\Character\CharacterClass;
+use App\Models\Character\CharacterTransformation as Transformation;
 use App\Models\Claymore\Gear;
 use App\Models\Claymore\GearCategory;
 use App\Models\Claymore\Weapon;
@@ -450,12 +450,13 @@ class WorldController extends Controller {
      */
     public function getTransformations(Request $request) {
         $query = Transformation::query();
+
         return view('world.transformations', [
             'transformations' => $query->orderBy('sort', 'DESC')->paginate(20)->appends($request->query()),
         ]);
     }
-    
-    /** 
+
+    /**
      *  LEVELS.
      */
     public function getLevels() {

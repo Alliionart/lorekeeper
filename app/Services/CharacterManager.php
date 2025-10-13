@@ -1124,9 +1124,9 @@ class CharacterManager extends Service {
     /**
      * Creates a breeding permission.
      *
-     * @param array                           $data
-     * @param \App\Models\Character\Character $character
-     * @param \App\Models\User\User           $user
+     * @param array     $data
+     * @param Character $character
+     * @param User      $user
      *
      * @return bool
      */
@@ -1182,9 +1182,9 @@ class CharacterManager extends Service {
     /**
      * Marks a breeding permission as used.
      *
-     * @param \App\Models\Character\Character          $character
-     * @param \App\Models\Character\BreedingPermission $permission
-     * @param \App\Models\User\User                    $user
+     * @param Character          $character
+     * @param BreedingPermission $permission
+     * @param User               $user
      *
      * @return bool
      */
@@ -1228,7 +1228,8 @@ class CharacterManager extends Service {
 
         return $this->rollbackReturn(false);
     }
-    /* 
+
+    /*
     * Sorts a character's pets.
      *
      * @param array $data
@@ -1265,10 +1266,10 @@ class CharacterManager extends Service {
     /**
      * Transfers a breeding permission.
      *
-     * @param \App\Models\Character\Character          $character
-     * @param \App\Models\Character\BreedingPermission $permission
-     * @param \App\Models\User\User                    $recipient
-     * @param \App\Models\User\User                    $user
+     * @param Character          $character
+     * @param BreedingPermission $permission
+     * @param User               $recipient
+     * @param User               $user
      *
      * @return bool
      */
@@ -1677,10 +1678,10 @@ class CharacterManager extends Service {
     /**
      * Updates a character's lineage.
      *
-     * @param array                           $data
-     * @param \App\Models\Character\Character $character
-     * @param \App\Models\User\User           $user
-     * @param bool                            $isAdmin
+     * @param array     $data
+     * @param Character $character
+     * @param User      $user
+     * @param bool      $isAdmin
      *
      * @return bool
      */
@@ -2395,8 +2396,8 @@ class CharacterManager extends Service {
     /**
      * Updates a character's markings.
      *
-     * @param array                           $data
-     * @param \App\Models\Character\Character $character
+     * @param array     $data
+     * @param Character $character
      *
      * @return bool
      */
@@ -2661,8 +2662,8 @@ class CharacterManager extends Service {
      * @param bool  $isMyo
      * @param mixed $character
      *
-     * @return \App\Models\Character\Character             $character
-     * @return \App\Models\Character\CharacterLineage|bool
+     * @return Character             $character
+     * @return bool|CharacterLineage
      */
     private function handleCharacterLineage($data, $character, $isMyo = false) {
         try {
@@ -2823,7 +2824,7 @@ class CharacterManager extends Service {
      * @param array $data
      * @param mixed $character
      *
-     * @return \App\Models\Character\Character              $character
+     * @return Character                                    $character
      * @return \App\Models\Character\CharacterMarkings|bool
      */
     private function handleCharacterMarkings($data, $character) {

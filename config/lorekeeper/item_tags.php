@@ -36,7 +36,7 @@ return [
         'text_color'       => '#ffffff',
         'background_color' => '#ff5ca8',
     ],
-    
+
     'buff' => [
         'name'             => 'Buff',
         'text_color'       => '#ffffff',

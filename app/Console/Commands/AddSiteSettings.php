@@ -102,7 +102,7 @@ class AddSiteSettings extends Command {
         $this->addSiteSetting('background_location_change_currency', 0, 'Enter the ID of the currency required to change backgrounds in the same location.');
 
         $this->addSiteSetting('background_location_change_amount', 0, 'Enter the amount of the chosen currency required to change backgrounds in the same location.');
-        
+
         $this->addSiteSetting('shop_type', 0, '0: Default, 1: Collapsible.');
 
         $this->addSiteSetting('coupon_settings', 0, '0: Percentage is taken from total (e.g 20% from 2 items costing a total of 100 = 80), 1: Percentage is taken from item (e.g 20% from 2 items costing a total of 100 = 90)');

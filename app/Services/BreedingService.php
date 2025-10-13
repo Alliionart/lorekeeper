@@ -25,7 +25,7 @@ class BreedingService extends Service {
      * @param array                 $data
      * @param \App\Models\User\User $user
      *
-     * @return \App\Models\Breeding\Breeding|bool
+     * @return bool|Breeding
      */
     public function createBreeding($data, $user) {
         DB::beginTransaction();
@@ -50,11 +50,11 @@ class BreedingService extends Service {
     /**
      * Updates a breeding.
      *
-     * @param \App\Models\Breeding\Breeding $breeding
-     * @param array                         $data
-     * @param \App\Models\User\User         $user
+     * @param Breeding              $breeding
+     * @param array                 $data
+     * @param \App\Models\User\User $user
      *
-     * @return \App\Models\Breeding\Breeding|bool
+     * @return bool|Breeding
      */
     public function updateBreeding($breeding, $data, $user) {
         DB::beginTransaction();
@@ -84,8 +84,8 @@ class BreedingService extends Service {
     /**
      * Deletes a breeding.
      *
-     * @param \App\Models\Breeding\Breeding $breeding
-     * @param mixed                         $user
+     * @param Breeding $breeding
+     * @param mixed    $user
      *
      * @return bool
      */

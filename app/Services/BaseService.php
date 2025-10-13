@@ -27,7 +27,7 @@ class BaseService extends Service {
      * @param array                 $data
      * @param \App\Models\User\User $user
      *
-     * @return \App\Models\Base\Base|bool
+     * @return Base|bool
      */
     public function createBase($data, $user) {
         DB::beginTransaction();
@@ -62,11 +62,11 @@ class BaseService extends Service {
     /**
      * Updates a base.
      *
-     * @param \App\Models\Base\Base $base
+     * @param Base                  $base
      * @param array                 $data
      * @param \App\Models\User\User $user
      *
-     * @return \App\Models\Base\Base|bool
+     * @return Base|bool
      */
     public function updateBase($base, $data, $user) {
         DB::beginTransaction();
@@ -106,8 +106,8 @@ class BaseService extends Service {
     /**
      * Deletes a base.
      *
-     * @param \App\Models\Base\Base $base
-     * @param mixed                 $user
+     * @param Base  $base
+     * @param mixed $user
      *
      * @return bool
      */
@@ -140,8 +140,8 @@ class BaseService extends Service {
     /**
      * Processes user input for creating/updating a base.
      *
-     * @param array                 $data
-     * @param \App\Models\Base\Base $base
+     * @param array $data
+     * @param Base  $base
      *
      * @return array
      */
