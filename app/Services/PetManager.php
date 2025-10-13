@@ -9,6 +9,8 @@ use App\Models\Pet\PetDrop;
 use App\Models\User\User;
 use App\Models\User\UserItem;
 use App\Models\User\UserPet;
+use App\Models\Item\ItemTag;
+use App\Services\InventoryManager;
 use Carbon\Carbon;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
@@ -279,14 +281,14 @@ class PetManager extends Service {
             }
             //Check if character has the Hoarder Skill (up to 5 pets) & how many pets they have
             $current_pet_count = $character->pets->count();
-            $hasHoarderSkill = $character->skills()->where('skill', function ($query) {
+            $hasHoarderSkill = $character->skills()->whereHas('skill', function ($query) {
                 $query->where('name', 'Hoarder');
             })->exists();
-            if ($hasHoarderSkill && $current_pet_count < 5) {
+            if ($hasHoarderSkill && $current_pet_count >= 5) {
                 //Throw exception if the character w/ Hoarder has 5 pets.
                 throw new \Exception('This character already has 5 familiars.');
             }
-            if (!$hasHoarderSkill && $current_pet_count < 3) {
+            if (!$hasHoarderSkill && $current_pet_count >= 3) {
                 //Throw exception if the character w/o Hoarder has 3 pets.
                 throw new \Exception('This character already has 3 familiars.');
             }
@@ -344,7 +346,7 @@ class PetManager extends Service {
      *
      * @param mixed $pet
      */
-    public function detachStack($pet) {
+    public function detachStack($pet, $stack_id = null) {
         DB::beginTransaction();
 
         try {
@@ -357,6 +359,31 @@ class PetManager extends Service {
             }
             if ($pet->user_id != $user->id && !$user->hasPower('edit_inventories')) {
                 throw new \Exception('You do not own this pet.');
+            }
+
+            if($stack_id) {
+                $stack = UserItem::find($stack_id);
+                if (!$stack) {
+                    throw new \Exception('An invalid item was selected.');
+                }
+                $item_id = $stack->item_id;
+                $itemTagData = ItemTag::where('item_id', $item_id)->pluck('data')->first();
+                $chance = $itemTagData['chance'] ?? 100;
+                $rolled = rand(1, 100);
+
+                \Log::info('Pet Detach Roll: '.$rolled.' vs Chance: '.$chance);
+
+                if ($rolled > $chance) {
+                    // Pet is lost
+                    \Log::info('Calling debitStack for pet:', ['pet' => $pet]);
+                    //Remove the item from the user inventory
+                    $invMan = new InventoryManager;
+                    $item_removed = $invMan->debitStack($pet->user, 'Trap used', ['data' => 'Trap used for familiar trapping.'], $stack, 1);
+                    \Log::info('Removed Item:', [$item_removed]);
+                    //Remove the pet
+                    $this->debitStack($pet->user, 'Pet Escaped', ['data' => 'The pet escaped its trap.'], $pet);
+                    throw new \Exception('Unfortunately your familiar escaped its trap and ran away...');
+                }
             }
 
             $pet['character_id'] = null;

@@ -41,4 +41,10 @@ return [
         'text_color'       => '#ffffff',
         'background_color' => '#b4676b',
     ],
+
+    'trap' => [
+        'name'             => 'Trap',
+        'text_color'       => '#ffffff',
+        'background_color' => '#693772',
+    ],
 ];

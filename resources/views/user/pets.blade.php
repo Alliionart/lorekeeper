@@ -8,7 +8,7 @@
     {!! breadcrumbs(['Users' => 'users', $user->name => $user->url, 'Pets' => $user->url . '/pets']) !!}
 
     <h1>
-        Pets
+        Familiars
     </h1>
 
     @foreach ($pets as $categoryId => $categoryPets)

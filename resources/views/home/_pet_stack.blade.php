@@ -80,10 +80,20 @@
                             @endif Detach Pet from Character
                         </a>
                         {!! Form::open(['url' => 'pets/detach/' . $stack->id, 'id' => 'attachForm', 'class' => 'collapse']) !!}
-                        <p>This pet is currently attached to {!! $stack->character->displayName !!}, do you want to detach them?</p>
-                        <div class="text-right">
+                        <p>This pet is currently attached to {!! $stack->character->displayName !!}, select an applicable item from your inventory to trap the familiar.</p>
+                        
+                        @if(count($traps) !== 0)
+                        {!! Form::label('trap', 'Trap to Use') !!} {!! add_help('Trap to use to capture the familiar. The trap will disappear upon use.') !!}
+                        {!! Form::select('trap', $traps, null, ['class' => 'form-control']) !!}
+
+                        <div class="text-right mt-2">
                             {!! Form::submit('Detach', ['class' => 'btn btn-primary']) !!}
                         </div>
+                        @else
+                            <div class="alert alert-warning my-2">You do not have any traps available to use for this familiar. You can only detach a familiar using a trap.</div>
+                        @endif
+
+                        
                         {!! Form::close() !!}
                     @elseif($stack->character_id == null || $diff < Carbon\Carbon::now())
                         <a class="card-title h5 collapse-title" data-toggle="collapse" href="#attachForm">

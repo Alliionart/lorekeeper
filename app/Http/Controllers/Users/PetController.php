@@ -74,6 +74,14 @@ class PetController extends Controller {
         })->pluck('item_id');
         $splices = UserItem::where('user_id', $stack->user_id)->whereIn('item_id', $tags)->where('count', '>', 0)->with('item')->get()->pluck('item.name', 'id');
 
+        // Get the applicable traps from the user's inventory
+        $trap_rules = ItemTag::where('tag', 'trap')->where('is_active', 1)->pluck('data', 'item_id')->toArray();
+        $filtered_traps = collect($trap_rules)->filter(function ($data) use ($stack) {
+            $rule = is_array($data) ? $data : json_decode($data, true);
+            return isset($rule['pet_category']) && $rule['pet_category'] == $stack->pet->pet_category_id;
+        })->keys()->toArray();
+        $traps = UserItem::where('user_id', $stack->user_id)->whereIn('item_id', $filtered_traps)->where('count', '>', 0)->with('item')->get();
+
         return view('home._pet_stack', [
             'stack'             => $stack,
             'chara'             => $chara,
@@ -81,6 +89,7 @@ class PetController extends Controller {
             'userOptions'       => ['' => 'Select User'] + User::visible()->where('id', '!=', $stack ? $stack->user_id : 0)->orderBy('name')->get()->pluck('verified_name', 'id')->toArray(),
             'readOnly'          => $readOnly,
             'splices'           => $splices,
+            'traps'             => $traps->pluck('item.name', 'id')->toArray(),
             'userCreditOptions' => ['' => 'Select User'] + User::visible()->orderBy('name')->get()->pluck('verified_name', 'id')->toArray(),
         ]);
     }
@@ -174,8 +183,10 @@ class PetController extends Controller {
      * @return \Illuminate\Http\RedirectResponse
      */
     public function postDetach(Request $request, PetManager $service, $id) {
-        if ($service->detachStack(UserPet::find($id))) {
-            flash('Pet detached successfully.')->success();
+        $stack_id = $request->only(['trap']);
+
+        if ($service->detachStack(UserPet::find($id), $stack_id['trap'] ?? null)) {
+            flash('Pet trapped and returned to your inventory.')->success();
         } else {
             foreach ($service->errors()->getMessages()['error'] as $error) {
                 flash($error)->error();
