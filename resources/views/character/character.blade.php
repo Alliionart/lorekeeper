@@ -124,51 +124,51 @@
                         </div>
                     </div>
                     @if (count($image->character->equipment()))
-                    <div class="card mb-2">
-                        <div class="card-header">
-                            <h4>Gear</h4>
-                        </div>
-                        <div class="card-body">
-                            <div class="mb-1 mt-4">
-                                <div class="mb-0">
-                                    <h5>Equipment</h5>
+                        <div class="card mb-2">
+                            <div class="card-header">
+                                <h4>Gear</h4>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-1 mt-4">
+                                    <div class="mb-0">
+                                        <h5>Equipment</h5>
+                                    </div>
+                                    <div class="text-center row">
+                                        @foreach ($image->character->equipment()->take(5) as $equipment)
+                                            <div class="col-md-2">
+                                                @if ($equipment->has_image)
+                                                    <img class="rounded" src="{{ $equipment->imageUrl }}" data-toggle="tooltip" title="{{ $equipment->equipment->name }}" style="max-width: 75px;" />
+                                                @elseif($equipment->equipment->imageurl)
+                                                    <img class="rounded" src="{{ $equipment->equipment->imageUrl }}" data-toggle="tooltip" title="{{ $equipment->equipment->name }}" style="max-width: 75px;" />
+                                                @else
+                                                    {!! $equipment->equipment->displayName !!}
+                                                @endif
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                    <div class="float-right">
+                                        <a href="{{ $character->url . '/stats' }}">View All...</a>
+                                    </div>
                                 </div>
-                                <div class="text-center row">
-                                    @foreach ($image->character->equipment()->take(5) as $equipment)
-                                        <div class="col-md-2">
-                                            @if ($equipment->has_image)
-                                                <img class="rounded" src="{{ $equipment->imageUrl }}" data-toggle="tooltip" title="{{ $equipment->equipment->name }}" style="max-width: 75px;" />
-                                            @elseif($equipment->equipment->imageurl)
-                                                <img class="rounded" src="{{ $equipment->equipment->imageUrl }}" data-toggle="tooltip" title="{{ $equipment->equipment->name }}" style="max-width: 75px;" />
-                                            @else
-                                                {!! $equipment->equipment->displayName !!}
-                                            @endif
+                            </div>
+                        </div>
+                    @endif
+                    @if ($skills)
+                        <div class="card mb-2">
+                            <div class="card-header">
+                                <h4>Skills</h4>
+                            </div>
+                            <div class="card-body">
+                                <div class="row px-4">
+                                    @foreach ($skills as $skill)
+                                        <div class="p-2 pl-3 border-left border-secondary">
+                                            <h5>{{ $skill->skill->name }}</h5>
+                                            {!! $skill->skill->parsed_description !!}
                                         </div>
                                     @endforeach
                                 </div>
-                                <div class="float-right">
-                                    <a href="{{ $character->url . '/stats' }}">View All...</a>
-                                </div>
                             </div>
                         </div>
-                    </div>
-                    @endif
-                    @if ($skills)
-                    <div class="card mb-2">
-                        <div class="card-header">
-                            <h4>Skills</h4>
-                        </div>
-                        <div class="card-body">
-                            <div class="row px-4">
-                                @foreach ($skills as $skill)
-                                    <div class="p-2 pl-3 border-left border-secondary">
-                                        <h5>{{ $skill->skill->name }}</h5>
-                                        {!! $skill->skill->parsed_description !!}
-                                    </div>
-                                @endforeach
-                            </div>
-                        </div>
-                    </div>
                     @endif
                 </div>
             </div>
