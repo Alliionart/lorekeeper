@@ -257,6 +257,18 @@
             </label>
         </div>
 
+        @if ($stats)
+            <h3>Stats</h3>
+            <p class="alert alert-info">If you want a character to have different stats from the default, set them here. Else, leave it as default</p>
+            <div class="form-group" id="stats">
+                <p>Set species and/or subtype to edit stats.</p>
+            </div>
+        @endif
+
+        <div class="text-right">
+            {!! Form::submit('Create Character', ['class' => 'btn btn-primary']) !!}
+        </div>
+
         <h4><a href="#advanced_lineage" class="dropdown-toggle" data-toggle="collapse" data-target="#advanced_lineage" aria-expanded="false" aria-controls="advanced_lineage">
                 Advanced Lineage
             </a></h4>
@@ -409,6 +421,7 @@
     <script>
         $("#species").change(function() {
             var species = $('#species').val();
+            var subtype = $('#subtype').val();
             var myo = '<?php echo $isMyo; ?>';
             $.ajax({
                 type: "GET",
@@ -429,10 +442,36 @@
                 alert("AJAX call failed: " + textStatus + ", " + errorThrown);
             });
         });
+
+        // Check stats
+        $.ajax({
+            type: "GET",
+            url: "{{ url('admin/masterlist/check-stats') }}?species=" + species + "&subtype=" + subtype,
+            dataType: "text"
+        }).done(function(res) {
+            $("#stats").html(res);
+        }).fail(function(jqXHR, textStatus, errorThrown) {
+            alert("AJAX call failed: " + textStatus + ", " + errorThrown);
+        });
+
         $(document).ready(function() {
             $('.character-select').selectize();
             $('#advanced_lineage').on('click', function(e) {
                 e.preventDefault();
+            });
+        });
+
+        $("#subtypes").change(function() {
+            var species = $('#species').val();
+            var subtype = $('#subtype').val();
+            $.ajax({
+                type: "GET",
+                url: "{{ url('admin/masterlist/check-stats') }}?species=" + species + "&subtype=" + subtype,
+                dataType: "text"
+            }).done(function(res) {
+                $("#stats").html(res);
+            }).fail(function(jqXHR, textStatus, errorThrown) {
+                alert("AJAX call failed: " + textStatus + ", " + errorThrown);
             });
         });
     </script>

@@ -106,7 +106,24 @@
                     </div>
                     <div class="col-lg-8 col-7 pl-1">{!! $image->rarity_id ? $image->rarity->displayName : 'None' !!}</div>
                 </div>
-
+                @php
+                    // check if there is a type for this object if not passed
+                    // for characters first check subtype (since it takes precedence)
+                    $type = \App\Models\Element\Typing::where('typing_model', 'App\Models\Character\CharacterImage')
+                        ->where('typing_id', $image->id)
+                        ->first();
+                    if (!isset($type) && $image->subtype_id) {
+                        $type = \App\Models\Element\Typing::where('typing_model', 'App\Models\Species\Subtype')
+                            ->where('typing_id', $image->subtype_id)
+                            ->first();
+                    }
+                    if (!isset($type)) {
+                        $type = \App\Models\Element\Typing::where('typing_model', 'App\Models\Species\Species')
+                            ->where('typing_id', $image->species_id)
+                            ->first();
+                    }
+                    $type = $type ?? null;
+                @endphp
                 <div class="mb-3">
                     <div>
                         <h5>Traits</h5>
@@ -182,6 +199,18 @@
                         @endif
                     </div>
                 </div>
+                <div class="row no-gutters">
+                    <div class="col-lg-4 col-5">
+                        <h5>Class</h5>
+                    </div>
+                    <div class="col-lg-8 col-md-6 col-8">{!! $image->character->class_id ? $image->character->class->displayName : 'None' !!}
+                        @if (Auth::check())
+                            @if (Auth::user()->isStaff || (Auth::user()->id == $image->character->user_id && $image->character->class_id == null))
+                                <a href="#" class="btn btn-outline-info btn-sm edit-class ml-1" data-id="{{ $image->character->id }}"><i class="fas fa-cog"></i></a>
+                            @endif
+                        @endif
+                    </div>
+                </div>
 
                 @include('character._tab_stats', ['character' => $character])
 
@@ -196,7 +225,7 @@
 
                 @if (Auth::check() && Auth::user()->hasPower('manage_characters'))
                     <div class="mt-3">
-                        <a href="#" class="btn btn-outline-info btn-sm edit-features" data-id="{{ $image->id }}"><i class="fas fa-cog"></i> Edit Image</a>
+                        <a href="#" class="btn btn-outline-info btn-sm edit-features mb-3" data-id="{{ $image->id }}"><i class="fas fa-cog"></i> Edit</a>
                     </div>
                 @endif
             </div>

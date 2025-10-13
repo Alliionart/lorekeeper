@@ -16,6 +16,9 @@ use App\Models\Currency\Currency;
 use App\Models\Gallery\GallerySubmission;
 use App\Models\Item\Item;
 use App\Models\Item\ItemCategory;
+use App\Models\Skill\Skill;
+use App\Models\Stat\Stat;
+use App\Models\Status\StatusEffect;
 use App\Models\User\User;
 use App\Models\User\UserCurrency;
 use App\Models\User\UserItem;
@@ -25,8 +28,8 @@ use App\Services\DesignUpdateManager;
 use App\Services\InventoryManager;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\View;
-use Route;
 
 class CharacterController extends Controller {
     /*
@@ -54,6 +57,11 @@ class CharacterController extends Controller {
             }
 
             $this->character->updateOwner();
+            if (!$this->character->level) {
+                $this->character->level()->create([
+                    'character_id' => $this->character->id,
+                ]);
+            }
 
             if (config('lorekeeper.extensions.previous_and_next_characters.display')) {
                 $query = Character::myo(0);
@@ -106,6 +114,9 @@ class CharacterController extends Controller {
                 View::share('extPrevAndNextBtns', $extPrevAndNextBtns);
             }
 
+            // checks stat propogation
+            $this->character->propagateStats();
+
             return $next($request);
         });
     }
@@ -125,6 +136,7 @@ class CharacterController extends Controller {
             'markings'              => $markings,
             'pheno'                 => $this->character->getMarkingLinkedArray($markings),
             'geno'                  => $this->character->getMarkingLinkedArray($markings, 'genotype'),
+            'skills'                => $this->character->skills,
             'showMention'           => true,
             'extPrevAndNextBtnsUrl' => '',
         ]);
@@ -378,6 +390,25 @@ class CharacterController extends Controller {
     }
 
     /**
+    * Shows a character's status effects.
+     *
+     * @param string $slug
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function getCharacterStatusEffects($slug) {
+        $character = $this->character;
+
+        return view('character.status_effects', [
+            'character' => $this->character,
+            'statuses'  => $character->getStatusEffects(),
+            'logs'      => $this->character->getStatusEffectLogs(),
+        ] + (Auth::check() && (Auth::user()->hasPower('edit_inventories') || Auth::user()->id == $this->character->user_id) ? [
+            'statusOptions' => StatusEffect::orderBy('name', 'DESC')->pluck('name', 'id')->toArray(),
+        ] : []));
+    }
+
+    /**
      * Transfers currency between the user and character.
      *
      * @param App\Services\CharacterManager $service
@@ -512,6 +543,20 @@ class CharacterController extends Controller {
     }
 
     /**
+     * Shows a character's status effect logs.
+     *
+     * @param string $slug
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function getCharacterStatusEffectLogs($slug) {
+        return view('character.status_effect_logs', [
+            'character' => $this->character,
+            'logs'      => $this->character->getStatusEffectLogs(0),
+        ]);
+    }
+
+    /**
      * Shows a character's item logs.
      *
      * @param mixed $slug
@@ -523,6 +568,108 @@ class CharacterController extends Controller {
             'character'             => $this->character,
             'extPrevAndNextBtnsUrl' => '/item-logs',
             'logs'                  => $this->character->getItemLogs(0),
+        ]);
+    }
+
+    /**
+     * Shows a character's exp logs.
+     *
+     * @param mixed $slug
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function getCharacterExpLogs($slug) {
+        $character = $this->character;
+
+        return view('character.stats.exp_logs', [
+            'logs'                  => $this->character->getExpLogs(0),
+            'character'             => $this->character,
+            'extPrevAndNextBtnsUrl' => '/stats/logs/exp',
+        ]);
+    }
+
+    /**
+     * Shows a character's skill logs.
+     *
+     * @param string $slug
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function getCharacterSkillLogs($slug) {
+        return view('character.character_skill_logs', [
+            'character'             => $this->character,
+            'extPrevAndNextBtnsUrl' => '/skill-logs',
+            'logs'                  => $this->character->getCharacterSkillLogs(),
+        ]);
+    }
+
+    /**
+     * Shows a user's stat logs.
+     *
+     * @param mixed $slug
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function getCharacterStatLogs($slug) {
+        $character = $this->character;
+
+        return view('character.stats.character_stat_logs', [
+            'levels'                => $this->character->getStatLevelLogs(0),
+            'character'             => $this->character,
+            'transfers'             => $this->character->getStatTransferLogs(0),
+            'extPrevAndNextBtnsUrl' => '/stats/logs',
+        ]);
+    }
+
+    /**
+     * Shows a user's stat logs.
+     *
+     * @param mixed $slug
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function getCharacterStatPointLogs($slug) {
+        $character = $this->character;
+
+        return view('character.stats.stat_logs', [
+            'levels'                => $this->character->getStatLevelLogs(0),
+            'character'             => $this->character,
+            'transfers'             => $this->character->getStatTransferLogs(0),
+            'extPrevAndNextBtnsUrl' => '/stats/logs',
+        ]);
+    }
+
+    /**
+     * Shows a user's level logs.
+     *
+     * @param mixed $slug
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function getCharacterLevelLogs($slug) {
+        $character = $this->character;
+
+        return view('character.stats.level_logs', [
+            'character'             => $this->character,
+            'extPrevAndNextBtnsUrl' => '/stats/logs/level',
+            'logs'                  => $this->character->getLevelLogs(0),
+        ]);
+    }
+
+    /**
+     * Shows a user's count logs.
+     *
+     * @param mixed $slug
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function getCharacterCountLogs($slug) {
+        $character = $this->character;
+
+        return view('character.stats.count_logs', [
+            'character'             => $this->character,
+            'extPrevAndNextBtnsUrl' => '/stats/logs/count',
+            'logs'                  => $this->character->getCountLogs(0),
         ]);
     }
 
@@ -708,6 +855,17 @@ class CharacterController extends Controller {
             'character' => $this->character,
             'image'     => $image,
             'ajax'      => true,
+        ]);
+    }
+    
+    /** 
+    * Shows the characters pets.
+     *
+     * @param string $slug
+     */
+    public function getCharacterPets($slug) {
+        return view('character.pets', [
+            'character'             => $this->character,
         ]);
     }
 

@@ -1,17 +1,17 @@
 <div class="row world-entry">
-    @if ($imageUrl)
+    @if (isset($imageUrl) && $imageUrl)
         <div class="col-md-3 world-entry-image">
             <a href="{{ $imageUrl }}" data-lightbox="entry" data-title="{{ $name }}">
                 <img src="{{ $imageUrl }}" class="world-entry-image" alt="{{ $name }}" />
             </a>
         </div>
     @endif
-    <div class="{{ $imageUrl ? 'col-md-9' : 'col-12' }}">
+    <div class="{{ isset($imageUrl) && $imageUrl ? 'col-md-9' : 'col-12' }}">
         @if (isset($edit))
             <x-admin-edit title="{{ $edit['title'] }}" :object="$edit['object']" />
         @endif
         <h3>
-            @if (!$visible)
+            @if (isset($visible) && !$visible)
                 <i class="fas fa-eye-slash mr-1"></i>
             @endif
             {!! $name !!}

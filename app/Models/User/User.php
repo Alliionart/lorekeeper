@@ -5,6 +5,10 @@ namespace App\Models\User;
 use App\Models\Character\Character;
 use App\Models\Character\CharacterBookmark;
 use App\Models\Character\CharacterImageCreator;
+use App\Models\Claymore\Gear;
+use App\Models\Claymore\GearLog;
+use App\Models\Claymore\Weapon;
+use App\Models\Claymore\WeaponLog;
 use App\Models\Comment\CommentLike;
 use App\Models\Currency\Currency;
 use App\Models\Currency\CurrencyLog;
@@ -13,10 +17,15 @@ use App\Models\Gallery\GalleryFavorite;
 use App\Models\Gallery\GallerySubmission;
 use App\Models\Item\Item;
 use App\Models\Item\ItemLog;
+use App\Models\Level\LevelLog;
 use App\Models\Notification;
+use App\Models\Pet\Pet;
+use App\Models\Pet\PetLog;
 use App\Models\Rank\Rank;
 use App\Models\Rank\RankPower;
 use App\Models\Shop\ShopLog;
+use App\Models\Stat\ExpLog;
+use App\Models\Stat\StatTransferLog;
 use App\Models\Submission\Submission;
 use App\Traits\Commenter;
 use Carbon\Carbon;
@@ -84,7 +93,7 @@ class User extends Authenticatable implements MustVerifyEmail {
      * Get all of the user's update logs.
      */
     public function logs() {
-        return $this->hasMany('App\Models\User\UserUpdateLog');
+        return $this->hasMany(UserUpdateLog::class);
     }
 
     /**
@@ -106,6 +115,13 @@ class User extends Authenticatable implements MustVerifyEmail {
      */
     public function deactivater() {
         return $this->belongsTo(self::class, 'deactivater_id');
+    }
+
+    /**
+     * Get user settings.
+     */
+    public function level() {
+        return $this->hasOne(UserLevel::class);
     }
 
     /**
@@ -165,6 +181,13 @@ class User extends Authenticatable implements MustVerifyEmail {
     }
 
     /**
+     * Get the user's pets.
+     */
+    public function pets() {
+        return $this->belongsToMany(Pet::class, 'user_pets')->withPivot('data', 'updated_at', 'id', 'variant_id', 'character_id', 'pet_name', 'has_image', 'evolution_id')->whereNull('user_pets.deleted_at');
+    }
+
+    /**
      * Get all of the user's gallery submissions.
      */
     public function gallerySubmissions() {
@@ -180,6 +203,20 @@ class User extends Authenticatable implements MustVerifyEmail {
      */
     public function galleryFavorites() {
         return $this->hasMany(GalleryFavorite::class)->where('user_id', $this->id);
+    }
+
+    /**
+     * Get the user's weapons.
+     */
+    public function weapons() {
+        return $this->belongsToMany(Weapon::class, 'user_weapons')->withPivot('data', 'updated_at', 'id', 'character_id', 'has_image')->whereNull('user_weapons.deleted_at');
+    }
+
+    /**
+     * Get the user's gears.
+     */
+    public function gears() {
+        return $this->belongsToMany(Gear::class, 'user_gears')->withPivot('data', 'updated_at', 'id', 'character_id', 'has_image')->whereNull('user_gears.deleted_at');
     }
 
     /**
@@ -448,7 +485,7 @@ class User extends Authenticatable implements MustVerifyEmail {
      */
     public function getcheckBirthdayAttribute() {
         $bday = $this->birthday;
-        if (!$bday || $bday->diffInYears(carbon::now()) < 13) {
+        if (!$bday || $bday->diffInYears(Carbon::now()) < 13) {
             return false;
         } else {
             return true;
@@ -541,6 +578,67 @@ class User extends Authenticatable implements MustVerifyEmail {
     }
 
     /**
+     * Get the user's exp logs.
+     *
+     * @param int $limit
+     *
+     * @return \Illuminate\Pagination\LengthAwarePaginator|\Illuminate\Support\Collection
+     */
+    public function getExpLogs($limit = 10) {
+        $user = $this;
+        $query = ExpLog::where(function ($query) use ($user) {
+            $query->with('sender')->where('sender_type', 'User')->where('sender_id', $user->id)->whereNotIn('log_type', ['Staff Grant', 'Prompt Rewards', 'Claim Rewards']);
+        })->orWhere(function ($query) use ($user) {
+            $query->with('recipient')->where('recipient_type', 'User')->where('recipient_id', $user->id)->where('log_type', '!=', 'Staff Removal');
+        })->orderBy('id', 'DESC');
+        if ($limit) {
+            return $query->take($limit)->get();
+        } else {
+            return $query->paginate(30);
+        }
+    }
+
+    /**
+     * Get the user's stat logs.
+     *
+     * @param int $limit
+     *
+     * @return \Illuminate\Pagination\LengthAwarePaginator|\Illuminate\Support\Collection
+     */
+    public function getStatLogs($limit = 10) {
+        $user = $this;
+        $query = StatTransferLog::where(function ($query) use ($user) {
+            $query->with('sender')->where('sender_type', 'User')->where('sender_id', $user->id)->whereNotIn('log_type', ['Staff Grant', 'Prompt Rewards', 'Claim Rewards']);
+        })->orWhere(function ($query) use ($user) {
+            $query->with('recipient')->where('recipient_type', 'User')->where('recipient_id', $user->id)->where('log_type', '!=', 'Staff Removal');
+        })->orderBy('id', 'DESC');
+        if ($limit) {
+            return $query->take($limit)->get();
+        } else {
+            return $query->paginate(30);
+        }
+    }
+
+    /**
+     * Get the user's level logs.
+     *
+     * @param int $limit
+     *
+     * @return \Illuminate\Pagination\LengthAwarePaginator|\Illuminate\Support\Collection
+     */
+    public function getLevelLogs($limit = 10) {
+        $user = $this;
+        $query = LevelLog::where(function ($query) use ($user) {
+            $query->with('recipient')->where('leveller_type', 'User')->where('recipient_id', $user->id);
+        })->orderBy('id', 'DESC');
+        if ($limit) {
+            return $query->take($limit)->get();
+        } else {
+            return $query->paginate(30);
+        }
+    }
+
+    /**
      * Get the user's item logs.
      *
      * @param int $limit
@@ -553,6 +651,69 @@ class User extends Authenticatable implements MustVerifyEmail {
             $query->with('sender')->where('sender_type', 'User')->where('sender_id', $user->id)->whereNotIn('log_type', ['Staff Grant', 'Prompt Rewards', 'Claim Rewards']);
         })->orWhere(function ($query) use ($user) {
             $query->with('recipient')->where('recipient_type', 'User')->where('recipient_id', $user->id)->where('log_type', '!=', 'Staff Removal');
+        })->orderBy('id', 'DESC');
+        if ($limit) {
+            return $query->take($limit)->get();
+        } else {
+            return $query->paginate(30);
+        }
+    }
+
+    /**
+     * Get the user's pet logs.
+     *
+     * @param int $limit
+     *
+     * @return \Illuminate\Pagination\LengthAwarePaginator|\Illuminate\Support\Collection
+     */
+    public function getPetLogs($limit = 10) {
+        $user = $this;
+        $query = PetLog::with('sender')->with('recipient')->with('pet')->where(function ($query) use ($user) {
+            $query->where('sender_id', $user->id)->whereNotIn('log_type', ['Staff Grant', 'Staff Removal']);
+        })->orWhere(function ($query) use ($user) {
+            $query->where('recipient_id', $user->id);
+        })->orderBy('id', 'DESC');
+        if ($limit) {
+            return $query->take($limit)->get();
+        } else {
+            return $query->paginate(30);
+        }
+    }
+
+    /**
+     * Get the user's weapon logs.
+     *
+     * @param int $limit
+     *
+     * @return \Illuminate\Pagination\LengthAwarePaginator|\Illuminate\Support\Collection
+     */
+    public function getWeaponLogs($limit = 10) {
+        $user = $this;
+        $query = WeaponLog::with('sender')->with('recipient')->with('weapon')->where(function ($query) use ($user) {
+            $query->where('sender_id', $user->id)->whereNotIn('log_type', ['Staff Grant', 'Prompt Rewards', 'Staff Removal']);
+        })->orWhere(function ($query) use ($user) {
+            $query->where('recipient_id', $user->id);
+        })->orderBy('id', 'DESC');
+        if ($limit) {
+            return $query->take($limit)->get();
+        } else {
+            return $query->paginate(30);
+        }
+    }
+
+    /**
+     * Get the user's gear logs.
+     *
+     * @param int $limit
+     *
+     * @return \Illuminate\Pagination\LengthAwarePaginator|\Illuminate\Support\Collection
+     */
+    public function getGearLogs($limit = 10) {
+        $user = $this;
+        $query = GearLog::with('sender')->with('recipient')->with('gear')->where(function ($query) use ($user) {
+            $query->where('sender_id', $user->id)->whereNotIn('log_type', ['Staff Grant', 'Prompt Rewards', 'Staff Removal']);
+        })->orWhere(function ($query) use ($user) {
+            $query->where('recipient_id', $user->id);
         })->orderBy('id', 'DESC');
         if ($limit) {
             return $query->take($limit)->get();
@@ -669,7 +830,7 @@ class User extends Authenticatable implements MustVerifyEmail {
      *
      * @param mixed $character
      *
-     * @return \App\Models\Character\CharacterBookmark
+     * @return CharacterBookmark
      */
     public function hasBookmarked($character) {
         return CharacterBookmark::where('user_id', $this->id)->where('character_id', $character->id)->first();

@@ -86,6 +86,7 @@
         <link href="{{ asset('css/designhub.css') . '?v=' . filemtime(public_path('css/designhub.css')) }}" rel="stylesheet">
     @endif
 
+    @stack('styles')
     @include('feed::links')
 </head>
 

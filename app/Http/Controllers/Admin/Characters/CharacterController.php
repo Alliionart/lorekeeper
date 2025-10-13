@@ -17,6 +17,7 @@ use App\Models\Marking\Marking;
 use App\Models\Rarity;
 use App\Models\Species\Species;
 use App\Models\Species\Subtype;
+use App\Models\Stat\Stat;
 use App\Models\Trade;
 use App\Models\User\User;
 use App\Models\User\UserItem;
@@ -64,6 +65,7 @@ class CharacterController extends Controller {
             'features'         => Feature::getDropdownItems(1),
             'transformations'  => ['0' => 'Pick a Species First'],
             'isMyo'            => false,
+            'stats'       => Stat::orderBy('name')->get(),
         ]);
     }
 
@@ -84,6 +86,7 @@ class CharacterController extends Controller {
             'features'         => Feature::getDropdownItems(1),
             'transformations'  => ['0' => 'Pick a Species First'],
             'isMyo'            => true,
+            'stats'       => Stat::orderBy('name')->get(),
         ]);
     }
 
@@ -116,6 +119,28 @@ class CharacterController extends Controller {
     }
 
     /**
+     * Gets the stats that are available for a specific species/subtype.
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function getCreateCharacterMyoStats(Request $request) {
+        $species = $request->input('species') ?? null;
+        $subtype = $request->input('subtype') ?? null;
+
+        $stats = Stat::whereHas('limits', function ($query) use ($species) {
+            $query->where('species_id', $species)->where('is_subtype', 0);
+        })->orWhereHas('limits', function ($query) use ($subtype) {
+            $query->where('species_id', $subtype)->where('is_subtype', 1);
+        })->orWhereDoesntHave('limits')->orderBy('name', 'ASC')->get();
+
+        return view('admin.masterlist._create_character_stats', [
+            'stats'      => $stats,
+            'species_id' => $species,
+            'subtype_id' => $subtype,
+        ]);
+    }
+
+    /**
      * Creates a character.
      *
      * @param App\Services\CharacterManager $service
@@ -133,7 +158,7 @@ class CharacterController extends Controller {
             'artist_id', 'artist_url',
             'species_id', 'subtype_id', 'rarity_id', 'feature_id', 'feature_data', 'marking_id', 'is_dominant', 'base', 'secondary_base', 'side_id',
             'marking_color_0', 'marking_color_1', 'is_chimera', 'sex',
-            'image', 'thumbnail', 'image_description',
+            'image', 'thumbnail', 'image_description', 'stats',
             'sire_id',           'sire_name',
             'sire_sire_id',      'sire_sire_name',
             'sire_sire_sire_id', 'sire_sire_sire_name',
@@ -185,7 +210,7 @@ class CharacterController extends Controller {
             'artist_id', 'artist_url',
             'species_id', 'subtype_id', 'rarity_id', 'feature_id', 'feature_data', 'marking_id', 'is_dominant', 'base', 'secondary_base', 'side_id',
             'marking_color_0', 'marking_color_1', 'is_chimera', 'sex',
-            'image', 'thumbnail',
+            'image', 'thumbnail', 'stats',
             'sire_id',           'sire_name',
             'sire_sire_id',      'sire_sire_name',
             'sire_sire_sire_id', 'sire_sire_sire_name',

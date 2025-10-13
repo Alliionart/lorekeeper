@@ -30,4 +30,28 @@ return [
         'text_color'       => '#ffffff',
         'background_color' => '#cbbd8a',
     ],
+
+    'coupon' => [
+        'name'             => 'Coupon',
+        'text_color'       => '#ffffff',
+        'background_color' => '#ff5ca8',
+    ],
+    
+    'buff' => [
+        'name'             => 'Buff',
+        'text_color'       => '#ffffff',
+        'background_color' => '#a4b88d',
+    ],
+
+    'cure' => [
+        'name'             => 'Cure',
+        'text_color'       => '#ffffff',
+        'background_color' => '#b4676b',
+    ],
+
+    'trap' => [
+        'name'             => 'Trap',
+        'text_color'       => '#ffffff',
+        'background_color' => '#693772',
+    ],
 ];

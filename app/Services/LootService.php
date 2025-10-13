@@ -23,7 +23,7 @@ class LootService extends Service {
      *
      * @param array $data
      *
-     * @return \App\Models\Loot\LootTable|bool
+     * @return bool|LootTable
      */
     public function createLootTable($data) {
         DB::beginTransaction();
@@ -53,9 +53,19 @@ class LootService extends Service {
                 }
             }
 
-            $table = LootTable::create(Arr::only($data, ['name', 'display_name']));
+            if (isset($data['sublist_status_id'])) {
+                foreach ($data['sublist_status_id'] as $key=>$id) {
+                    $data['data'][($key + 1)] = [
+                        'status_id' => $id,
+                        'criteria'  => $data['sublist_criteria'][$key],
+                        'quantity'  => $data['sublist_quantity'][$key],
+                    ];
+                }
+            }
 
-            $this->populateLootTable($table, Arr::only($data, ['rewardable_type', 'rewardable_id', 'quantity', 'weight', 'criteria', 'rarity']));
+            $table = LootTable::create(Arr::only($data, ['name', 'display_name', 'data']));
+
+            $this->populateLootTable($table, Arr::only($data, ['rewardable_type', 'rewardable_id', 'quantity', 'weight', 'criteria', 'rarity', 'subtable_id']));
 
             return $this->commitReturn($table);
         } catch (\Exception $e) {
@@ -68,10 +78,10 @@ class LootService extends Service {
     /**
      * Updates a loot table.
      *
-     * @param \App\Models\Loot\LootTable $table
-     * @param array                      $data
+     * @param LootTable $table
+     * @param array     $data
      *
-     * @return \App\Models\Loot\LootTable|bool
+     * @return bool|LootTable
      */
     public function updateLootTable($table, $data) {
         DB::beginTransaction();
@@ -101,9 +111,19 @@ class LootService extends Service {
                 }
             }
 
-            $table->update(Arr::only($data, ['name', 'display_name']));
+            if (isset($data['sublist_status_id'])) {
+                foreach ($data['sublist_status_id'] as $key=>$id) {
+                    $data['data'][($key + 1)] = [
+                        'status_id' => $id,
+                        'criteria'  => $data['sublist_criteria'][$key],
+                        'quantity'  => $data['sublist_quantity'][$key],
+                    ];
+                }
+            }
 
-            $this->populateLootTable($table, Arr::only($data, ['rewardable_type', 'rewardable_id', 'quantity', 'weight', 'criteria', 'rarity']));
+            $table->update(Arr::only($data, ['name', 'display_name', 'data']));
+
+            $this->populateLootTable($table, Arr::only($data, ['rewardable_type', 'rewardable_id', 'quantity', 'weight', 'criteria', 'rarity', 'subtable_id']));
 
             return $this->commitReturn($table);
         } catch (\Exception $e) {
@@ -116,7 +136,7 @@ class LootService extends Service {
     /**
      * Deletes a loot table.
      *
-     * @param \App\Models\Loot\LootTable $table
+     * @param LootTable $table
      *
      * @return bool
      */
@@ -145,8 +165,8 @@ class LootService extends Service {
     /**
      * Handles the creation of loot for a loot table.
      *
-     * @param \App\Models\Loot\LootTable $table
-     * @param array                      $data
+     * @param LootTable $table
+     * @param array     $data
      */
     private function populateLootTable($table, $data) {
         // Clear the old loot...
@@ -167,6 +187,7 @@ class LootService extends Service {
                 'quantity'        => $data['quantity'][$key],
                 'weight'          => $data['weight'][$key],
                 'data'            => isset($lootData) ? json_encode($lootData) : null,
+                'subtable_id'     => $data['subtable_id'][$key] != 'null' ? $data['subtable_id'][$key] : null,
             ]);
         }
     }
