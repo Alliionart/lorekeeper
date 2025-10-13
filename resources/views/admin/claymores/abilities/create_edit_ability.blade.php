@@ -18,10 +18,10 @@
     <h3>Basic Information</h3>
 
     <?php
-        $effects = $effects ?? [];
-        $new = $effects ? unserialize($effects): null; //Idk why I have to do this, its stupid
-        $success = isset($new['success']) && count($new['success']) > 0 ? $new['success']['effects'] : null;
-        $failure = isset($new['failure']) && count($new['failure']) > 0 ? $new['failure']['effects'] : null;
+    $effects = $effects ?? [];
+    $new = $effects ? unserialize($effects) : null; //Idk why I have to do this, its stupid
+    $success = isset($new['success']) && count($new['success']) > 0 ? $new['success']['effects'] : null;
+    $failure = isset($new['failure']) && count($new['failure']) > 0 ? $new['failure']['effects'] : null;
     ?>
 
     <div class="row">
@@ -83,13 +83,13 @@
 
                 <div class="ability-form px-2" data-type="success">
                     @if ($success)
-                        @foreach($success as $i => $effect)
-                            @include('admin.claymores.abilities._ability_effects', ['type' =>  'success', 'index' => $i, 'fields' => $effect])
+                        @foreach ($success as $i => $effect)
+                            @include('admin.claymores.abilities._ability_effects', ['type' => 'success', 'index' => $i, 'fields' => $effect])
                         @endforeach
                     @endif
                 </div>
                 <div class="text-right">
-                    <a href="#" class="add-effect btn btn-primary mt-3" >Add Effect</a>
+                    <a href="#" class="add-effect btn btn-primary mt-3">Add Effect</a>
                 </div>
             </div>
             <div class="p-3 border border-danger">
@@ -97,14 +97,14 @@
                 <p>When this ability fails. If there is no failure affect, leave this section blank.</p>
 
                 <div class="ability-form px-2" data-type="failure">
-                     @if ($failure)
-                        @foreach($failure as $i => $effect)
-                            @include('admin.claymores.abilities._ability_effects', ['type' =>  'failure', 'index' => $i, 'fields' => $effect])
+                    @if ($failure)
+                        @foreach ($failure as $i => $effect)
+                            @include('admin.claymores.abilities._ability_effects', ['type' => 'failure', 'index' => $i, 'fields' => $effect])
                         @endforeach
                     @endif
                 </div>
                 <div class="text-right">
-                    <a href="#" class="add-effect btn btn-primary mt-3" >Add Effect</a>
+                    <a href="#" class="add-effect btn btn-primary mt-3">Add Effect</a>
                 </div>
             </div>
         </div>
@@ -163,7 +163,7 @@
                 $newRow.html($newRow.html().replace(/\[__INDEX__\]/g, $index[$group_type]));
 
                 $newRow.find('.selectize').selectize();
-                
+
                 $(this).parent().prev('.ability-form').append($newRow);
                 $index[$group_type]++;
             });
