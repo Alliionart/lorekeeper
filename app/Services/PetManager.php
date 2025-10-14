@@ -4,13 +4,12 @@ namespace App\Services;
 
 use App\Facades\Notifications;
 use App\Models\Character\Character;
+use App\Models\Item\ItemTag;
 use App\Models\Pet\Pet;
 use App\Models\Pet\PetDrop;
 use App\Models\User\User;
 use App\Models\User\UserItem;
 use App\Models\User\UserPet;
-use App\Models\Item\ItemTag;
-use App\Services\InventoryManager;
 use Carbon\Carbon;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
@@ -344,7 +343,8 @@ class PetManager extends Service {
     /**
      * detaches a pet stack.
      *
-     * @param mixed $pet
+     * @param mixed      $pet
+     * @param mixed|null $stack_id
      */
     public function detachStack($pet, $stack_id = null) {
         DB::beginTransaction();
@@ -361,7 +361,7 @@ class PetManager extends Service {
                 throw new \Exception('You do not own this pet.');
             }
 
-            if($stack_id) {
+            if ($stack_id) {
                 $stack = UserItem::find($stack_id);
                 if (!$stack) {
                     throw new \Exception('An invalid item was selected.');

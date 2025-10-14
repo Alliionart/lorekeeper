@@ -28,7 +28,7 @@ class MarkingService extends Service {
      * @param array                 $data
      * @param \App\Models\User\User $user
      *
-     * @return \App\Models\Marking\Marking|bool
+     * @return bool|Marking
      */
     public function createMarking($data, $user) {
         DB::beginTransaction();
@@ -71,11 +71,11 @@ class MarkingService extends Service {
     /**
      * Updates a marking.
      *
-     * @param \App\Models\Marking\Marking $marking
-     * @param array                       $data
-     * @param \App\Models\User\User       $user
+     * @param Marking               $marking
+     * @param array                 $data
+     * @param \App\Models\User\User $user
      *
-     * @return \App\Models\Marking\Marking|bool
+     * @return bool|Marking
      */
     public function updateMarking($marking, $data, $user) {
         DB::beginTransaction();
@@ -122,8 +122,8 @@ class MarkingService extends Service {
     /**
      * Deletes a marking.
      *
-     * @param \App\Models\Marking\Marking $marking
-     * @param mixed                       $user
+     * @param Marking $marking
+     * @param mixed   $user
      *
      * @return bool
      */
@@ -156,8 +156,8 @@ class MarkingService extends Service {
     /**
      * Processes user input for creating/updating a marking.
      *
-     * @param array                       $data
-     * @param \App\Models\Marking\Marking $marking
+     * @param array   $data
+     * @param Marking $marking
      *
      * @return array
      */

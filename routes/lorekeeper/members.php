@@ -167,7 +167,7 @@ Route::group(['prefix' => 'character', 'namespace' => 'Characters'], function ()
     Route::post('{slug}/approval', 'CharacterController@postCharacterApproval');
     Route::get('{slug}/approval', 'CharacterController@getCharacterApproval');
     Route::post('{slug}/approval/{id}', 'CharacterController@postCharacterApprovalSpecificImage');
-    
+
     Route::get('{slug}/stats', 'CharacterStatController@getStats');
     Route::get('{slug}/stats/{id}', 'CharacterStatController@getStat');
     Route::post('{slug}/stats/{id}/level', 'CharacterStatController@postLevelStat'); // stat level up

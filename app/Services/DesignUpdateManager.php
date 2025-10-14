@@ -34,10 +34,10 @@ class DesignUpdateManager extends Service {
     /**
      * Creates a character design update request (or a MYO design approval request).
      *
-     * @param \App\Models\Character\Character $character
-     * @param \App\Models\User\User           $user
-     * @param mixed|null                      $image
-     * @param mixed                           $isImage
+     * @param Character  $character
+     * @param User       $user
+     * @param mixed|null $image
+     * @param mixed      $isImage
      *
      * @return bool|CharacterDesignUpdate
      */
