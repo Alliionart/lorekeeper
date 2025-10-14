@@ -11,7 +11,7 @@ class Subtype extends Model {
      * @var array
      */
     protected $fillable = [
-        'species_id', 'name', 'sort', 'has_image', 'description', 'parsed_description', 'is_visible', 'hash', 'allow_wingspan', 'allow_height', 'size_data'
+        'species_id', 'name', 'sort', 'has_image', 'description', 'parsed_description', 'is_visible', 'hash', 'allow_wingspan', 'allow_height', 'size_data',
     ];
 
     /**

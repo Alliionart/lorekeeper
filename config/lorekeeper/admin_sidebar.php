@@ -257,7 +257,7 @@ return [
                 'name' => 'Breeding Requests',
                 'url'  => 'admin/breedings/pending',
             ],
-            
+
         ],
     ],
     'Claymores' => [

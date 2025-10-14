@@ -20,11 +20,11 @@ use App\Models\Character\CharacterMarking;
 use App\Models\Character\CharacterStat;
 use App\Models\Character\CharacterTransfer;
 use App\Models\Currency\Currency;
+use App\Models\Item\Item;
 use App\Models\Marking\Marking;
 use App\Models\Sales\SalesCharacter;
 use App\Models\Species\Subtype;
 use App\Models\User\User;
-use App\Models\Item\Item;
 use App\Models\User\UserItem;
 use App\Models\User\UserPet;
 use Carbon\Carbon;
@@ -674,17 +674,17 @@ class CharacterManager extends Service {
             $old['subtype'] = $image->subtype_id ? $image->subtype->displayName : null;
             $old['rarity'] = $image->rarity_id ? $image->rarity->displayName : null;
             $old['transformation'] = $image->transformation_id ? $image->transformation->displayName : null;
-            $old['size']    = $image->size ?? null;
-            $old['age']     = $image->age ?? null;
+            $old['size'] = $image->size ?? null;
+            $old['age'] = $image->age ?? null;
 
-            $wingspan = isset($data['wingspan']) ? $data['wingspan'] : null;
-            $height = isset($data['height']) ? $data['height'] : null;
+            $wingspan = $data['wingspan'] ?? null;
+            $height = $data['height'] ?? null;
             $age = ($data['age'] !== 'Custom' ? $data['age'] : $data['custom_age']) ?? 'Unknown';
             $sizes = [];
-            if($wingspan) {
+            if ($wingspan) {
                 $sizes['Wingspan'] = $wingspan;
             }
-            if($height) {
+            if ($height) {
                 $sizes['Height'] = $height;
             }
 
