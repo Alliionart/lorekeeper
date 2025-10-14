@@ -70,7 +70,7 @@
 
     <div class="my-3">
         <h3>Species Sizes</h3>
-        @if($subtype->allow_wingspan)
+        @if ($subtype->allow_wingspan)
             <?php $wingspan = $subtype->size_data ? json_decode($subtype->size_data)->wingspan : null; ?>
 
             <h5>Wingspans</h5>
@@ -89,7 +89,7 @@
                 </div>
             </div>
         @endif
-        @if($subtype->allow_height)
+        @if ($subtype->allow_height)
             <?php $height = $subtype->size_data ? json_decode($subtype->size_data)->height : null; ?>
 
             <h5>Height</h5>

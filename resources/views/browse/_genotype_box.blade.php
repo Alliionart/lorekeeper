@@ -13,41 +13,41 @@
             <?php $features = $character->image
                 ->features()
                 ->with('feature.category')
-                ->get(); 
-                
-                $fur = $features->first(function ($feature) {
-                    return $feature->feature->category && $feature->feature->category->name === 'Fur';
-                });
-                $ear = $features->first(function ($feature) {
-                    return $feature->feature->category && $feature->feature->category->name === 'Ears';
-                });
-                $tail = $features->first(function ($feature) {
-                    return $feature->feature->category && $feature->feature->category->name === 'Tails';
-                });
-                $eyes = $features->first(function ($feature) {
-                    return $feature->feature->category && $feature->feature->category->name === 'Eyes';
-                });
-                $corrupt = $features->first(function ($feature) {
-                    return $feature->feature->category && $feature->feature->category->name === 'Corrupt Mutation';
-                });
-                $magical = $features->first(function ($feature) {
-                    return $feature->feature->category && $feature->feature->category->name === 'Magical Mutation';
-                });
+                ->get();
             
-                $trait_list = [];
-                if($ear) {
-                    $trait_list[] = '<a href="'.$ear->feature->url.'" style="text-decoration-color:#'.$ear->feature->rarity->color.'">' . $ear->feature->name . ' Ears</a>';
-                }
-                if($tail) {
-                    $trait_list[] = '<a href="'.$tail->feature->url.'" style="text-decoration-color:#'.$tail->feature->rarity->color.'">' . $tail->feature->name . ' Tail</a>';
-                }
-                if($eyes) {
-                    $trait_list[] = '<a href="'.$eyes->feature->url.'" style="text-decoration-color:#'.$eyes->feature->rarity->color.'">' . $eyes->feature->name . ' Eyes</a>';
-                }
+            $fur = $features->first(function ($feature) {
+                return $feature->feature->category && $feature->feature->category->name === 'Fur';
+            });
+            $ear = $features->first(function ($feature) {
+                return $feature->feature->category && $feature->feature->category->name === 'Ears';
+            });
+            $tail = $features->first(function ($feature) {
+                return $feature->feature->category && $feature->feature->category->name === 'Tails';
+            });
+            $eyes = $features->first(function ($feature) {
+                return $feature->feature->category && $feature->feature->category->name === 'Eyes';
+            });
+            $corrupt = $features->first(function ($feature) {
+                return $feature->feature->category && $feature->feature->category->name === 'Corrupt Mutation';
+            });
+            $magical = $features->first(function ($feature) {
+                return $feature->feature->category && $feature->feature->category->name === 'Magical Mutation';
+            });
+            
+            $trait_list = [];
+            if ($ear) {
+                $trait_list[] = '<a href="' . $ear->feature->url . '" style="text-decoration-color:#' . $ear->feature->rarity->color . '">' . $ear->feature->name . ' Ears</a>';
+            }
+            if ($tail) {
+                $trait_list[] = '<a href="' . $tail->feature->url . '" style="text-decoration-color:#' . $tail->feature->rarity->color . '">' . $tail->feature->name . ' Tail</a>';
+            }
+            if ($eyes) {
+                $trait_list[] = '<a href="' . $eyes->feature->url . '" style="text-decoration-color:#' . $eyes->feature->rarity->color . '">' . $eyes->feature->name . ' Eyes</a>';
+            }
             ?>
-          
-            @if ($fur) 
-                <p class="mb-0"><strong>F: </strong>{{ $fur->feature->name }} Coat</p> 
+
+            @if ($fur)
+                <p class="mb-0"><strong>F: </strong>{{ $fur->feature->name }} Coat</p>
             @endif
             @if ($trait_list)
                 <p class="mb-0 trait-row"><strong>T: </strong> {!! implode(', ', $trait_list) !!}</p>

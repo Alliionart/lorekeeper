@@ -267,10 +267,10 @@
                 @elseif ($i == 7)
                 </div>
                 <div class="col-md-6">
-                @endif
-            @endfor
-            </div>
-        </div>
+    @endif
+    @endfor
+    </div>
+    </div>
     </div>
 
     <h3>Traits</h3>
