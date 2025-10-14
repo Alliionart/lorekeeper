@@ -242,6 +242,12 @@ return [
                 'name' => 'Backgrounds',
                 'url'  => 'admin/data/backgrounds',
             ],
+            [
+                'name' => 'Settings',
+                'url'  => 'admin/breedings/settings',
+                'name' => 'Pets',
+                'url'  => 'admin/data/pets',
+            ],
         ],
     ],
     'Breedings'  => [
@@ -251,12 +257,7 @@ return [
                 'name' => 'Breeding Requests',
                 'url'  => 'admin/breedings/pending',
             ],
-            [
-                'name' => 'Settings',
-                'url'  => 'admin/breedings/settings',
-                'name' => 'Pets',
-                'url'  => 'admin/data/pets',
-            ],
+            
         ],
     ],
     'Claymores' => [
@@ -316,6 +317,10 @@ return [
     'Settings'   => [
         'power' => 'edit_site_settings',
         'links' => [
+            [
+                'name' => 'Breeding Settings',
+                'url'  => 'admin/breedings/settings',
+            ],
             [
                 'name' => 'Site Settings',
                 'url'  => 'admin/settings',

@@ -4,6 +4,7 @@ namespace App\Models\Skill;
 
 use App\Models\Model;
 use App\Models\Species\SpeciesLimit;
+use App\Models\Rarity;
 
 class Skill extends Model {
     /**
@@ -12,7 +13,7 @@ class Skill extends Model {
      * @var array
      */
     protected $fillable = [
-        'name', 'description', 'parsed_description', 'skill_category_id', 'parent_id', 'parent_level', 'prerequisite_id', 'has_image', 'species_ids', 'is_visible',
+        'name', 'description', 'parsed_description', 'skill_category_id', 'parent_id', 'parent_level', 'prerequisite_id', 'has_image', 'species_ids', 'is_visible', 'rarity_id',
     ];
 
     /**
@@ -53,6 +54,13 @@ class Skill extends Model {
      */
     public function category() {
         return $this->belongsTo(SkillCategory::class, 'skill_category_id');
+    }
+
+    /**
+     * Get the rarity the skill belongs to.
+     */
+    public function rarity() {
+        return $this->belongsTo(Rarity::class, 'rarity_id');
     }
 
     /**

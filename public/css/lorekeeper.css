@@ -571,6 +571,11 @@ tr.accountbound {
 .trait-row {
     gap: 2px 5px;
 }
+.trait-row a {
+	color: var(--gray-400) !important;
+	text-decoration: dotted underline;
+    transition: 250ms all;
+}
 
 @keyframes copy-to-check {
     from {

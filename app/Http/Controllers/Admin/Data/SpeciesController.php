@@ -77,7 +77,7 @@ class SpeciesController extends Controller {
         $id ? $request->validate(Species::$updateRules) : $request->validate(Species::$createRules);
         $data = $request->only([
             'lineage-blacklist',
-            'name', 'description', 'image', 'remove_image', 'masterlist_sub_id', 'is_visible',
+            'name', 'description', 'image', 'remove_image', 'masterlist_sub_id', 'is_visible', 'allow_wingspan',
         ]);
         if ($id && $service->updateSpecies(Species::find($id), $data, Auth::user())) {
             flash('Species updated successfully.')->success();
@@ -204,7 +204,8 @@ class SpeciesController extends Controller {
         $id ? $request->validate(Subtype::$updateRules) : $request->validate(Subtype::$createRules);
         $data = $request->only([
             'lineage-blacklist',
-            'species_id', 'name', 'description', 'image', 'remove_image', 'is_visible',
+            'species_id', 'name', 'description', 'image', 'remove_image', 'is_visible', 'allow_wingspan', 'allow_height',
+            'wingspan_min', 'wingspan_max', 'wingspan_unit', 'height_min', 'height_max', 'height_unit',
         ]);
         if ($id && $service->updateSubtype(Subtype::find($id), $data, Auth::user())) {
             flash('Subtype updated successfully.')->success();

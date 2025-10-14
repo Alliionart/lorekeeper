@@ -348,13 +348,20 @@
                         <h2 class="mb-0">
                             <button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#collapseSkills" aria-expanded="false" aria-controls="collapseSkills">
                                 <h5 class="mb-0 text-secondary text-decoration-none">Skills</h5>
-                                <p class="mb-0 text-secondary text-decoration-none">Bleugh</p>
+                                <p class="mb-0 text-secondary text-decoration-none">Fil out the drop rate percentage for each skill rarity.</p>
                             </button>
                         </h2>
                     </div>
                     <div id="collapseSkills" class="collapse" aria-labelledby="headingSkills" data-parent="#breedingRatesAccordion">
                         <div class="card-body">
-                            And lastly, the placeholder content for the third and final accordion panel. This panel is hidden by default.
+                            @if ($skillRarities)
+                                @foreach($skillRarities as $id => $name) 
+                                    <div class="d-flex form-group mb-2">
+                                        <div class="mr-2" style="min-width:200px;">{{ $name }} Skills (Drop rate (%))</div>
+                                        {!! Form::number('skill_rate__'.$id, null, ['class' => 'form-control', 'id' => 'skill', 'min' => 0, 'step' => 'any', 'max' => 100]) !!}
+                                    </div>
+                                @endforeach
+                            @endif
                         </div>
                     </div>
                 </div>
@@ -398,6 +405,28 @@
                     </div>
                 </div>
 
+            </div>
+        </div>
+    </div>
+
+    <div class="card mb-3">
+        <div class="card-header">
+            <h4>Inbreeding</h4>
+            <p class="mb-0">What traits can pass due to inbreeding.</p>
+        </div>
+        <div class="card-body">
+            <div class="form-group">
+                <p>Note that these are automatically pulled from the set Inbreeding trait category. If you would like to change this, you can do so in the site settings. Stillborn does NOT need to be added, as it is automatic.</p>
+
+                @foreach($inbreeding_traits as $id => $name)
+                    <div class="d-flex form-group mb-2">
+                        <div class="mr-2" style="min-width:200px;">{{ $name }} (Drop rate (%))</div>
+                        {!! Form::number('inbreeding_trait__'.$id, null, ['class' => 'form-control', 'id' => 'skill', 'min' => 0, 'step' => 'any', 'max' => 100]) !!}
+                    </div>
+                @endforeach
+                <pre style="background-color:#ccc">
+                    {{ print_r($inbreeding_traits, true)}}
+                </pre>
             </div>
         </div>
     </div>

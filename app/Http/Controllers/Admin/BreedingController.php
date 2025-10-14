@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Base\Base;
+use App\Models\Feature\Feature;
 use App\Models\Feature\FeatureCategory;
 use App\Models\Item\Item;
 use App\Models\Marking\Marking;
@@ -25,6 +26,8 @@ class BreedingController extends Controller {
             'rarities'           => ['Select Rarity'] + Rarity::all()->pluck('name', 'id')->toArray(),
             'bases'              => ['Select Base'] + Base::all()->pluck('name', 'id')->toArray(),
             'items'              => ['Select Item'] + Item::where('item_category_id', DB::table('site_settings')->where('key', 'breeding_item_category_id')->value('value'))->pluck('name', 'id')->toArray(),
+            'skillRarities'      => Rarity::wherein('id', DB::table('skills')->distinct()->pluck('rarity_id')->toArray())->pluck('name', 'id')->toArray(),
+            'inbreeding_traits'  => [0 => 'Stillborn'] + Feature::where('feature_category_id', DB::table('site_settings')->where('key', 'breeding_inbreeding_trait_category_id')->value('value'))->pluck('name', 'id')->toArray(),
             'markingConfig'      => [
                 ['recessive' => null],
                 ['recessive' => 'recessive'],

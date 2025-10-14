@@ -47,9 +47,67 @@
         {!! Form::textarea('description', $subtype->description, ['class' => 'form-control wysiwyg']) !!}
     </div>
 
-    <div class="form-group">
-        {!! Form::checkbox('is_visible', 1, $subtype->id ? $subtype->is_visible : 1, ['class' => 'form-check-input', 'data-toggle' => 'toggle']) !!}
-        {!! Form::label('is_visible', 'Is Visible', ['class' => 'form-check-label ml-3']) !!} {!! add_help('If turned off, the subtype will not be visible in the subtypes list or available for selection in search and design updates. Permissioned staff will still be able to add them to characters, however.') !!}
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-group">
+                {!! Form::checkbox('is_visible', 1, $subtype->id ? $subtype->is_visible : 1, ['class' => 'form-check-input', 'data-toggle' => 'toggle']) !!}
+                {!! Form::label('is_visible', 'Is Visible', ['class' => 'form-check-label ml-3']) !!} {!! add_help('If turned off, the subtype will not be visible in the subtypes list or available for selection in search and design updates. Permissioned staff will still be able to add them to characters, however.') !!}
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="form-group">
+                {!! Form::checkbox('allow_wingspan', 1, $subtype->id ? $subtype->allow_wingspan : 1, ['class' => 'form-check-input', 'data-toggle' => 'toggle']) !!}
+                {!! Form::label('allow_wingspan', 'Allow Wingspan', ['class' => 'form-check-label ml-3']) !!} {!! add_help('If turned off, the wingspan fields will not be shown for this subtype.') !!}
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="form-group">
+                {!! Form::checkbox('allow_height', 1, $subtype->id ? $subtype->allow_height : 1, ['class' => 'form-check-input', 'data-toggle' => 'toggle']) !!}
+                {!! Form::label('allow_height', 'Allow Height', ['class' => 'form-check-label ml-3']) !!} {!! add_help('If turned off, the height fields will not be shown for this subtype.') !!}
+            </div>
+        </div>
+    </div>
+
+    <div class="my-3">
+        <h3>Species Sizes</h3>
+        @if($subtype->allow_wingspan)
+            <?php $wingspan = $subtype->size_data ? json_decode($subtype->size_data)->wingspan : null; ?>
+
+            <h5>Wingspans</h5>
+            <div class="row">
+                <div class="col-md-4">
+                    {!! Form::label('Minimum Wingspan') !!}
+                    {!! Form::text('wingspan_min', $wingspan->min ?? null, ['class' => 'form-control']) !!}
+                </div>
+                <div class="col-md-4">
+                    {!! Form::label('Maximum Wingspan') !!}
+                    {!! Form::text('wingspan_max', $wingspan->max ?? null, ['class' => 'form-control']) !!}
+                </div>
+                <div class="col-md-4">
+                    {!! Form::label('Wingspan Unit') !!}
+                    {!! Form::text('wingspan_unit', $wingspan->unit ?? null, ['class' => 'form-control']) !!}
+                </div>
+            </div>
+        @endif
+        @if($subtype->allow_height)
+            <?php $height = $subtype->size_data ? json_decode($subtype->size_data)->height : null; ?>
+
+            <h5>Height</h5>
+            <div class="row">
+                <div class="col-md-4">
+                    {!! Form::label('Minimum Height') !!}
+                    {!! Form::text('height_min', $height->min ?? null, ['class' => 'form-control']) !!}
+                </div>
+                <div class="col-md-4">
+                    {!! Form::label('Maximum Height') !!}
+                    {!! Form::text('height_max', $height->max ?? null, ['class' => 'form-control']) !!}
+                </div>
+                <div class="col-md-4">
+                    {!! Form::label('Height Unit') !!}
+                    {!! Form::text('height_unit', $height->unit ?? null, ['class' => 'form-control']) !!}
+                </div>
+            </div>
+        @endif
     </div>
 
     @include('admin.lineage._edit_lineage_blacklist', [
@@ -64,8 +122,6 @@
     {!! Form::close() !!}
 
     @if ($subtype->id)
-        @include('widgets._add_typing', ['object' => $subtype, 'info' => 'Subtype typings take priority over species typings.'])
-
         <h3>Preview</h3>
         <div class="card mb-3">
             <div class="card-body">

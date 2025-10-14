@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('title')
-    MYO Slot Masterlist
+    Genotype Masterlist
 @endsection
 
 @section('sidebar')
@@ -9,8 +9,8 @@
 @endsection
 
 @section('content')
-    {!! breadcrumbs(['MYO Slot Masterlist' => 'myos']) !!}
-    <h1>MYO Slot Masterlist</h1>
+    {!! breadcrumbs(['Genotype Masterlist' => 'myos']) !!}
+    <h1>Genotype Masterlist</h1>
 
     @include('browse._masterlist_content', ['characters' => $slots])
 @endsection

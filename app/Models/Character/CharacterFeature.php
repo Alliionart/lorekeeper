@@ -48,4 +48,19 @@ class CharacterFeature extends Model {
     public function feature() {
         return $this->belongsTo(Feature::class, 'feature_id');
     }
+
+    /**********************************************************************************************
+
+        Other Functions
+
+    **********************************************************************************************/
+
+    public function getFeatureByCategory($categoryName) {
+        return $this->image->features()
+            ->whereHas('feature.category', function ($query) use ($categoryName) {
+                $query->where('name', $categoryName);
+            })
+            ->with('feature.category')
+            ->first();
+    }
 }

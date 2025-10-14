@@ -181,6 +181,8 @@ class SpeciesService extends Service {
                 $data['has_image'] = 0;
             }
 
+            $data['size_data'] = $this->populateSizeData($data);
+
             $subtype = Subtype::create($data);
 
             if ($image) {
@@ -219,6 +221,8 @@ class SpeciesService extends Service {
                 $image = $data['image'];
                 unset($data['image']);
             }
+
+            $data['size_data'] = $this->populateSizeData($data);
 
             $subtype->update($data);
 
@@ -318,6 +322,36 @@ class SpeciesService extends Service {
         }
 
         return $data;
+    }
+
+    /**
+     * Processes size data for the subtype.
+     *
+     * @param array   $data
+     *
+     * @return array
+     */
+    private function populateSizeData($data) {
+        $sizeData = [];
+        if (isset($data['allow_wingspan']) && $data['allow_wingspan']) {
+            $sizeData['wingspan'] = [
+                'min'  => isset($data['wingspan_min']) ? (float) $data['wingspan_min'] : null,
+                'max'  => isset($data['wingspan_max']) ? (float) $data['wingspan_max'] : null,
+                'unit' => isset($data['wingspan_unit']) ? $data['wingspan_unit'] : null,
+            ];
+        }
+        if (isset($data['allow_height']) && $data['allow_height']) {
+            $sizeData['height'] = [
+                'min'  => isset($data['height_min']) ? (float) $data['height_min'] : null,
+                'max'  => isset($data['height_max']) ? (float) $data['height_max'] : null,
+                'unit' => isset($data['height_unit']) ? $data['height_unit'] : null,
+            ];
+        }
+
+        unset($data['allow_wingspan'], $data['wingspan_min'], $data['wingspan_max'], $data['wingspan_unit']);
+        unset($data['allow_height'], $data['height_min'], $data['height_max'], $data['height_unit']);
+
+        return count($sizeData) > 0 ? json_encode($sizeData) : null;
     }
 
     /**

@@ -35,7 +35,7 @@
                                 My Characters
                             </a>
                             <a class="dropdown-item" href="{{ url('characters/myos') }}">
-                                My MYO Slots
+                                My Genotypes
                             </a>
                             <a class="dropdown-item" href="{{ url('breeding-permissions') }}">
                                 Breeding Permissions

@@ -24,6 +24,7 @@ use App\Models\Marking\Marking;
 use App\Models\Sales\SalesCharacter;
 use App\Models\Species\Subtype;
 use App\Models\User\User;
+use App\Models\Item\Item;
 use App\Models\User\UserItem;
 use App\Models\User\UserPet;
 use Carbon\Carbon;
@@ -673,6 +674,19 @@ class CharacterManager extends Service {
             $old['subtype'] = $image->subtype_id ? $image->subtype->displayName : null;
             $old['rarity'] = $image->rarity_id ? $image->rarity->displayName : null;
             $old['transformation'] = $image->transformation_id ? $image->transformation->displayName : null;
+            $old['size']    = $image->size ?? null;
+            $old['age']     = $image->age ?? null;
+
+            $wingspan = isset($data['wingspan']) ? $data['wingspan'] : null;
+            $height = isset($data['height']) ? $data['height'] : null;
+            $age = ($data['age'] !== 'Custom' ? $data['age'] : $data['custom_age']) ?? 'Unknown';
+            $sizes = [];
+            if($wingspan) {
+                $sizes['Wingspan'] = $wingspan;
+            }
+            if($height) {
+                $sizes['Height'] = $height;
+            }
 
             // Clear old features
             $image->features()->delete();
@@ -691,6 +705,8 @@ class CharacterManager extends Service {
             $image->transformation_id = $data['transformation_id'] ?: null;
             $image->transformation_info = $data['transformation_info'] ?: null;
             $image->transformation_description = $data['transformation_description'] ?: null;
+            $image->age = $age;
+            $image->size = json_encode($sizes);
             $image->save();
 
             $new = [];
@@ -1595,8 +1611,12 @@ class CharacterManager extends Service {
                     $item_id = Settings::get('background_location_change_item_id');
                     $stack = UserItem::where('user_id', $character->user_id)->where('item_id', $item_id)->whereRaw('count > submission_count')->first();
 
+                    if (!$stack) {
+                        throw new \Exception('You do not have any of the required item ('.Item::find($item_id)->name.') for a location update.');
+                    }
+
                     if (!(new InventoryManager)->debitStack($user, 'Character Location Update', ['data' => 'Item used in character background change ('.$character->displayName.')'], $stack, 1)) {
-                        throw new \Exception('You do not have enough available items for a location update.');
+                        throw new \Exception('You do not have any of the required item ('.Item::find($item_id)->name.') for a location update.');
                     }
                     $character->location = $data['location'];
                 }

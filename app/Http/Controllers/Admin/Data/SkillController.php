@@ -8,6 +8,7 @@ use App\Models\Skill\Skill;
 use App\Models\Skill\SkillCategory;
 use App\Models\Species\Species;
 use App\Models\Species\Subtype;
+use App\Models\Rarity;
 use App\Services\SkillService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -33,6 +34,7 @@ class SkillController extends Controller {
             'prompts'    => Prompt::where('is_active', 1)->orderBy('id')->pluck('name', 'id'),
             'skills'     => ['none' => 'No Parent/Prerequisite'] + Skill::orderBy('name', 'ASC')->pluck('name', 'id')->toArray(),
             'categories' => ['none' => 'Any Category'] + SkillCategory::pluck('name', 'id')->toArray(),
+            'rarities'   => ['none' => 'Any Rarity'] + Rarity::pluck('name', 'id')->toArray(),
         ]);
     }
 
@@ -56,6 +58,7 @@ class SkillController extends Controller {
             'categories' => ['none' => 'Any Category'] + SkillCategory::pluck('name', 'id')->toArray(),
             'specieses'  => Species::orderBy('specieses.sort', 'DESC')->pluck('name', 'id')->toArray(),
             'subtypes'   => Subtype::orderBy('sort', 'DESC')->pluck('name', 'id')->toArray(),
+            'rarities'   => ['none' => 'Any Rarity'] + Rarity::pluck('name', 'id')->toArray(),
         ]);
     }
 
@@ -70,7 +73,7 @@ class SkillController extends Controller {
     public function postCreateEditSkill(Request $request, SkillService $service, $id = null) {
         $id ? $request->validate(Skill::$updateRules) : $request->validate(Skill::$createRules);
         $data = $request->only([
-            'name', 'skill_category_id', 'description', 'image', 'remove_image', 'parent_id', 'parent_level', 'prerequisite_id', 'types', 'type_ids', 'is_visible',
+            'name', 'skill_category_id', 'description', 'image', 'remove_image', 'parent_id', 'parent_level', 'prerequisite_id', 'types', 'type_ids', 'is_visible', 'rarity_id'
         ]);
         if ($id && $service->updateSkill(Skill::find($id), $data, Auth::user())) {
             flash('Skill updated successfully.')->success();

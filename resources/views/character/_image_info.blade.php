@@ -55,21 +55,35 @@
                         <div class="col-lg-8 col-7 pl-1">{!! $character->sex !!}</div>
                     </div>
                 @endif
-                @if ($character->age)
+                @if ($image->age)
                     <div class="row no-gutters">
                         <div class="col-lg-4 col-5">
                             <h5>Age</h5>
                         </div>
-                        <div class="col-lg-8 col-7 pl-1">{!! $character->age !!}</div>
+                        <div class="col-lg-8 col-7 pl-1">{!! (is_numeric($image->age) ? $image->age .  ' Years' : 'Unknown') !!}</div>
                     </div>
                 @endif
-                @if ($character->size)
-                    <div class="row no-gutters">
-                        <div class="col-lg-4 col-5">
-                            <h5>Size</h5>
+                @if ($image->size)
+                    <?php 
+                        $size = json_decode($image->size);
+                        $size_rules = $image->subtype->size_data ? json_decode($image->subtype->size_data) : null;
+                    ?>
+                    @if (isset($size->Wingspan))
+                        <div class="row no-gutters">
+                            <div class="col-lg-4 col-5">
+                                <h5>Wingspan</h5>
+                            </div>
+                            <div class="col-lg-8 col-7 pl-1">{!! $size->Wingspan !!} {!! $size_rules->wingspan->unit ?? '' !!}</div>
                         </div>
-                        <div class="col-lg-8 col-7 pl-1">{!! $character->size !!}</div>
-                    </div>
+                    @endif
+                    @if (isset($size->Height))
+                        <div class="row no-gutters">
+                            <div class="col-lg-4 col-5">
+                                <h5>Height</h5>
+                            </div>
+                            <div class="col-lg-8 col-7 pl-1">{!! $size->Height !!} {!! $size_rules->height->unit ?? '' !!}</div>
+                        </div>
+                    @endif
                 @endif
                 <div class="row no-gutters">
                     <div class="col-lg-4 col-5">
@@ -85,23 +99,8 @@
                         <div class="col-lg-8 col-7 pl-1">{!! $image->subtype_id ? $image->subtype->displayName : 'None' !!}</div>
                     </div>
                 @endif
-                @if ($image->transformation_id)
-                    <div class="row">
-                        <div class="col-lg-4 col-md-6 col-4">
-                            <h5>{{ ucfirst(__('transformations.form')) }} {!! add_help('The main image is always the active image') !!}</h5>
-                        </div>
-                        <div class="col-lg-8 col-md-6 col-8">
-                            <a href="{{ $image->transformation->url }}">
-                                {!! $image->transformation->displayName !!}
-                            </a>
-                            @if ($image->transformation_description)
-                                ({{ $image->transformation_description }})
-                            @endif
-                        </div>
-                    </div>
-                @endif
                 <div class="row">
-                    <div class="col-lg-4 col-md-6 col-4">
+                    <div class="col-lg-4 col-5">
                         <h5>Rarity</h5>
                     </div>
                     <div class="col-lg-8 col-7 pl-1">{!! $image->rarity_id ? $image->rarity->displayName : 'None' !!}</div>
@@ -205,7 +204,7 @@
                     </div>
                     <div class="col-lg-8 col-md-6 col-8">{!! $image->character->class_id ? $image->character->class->displayName : 'None' !!}
                         @if (Auth::check())
-                            @if (Auth::user()->isStaff || (Auth::user()->id == $image->character->user_id && $image->character->class_id == null))
+                            @if (Auth::user()->isStaff)
                                 <a href="#" class="btn btn-outline-info btn-sm edit-class ml-1" data-id="{{ $image->character->id }}"><i class="fas fa-cog"></i></a>
                             @endif
                         @endif

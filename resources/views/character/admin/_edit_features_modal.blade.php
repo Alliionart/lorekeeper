@@ -30,6 +30,51 @@
     {!! Form::select('rarity_id', $rarities, $image->rarity_id, ['class' => 'form-control']) !!}
 </div>
 
+<?php 
+    $size = $image->size ? json_decode($image->size) : null;
+    $size_rules = $image->subtype->size_data ? json_decode($image->subtype->size_data) : null;
+?>
+@if ($image->subtype->allow_wingspan)
+    <div class="form-group">
+        <div class="form-group">
+            <?php $range = ' | ' . $image->subtype->name . ': ' . $size_rules->wingspan->min . ' - ' . $size_rules->wingspan->max; ?>
+            {!! Form::label('Character Wingspan ' . $range . (isset($size_rules->wingspan) ? ' (' . $size_rules->wingspan->unit . ')' : '')) !!}
+            {!! Form::number('wingspan', $size->Wingspan ?? $size_rules->wingspan->min ?? null, ['class' => 'form-control', 'min' => $size_rules->wingspan->min, 'max' => $size_rules->wingspan->max]) !!}
+        </div>
+    </div>
+@endif
+@if ($image->subtype->allow_height)
+    <div class="form-group">
+        <?php $range = ' | ' . $image->subtype->name . ': ' . $size_rules->height->min . ' - ' . $size_rules->height->max; ?>
+        {!! Form::label('Character Height ' . $range . (isset($size_rules->height) ? ' (' . $size_rules->height->unit . ')' : '')) !!}
+        {!! Form::number('height', $size->Height ?? $size_rules->height->min ?? null, ['class' => 'form-control', 'min' => $size_rules->height->min, 'max' => $size_rules->height->max]) !!}
+    </div>
+@endif
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="form-group">
+            {!! Form::label('Character Age') !!}
+            {!! Form::select('age', [
+                'Unknown' => 'Unknown',
+                'Child' => 'Child',
+                'Teen' => 'Teen',
+                'Young Adult' => 'Young Adult',
+                'Adult' => 'Adult',
+                'Middle-Aged' => 'Middle-Aged',
+                'Elder' => 'Elder',
+                'Custom' => 'Custom',
+            ], $image->age, ['class' => 'form-control']) !!}
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="form-group custom-age-input {{ $image->age == 'Custom' ? '' : 'hide' }}">
+            {!! Form::label('Custom Age') !!}
+            {!! Form::number('custom_age', $image->age, ['class' => 'form-control', 'min' => 1, 'max' =>  100]) !!}
+        </div>
+    </div>
+</div>
+
 <div class="form-group">
     {!! Form::label('Traits') !!}
     <div><a href="#" class="btn btn-primary mb-2" id="add-feature">Add Trait</a></div>
@@ -103,6 +148,18 @@
             return '<div><span>' + escape(item["text"].trim()) + ' (' + escape(item["optgroup"].trim()) + ')' + '</span></div>';
         }
         refreshSubtype();
+
+        $('[name="age"]').change(function() {
+            if ($(this).val() == 'Custom') {
+                $('[name="custom_age"]').prop('disabled', false);
+                $('.custom-age-input').removeClass('hide');
+            } else {
+                $('[name="custom_age"]').prop('disabled', true);
+                $('.custom-age-input').addClass('hide');
+                $('[name="custom_age"]').val('');
+            }
+        });
+
     });
 
     $("#species").change(function() {

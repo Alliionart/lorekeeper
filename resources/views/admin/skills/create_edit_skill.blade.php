@@ -39,9 +39,19 @@
         {!! Form::textarea('description', $skill->description, ['class' => 'form-control wysiwyg']) !!}
     </div>
 
-    <div class="form-group">
-        {!! Form::label('Skill Category (Optional)') !!}
-        {!! Form::select('skill_category_id', $categories, $skill->skill_category_id, ['class' => 'form-control']) !!}
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-group">
+                {!! Form::label('Skill Category (Optional)') !!}
+                {!! Form::select('skill_category_id', $categories, $skill->skill_category_id, ['class' => 'form-control']) !!}
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                {!! Form::label('Skill Rarity (Optional)') !!}
+                {!! Form::select('rarity_id', $rarities, $skill->rarity_id, ['class' => 'form-control']) !!}
+            </div>
+        </div>
     </div>
 
     <div class="row">

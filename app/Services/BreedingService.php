@@ -128,6 +128,7 @@ class BreedingService extends Service {
             $marking_rates = [];
             $mutation_rates = [];
             $modifiers = [];
+            $inbreeding_rates = [];
 
             $db_keys = [
                 'marking_rates' => DB::table('site_settings')->where('key', 'marking_rates'),
@@ -210,6 +211,8 @@ class BreedingService extends Service {
             // }
             //\Log::info($subtype_rates);
 
+            
+
             if ($mutation_rates) {
                 //Refactor the array BEFORE saving
                 foreach ($mutation_rates as $i => $row) {
@@ -221,7 +224,6 @@ class BreedingService extends Service {
                 }
                 $this->saveBreedingSetting('mutation_rates', $mutation_rates);
             }
-            \Log::info($mutation_rates);
 
             $this->saveBreedingSetting('litter_config', $litter_config);
             $this->saveBreedingSetting('marking_rates', $marking_rates);

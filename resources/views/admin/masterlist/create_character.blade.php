@@ -257,18 +257,6 @@
             </label>
         </div>
 
-        @if ($stats)
-            <h3>Stats</h3>
-            <p class="alert alert-info">If you want a character to have different stats from the default, set them here. Else, leave it as default</p>
-            <div class="form-group" id="stats">
-                <p>Set species and/or subtype to edit stats.</p>
-            </div>
-        @endif
-
-        <div class="text-right">
-            {!! Form::submit('Create Character', ['class' => 'btn btn-primary']) !!}
-        </div>
-
         <h4><a href="#advanced_lineage" class="dropdown-toggle" data-toggle="collapse" data-target="#advanced_lineage" aria-expanded="false" aria-controls="advanced_lineage">
                 Advanced Lineage
             </a></h4>
@@ -279,10 +267,10 @@
                 @elseif ($i == 7)
                 </div>
                 <div class="col-md-6">
-    @endif
-    @endfor
-    </div>
-    </div>
+                @endif
+            @endfor
+            </div>
+        </div>
     </div>
 
     <h3>Traits</h3>
@@ -400,6 +388,14 @@
             <a href="#" class="remove-marking btn btn-danger mb-2">×</a>
         </div>
     </div>
+
+    @if ($stats)
+        <h3>Stats</h3>
+        <p class="alert alert-info">If you want a character to have different stats from the default, set them here. Else, leave it as default</p>
+        <div class="form-group" id="stats">
+            <p>Set species and/or subtype to edit stats.</p>
+        </div>
+    @endif
 
     <div class="text-right">
         {!! Form::submit('Create Character', ['class' => 'btn btn-primary', 'multiple' => true, 'placeholder' => 'Select Marking(s)']) !!}
