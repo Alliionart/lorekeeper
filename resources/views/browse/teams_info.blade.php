@@ -22,9 +22,6 @@
                 <div class="col-md-4 mb-4 d-flex">
                     <div class="card text-center flex-fill" style="border-width:0px">
                         <h5 class="mt-4">{!! $teams->name !!}</h5>
-                        @if($teams->relation)
-                            <i>Sub team of: {!! $teams->parent->name !!}</i>
-                        @endif
                         <p>{!! $teams->description !!}</p>
                         @if($teams->apps_open)
                             Applications are open!
