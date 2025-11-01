@@ -19,6 +19,7 @@ return new class extends Migration {
             $table->increments('id');
             $table->string('name');
             $table->text('description')->nullable()->default(null);
+            $table->integer('parent_type_id')->nullable()->default(null);
         });
     }
 

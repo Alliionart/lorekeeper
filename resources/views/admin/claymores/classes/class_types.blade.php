@@ -1,39 +1,40 @@
 @extends('admin.layout')
 
 @section('admin-title')
-    Character Class
+    Class Types
 @endsection
 
 @section('admin-content')
-    {!! breadcrumbs(['Admin Panel' => 'admin', 'Character Class' => 'admin/character-classes']) !!}
+    {!! breadcrumbs(['Admin Panel' => 'admin', 'Classes' => 'admin/character-classes', 'Types' => 'admin/character-classes/types']) !!}
 
-    <h1>Character Class</h1>
+    <h1>Class Types</h1>
 
-    <p>This is a list of character class that will be used to classify characters. Creating character class is entirely optional, but recommended for organisational purposes.</p>
-    <p>The sorting order reflects the order in which the character class will be displayed on the world pages.</p>
+    <p>This is a list of types that connect to classes.</p>
 
-    <div class="text-right mb-3"><a class="btn btn-primary" href="{{ url('admin/character-classes/types') }}"><i class="fas fa-folder"></i> Class Types</a> <a class="btn btn-primary" href="{{ url('admin/character-classes/create') }}"><i class="fas fa-plus"></i> Create New Character Class</a></div>
-    @if (!count($class))
-        <p>No character classes found.</p>
+    <div class="text-right mb-3"><a class="btn btn-primary mr-3" href="{{ url('admin/character-classes/') }}"><i class="fas fa-arrow-left mr-2"></i>Back</a><a class="btn btn-primary" href="{{ url('admin/character-classes/types/create') }}"><i class="fas fa-plus"></i> Create
+            New Type</a></div>
+    @if (!count($types))
+        <p>No Class Types found.</p>
     @else
         <table class="table table-sm category-table">
             <thead>
                 <tr>
                     <th>Class</th>
+                    <th>Parent</th>
                     <th></th>
                 </tr>
             </thead>
             <tbody>
-                @foreach ($class as $category)
+                @foreach ($types as $type)
                     <tr>
                         <td>
-                            @if (!$category->is_visible)
-                                <i class="fas fa-eye-slash mr-1"></i>
-                            @endif
-                            {!! $category->displayName !!}
+                            {!! $type->displayName !!}
+                        </td>
+                        <td>
+                            {{ $type->parent_type_id ? $type->parent->name : '' }}
                         </td>
                         <td class="text-right">
-                            <a href="{{ url('admin/character-classes/edit/' . $category->id) }}" class="btn btn-primary">Edit</a>
+                            <a href="{{ url('admin/classes/edit/' . $type->id) }}" class="btn btn-primary">Edit</a>
                         </td>
                     </tr>
                 @endforeach

@@ -739,6 +739,15 @@ Route::group(['prefix' => 'character-classes', 'namespace' => 'Claymores', 'midd
     Route::post('edit/{id?}', 'CharacterClassController@postCreateEditCharacterClass');
     Route::post('delete/{id}', 'CharacterClassController@postDeleteCharacterClass');
     Route::post('sort', 'CharacterClassController@postSortCharacterClass');
+
+    //Types
+    Route::get('types', 'CharacterClassTypeController@getIndex');
+    Route::get('types/create', 'CharacterClassTypeController@getCreateClassType');
+    Route::get('types/edit/{id}', 'CharacterClassTypeController@getEditClassType');
+    Route::get('types/delete/{id}', 'CharacterClassTypeController@getDeleteClassType');
+    Route::post('types/create', 'CharacterClassTypeController@postCreateEditClassType');
+    Route::post('types/edit/{id}', 'CharacterClassTypeController@postCreateEditClassType');
+    Route::post('types/delete/{id}', 'CharacterClassTypeController@postDeleteClassType');
 });
 
 Route::group(['prefix' => 'typing', 'middleware' => 'power:edit_data', 'namespace' => 'Data'], function () {
