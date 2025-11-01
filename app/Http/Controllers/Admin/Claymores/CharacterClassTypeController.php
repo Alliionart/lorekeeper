@@ -55,7 +55,7 @@ class CharacterClassTypeController extends Controller {
 
         return view('admin.claymores.classes.create_edit_type', [
             'type'     => $type,
-            'types' => CharacterClassType::pluck('name', 'id')->toArray(),
+            'types'    => CharacterClassType::pluck('name', 'id')->toArray(),
         ]);
     }
 
@@ -63,7 +63,7 @@ class CharacterClassTypeController extends Controller {
      * Creates or edits a character class.
      *
      * @param App\Services\ClassTypeService $service
-     * @param int|null                           $id
+     * @param int|null                      $id
      *
      * @return \Illuminate\Http\RedirectResponse
      */
@@ -106,7 +106,7 @@ class CharacterClassTypeController extends Controller {
      * Deletes a character class.
      *
      * @param App\Services\ClassTypeService $service
-     * @param int                                $id
+     * @param int                           $id
      *
      * @return \Illuminate\Http\RedirectResponse
      */

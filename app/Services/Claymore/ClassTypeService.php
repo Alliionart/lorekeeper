@@ -2,8 +2,8 @@
 
 namespace App\Services\Claymore;
 
-use App\Models\Character\CharacterClassType;
 use App\Models\Character\CharacterClass;
+use App\Models\Character\CharacterClassType;
 use App\Services\Service;
 use Illuminate\Support\Facades\DB;
 
@@ -44,7 +44,7 @@ class ClassTypeService extends Service {
      * Update a class.
      *
      * @param CharacterClassType $class
-     * @param array          $data
+     * @param array              $data
      *
      * @return bool|CharacterClassType
      */
@@ -97,7 +97,7 @@ class ClassTypeService extends Service {
     /**
      * Handle class data.
      *
-     * @param array               $data
+     * @param array                   $data
      * @param CharacterClassType|null $class
      *
      * @return array

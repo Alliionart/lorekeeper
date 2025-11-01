@@ -11,7 +11,7 @@ class CharacterClassType extends Model {
      * @var array
      */
     protected $fillable = [
-        'name', 'description', 'parent_type_id'
+        'name', 'description', 'parent_type_id',
     ];
 
     /**
@@ -53,7 +53,7 @@ class CharacterClassType extends Model {
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function parent() {
-        return $this->belongsTo(CharacterClassType::class, 'parent_type_id');
+        return $this->belongsTo(self::class, 'parent_type_id');
     }
 
     /**********************************************************************************************
