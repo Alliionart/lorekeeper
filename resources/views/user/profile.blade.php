@@ -21,7 +21,7 @@
 
     @if ($user->is_deactivated)
         <div class="alert alert-info text-center">
-            <h1>{!! $user->isOnline() !!} {!! $user->displayName !!}</h1>
+            <h1>{!! $user->displayName !!}</h1>
             <p>This account is currently deactivated, be it by staff or the user's own action. All information herein is hidden until the account is reactivated.</p>
             @if (Auth::check() && Auth::user()->isStaff)
                 <p class="mb-0">As you are staff, you can see the profile contents below and the sidebar contents.</p>
