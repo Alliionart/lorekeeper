@@ -420,11 +420,17 @@ class Character extends Model {
         $Item_bgs = BackgroundCondition::where('type', 'Item')->whereIn('value', $characters_bg_items)->pluck('background_id')->toArray();
 
         //Character Award BGs
+        $unique_bg_awards = BackgroundCondition::where('type', 'Award')->where('location', $location)->distinct()->pluck('value', 'background_id')->toArray();
+        $award_ids = array_values($unique_bg_awards);
+        $characters_bg_awards = $this->awards()->whereIn('awards.id', $award_ids)->pluck('awards.id')->toArray();
+        $Award_bgs = BackgroundCondition::where('type', 'Award')->whereIn('value', $characters_bg_awards)->pluck('background_id')->toArray();
 
         //Character Guild BGs
-
         if ($Item_bgs) {
             $applicable_bgs_raw['Items'] = $Item_bgs;
+        }
+        if ($Award_bgs) {
+            $applicable_bgs_raw['Awards'] = $Award_bgs;
         }
         if ($Status_bgs) {
             $applicable_bgs_raw['Status'] = $Status_bgs;

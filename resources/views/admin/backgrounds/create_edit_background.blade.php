@@ -85,7 +85,7 @@
 
     <div class="form-group">
         {!! Form::label('Applicable Awards') !!}{!! add_help('What awards the character needs to use this background.') !!}
-        {!! Form::select('award_id[]', [], array_key_exists('Award', $conditions) ? $conditions['Award'] : null, ['class' => 'form-control selectize', 'multiple']) !!}
+        {!! Form::select('award_id[]', $awards, array_key_exists('Award', $conditions) ? $conditions['Award'] : null, ['class' => 'form-control selectize', 'multiple']) !!}
     </div>
 
     <div class="form-group">

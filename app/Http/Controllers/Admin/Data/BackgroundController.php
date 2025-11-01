@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Background\Background;
 use App\Models\Item\Item;
 use App\Models\User\User;
+use \App\Models\Award\Award;
 use App\Services\BackgroundService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -53,6 +54,7 @@ class BackgroundController extends Controller {
             'users'         => User::query()->orderBy('name')->pluck('name', 'id')->toArray(),
             'locations'     => array_combine($locations, $locations),
             'items'         => ['' => 'None'] + Item::orderBy('name')->pluck('name', 'id')->toArray(),
+            'awards'        => ['' => 'None'] + Award::orderBy('name')->pluck('name', 'id')->toArray(),
         ]);
     }
 
@@ -77,6 +79,7 @@ class BackgroundController extends Controller {
             'users'         => User::query()->orderBy('name')->pluck('name', 'id')->toArray(),
             'locations'     => array_combine($locations, $locations),
             'items'         => ['' => 'None'] + Item::orderBy('name')->pluck('name', 'id')->toArray(),
+            'awards'        => ['' => 'None'] + Award::orderBy('name')->pluck('name', 'id')->toArray(),
         ]);
     }
 
