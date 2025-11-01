@@ -18,6 +18,7 @@
         <div class="sidebar-item"><a href="{{ $user->url . '/myos' }}" class="{{ set_active('user/' . $user->name . '/myos*') }}">Genotypes</a></div>
         <div class="sidebar-item"><a href="{{ $user->url . '/breeding-permissions' }}" class="{{ set_active('user/' . $user->name . '/breeding-permissions*') }}">Breeding Permissions</a></div>
         <div class="sidebar-item"><a href="{{ $user->url . '/inventory' }}" class="{{ set_active('user/' . $user->name . '/inventory*') }}">Inventory</a></div>
+        <div class="sidebar-item"><a href="{{ $user->url . '/' . __('awards.awardcase') }}" class="{{ set_active('user/' . $user->name . '/awardcase*') }}">{{ ucfirst(ucfirst(__('awards.awardcase'))) }}</a></div>
         <div class="sidebar-item"><a href="{{ $user->url . '/bank' }}" class="{{ set_active('user/' . $user->name . '/bank*') }}">Bank</a></div>
         <div class="sidebar-item"><a href="{{ $user->url . '/pets' }}" class="{{ set_active('user/' . $user->name . '/pets*') }}">Pets</a></div>
         <div class="sidebar-item"><a href="{{ $user->url . '/armoury' }}" class="{{ set_active('user/' . $user->name . '/armoury*') }}">Armoury</a></div>
@@ -31,6 +32,7 @@
         <div class="sidebar-item"><a href="{{ $user->url . '/currency-logs' }}" class="{{ set_active($user->url . '/currency-logs*') }}">Currency Logs</a></div>
         <div class="sidebar-item"><a href="{{ $user->url . '/pet-logs' }}" class="{{ set_active($user->url . '/pet-logs*') }}">Pet Logs</a></div>
         <div class="sidebar-item"><a href="{{ $user->url . '/submissions' }}" class="{{ set_active($user->url . '/submissions*') }}">Submissions</a></div>
+        <div class="sidebar-item"><a href="{{ $user->url . '/' . __('awards.award') . '-logs' }}" class="{{ set_active($user->url . '/award-logs*') }}">{{ ucfirst(ucfirst(__('awards.award'))) }} Logs</a></div>
     </li>
 
     @if (Auth::check() && Auth::user()->hasPower('edit_user_info'))

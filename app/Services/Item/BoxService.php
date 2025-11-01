@@ -89,6 +89,9 @@ class BoxService extends Service {
                     case 'Weapon':
                         $type = 'App\Models\Claymore\Weapon';
                         break;
+                    case 'Award':
+                        $type = 'App\Models\Award\Award';
+                        break;
                     case 'LootTable':
                         $type = 'App\Models\Loot\LootTable';
                         break;

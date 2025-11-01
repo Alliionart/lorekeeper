@@ -2,6 +2,7 @@
 
 namespace App\Models\User;
 
+use App\Models\Award\AwardLog;
 use App\Models\Character\Character;
 use App\Models\Character\CharacterBookmark;
 use App\Models\Character\CharacterImageCreator;
@@ -27,6 +28,7 @@ use App\Models\Shop\ShopLog;
 use App\Models\Stat\ExpLog;
 use App\Models\Stat\StatTransferLog;
 use App\Models\Submission\Submission;
+use App\Models\Award\Award;
 use App\Traits\Commenter;
 use Carbon\Carbon;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -185,6 +187,13 @@ class User extends Authenticatable implements MustVerifyEmail {
      */
     public function pets() {
         return $this->belongsToMany(Pet::class, 'user_pets')->withPivot('data', 'updated_at', 'id', 'variant_id', 'character_id', 'pet_name', 'has_image', 'evolution_id')->whereNull('user_pets.deleted_at');
+    }
+
+    /**
+     * Get the user's awards.
+     */
+    public function awards() {
+        return $this->belongsToMany(Award::class, 'user_awards')->withPivot('count', 'data', 'updated_at', 'id')->whereNull('user_awards.deleted_at');
     }
 
     /**
@@ -753,6 +762,27 @@ class User extends Authenticatable implements MustVerifyEmail {
         })->orderBy('id', 'DESC');
 
         return $query->paginate(30);
+    }
+
+    /**
+     * Get the user's award logs.
+     *
+     * @param int $limit
+     *
+     * @return \Illuminate\Pagination\LengthAwarePaginator|\Illuminate\Support\Collection
+     */
+    public function getAwardLogs($limit = 10) {
+        $user = $this;
+        $query = AwardLog::with('award')->where(function ($query) use ($user) {
+            $query->with('sender')->where('sender_type', 'User')->where('sender_id', $user->id)->whereNotIn('log_type', ['Staff Grant', 'Prompt Rewards', 'Claim Rewards']);
+        })->orWhere(function ($query) use ($user) {
+            $query->with('recipient')->where('recipient_type', 'User')->where('recipient_id', $user->id)->where('log_type', '!=', 'Staff Removal');
+        })->orderBy('id', 'DESC');
+        if ($limit) {
+            return $query->take($limit)->get();
+        } else {
+            return $query->paginate(30);
+        }
     }
 
     /**

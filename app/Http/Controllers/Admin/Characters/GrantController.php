@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin\Characters;
 use App\Http\Controllers\Controller;
 use App\Models\Character\Character;
 use App\Models\Currency\Currency;
+use App\Services\AwardCaseManager;
 use App\Services\CurrencyManager;
 use App\Services\InventoryManager;
 use App\Services\StatusEffectManager;
@@ -66,6 +67,27 @@ class GrantController extends Controller {
         $data = $request->only(['status_id', 'quantity', 'data']);
         if ($service->grantCharacterStatusEffects($data, Character::where('slug', $slug)->first(), Auth::user())) {
             flash('Status effect granted successfully.')->success();
+        } else {
+            foreach ($service->errors()->getMessages()['error'] as $error) {
+                flash($error)->error();
+            }
+        }
+
+        return redirect()->back();
+    }
+
+    /**
+    * Grants awards to characters.
+     *
+     * @param string                        $slug
+     * @param App\Services\InventoryManager $service
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function postCharacterAwards($slug, Request $request, AwardCaseManager $service) {
+        $data = $request->only(['award_ids', 'quantities', 'data', 'disallow_transfer', 'notes']);
+        if ($service->grantCharacterAwards($data, Character::where('slug', $slug)->first(), Auth::user())) {
+            flash(ucfirst(__('awards.awards')).' granted successfully.')->success();
         } else {
             foreach ($service->errors()->getMessages()['error'] as $error) {
                 flash($error)->error();

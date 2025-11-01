@@ -178,4 +178,10 @@ class Notification extends Model {
     public const FORCED_BREEDING_PERMISSION_TRANSFER = 520;
     public const CHARACTER_STATUS_GRANT = 521;
     public const CHARACTER_STATUS_REMOVAL = 522;
+    public const AWARD_GRANT = 341;
+    public const AWARD_REMOVAL = 342;
+    public const AWARD_TRANSFER = 343;
+    public const FORCED_AWARD_TRANSFER = 344;
+    public const CHARACTER_AWARD_GRANT = 345;
+    public const CHARACTER_AWARD_REMOVAL = 346;
 }
