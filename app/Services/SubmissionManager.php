@@ -476,7 +476,7 @@ class SubmissionManager extends Service {
                     'tables'       => $tables,
                     'elements'     => $elements,
                     'statuses'     => $statuses,
-                    'awards'       => $awards
+                    'awards'       => $awards,
                 ], true);
 
                 if (!$assets = fillCharacterAssets($assets, $user, $c, $promptLogType, $promptData, $submission->user)) {

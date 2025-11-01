@@ -4,10 +4,10 @@ namespace App\Http\Controllers\Characters;
 
 use App\Facades\Settings;
 use App\Http\Controllers\Controller;
-use App\Models\Background\Background;
-use App\Models\Character\BreedingPermission;
 use App\Models\Award\Award;
 use App\Models\Award\AwardCategory;
+use App\Models\Background\Background;
+use App\Models\Character\BreedingPermission;
 use App\Models\Character\Character;
 use App\Models\Character\CharacterAward;
 use App\Models\Character\CharacterCurrency;
@@ -394,11 +394,11 @@ class CharacterController extends Controller {
         ]);
     }
 
-    /** 
+    /**
      * Shows a character's awards.
-     * 
+     *
      * @param string $slug
-     * 
+     *
      * @return \Illuminate\Contracts\Support\Renderable
      */
     public function getCharacterAwards($slug) {
@@ -569,12 +569,12 @@ class CharacterController extends Controller {
         return redirect()->back();
     }
 
-    /**     
+    /**
      * Handles inventory award processing, including transferring awards between the user and character.
-     * 
+     *
      * @param App\Services\CharacterManager $service
      * @param string                        $slug
-     * 
+     *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function postAwardEdit(Request $request, AwardCaseManager $service, $slug) {
@@ -756,14 +756,13 @@ class CharacterController extends Controller {
         ]);
     }
 
-    /**     
-    * Shows a character's award logs.
-     * 
+    /**
+     * Shows a character's award logs.
+     *
      * @param mixed $slug
-     * 
+     *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-
     public function getCharacterAwardLogs($slug) {
         return view('character.award_logs', [
             'character' => $this->character,
@@ -1014,7 +1013,7 @@ class CharacterController extends Controller {
         return redirect()->back();
     }
 
-    /**     
+    /**
      * Transfers inventory awards back to a user.
      *
      * @param App\Services\InventoryManager $service

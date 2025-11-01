@@ -2,6 +2,7 @@
 
 namespace App\Models\User;
 
+use App\Models\Award\Award;
 use App\Models\Award\AwardLog;
 use App\Models\Character\Character;
 use App\Models\Character\CharacterBookmark;
@@ -28,7 +29,6 @@ use App\Models\Shop\ShopLog;
 use App\Models\Stat\ExpLog;
 use App\Models\Stat\StatTransferLog;
 use App\Models\Submission\Submission;
-use App\Models\Award\Award;
 use App\Traits\Commenter;
 use Carbon\Carbon;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
