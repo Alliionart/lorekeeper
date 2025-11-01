@@ -49,7 +49,7 @@
     <div class="mb-4 logs-table">
         <div class="logs-table-header">
             <div class="row">
-                <div class="col-12 col-md-4">
+                <div class="col-12 col-md-3">
                     <div class="logs-table-cell">Username</div>
                 </div>
                 <div class="col-4 col-md-3">
@@ -61,14 +61,17 @@
                 <div class="col-4 col-md-3">
                     <div class="logs-table-cell">Joined</div>
                 </div>
+                <div class="col-4 col-md-1 font-weight-bold">
+                    <div class="logs-table-cell">Last Seen</div>
+                </div>
             </div>
         </div>
         <div class="logs-table-body">
             @foreach ($users as $user)
                 <div class="logs-table-row">
                     <div class="row flex-wrap">
-                        <div class="col-12 col-md-4">
-                            <div class="logs-table-cell">{!! $user->displayName !!}</div>
+                        <div class="col-12 col-md-3">
+                            <div class="logs-table-cell">{!! $user->isOnline() !!} {!! $user->displayName !!}</div>
                         </div>
                         <div class="col-4 col-md-3">
                             <div class="logs-table-cell">{!! $user->displayAlias !!}</div>
@@ -78,6 +81,9 @@
                         </div>
                         <div class="col-4 col-md-3">
                             <div class="logs-table-cell">{!! pretty_date($user->created_at, false) !!}</div>
+                        </div>
+                        <div class="col-4 col-md-1">
+                            {{ isset($user->last_seen) ? Carbon\Carbon::parse($user->last_seen)->diffForHumans() : '-' }}
                         </div>
                     </div>
                 </div>

@@ -78,4 +78,12 @@ return [
         ]),
         'version' => '1.0.2',
     ],
+    'is_online' => [
+        'key' => 'is_online',
+        'wiki_key' => 'Online_Status',
+        'creators' => json_encode([
+            'Uri' => 'https://github.com/preimpression/',
+        ]),
+        'version' => '2.0.0',
+    ],
 ];
