@@ -11,7 +11,8 @@
 
     <p>This is a list of types that connect to classes.</p>
 
-    <div class="text-right mb-3"><a class="btn btn-primary mr-3" href="{{ url('admin/character-classes/') }}"><i class="fas fa-arrow-left mr-2"></i>Back</a><a class="btn btn-primary" href="{{ url('admin/character-classes/types/create') }}"><i class="fas fa-plus"></i> Create
+    <div class="text-right mb-3"><a class="btn btn-primary mr-3" href="{{ url('admin/character-classes/') }}"><i class="fas fa-arrow-left mr-2"></i>Back</a><a class="btn btn-primary" href="{{ url('admin/character-classes/types/create') }}"><i
+                class="fas fa-plus"></i> Create
             New Type</a></div>
     @if (!count($types))
         <p>No Class Types found.</p>

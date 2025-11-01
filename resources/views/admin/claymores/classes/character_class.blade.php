@@ -12,7 +12,8 @@
     <p>This is a list of character class that will be used to classify characters. Creating character class is entirely optional, but recommended for organisational purposes.</p>
     <p>The sorting order reflects the order in which the character class will be displayed on the world pages.</p>
 
-    <div class="text-right mb-3"><a class="btn btn-primary" href="{{ url('admin/character-classes/types') }}"><i class="fas fa-folder"></i> Class Types</a> <a class="btn btn-primary" href="{{ url('admin/character-classes/create') }}"><i class="fas fa-plus"></i> Create New Character Class</a></div>
+    <div class="text-right mb-3"><a class="btn btn-primary" href="{{ url('admin/character-classes/types') }}"><i class="fas fa-folder"></i> Class Types</a> <a class="btn btn-primary" href="{{ url('admin/character-classes/create') }}"><i class="fas fa-plus"></i>
+            Create New Character Class</a></div>
     @if (!count($class))
         <p>No character classes found.</p>
     @else

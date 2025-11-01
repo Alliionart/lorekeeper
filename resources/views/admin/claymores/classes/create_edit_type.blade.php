@@ -5,7 +5,12 @@
 @endsection
 
 @section('admin-content')
-    {!! breadcrumbs(['Admin Panel' => 'admin', 'Character Classes' => 'admin/character-classes', 'Class Types' => 'admin/character-classes/types', ($type->id ? 'Edit' : 'Create') . ' Types' => $type->id ? 'admin/character-classes/type/edit/' . $type->id : 'admin/character-classes/type/create']) !!}
+    {!! breadcrumbs([
+        'Admin Panel' => 'admin',
+        'Character Classes' => 'admin/character-classes',
+        'Class Types' => 'admin/character-classes/types',
+        ($type->id ? 'Edit' : 'Create') . ' Types' => $type->id ? 'admin/character-classes/type/edit/' . $type->id : 'admin/character-classes/type/create',
+    ]) !!}
 
     <h1>{{ $type->id ? 'Edit' : 'Create' }} Type
         @if ($type->id)
