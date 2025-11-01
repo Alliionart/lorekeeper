@@ -37,27 +37,27 @@
     <p>You can add any kind of currencies (both user- and character-attached), but be sure to keep track of which are being distributed! Character-only currencies cannot be given to users.</p>
 
     <!-- <div class="text-right mb-3">
-                                                            <a href="#" class="btn btn-info addLoot" id="addLoot">Add Loot</a>
-                                                        </div>
-                                                        <table class="table table-sm lootTable" id="lootTable">
-                                                            <thead>
-                                                                <tr>
-                                                                    <th width="25%">Loot Type</th>
-                                                                    <th width="35%">Reward</th>
-                                                                    <th width="10%">Quantity</th>
-                                                                    <th width="10%">Weight {!! add_help('A higher weight means a reward is more likely to be rolled. Weights have to be integers above 0 (round positive number, no decimals) and do not have to add up to be a particular number.') !!}</th>
-                                                                    <th width="10%">Chance</th>
-                                                                    <th width="10%"></th>
-                                                                </tr>
-                                                            </thead>
-                                                            <tbody class="lootTableBody" id="lootTableBody">
-                                                                @if ($table->id)
+                                                                <a href="#" class="btn btn-info addLoot" id="addLoot">Add Loot</a>
+                                                            </div>
+                                                            <table class="table table-sm lootTable" id="lootTable">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th width="25%">Loot Type</th>
+                                                                        <th width="35%">Reward</th>
+                                                                        <th width="10%">Quantity</th>
+                                                                        <th width="10%">Weight {!! add_help('A higher weight means a reward is more likely to be rolled. Weights have to be integers above 0 (round positive number, no decimals) and do not have to add up to be a particular number.') !!}</th>
+                                                                        <th width="10%">Chance</th>
+                                                                        <th width="10%"></th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody class="lootTableBody" id="lootTableBody">
+                                                                    @if ($table->id)
     @foreach ($table->loot()->whereNull('subtable_id')->get() as $loot)
     @include('admin.loot_tables._loot_entry')
     @endforeach
     @endif
-                                                            </tbody>
-                                                        </table> -->
+                                                                </tbody>
+                                                            </table> -->
     </div>
 
     <h4>Status Effect Adjustments</h4>
