@@ -4,10 +4,10 @@ namespace App\Http\Controllers\Admin\Data;
 
 use App\Facades\Settings;
 use App\Http\Controllers\Controller;
+use App\Models\Award\Award;
 use App\Models\Background\Background;
 use App\Models\Item\Item;
 use App\Models\User\User;
-use \App\Models\Award\Award;
 use App\Services\BackgroundService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
