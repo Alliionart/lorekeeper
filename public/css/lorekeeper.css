@@ -898,3 +898,12 @@ tr.accountbound {
     /* darken bg-color */
     background-color: rgba(0,0,0,0.05) !important;
 }
+
+/* Mini Clock */
+.clock-styling {
+    padding: 5px 15px;
+    border-radius: 15px 15px;
+    margin-bottom: .5em;
+    color: #fff;
+    letter-spacing: .05em;
+}
