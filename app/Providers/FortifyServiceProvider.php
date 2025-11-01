@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Fortify\Fortify;
 use Route;
+use App\Models\Theme;
 
 class FortifyServiceProvider extends ServiceProvider {
     /**
@@ -47,6 +48,7 @@ class FortifyServiceProvider extends ServiceProvider {
         Fortify::registerView(fn () => view('auth.register', [
             'userCount'        => User::count(),
             'altRegistrations' => $altRegistrations,
+            'defaultTheme' => Theme::where('is_default',true)->first()
         ]));
 
         $altLogins = array_filter(config('lorekeeper.sites'), function ($item) {
@@ -55,6 +57,7 @@ class FortifyServiceProvider extends ServiceProvider {
         Fortify::loginView(fn () => view('auth.login', [
             'userCount' => User::count(),
             'altLogins' => $altLogins,
+            'defaultTheme' => Theme::where('is_default',true)->first()
         ]));
 
         Fortify::requestPasswordResetLinkView(fn () => view('auth.passwords.forgot'));

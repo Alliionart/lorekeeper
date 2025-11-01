@@ -16,6 +16,7 @@ use App\Models\Currency\Currency;
 use App\Models\Currency\CurrencyLog;
 use App\Models\Gallery\GalleryCollaborator;
 use App\Models\Gallery\GalleryFavorite;
+use App\Models\Theme;
 use App\Models\Gallery\GallerySubmission;
 use App\Models\Item\Item;
 use App\Models\Item\ItemLog;
@@ -47,7 +48,7 @@ class User extends Authenticatable implements MustVerifyEmail {
      * @var array
      */
     protected $fillable = [
-        'name', 'alias', 'rank_id', 'email', 'email_verified_at', 'password', 'is_news_unread', 'is_banned', 'has_alias', 'avatar', 'is_sales_unread', 'birthday',
+        'name', 'alias', 'rank_id', 'email', 'email_verified_at', 'password', 'is_news_unread', 'is_banned', 'has_alias', 'avatar', 'is_sales_unread', 'birthday', 'theme_id', 'decorator_theme_id',
         'is_deactivated', 'deactivater_id', 'last_seen',
     ];
 
@@ -104,6 +105,32 @@ class User extends Authenticatable implements MustVerifyEmail {
      */
     public function settings() {
         return $this->hasOne(UserSettings::class);
+    }
+
+    /**
+     * Get user theme.
+     */
+    public function theme()
+    {
+        return $this->belongsTo('App\Models\Theme');
+    }
+
+    /**
+     * Get user decorator .
+     */
+    public function decoratorTheme() {
+        return $this->belongsTo('App\Models\Theme', 'decorator_theme_id');
+    }
+
+
+    /**
+     * Get User Granted Themes 
+     */
+    /**
+     * Get user theme.
+     */
+    public function themes() {
+        return $this->belongsToMany('App\Models\Theme', 'user_themes')->withPivot('id');
     }
 
     /**
@@ -290,6 +317,18 @@ class User extends Authenticatable implements MustVerifyEmail {
 
      **********************************************************************************************/
 
+    /**
+     * Checks if the user has the named recipe
+     *
+     * @return bool
+     */
+    public function hasTheme($theme_id) {
+        $theme = Theme::find($theme_id);
+        $user_has = $this->recipes && $this->recipes->contains($theme);
+        $default = $theme->is_user_selectable;
+        return $default ? true : $user_has;
+    }
+    
     /**
      * Get the user's alias.
      *

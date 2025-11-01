@@ -28,6 +28,9 @@
             ->pluck('name', 'id');
     }
     $awards = \App\Models\Award\Award::orderBy('name')->pluck('name', 'id');
+    if (isset($showThemes) && $showThemes) {
+         $themes = \App\Models\Theme::orderBy('name')->where('is_user_selectable', 0)->pluck('name', 'id');
+    }
 @endphp
 
 <div class="text-right mb-3">
@@ -50,7 +53,8 @@
                         'rewardable_type[]',
                         ['Item' => 'Item', 'Currency' => 'Currency', 'Award' => ucfirst(__('awards.award')), 'Pet' => 'Pet', 'Gear' => 'Gear', 'Weapon' => 'Weapon', 'Exp' => 'Exp', 'Points' => 'Stat Points'] +
                             ($showLootTables ? ['LootTable' => 'Loot Table'] : []) +
-                            ($showRaffles ? ['Raffle' => 'Raffle Ticket'] : []),
+                            ($showRaffles ? ['Raffle' => 'Raffle Ticket'] : []) +
+                            (isset($showThemes) && $showThemes ? ['Theme' => 'Theme'] : []),
                         $loot->rewardable_type,
                         ['class' => 'form-control reward-type', 'placeholder' => 'Select Reward Type'],
                     ) !!}</td>
@@ -75,6 +79,8 @@
                             {!! Form::text('rewardable_id[]', null, ['class' => 'form-control hide claymore-select', 'placeholder' => 'Enter Reward']) !!}
                         @elseif($loot->rewardable_type == 'Award')
                             {!! Form::select('rewardable_id[]', $awards, $loot->rewardable_id, ['class' => 'form-control award-select selectize', 'placeholder' => 'Select ' . ucfirst(__('awards.award'))]) !!}
+                        @elseif(isset($showThemes) && $showThemes && $loot->rewardable_type == 'Theme')
+                            {!! Form::select('rewardable_id[]', $themes, $loot->rewardable_id, ['class' => 'form-control theme-select selectize', 'placeholder' => 'Select Theme']) !!}
                         @endif
                     </td>
                     <td>{!! Form::text('quantity[]', $loot->quantity, ['class' => 'form-control']) !!}</td>

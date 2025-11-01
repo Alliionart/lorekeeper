@@ -54,4 +54,9 @@ return [
         'text_color'       => '#ffffff',
         'background_color' => '#693772',
     ],
+    'theme' => [
+        'name' => 'Theme',
+        'text_color' => "#ffffff",
+        'background_color' => '#573f7e'
+    ],
 ];

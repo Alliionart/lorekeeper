@@ -26,28 +26,24 @@ class MyoController extends Controller {
     /**
      * Create a new controller instance.
      */
-    public function __construct() {
+    public function __construct()
+    {
+        parent::__construct();
         $this->middleware(function ($request, $next) {
             $id = Route::current()->parameter('id');
             $check = Character::where('id', $id)->first();
-            if (!$check) {
-                abort(404);
-            }
+            if(!$check) abort(404);
 
-            if ($check->is_myo_slot) {
+            if($check->is_myo_slot) {
                 $query = Character::myo(1)->where('id', $id);
-                if (!(Auth::check() && Auth::user()->hasPower('manage_characters'))) {
-                    $query->where('is_visible', 1);
-                }
+                if(!(Auth::check() && Auth::user()->hasPower('manage_characters'))) $query->where('is_visible', 1);
                 $this->character = $query->first();
-                if (!$this->character) {
-                    abort(404);
-                }
+                if(!$this->character) abort(404);
                 $this->character->updateOwner();
-
                 return $next($request);
-            } else {
-                return redirect('/character/'.$check->slug);
+            }
+            else {
+                return redirect('/character/' . $check->slug);
             }
         });
     }
