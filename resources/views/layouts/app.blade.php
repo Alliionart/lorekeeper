@@ -274,7 +274,7 @@
                     setInterval(function() {
                         var date = new Date(); // initial date, this acts kinda like a first carbon instance so we can preform functions on it
                         var time = new Date(date.getTime() + 60 * 60 *
-                        1000); // preform function on first date (basically get time in timestamp format, the 60*60*1000 is an offset of +1 hour. To do other timezones just convert it to the necessary amount of hours +- UTC
+                            1000); // preform function on first date (basically get time in timestamp format, the 60*60*1000 is an offset of +1 hour. To do other timezones just convert it to the necessary amount of hours +- UTC
                         var cycle = time.getUTCHours() >= 12 ? ' PM' : ' AM'; // this gets the hour in military time so if it's greater than 12 it's pm
                         // substr is a function that'll knock of certain letters from a given input. 
                         // Because ours is -2, if we have 001, it'll read as 01. If we have 042, it'll be 42
