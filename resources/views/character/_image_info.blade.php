@@ -60,13 +60,13 @@
                         <div class="col-lg-4 col-5">
                             <h5>Age</h5>
                         </div>
-                        <div class="col-lg-8 col-7 pl-1">{!! (is_numeric($image->age) ? $image->age .  ' Years' : 'Unknown') !!}</div>
+                        <div class="col-lg-8 col-7 pl-1">{!! is_numeric($image->age) ? $image->age . ' Years' : 'Unknown' !!}</div>
                     </div>
                 @endif
                 @if ($image->size)
-                    <?php 
-                        $size = json_decode($image->size);
-                        $size_rules = $image->subtype->size_data ? json_decode($image->subtype->size_data) : null;
+                    <?php
+                    $size = json_decode($image->size);
+                    $size_rules = $image->subtype->size_data ? json_decode($image->subtype->size_data) : null;
                     ?>
                     @if (isset($size->Wingspan))
                         <div class="row no-gutters">

@@ -355,10 +355,10 @@
                     <div id="collapseSkills" class="collapse" aria-labelledby="headingSkills" data-parent="#breedingRatesAccordion">
                         <div class="card-body">
                             @if ($skillRarities)
-                                @foreach($skillRarities as $id => $name) 
+                                @foreach ($skillRarities as $id => $name)
                                     <div class="d-flex form-group mb-2">
                                         <div class="mr-2" style="min-width:200px;">{{ $name }} Skills (Drop rate (%))</div>
-                                        {!! Form::number('skill_rate__'.$id, null, ['class' => 'form-control', 'id' => 'skill', 'min' => 0, 'step' => 'any', 'max' => 100]) !!}
+                                        {!! Form::number('skill_rate__' . $id, null, ['class' => 'form-control', 'id' => 'skill', 'min' => 0, 'step' => 'any', 'max' => 100]) !!}
                                     </div>
                                 @endforeach
                             @endif
@@ -418,14 +418,14 @@
             <div class="form-group">
                 <p>Note that these are automatically pulled from the set Inbreeding trait category. If you would like to change this, you can do so in the site settings. Stillborn does NOT need to be added, as it is automatic.</p>
 
-                @foreach($inbreeding_traits as $id => $name)
+                @foreach ($inbreeding_traits as $id => $name)
                     <div class="d-flex form-group mb-2">
                         <div class="mr-2" style="min-width:200px;">{{ $name }} (Drop rate (%))</div>
-                        {!! Form::number('inbreeding_trait__'.$id, null, ['class' => 'form-control', 'id' => 'skill', 'min' => 0, 'step' => 'any', 'max' => 100]) !!}
+                        {!! Form::number('inbreeding_trait__' . $id, null, ['class' => 'form-control', 'id' => 'skill', 'min' => 0, 'step' => 'any', 'max' => 100]) !!}
                     </div>
                 @endforeach
                 <pre style="background-color:#ccc">
-                    {{ print_r($inbreeding_traits, true)}}
+                    {{ print_r($inbreeding_traits, true) }}
                 </pre>
             </div>
         </div>

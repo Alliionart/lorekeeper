@@ -211,8 +211,6 @@ class BreedingService extends Service {
             // }
             //\Log::info($subtype_rates);
 
-            
-
             if ($mutation_rates) {
                 //Refactor the array BEFORE saving
                 foreach ($mutation_rates as $i => $row) {

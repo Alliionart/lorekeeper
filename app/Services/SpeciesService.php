@@ -327,7 +327,7 @@ class SpeciesService extends Service {
     /**
      * Processes size data for the subtype.
      *
-     * @param array   $data
+     * @param array $data
      *
      * @return array
      */
@@ -337,14 +337,14 @@ class SpeciesService extends Service {
             $sizeData['wingspan'] = [
                 'min'  => isset($data['wingspan_min']) ? (float) $data['wingspan_min'] : null,
                 'max'  => isset($data['wingspan_max']) ? (float) $data['wingspan_max'] : null,
-                'unit' => isset($data['wingspan_unit']) ? $data['wingspan_unit'] : null,
+                'unit' => $data['wingspan_unit'] ?? null,
             ];
         }
         if (isset($data['allow_height']) && $data['allow_height']) {
             $sizeData['height'] = [
                 'min'  => isset($data['height_min']) ? (float) $data['height_min'] : null,
                 'max'  => isset($data['height_max']) ? (float) $data['height_max'] : null,
-                'unit' => isset($data['height_unit']) ? $data['height_unit'] : null,
+                'unit' => $data['height_unit'] ?? null,
             ];
         }
 

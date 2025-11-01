@@ -3,8 +3,8 @@
 namespace App\Models\Skill;
 
 use App\Models\Model;
-use App\Models\Species\SpeciesLimit;
 use App\Models\Rarity;
+use App\Models\Species\SpeciesLimit;
 
 class Skill extends Model {
     /**
