@@ -77,7 +77,7 @@ class GrantController extends Controller {
     }
 
     /**
-    * Grants awards to characters.
+     * Grants awards to characters.
      *
      * @param string                        $slug
      * @param App\Services\InventoryManager $service

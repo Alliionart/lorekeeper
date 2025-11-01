@@ -467,7 +467,7 @@ function fillUserAssets($assets, $sender, $recipient, $logType, $data) {
                 }
             }
         } elseif ($key == 'awards' && count($contents)) {
-            $service = new \App\Services\AwardCaseManager;
+            $service = new App\Services\AwardCaseManager;
             foreach ($contents as $asset) {
                 if (!$service->creditAward($sender, $recipient, $logType, $data, $asset['asset'], $asset['quantity'])) {
                     return false;
@@ -516,7 +516,7 @@ function fillUserAssets($assets, $sender, $recipient, $logType, $data) {
                 }
             }
         } elseif ($key == 'user_awards' && count($contents)) {
-            $service = new \App\Services\AwardCaseManager;
+            $service = new App\Services\AwardCaseManager;
             foreach ($contents as $asset) {
                 if (!$service->moveStack($sender, $recipient, $logType, $data, $asset['asset'])) {
                     return false;
@@ -614,10 +614,10 @@ function fillCharacterAssets($assets, $sender, $recipient, $logType, $data, $sub
                 }
             }
         } elseif ($key == 'awards' && count($contents)) {
-            $service = new \App\Services\AwardCaseManager;
+            $service = new App\Services\AwardCaseManager;
             foreach ($contents as $asset) {
                 if (!$service->creditAward($sender, ($asset['asset']->is_character_owned ? $recipient : $item_recipient), $logType, $data, $asset['asset'], $asset['quantity'])) {
-                    return false; 
+                    return false;
                 }
             }
         }

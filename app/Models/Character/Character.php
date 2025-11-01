@@ -3,12 +3,12 @@
 namespace App\Models\Character;
 
 use App\Facades\Notifications;
+use App\Models\Award\Award;
+use App\Models\Award\AwardLog;
 use App\Models\Background\Background;
 use App\Models\Background\BackgroundCondition;
 use App\Models\Base\Base;
 use App\Models\Carrier\Carrier;
-use App\Models\Award\Award;
-use App\Models\Award\AwardLog;
 use App\Models\Currency\Currency;
 use App\Models\Currency\CurrencyLog;
 use App\Models\Gallery\GalleryCharacter;
