@@ -8,17 +8,13 @@ use Cache;
 use Closure;
 use Illuminate\Http\Request;
 
-class UserActivity
-{
+class UserActivity {
     /**
      * Handle an incoming request.
      *
-     * * @param  \Closure  $next
-     *
      * * @return mixed
      * */
-    public function handle(Request $request, Closure $next)
-    {
+    public function handle(Request $request, Closure $next) {
         if (Auth::check()) {
             $expiresAt = now()->addMinutes(2); /* keep online for 2 min */
             Cache::put('user-is-online-'.Auth::user()->id, true, $expiresAt);
