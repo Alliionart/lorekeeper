@@ -46,10 +46,10 @@
                         <!-- @if ($namespace)
     @if (Auth::check() && Auth::user()->id == $pet->character->user_id && $pet->canBond())
     <div class="form-group mb-0">
-                                                                        {!! Form::open(['url' => 'pets/bond/' . $pet->id]) !!}
-                                                                        {!! Form::submit('Bond', ['class' => 'btn btn-primary']) !!}
-                                                                        {!! Form::close() !!}
-                                                                    </div>
+                                                                            {!! Form::open(['url' => 'pets/bond/' . $pet->id]) !!}
+                                                                            {!! Form::submit('Bond', ['class' => 'btn btn-primary']) !!}
+                                                                            {!! Form::close() !!}
+                                                                        </div>
 @else
     <div class="alert alert-warning mb-0">{{ $pet->canBond(true) }}</div>
     @endif
