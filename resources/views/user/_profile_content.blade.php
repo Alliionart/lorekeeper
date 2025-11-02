@@ -66,6 +66,20 @@
                     <div class="col-md-8 col-8">{!! $user->birthdayDisplay !!}</div>
                 </div>
             @endif
+            @if (isset($user->border) || isset($user->borderVariant))
+                <div class="row col-sm-5">
+                    <div class="col-md-3 col-4">
+                        <h5>Border</h5>
+                    </div>
+                    <div class="col-md-9 col-8">
+                        <a href="{{ $user->borderVariant ? $user->borderVariant->parent->idUrl : $user->border->idUrl }}">
+                            {!! $user->borderVariant ? $user->borderVariant->parent->name : $user->border->name !!} @if ($user->borderVariant)
+                                ({{ $user->borderVariant->name }})
+                            @endif
+                        </a>
+                    </div>
+                </div>
+            @endif
         </div>
     </div>
 </div>
