@@ -10,6 +10,7 @@ use App\Models\Shop\Shop;
 use App\Models\SiteIndex;
 use App\Models\SitePage;
 use App\Models\User\User;
+use App\Models\Marking\Marking;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
@@ -135,6 +136,19 @@ class IndexSitePages extends Command {
                     'type'        => get_class($feature),
                     'identifier'  => $feature->name,
                     'description' => substr_replace(strip_tags($feature->parsed_description), '...', 100),
+                ]);
+            }
+
+            //8. FIND ALL MARKINGS TO INDEX
+            $markings = Marking::visible()->get();
+            foreach ($markings as $marking) {
+                DB::table('site_temp_index')->insert([
+                    // input all neccessary fields
+                    'id'          => $marking->id,
+                    'title'       => $marking->name,
+                    'type'        => get_class($marking),
+                    'identifier'  => $marking->slug,
+                    'description' => substr_replace(strip_tags($marking->short_description), '...', 100),
                 ]);
             }
 
