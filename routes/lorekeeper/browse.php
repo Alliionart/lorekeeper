@@ -201,6 +201,14 @@ Route::group(['prefix' => __('dailies.dailies')], function() {
     Route::get('{id}', 'DailyController@getDaily')->where(['id' => '[0-9]+']);
 });
 
+/**************************************************************************************************
+    Cultivation
+**************************************************************************************************/
+Route::group(['prefix' => __('cultivation.cultivation')], function() {
+    Route::get('/', 'CultivationController@getIndex');
+    Route::get('/guide', 'CultivationController@getGuide');
+
+});
 
 /**************************************************************************************************
     Pet Drops

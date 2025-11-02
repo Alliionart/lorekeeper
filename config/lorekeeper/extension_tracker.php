@@ -13,6 +13,15 @@ return [
     //     'version' => '1.0.0',
     // ],
 
+    'cultivation' => [
+        'key' => 'cultivation',
+        'wiki_key' => 'Cultivation',
+        'creators' => json_encode([
+            'Cylunny' => 'https://toyhou.se/cylunny',
+        ]),
+        'version' => '1.0.0',
+    ],    
+
     'breeding_permissions' => [
         'key'      => 'breeding_permissions',
         'wiki_key' => 'Breeding_Permissions',
