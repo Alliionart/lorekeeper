@@ -123,6 +123,10 @@ class AddSiteSettings extends Command {
         
         $this->addSiteSetting('cultivation_area_unlock', 0, 'How many areas can a user unlock at the same time? 0=unlimited.');
 
+        $this->addSiteSetting('can_transfer_currency_directly', 1, 'Whether or not users can directly transfer currency to other users without trading. 0: Users cannot directly transfer currency. 1: Direct currency transfers are allowed.');
+
+        $this->addSiteSetting('can_transfer_items_directly', 1, 'Whether or not users can directly transfer items to other users without trading. 0: Users cannot directly transfer items. 1: Direct item transfers are allowed.');
+
         /**
         * AFFILIATES
         * Setting determines whether affiliates are open or closed.

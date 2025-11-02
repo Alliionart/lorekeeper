@@ -51,6 +51,8 @@ Route::get('/deactivated-list', 'BrowseController@getDeactivated');
 // PROFILES
 Route::group(['prefix' => 'user', 'namespace' => 'Users'], function () {
     Route::get('{name}/gallery', 'UserController@getUserGallery');
+    Route::get('{name}/character-designs', 'UserController@getUserCharacterDesigns');
+    Route::get('{name}/character-art', 'UserController@getUserCharacterArt');
     Route::get('{name}/favorites', 'UserController@getUserFavorites');
     Route::get('{name}/favorites/own-characters', 'UserController@getUserOwnCharacterFavorites');
 
@@ -83,6 +85,7 @@ Route::group(['prefix' => 'user', 'namespace' => 'Users'], function () {
     Route::get('{name}/submissions', 'UserController@getUserSubmissions');
     Route::get('{name}/gear-logs', 'UserController@getUserGearLogs');
     Route::get('{name}/weapon-logs', 'UserController@getUserWeaponLogs');
+    Route::get('{name}/recipe-logs', 'UserController@getUserRecipeLogs');
 });
 
 /**************************************************************************************************
@@ -181,6 +184,9 @@ Route::group(['prefix' => 'world'], function () {
     Route::get('skills/{id}', 'WorldController@getSkill');
     Route::get('elements', 'WorldController@getElements');
     Route::get('elements/{id}', 'WorldController@getElement');
+    Route::get('traits/modal/{id}', 'WorldController@getFeatureDetail')->where(['id' => '[0-9]+']);
+    Route::get('recipes', 'WorldController@getRecipes');
+    Route::get('recipes/{id}', 'WorldController@getRecipe');
 });
 
 Route::group(['prefix' => 'prompts'], function () {

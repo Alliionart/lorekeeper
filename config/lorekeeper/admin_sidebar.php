@@ -153,6 +153,10 @@ return [
                 'name' => 'Award Grants',
                 'url'  => 'admin/grants/awards',
             ],
+            [
+                'name' => 'Recipe Grants',
+                'url'  => 'admin/grants/recipes',
+            ],
         ],
     ],
     'Masterlist' => [
@@ -276,6 +280,10 @@ return [
                 'url'  => 'admin/breedings/settings',
                 'name' => 'Pets',
                 'url'  => 'admin/data/pets',
+            ],
+            [
+                'name' => 'Recipes',
+                'url'  => 'admin/data/recipes',
             ],
         ],
     ],

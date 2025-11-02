@@ -2,9 +2,7 @@
     // This file represents a common source and definition for assets used in loot_select
     // While it is not per se as tidy as defining these in the controller(s),
     // doing so this way enables better compatibility across disparate extensions
-    $characterCurrencies = \App\Models\Currency\Currency::where('is_character_owned', 1)
-        ->orderBy('sort_character', 'DESC')
-        ->pluck('name', 'id');
+    $characterCurrencies = \App\Models\Currency\Currency::where('is_character_owned', 1)->orderBy('sort_character', 'DESC')->pluck('name', 'id');
     $items = \App\Models\Item\Item::orderBy('name')->pluck('name', 'id');
     $pets = \App\Models\Pet\Pet::orderBy('name')->pluck('name', 'id');
     $currencies = \App\Models\Currency\Currency::where('is_user_owned', 1)
@@ -22,10 +20,7 @@
         $tables = \App\Models\Loot\LootTable::orderBy('name')->pluck('name', 'id');
     }
     if ($showRaffles) {
-        $raffles = \App\Models\Raffle\Raffle::where('rolled_at', null)
-            ->where('is_active', 1)
-            ->orderBy('name')
-            ->pluck('name', 'id');
+        $raffles = \App\Models\Raffle\Raffle::where('rolled_at', null)->where('is_active', 1)->orderBy('name')->pluck('name', 'id');
     }
     $awards = \App\Models\Award\Award::orderBy('name')->pluck('name', 'id');
     if (isset($showThemes) && $showThemes) {
@@ -42,7 +37,8 @@
                     ['Item' => 'Item', 'Currency' => 'Currency', 'Award' => ucfirst(__('awards.award')), 'Pet' => 'Pet', 'Gear' => 'Gear', 'Weapon' => 'Weapon', 'Exp' => 'Exp', 'Points' => 'Stat Points'] +
                         ($showLootTables ? ['LootTable' => 'Loot Table'] : []) +
                         ($showRaffles ? ['Raffle' => 'Raffle Ticket'] : []) +
-                        (isset($showThemes) && $showThemes ? ['Theme' => 'Theme'] : []),
+                        (isset($showThemes) && $showThemes ? ['Theme' => 'Theme'] : []) +
+                        ($showRecipes ? ['Recipe' => 'Recipe'] : []),
                     null,
                     ['class' => 'form-control reward-type', 'placeholder' => 'Select Reward Type'],
                 ) !!}</td>
@@ -68,5 +64,8 @@
     {!! Form::select('rewardable_id[]', $awards, null, ['class' => 'form-control award-select', 'placeholder' => 'Select ' . ucfirst(__('awards.award'))]) !!}
     @if(isset($showThemes) && $showThemes)
         {!! Form::select('rewardable_id[]', $themes, null, ['class' => 'form-control theme-select', 'placeholder' => 'Select Theme']) !!}
+    @endif
+    @if ($showRecipes)
+        {!! Form::select('rewardable_id[]', $recipes, null, ['class' => 'form-control recipe-select', 'placeholder' => 'Select Recipe']) !!}
     @endif
 </div>

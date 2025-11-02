@@ -3,6 +3,8 @@
     <li class="sidebar-section">
         <div class="sidebar-section-header">Gallery</div>
         <div class="sidebar-item"><a href="{{ $user->url . '/gallery' }}" class="{{ set_active('user/' . $user->name . '/gallery*') }}">Gallery</a></div>
+        <div class="sidebar-item"><a href="{{ $user->url . '/character-designs' }}" class="{{ set_active('user/' . $user->name . '/character-designs*') }}">Character Designs</a></div>
+        <div class="sidebar-item"><a href="{{ $user->url . '/character-art' }}" class="{{ set_active('user/' . $user->name . '/character-art*') }}">Character Art</a></div>
         <div class="sidebar-item"><a href="{{ $user->url . '/favorites' }}" class="{{ set_active('user/' . $user->name . '/favorites*') }}">Favorites</a></div>
         <div class="sidebar-item"><a href="{{ $user->url . '/favorites/own-characters' }}" class="{{ set_active('user/' . $user->name . '/favorites/own-characters*') }}">Own Character Favorites</a></div>
     </li>
@@ -31,6 +33,7 @@
         <div class="sidebar-item"><a href="{{ $user->url . '/item-logs' }}" class="{{ $user->url . '/currency-logs*' }}">Item Logs</a></div>
         <div class="sidebar-item"><a href="{{ $user->url . '/pet-logs' }}" class="{{ set_active($user->url . '/pet-logs*') }}">Pet Logs</a></div>
         <div class="sidebar-item"><a href="{{ $user->url . '/currency-logs' }}" class="{{ set_active($user->url . '/currency-logs*') }}">Currency Logs</a></div>
+        <div class="sidebar-item"><a href="{{ $user->url . '/recipe-logs' }}" class="{{ set_active($user->url . '/recipe-logs*') }}">Recipe Logs</a></div>
         <div class="sidebar-item"><a href="{{ $user->url . '/pet-logs' }}" class="{{ set_active($user->url . '/pet-logs*') }}">Pet Logs</a></div>
         <div class="sidebar-item"><a href="{{ $user->url . '/submissions' }}" class="{{ set_active($user->url . '/submissions*') }}">Submissions</a></div>
         <div class="sidebar-item"><a href="{{ $user->url . '/' . __('awards.award') . '-logs' }}" class="{{ set_active($user->url . '/award-logs*') }}">{{ ucfirst(ucfirst(__('awards.award'))) }} Logs</a></div>

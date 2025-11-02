@@ -1031,3 +1031,7 @@ tr.accountbound {
     letter-spacing: .05em;
 }
 .overflow-auto {overflow:auto;}
+/* RECIPES ***************************************************************************************/
+.recipe-image {
+    width: 150px;
+}

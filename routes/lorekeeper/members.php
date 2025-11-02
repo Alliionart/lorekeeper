@@ -124,6 +124,9 @@ Route::group(['prefix' => 'characters', 'namespace' => 'Users'], function () {
 Route::group(['prefix' => 'bank', 'namespace' => 'Users'], function () {
     Route::get('/', 'BankController@getIndex');
     Route::post('transfer', 'BankController@postTransfer');
+    Route::get('convert/{id}', 'BankController@getConvertCurrency');
+    Route::get('convert/{currency_id}/rate/{conversion_id}', 'BankController@getConvertCurrencyRate');
+    Route::post('convert', 'BankController@postConvertCurrency');
 });
 
 Route::group(['prefix' => 'userstats', 'namespace' => 'Users'], function () {
@@ -146,6 +149,12 @@ Route::group(['prefix' => 'trades', 'namespace' => 'Users'], function () {
     Route::post('{id}/confirm-trade', 'TradeController@postConfirmTrade');
     Route::get('{id}/cancel-trade', 'TradeController@getCancelTrade');
     Route::post('{id}/cancel-trade', 'TradeController@postCancelTrade');
+});
+
+Route::group(['prefix' => 'crafting', 'namespace' => 'Users'], function () {
+    Route::get('/', 'CraftingController@getIndex');
+    Route::get('craft/{id}', 'CraftingController@getCraftRecipe');
+    Route::post('craft/{id}', 'CraftingController@postCraftRecipe');
 });
 
 /**************************************************************************************************
@@ -278,6 +287,9 @@ Route::group(['prefix' => 'designs', 'namespace' => 'Characters'], function () {
 
     Route::get('{id}/delete', 'DesignController@getDelete');
     Route::post('{id}/delete', 'DesignController@postDelete');
+
+    Route::get('{id}/cancel', 'DesignController@getCancel');
+    Route::post('{id}/cancel', 'DesignController@postCancel');
 });
 
 /**************************************************************************************************

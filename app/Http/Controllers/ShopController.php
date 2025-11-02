@@ -42,6 +42,7 @@ class ShopController extends Controller {
      * @return \Illuminate\Contracts\Support\Renderable
      */
     public function getShop($id) {
+        $categories = ItemCategory::visible(Auth::user() ?? null)->orderBy('sort', 'DESC')->get();
         $shop = Shop::where('id', $id)->where('is_active', 1)->first();
 
         if (!$shop) {

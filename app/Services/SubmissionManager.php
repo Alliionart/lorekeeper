@@ -13,6 +13,7 @@ use App\Models\Loot\LootTable;
 use App\Models\Prompt\Prompt;
 use App\Models\Raffle\Raffle;
 use App\Models\Status\StatusEffect;
+use App\Models\Recipe\Recipe;
 use App\Models\Submission\Submission;
 use App\Models\Submission\SubmissionCharacter;
 use App\Models\User\User;
@@ -96,7 +97,7 @@ class SubmissionManager extends Service {
                 'data' => json_encode([
                     'user'    => Arr::only(getDataReadyAssets($userAssets), ['user_items', 'currencies']),
                     'rewards' => getDataReadyAssets($promptRewards),
-                ]), // list of rewards and addons
+                ] + (config('lorekeeper.settings.allow_gallery_submissions_on_prompts') ? ['gallery_submission_id' => $data['gallery_submission_id'] ?? null] : [])),
             ]);
 
             // Set characters that have been attached.
@@ -168,7 +169,7 @@ class SubmissionManager extends Service {
                 'data'          => json_encode([
                     'user'          => Arr::only(getDataReadyAssets($userAssets), ['user_items', 'currencies']),
                     'rewards'       => getDataReadyAssets($promptRewards),
-                ]), // list of rewards and addons
+                ] + (config('lorekeeper.settings.allow_gallery_submissions_on_prompts') ? ['gallery_submission_id' => $data['gallery_submission_id'] ?? null] : [])),
             ] + ($isClaim ? [] : ['prompt_id' => $prompt->id]));
 
             return $this->commitReturn($submission);
@@ -226,8 +227,9 @@ class SubmissionManager extends Service {
                     'staff_id'              => $user->id,
                     'status'                => 'Draft',
                     'data'                  => json_encode([
-                        'user'      => $userAssets,
-                        'rewards'   => getDataReadyAssets($promptRewards),
+                        'user'                  => $userAssets,
+                        'rewards'               => getDataReadyAssets($promptRewards),
+                        'gallery_submission_id' => $submission->data['gallery_submission_id'] ?? null,
                     ]), // list of rewards and addons
                 ]);
 
@@ -242,8 +244,9 @@ class SubmissionManager extends Service {
                     'status'     => 'Draft',
                     'updated_at' => Carbon::now(),
                     'data'       => json_encode([
-                        'user'      => $userAssets,
-                        'rewards'   => getDataReadyAssets($promptRewards),
+                        'user'                  => $userAssets,
+                        'rewards'               => getDataReadyAssets($promptRewards),
+                        'gallery_submission_id' => $submission->data['gallery_submission_id'] ?? null,
                     ]), // list of rewards and addons
                 ]);
             }
@@ -542,6 +545,7 @@ class SubmissionManager extends Service {
                     'user'    => $addonData,
                     'rewards' => getDataReadyAssets($rewards),
                     'skills'  => $skills ?? null,
+                    'gallery_submission_id' => $submission->data['gallery_submission_id'] ?? null,
                 ]), // list of rewards
             ]);
 
@@ -726,6 +730,15 @@ class SubmissionManager extends Service {
                             break;
                         case 'Award':
                             $reward = Award::find($data['rewardable_id'][$key]);
+                            break;
+                        case 'Recipe':
+                            if (!$isStaff) {
+                                break;
+                            }
+                            $reward = Recipe::find($data['rewardable_id'][$key]);
+                            if (!$reward->needs_unlocking) {
+                                throw new \Exception('Invalid recipe selected.');
+                            }
                             break;
                     }
                     if (!$reward) {

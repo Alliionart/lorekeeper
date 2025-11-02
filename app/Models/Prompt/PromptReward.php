@@ -11,6 +11,7 @@ use App\Models\Model;
 use App\Models\Pet\Pet;
 use App\Models\Raffle\Raffle;
 use App\Models\Stat\Stat;
+use App\Models\Recipe\Recipe;
 
 class PromptReward extends Model {
     /**
@@ -85,6 +86,9 @@ class PromptReward extends Model {
                 break;
             case 'Award':
                 return $this->belongsTo(Award::class, 'rewardable_id');
+                break;
+            case 'Recipe':
+                return $this->belongsTo(Recipe::class, 'rewardable_id');
                 break;
         }
 
