@@ -208,8 +208,11 @@ function getAssetModelString($type, $namespaced = true) {
             }
             break;
         case 'themes':
-            if ($namespaced) return '\App\Models\Theme';
-            else return 'Theme';
+            if ($namespaced) {
+                return '\App\Models\Theme';
+            } else {
+                return 'Theme';
+            }
             break;
     }
 
@@ -544,10 +547,13 @@ function fillUserAssets($assets, $sender, $recipient, $logType, $data) {
             if (!$service->creditStat($sender, $recipient, $logType, $data['data'], 'none', $contents['quantity'])) {
                 return false;
             }
-        } else if ($key == 'themes' && count($contents)) {
-            $service = new \App\Services\ThemeManager;
-            foreach ($contents as $asset)
-                if (!$service->creditTheme($recipient, $asset['asset'])) return false;
+        } elseif ($key == 'themes' && count($contents)) {
+            $service = new App\Services\ThemeManager;
+            foreach ($contents as $asset) {
+                if (!$service->creditTheme($recipient, $asset['asset'])) {
+                    return false;
+                }
+            }
         }
     }
 
