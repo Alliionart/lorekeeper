@@ -143,6 +143,7 @@
                         <a class="dropdown-item" href="{{ url('prompts/prompts') }}">
                             Prompts
                         </a>
+                        <div class="dropdown-divider"></div>
                         <a class="dropdown-item" href="{{ url('shops') }}">
                             Shops
                         </a>
@@ -152,6 +153,14 @@
                         <a class="dropdown-item" href="{{ url(__('cultivation.cultivation')) }}">
                             {{__('cultivation.cultivation')}}
                         </a>
+                        <a class="dropdown-item" href="{{ url('user-shops/shop-index') }}">
+                            User Shops
+                        </a>
+                        @if (Auth::check())
+                            <a class="dropdown-item" href="{{ url('user-shops') }}">
+                                My Shops
+                            </a>
+                        @endif
                     </div>
                 </li>
                 <li class="nav-item">

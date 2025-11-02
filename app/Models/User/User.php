@@ -32,6 +32,7 @@ use App\Models\Recipe\Recipe;
 use App\Models\Shop\ShopLog;
 use App\Models\Stat\ExpLog;
 use App\Models\Stat\StatTransferLog;
+use App\Models\Shop\UserShopLog;
 use App\Models\Submission\Submission;
 use App\Models\Theme;
 use App\Traits\Commenter;
@@ -279,6 +280,13 @@ class User extends Authenticatable implements MustVerifyEmail {
      */
     public function bookmarks() {
         return $this->hasMany(CharacterBookmark::class)->where('user_id', $this->id);
+    }
+
+    /**
+     * Get the user's shops.
+     */
+    public function shops() {
+        return $this->belongsTo('App\Models\Shop\UserShop', 'user_id');
     }
 
     /**
@@ -853,6 +861,23 @@ class User extends Authenticatable implements MustVerifyEmail {
     public function getShopLogs($limit = 10) {
         $user = $this;
         $query = ShopLog::where('user_id', $this->id)->with('character')->with('shop')->with('item')->with('currency')->orderBy('id', 'DESC');
+        if ($limit) {
+            return $query->take($limit)->get();
+        } else {
+            return $query->paginate(30);
+        }
+    }
+
+    /**
+     * Get the user's shop purchase logs.
+     *
+     * @param int $limit
+     *
+     * @return \Illuminate\Pagination\LengthAwarePaginator|\Illuminate\Support\Collection
+     */
+    public function getUserShopLogs($limit = 10) {
+        $user = $this;
+        $query = UserShopLog::where('user_id', $this->id)->with('shop')->with('item')->with('currency')->orderBy('id', 'DESC');
         if ($limit) {
             return $query->take($limit)->get();
         } else {

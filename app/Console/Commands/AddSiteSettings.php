@@ -127,6 +127,8 @@ class AddSiteSettings extends Command {
 
         $this->addSiteSetting('can_transfer_items_directly', 1, 'Whether or not users can directly transfer items to other users without trading. 0: Users cannot directly transfer items. 1: Direct item transfers are allowed.');
 
+        $this->addSiteSetting('user_shop_limit', 1, 'Number of user shops that a user can make in total set to 0 to allow infinite shops.');
+
         /**
         * AFFILIATES
         * Setting determines whether affiliates are open or closed.

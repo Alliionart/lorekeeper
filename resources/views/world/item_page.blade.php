@@ -56,6 +56,17 @@
                                         </p>
                                     </div>
                                 @endif
+                                @if (isset($item->category) && $item->category)
+                                    @if ($item->category->can_user_sell == 1 && $item->allow_transfer)
+                                        <div class="text-right mb-4">
+                                            <a class="btn btn-secondary " href="{{ url('user-shops/item-search?item_ids=' . $item->id) }}"><i class="fas fa-shopping-cart mr-2"></i>User Shops</a>
+                                        </div>
+                                    @endif
+                                @elseif(!$item->category && $item->allow_transfer)
+                                    <div class="text-right mb-4">
+                                        <a class="btn btn-secondary " href="{{ url('user-shops/item-search?item_ids=' . $item->id) }}"><i class="fas fa-shopping-cart mr-2"></i>User Shops</a>
+                                    </div>
+                                @endif
                                 @if (config('lorekeeper.extensions.item_entry_expansion.extra_fields'))
                                     @if (isset($item->rarity) && $item->rarity)
                                         <div class="col-md">
