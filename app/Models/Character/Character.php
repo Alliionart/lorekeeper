@@ -314,6 +314,17 @@ class Character extends Model {
         return $this->belongsToMany(Award::class, 'character_awards')->withPivot('count', 'data', 'updated_at', 'id')->whereNull('character_awards.deleted_at');
     }
 
+    /**
+     * Get the character's awards.
+     */
+    public function awardsByCategory($id = 1) {
+        return $this->belongsToMany(Award::class, 'character_awards')
+            ->withPivot('count', 'data', 'updated_at', 'id')
+            ->whereNull('character_awards.deleted_at')
+            ->where('award_category_id', $id)
+            ->get();
+    }
+
     /**********************************************************************************************
 
         SCOPES

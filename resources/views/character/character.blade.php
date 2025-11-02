@@ -76,7 +76,18 @@
             <h3>Cores</h3>
         </div>
         <div class="card-body">
-            Badges here
+            @if ($core_awards)
+                <div class="row px-4">
+                    @foreach($core_awards as $award)
+                        <div class="col-md-2 text-center border rounded border-dark p-2">
+                            <a href="{{ $award->getUrlAttribute() }}">
+                                <img src="{{ $award->imageUrl }}" class="img-fluid" />
+                                <h6>{{ $award->name }}</h6>
+                            </a>
+                        </div>
+                    @endforeach
+                </div>
+            @endif
         </div>
     </div>
 
