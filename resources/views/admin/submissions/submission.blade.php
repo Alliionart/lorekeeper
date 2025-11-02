@@ -71,6 +71,14 @@
             </div>
         @endif
 
+        <div class="comments">
+            @comments([
+                'model' => $submission,
+                'perPage' => 5,
+                'allow_dislikes' => false,
+            ])
+        </div>
+
         {!! Form::open(['url' => url()->current(), 'id' => 'submissionForm']) !!}
 
         <h2>Rewards</h2>

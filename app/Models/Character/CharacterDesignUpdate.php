@@ -8,9 +8,11 @@ use App\Models\Rarity;
 use App\Models\Species\Species;
 use App\Models\Species\Subtype;
 use App\Models\User\User;
+use App\Traits\Commentable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class CharacterDesignUpdate extends Model {
+    use Commentable;
     use SoftDeletes;
 
     /**
