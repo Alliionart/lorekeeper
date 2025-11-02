@@ -113,6 +113,22 @@ class AddSiteSettings extends Command {
 
         $this->addSiteSetting('default_theme', 0, 'ID of the default theme users should see. 0: Disabled, shows default lorekeeper. This setting is overwritten by the users theme setting.');
 
+        /**
+        * AFFILIATES
+        * Setting determines whether affiliates are open or closed.
+        */
+        if(!DB::table('site_settings')->where('key', 'affiliates_open')->exists()) {
+            DB::table('site_settings')->insert([
+                [
+                    'key' => 'affiliates_open',
+                    'value' => 0,
+                    'description' => 'Are you open for affiliates? 0: Disabled, 1: Enabled.'
+                ]
+            ]);
+            $this->info("Added:   affiliates_open / Default: 1");
+        }
+        else $this->line("Skipped: affiliates_open");
+
         $this->line("\nSite settings up to date!");
     }
 

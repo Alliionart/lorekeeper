@@ -40,6 +40,19 @@ return [
             ],
         ],
     ],
+    'Affiliates' => [
+        'power' => 'manage_affiliates',
+        'links' => [
+            [
+                'name' => 'Approved Affiliates',
+                'url' => 'admin/affiliates/current'
+            ],
+            [
+                'name' => 'Affiliate Requests',
+                'url' => 'admin/affiliates/pending'
+            ],
+        ]
+    ],
     'News' => [
         'power' => 'manage_news',
         'links' => [

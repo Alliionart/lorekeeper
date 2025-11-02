@@ -138,6 +138,9 @@ class Notification extends Model {
     public const BOOKMARK_GIFT_WRITING = 39;
     public const USER_REACTIVATED = 103;
     public const USER_DEACTIVATED = 104;
+    public const AFFILIATE_ACCEPTION = 105; // URI - Affiliates
+    public const AFFILIATE_REJECTION = 106; // URI - Affiliates
+    public const AFFILIATE_PENDING = 107; // URI - Affiliates
     public const SUBMISSION_CANCELLED = 108;
     public const CLAIM_CANCELLED = 109;
     public const REPORT_ASSIGNED = 220;

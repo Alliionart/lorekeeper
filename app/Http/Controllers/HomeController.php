@@ -2,14 +2,23 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Gallery\GallerySubmission;
-use App\Models\SitePage;
-use App\Services\LinkService;
-use App\Services\UserService;
+use Auth;
+use DB;
+use Settings;
+use Config;
+use Carbon\Carbon;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Laravel\Socialite\Facades\Socialite;
+use App\Models\Gallery\GallerySubmission;
+use App\Models\SitePage;
+use App\Models\Affiliate;
+
+use App\Services\LinkService;
+use App\Services\DeviantArtService;
+use App\Services\UserService;
 
 class HomeController extends Controller {
     /*
@@ -37,6 +46,9 @@ class HomeController extends Controller {
         return view('welcome', [
             'about'               => SitePage::where('key', 'about')->first(),
             'gallerySubmissions'  => $gallerySubmissions,
+            'open' => intval(Settings::get('affiliates_open')),
+            'affiliates' => Affiliate::where('status','Accepted')->featured(0)->inRandomOrder()->limit(10)->get(),
+            'featured_affiliates' => Affiliate::where('status','Accepted')->featured(1)->get(),
         ]);
     }
 
