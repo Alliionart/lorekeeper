@@ -1,4 +1,4 @@
-<div class="card mt-2 text-center">
+<div class="card mt-2 w-100 text-center">
     <div class="row mx-2 my-1" style="font-size:0.9em">
         <div class="col-6 text-left mx-0 px-0">@if($open)<a href="{{ url('affiliates/apply')}}">Apply to Affiliates</a>@endif</div>
         <div class="col-6 text-right mx-0 px-0"><a href="{{ url('affiliates')}}">See All Affiliates</a></div>
