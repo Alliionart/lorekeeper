@@ -3,6 +3,7 @@
         var $lootTable = $('#lootTableBody');
         var $lootRow = $('#lootRow').find('.loot-row');
         var $itemSelect = $('#lootRowData').find('.item-select');
+        var $recipeSelect = $('#lootRowData').find('.recipe-select');
         var $PetSelect = $('#lootRowData').find('.pet-select');
         var $WeaponSelect = $('#lootRowData').find('.weapon-select');
         var $GearSelect = $('#lootRowData').find('.gear-select');
@@ -25,7 +26,7 @@
         @if(isset($showThemes) && $showThemes)
             var $themeSelect = $('#lootRowData').find('.theme-select');
         @endif
-        @if ($showRecipes)
+        @if (isset($showRecipes) && $showRecipes)
             var $recipeSelect = $('#lootRowData').find('.recipe-select');
         @endif
         @if(isset($showBorders) && $showBorders)
@@ -65,7 +66,7 @@
             @if(isset($showThemes) && $showThemes)
                 else if (val == 'Theme') $clone = $themeSelect.clone();
             @endif
-            @if ($showRecipes)
+            @if (isset($showRecipes) && $showRecipes)
                 else if (val == 'Recipe') $clone = $recipeSelect.clone();
             @endif
             @if(isset($showBorders) && $showBorders)
@@ -97,7 +98,7 @@
                 @if ($showRaffles)
                     else if (val == 'Raffle') $clone = $raffleSelect.clone();
                 @endif
-                @if ($showRecipes)
+                @if (isset($showRecipes) && $showRecipes)
                     else if (val == 'Recipe') $clone = $recipeSelect.clone();
                 @endif
 

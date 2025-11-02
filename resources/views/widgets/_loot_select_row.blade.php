@@ -26,6 +26,9 @@
     if (isset($showThemes) && $showThemes) {
          $themes = \App\Models\Theme::orderBy('name')->where('is_user_selectable', 0)->pluck('name', 'id');
     }
+    if (isset($showRecipes) && $showRecipes) {
+         $recipes = \App\Models\Recipe::orderBy('name')->where('is_user_selectable', 0)->pluck('name', 'id');
+    }
 @endphp
 
 <div id="lootRowData" class="hide">
@@ -38,7 +41,7 @@
                         ($showLootTables ? ['LootTable' => 'Loot Table'] : []) +
                         ($showRaffles ? ['Raffle' => 'Raffle Ticket'] : []) +
                         (isset($showThemes) && $showThemes ? ['Theme' => 'Theme'] : []) +
-                        ($showRecipes ? ['Recipe' => 'Recipe'] : []) +
+                        (isset($showRecipes) && $showRecipes ? ['Recipe' => 'Recipe'] : []) +
                         (isset($showBorders) && $showBorders ? ['Border' => 'Border'] : []),
                     null,
                     ['class' => 'form-control reward-type', 'placeholder' => 'Select Reward Type'],
@@ -66,7 +69,7 @@
     @if(isset($showThemes) && $showThemes)
         {!! Form::select('rewardable_id[]', $themes, null, ['class' => 'form-control theme-select', 'placeholder' => 'Select Theme']) !!}
     @endif
-    @if ($showRecipes)
+    @if(isset($showRecipes) && $showRecipes)
         {!! Form::select('rewardable_id[]', $recipes, null, ['class' => 'form-control recipe-select', 'placeholder' => 'Select Recipe']) !!}
     @endif
     @if(isset($showBorders) && $showBorders)

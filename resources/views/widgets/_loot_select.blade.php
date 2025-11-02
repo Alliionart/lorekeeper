@@ -50,7 +50,7 @@
                             ($showLootTables ? ['LootTable' => 'Loot Table'] : []) +
                             ($showRaffles ? ['Raffle' => 'Raffle Ticket'] : []) +
                             (isset($showThemes) && $showThemes ? ['Theme' => 'Theme'] : []) +
-                            ($showRecipes ? ['Recipe' => 'Recipe'] : []) +
+                            (isset($showRecipes) && $showRecipes ? ['Recipe' => 'Recipe'] : []) +
                             (isset($showBorders) && $showBorders ? ['Border' => 'Border'] : []),
                         $loot->rewardable_type,
                         ['class' => 'form-control reward-type', 'placeholder' => 'Select Reward Type'],

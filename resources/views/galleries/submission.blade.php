@@ -75,9 +75,9 @@
         <div class="col-md mb-4">
             <div class="row mb-4 no-gutters">
                 <div class="col-md-2 mb-4 mobile-hide text-center">
-                    <a href="/user/{{ $submission->user->name }}"><img src="{{ $submission->user->avatarUrl }}" style="border-radius:50%; margin-right:25px; max-width:100%;" data-toggle="tooltip" title="{{ $submission->user->name }}"
-                            alt="{{ $submission->user->name }}'s Avatar" /></a>
-                    <a href="/user/{{ $submission->user->name }}">{!! $submission->user->userBorder() !!}</a>
+                    <!-- <a href="/user/{{ $submission->user->name }}"><img src="{{ $submission->user->avatarUrl }}" style="border-radius:50%; margin-right:25px; max-width:100%;" data-toggle="tooltip" title="{{ $submission->user->name }}"
+                            alt="{{ $submission->user->name }}'s Avatar" /></a> -->
+                    <a href="/user/{{ $submission->user->name }}">{!! $submission->user->userBorder(50) !!}</a>
                 </div>
                 <div class="col-md ml-md-2">
                     <div class="card">

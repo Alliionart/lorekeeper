@@ -1137,7 +1137,7 @@ class User extends Authenticatable implements MustVerifyEmail {
      * display the user's icon and border styling
      *
      */
-    public function UserBorder() {
+    public function UserBorder($size =  150) {
         //basically just an ugly ass string of html for copypasting use
         //would you want to keep posting this everywhere? yeah i thought so. me neither
         //there's probably a less hellish way to do this but it beats having to paste this over everywhere... EVERY SINGLE TIME.
@@ -1156,7 +1156,7 @@ class User extends Authenticatable implements MustVerifyEmail {
             $layer = null;
         }
 
-        $styling = '<div class="user-avatar">';
+        $styling = '<div class="user-avatar" style="width:'.$size.'px">';
 
         if(isset($this->settings->border_settings['border_flip']) && $this->settings->border_settings['border_flip']){
             $flip =  'transform: scaleX(-1)';

@@ -89,7 +89,9 @@ class AccountController extends Controller {
         $daysSinceNameChange = isset($lastUsernameChange) ? Carbon::now()->diffInDays($lastUsernameChange->updated_at) : Settings::get('username_change_cooldown');
         $usernameCooldown = Settings::get('username_change_cooldown');
         $decoratorOptions = ['0' => 'Select Decorator Theme'] + Theme::where('is_active', 1)->where('theme_type', 'decorator')->where('is_user_selectable', 1)->get()->pluck('displayName', 'id')->toArray();
-
+        $default = Border::base()->active(Auth::user() ?? null)->where('is_default', 1)->get();
+        $admin = Border::base()->where('admin_only', 1)->get();
+        
         return view('account.settings', [
             'themeOptions'      => $themeOptions + Auth::user()->themes()->where('theme_type', 'base')->get()->pluck('displayName', 'id')->toArray(),
             'decoratorThemes'   => $decoratorOptions + Auth::user()->themes()->where('theme_type', 'decorator')->get()->pluck('displayName', 'id')->toArray(),

@@ -23,7 +23,7 @@
         <div class="alert alert-info text-center">
             <h1>
                 <div style=" float:left;">
-                    {!! $user->userBorder() !!}
+                    {!! $user->userBorder(150) !!}
                 </div>
                 {!! $user->displayName !!}
             </h1>
