@@ -214,7 +214,7 @@ class PromptController extends Controller {
         $id ? $request->validate(Prompt::$updateRules) : $request->validate(Prompt::$createRules);
         $data = $request->only([
             'name', 'prompt_category_id', 'summary', 'description', 'start_at', 'end_at', 'hide_before_start', 'hide_after_end', 'is_active', 
-            'rewardable_type', 'rewardable_id', 'quantity', 'image', 'remove_image', 'prefix', 'hide_submissions', 'staff_only', 'form', 'public_queue',
+            'rewardable_type', 'rewardable_id', 'quantity', 'image', 'remove_image', 'prefix', 'hide_submissions', 'staff_only', 'form', 'public_queue', 'user_queue_limit',
             'level_req', 'level_check', 'skill_id', 'skill_quantity',
         ]);
         if ($id && $service->updatePrompt(Prompt::find($id), $data, Auth::user())) {

@@ -203,7 +203,7 @@ class PromptService extends Service {
                 $data['hide_submissions'] = 0;
             }
 
-            $prompt = Prompt::create(Arr::only($data, ['prompt_category_id', 'name', 'summary', 'description', 'parsed_description', 'is_active', 'start_at', 'end_at', 'hide_before_start', 'hide_after_end', 'has_image', 'prefix', 'hide_submissions', 'staff_only', 'hash', 'level_req', 'form', 'public_queue']));
+            $prompt = Prompt::create(Arr::only($data, ['prompt_category_id', 'name', 'summary', 'description', 'parsed_description', 'is_active', 'start_at', 'end_at', 'hide_before_start', 'hide_after_end', 'has_image', 'prefix', 'hide_submissions', 'staff_only', 'hash', 'level_req', 'form', 'public_queue', 'user_queue_limit']));
 
             if ($image) {
                 $this->handleImage($image, $prompt->imagePath, $prompt->imageFileName);
@@ -263,7 +263,7 @@ class PromptService extends Service {
                 $data['hide_submissions'] = 0;
             }
 
-            $prompt->update(Arr::only($data, ['prompt_category_id', 'name', 'summary', 'description', 'parsed_description', 'is_active', 'start_at', 'end_at', 'hide_before_start', 'hide_after_end', 'has_image', 'prefix', 'hide_submissions', 'staff_only', 'hash', 'level_req', 'form', 'public_queue']));
+            $prompt->update(Arr::only($data, ['prompt_category_id', 'name', 'summary', 'description', 'parsed_description', 'is_active', 'start_at', 'end_at', 'hide_before_start', 'hide_after_end', 'has_image', 'prefix', 'hide_submissions', 'staff_only', 'hash', 'level_req', 'form', 'public_queue', 'user_queue_limit']));
 
             if ($prompt) {
                 $this->handleImage($image, $prompt->imagePath, $prompt->imageFileName);

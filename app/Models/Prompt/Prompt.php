@@ -14,7 +14,7 @@ class Prompt extends Model {
     protected $fillable = [
         'prompt_category_id', 'name', 'summary', 'description', 'parsed_description', 'is_active',
         'start_at', 'end_at', 'hide_before_start', 'hide_after_end', 'has_image', 'prefix',
-        'hide_submissions', 'staff_only', 'hash', 'level_req', 'form', 'public_queue',
+        'hide_submissions', 'staff_only', 'hash', 'level_req', 'form', 'public_queue', 'user_queue_limit',
     ];
 
     /**
@@ -295,6 +295,15 @@ class Prompt extends Model {
      */
     public function getUrlAttribute() {
         return url('prompts/prompts?name='.$this->name);
+    }
+
+    /**
+     * Gets the URL of the individual prompt's page, by ID.
+     *
+     * @return string
+     */
+    public function getIdUrlAttribute() {
+        return url('prompts/'.$this->id);
     }
 
     /**

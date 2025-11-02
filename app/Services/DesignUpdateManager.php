@@ -169,7 +169,17 @@ class DesignUpdateManager extends Service {
                     $imageData['use_cropper'] = isset($data['use_cropper']);
                 }
                 if (!$isAdmin && isset($data['image'])) {
-                    $imageData['extension'] = (config('lorekeeper.settings.masterlist_image_format') ? config('lorekeeper.settings.masterlist_image_format') : ($data['extension'] ?? $data['image']->getClientOriginalExtension()));
+                    if (config('lorekeeper.settings.store_masterlist_fullsizes')) {
+                        if (config('lorekeeper.settings.masterlist_fullsizes_format') != null) {
+                            $imageData['extension'] = config('lorekeeper.settings.masterlist_fullsizes_format');
+                        } else {
+                            $imageData['extension'] = $data['image']->getClientOriginalExtension();
+                        }
+                    } elseif (config('lorekeeper.settings.masterlist_image_format') != null) {
+                        $imageData['extension'] = config('lorekeeper.settings.masterlist_image_format');
+                    } else {
+                        $imageData['extension'] = $data['image']->getClientOriginalExtension();
+                    }
                     $imageData['has_image'] = true;
                 }
                 $request->update($imageData);
@@ -580,8 +590,6 @@ class DesignUpdateManager extends Service {
                     }
                 }
             }
-
-            $extension = config('lorekeeper.settings.masterlist_image_format') != null ? config('lorekeeper.settings.masterlist_image_format') : $request->extension;
 
             // Create a new image with the request data
             $image = CharacterImage::create([

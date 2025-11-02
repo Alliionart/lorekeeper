@@ -6,9 +6,9 @@
         <x-admin-edit title="Prompt" :object="$prompt" />
         <div class="mb-3">
             @if (isset($isPage))
-                <h1 class="mb-0">{!! $prompt->name !!}</h1>
+                <h1 class="mb-0">{!! $prompt->name !!} <a href="{{ $prompt->idUrl }}" class="world-entry-search text-muted"><i class="fas fa-search"></i></a></h1>
             @else
-                <h2 class="mb-0"><a href="{{ url('prompts/' . $prompt->id) }}">{!! $prompt->name !!}</a></h2>
+                <h2 class="mb-0"><a href="{{ $prompt->idUrl }}">{!! $prompt->name !!}</a></h2>
             @endif
             @if ($prompt->prompt_category_id)
                 <div><strong>Category: </strong>{!! $prompt->category->displayName !!}</div>
@@ -23,6 +23,19 @@
                 <div><strong>Queue Visibility: </strong>Public</div>
             @else
                 <div><strong>Queue Visibility: </strong>Private</div>
+            @endif
+            @if (!is_null($prompt->user_queue_limit))
+                <div><strong>User Queue Limit at Once<i class="fas fa-question-circle help-icon" data-toggle="tooltip" title="" data-original-title="Limits how many prompt entries can be submitted at once."></i>:
+                    </strong>{{ $prompt->user_queue_limit }}</div>
+            @else
+                <div><strong>User Queue Limit at Once<i class="fas fa-question-circle help-icon" data-toggle="tooltip" title="" data-original-title="Limits how many prompt entries can be submitted at once."></i>: </strong>No limit</div>
+            @endif
+            @if (Auth::check())
+                @if (isset($userSubmissionCounts) && isset($userSubmissionCounts[$prompt->id]))
+                    <div><strong>Your Submissions<i class="fas fa-question-circle help-icon" data-toggle="tooltip" title="" data-original-title="Submissions you currently have in the queue for this prompt."></i>: </strong>{{ $userSubmissionCounts[$prompt->id] }}</div>
+                @elseif (isset($userSubmissionCount))
+                    <div><strong>Your Submissions<i class="fas fa-question-circle help-icon" data-toggle="tooltip" title="" data-original-title="Submissions you currently have in the queue for this prompt."></i>: </strong>{{ $userSubmissionCount }}</div>
+                @endif
             @endif
         </div>
         <div class="world-entry-text">

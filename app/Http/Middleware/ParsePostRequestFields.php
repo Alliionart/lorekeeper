@@ -32,6 +32,11 @@ class ParsePostRequestFields {
                     } else {
                         $parsedFields[$key] = parse($value);
                     }
+
+                    // Decode HTML special chars
+                    if ($parsedFields[$key] != null) {
+                        $parsedFields[$key] = htmlspecialchars_decode($parsedFields[$key]);
+                    }
                 }
             }
 
@@ -57,6 +62,11 @@ class ParsePostRequestFields {
                     $array[$key] = parse(strip_tags($value));
                 } else {
                     $array[$key] = parse($value);
+                }
+
+                // Decode HTML special chars
+                if ($array[$key] != null) {
+                    $array[$key] = htmlspecialchars_decode($array[$key]);
                 }
             }
         }
