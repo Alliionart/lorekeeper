@@ -9,8 +9,6 @@ use Config;
 use Carbon\Carbon;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Laravel\Socialite\Facades\Socialite;
 use App\Models\Gallery\GallerySubmission;
 use App\Models\SitePage;
