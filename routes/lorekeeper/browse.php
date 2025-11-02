@@ -296,3 +296,8 @@ Route::group(['prefix' => 'breeding'], function () {
 Route::get('time', function () {
     return date('Y-m-d H:i:s');
 });
+
+/**************************************************************************************************
+    Search Function
+**************************************************************************************************/
+Route::get('asearch', 'SearchController@siteSearch');

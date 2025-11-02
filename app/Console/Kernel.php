@@ -41,6 +41,8 @@ class Kernel extends ConsoleKernel {
             ->everyMinute();
         $schedule->command('update-timed-daily')
                 ->everyMinute(); 
+        $schedule->command('index-new-search-pages')
+            ->daily();
     }
 
     /**
