@@ -163,4 +163,5 @@ class PromptsController extends Controller {
             'userSubmissionCount' => $userSubmissionCount,
         ]);
     }
+
 }
