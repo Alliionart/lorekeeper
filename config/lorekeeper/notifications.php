@@ -650,4 +650,11 @@ return [
         'message' => '{status_name} (×{status_quantity})  was removed from {character_name} by <a href="{sender_url}">{sender_name}</a>. (<a href="{url}">View Status Effects</a>)',
         'url'     => 'character/{character_slug}/status-effects',
     ],
+
+        // BIRTHDAY_REWARDED
+        1105 => [
+            'name' => 'Happy Birthday to You',
+            'message' => 'It\'s your birthday this month, {user_name}! A gift has been left in your inventory. (<a href="{url}">View Inventory</a>)',
+            'url' => 'inventory'
+        ],
 ];

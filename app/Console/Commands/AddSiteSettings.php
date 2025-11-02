@@ -115,6 +115,8 @@ class AddSiteSettings extends Command {
 
         $this->addSiteSetting('username_change_cooldown', 30, 'The number of days a user must wait before they can change their username.');
 
+        $this->addSiteSetting('birthday_item', 1, 'ID of item to be granted to a user on their birth month. Suggestion is to set this to a box type item.');
+
         /**
         * AFFILIATES
         * Setting determines whether affiliates are open or closed.
