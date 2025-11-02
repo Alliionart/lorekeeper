@@ -38,7 +38,8 @@
                         ($showLootTables ? ['LootTable' => 'Loot Table'] : []) +
                         ($showRaffles ? ['Raffle' => 'Raffle Ticket'] : []) +
                         (isset($showThemes) && $showThemes ? ['Theme' => 'Theme'] : []) +
-                        ($showRecipes ? ['Recipe' => 'Recipe'] : []),
+                        ($showRecipes ? ['Recipe' => 'Recipe'] : []) +
+                        (isset($showBorders) && $showBorders ? ['Border' => 'Border'] : []),
                     null,
                     ['class' => 'form-control reward-type', 'placeholder' => 'Select Reward Type'],
                 ) !!}</td>
@@ -67,5 +68,8 @@
     @endif
     @if ($showRecipes)
         {!! Form::select('rewardable_id[]', $recipes, null, ['class' => 'form-control recipe-select', 'placeholder' => 'Select Recipe']) !!}
+    @endif
+    @if(isset($showBorders) && $showBorders)
+        {!! Form::select('rewardable_id[]', $borders, null, ['class' => 'form-control border-select', 'placeholder' => 'Select Border']) !!}
     @endif
 </div>

@@ -81,4 +81,10 @@ return [
         'text_color'       => '#ffffff',
         'background_color' => '#6D18A7',
     ],
+
+    'border' => [
+        'name' => 'Border',
+        'text_color' => '#ffffff',
+        'background_color' => '#bb6e7d'
+    ],
 ];

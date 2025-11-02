@@ -157,6 +157,10 @@ return [
                 'name' => 'Recipe Grants',
                 'url'  => 'admin/grants/recipes',
             ],
+            [
+                'name' => 'Border Grants',
+                'url' => 'admin/grants/borders'
+            ],
         ],
     ],
     'Masterlist' => [
@@ -284,6 +288,10 @@ return [
             [
                 'name' => 'Recipes',
                 'url'  => 'admin/data/recipes',
+            ],
+            [
+                'name' => 'User Borders',
+                'url' => 'admin/data/borders'
             ],
         ],
     ],

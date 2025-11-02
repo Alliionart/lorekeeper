@@ -72,6 +72,8 @@ Route::group(['prefix' => 'user', 'namespace' => 'Users'], function () {
     Route::get('{name}/stats/logs/exp', 'UserController@getUserExpLogs');
     Route::get('{name}/armoury', 'UserController@getUserArmoury');
 
+    Route::get('{name}/borders', 'UserController@getUserBorders');
+    
     Route::get('{name}/currency-logs', 'UserController@getUserCurrencyLogs');
     Route::get('{name}/item-logs', 'UserController@getUserItemLogs');
     Route::get('{name}/pet-logs', 'UserController@getUserPetLogs');
@@ -86,6 +88,7 @@ Route::group(['prefix' => 'user', 'namespace' => 'Users'], function () {
     Route::get('{name}/gear-logs', 'UserController@getUserGearLogs');
     Route::get('{name}/weapon-logs', 'UserController@getUserWeaponLogs');
     Route::get('{name}/recipe-logs', 'UserController@getUserRecipeLogs');
+    Route::get('{name}/border-logs', 'UserController@getUserBorderLogs');
     
     Route::get('{name}/shops', 'UserController@getUserShops');
 });
@@ -189,6 +192,11 @@ Route::group(['prefix' => 'world'], function () {
     Route::get('traits/modal/{id}', 'WorldController@getFeatureDetail')->where(['id' => '[0-9]+']);
     Route::get('recipes', 'WorldController@getRecipes');
     Route::get('recipes/{id}', 'WorldController@getRecipe');
+    
+    Route::get('border-categories', 'WorldController@getBorderCategories');
+    Route::get('borders', 'WorldController@getBorders');
+    Route::get('borders/{id}', 'WorldController@getBorder');
+    Route::get('check-border', 'WorldController@getBorderPreview');
 });
 
 Route::group(['prefix' => 'prompts'], function () {

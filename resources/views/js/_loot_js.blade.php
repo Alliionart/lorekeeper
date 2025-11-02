@@ -13,6 +13,9 @@
         @if ($showLootTables)
             var $tableSelect = $('#lootRowData').find('.table-select');
         @endif
+        @if(isset($showBorders) && $showBorders)
+            var $borderSelect = $('#lootRowData').find('.border-select');
+        @endif
         @if ($showRaffles)
             var $raffleSelect = $('#lootRowData').find('.raffle-select');
         @endif
@@ -24,6 +27,9 @@
         @endif
         @if ($showRecipes)
             var $recipeSelect = $('#lootRowData').find('.recipe-select');
+        @endif
+        @if(isset($showBorders) && $showBorders)
+            else if (val == 'Border') $clone = $borderSelect.clone();
         @endif
 
         $('#lootTableBody .selectize').selectize();
@@ -61,6 +67,9 @@
             @endif
             @if ($showRecipes)
                 else if (val == 'Recipe') $clone = $recipeSelect.clone();
+            @endif
+            @if(isset($showBorders) && $showBorders)
+                else if (val == 'Border') $clone = $borderSelect.clone();
             @endif
 
             $cell.html('');

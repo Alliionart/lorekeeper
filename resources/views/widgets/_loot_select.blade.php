@@ -50,7 +50,8 @@
                             ($showLootTables ? ['LootTable' => 'Loot Table'] : []) +
                             ($showRaffles ? ['Raffle' => 'Raffle Ticket'] : []) +
                             (isset($showThemes) && $showThemes ? ['Theme' => 'Theme'] : []) +
-                            ($showRecipes ? ['Recipe' => 'Recipe'] : []),
+                            ($showRecipes ? ['Recipe' => 'Recipe'] : []) +
+                            (isset($showBorders) && $showBorders ? ['Border' => 'Border'] : []),
                         $loot->rewardable_type,
                         ['class' => 'form-control reward-type', 'placeholder' => 'Select Reward Type'],
                     ) !!}</td>
@@ -79,6 +80,8 @@
                             {!! Form::select('rewardable_id[]', $themes, $loot->rewardable_id, ['class' => 'form-control theme-select selectize', 'placeholder' => 'Select Theme']) !!}
                         @elseif($showRecipes && $loot->rewardable_type == 'Recipe')
                             {!! Form::select('rewardable_id[]', $recipes, $loot->rewardable_id, ['class' => 'form-control recipe-select selectize', 'placeholder' => 'Select Recipe']) !!}
+                        @elseif(isset($showBorders) && $showBorders && $loot->rewardable_type == 'Border')
+                            {!! Form::select('rewardable_id[]', $borders, $loot->rewardable_id, ['class' => 'form-control border-select selectize', 'placeholder' => 'Select Border']) !!}
                         @endif
                     </td>
                     <td>{!! Form::text('quantity[]', $loot->quantity, ['class' => 'form-control']) !!}</td>

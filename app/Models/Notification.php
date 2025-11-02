@@ -190,4 +190,5 @@ class Notification extends Model {
     public const BIRTHDAY_REWARDED    = 1105;
     public const RECIPE_GRANT = 600; // Draginraptor - Crafting
     public const USER_SHOP_ITEM_SOLD = 1104; // supercool
+    public const BORDER_GRANT        = 1106;
 }

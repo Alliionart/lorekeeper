@@ -26,6 +26,7 @@
         <div class="sidebar-item"><a href="{{ $user->url . '/armoury' }}" class="{{ set_active('user/' . $user->name . '/armoury*') }}">Armoury</a></div>
         <div class="sidebar-item"><a href="{{ $user->url . '/stats' }}" class="{{ set_active('user/' . $user->name . '/stats*') }}">Stat Information</a></div>
         <div class="sidebar-item"><a href="{{ $user->url . '/shops' }}" class="{{ set_active('user/' . $user->name . '/shops*') }}">User Shops</a></div>
+        <div class="sidebar-item"><a href="{{ $user->url.'/borders' }}" class="{{ set_active('user/'.$user->name.'/borders*') }}">Borders</a></div>
     </li>
     <li class="sidebar-section">
         <div class="sidebar-section-header">History</div>
@@ -38,6 +39,7 @@
         <div class="sidebar-item"><a href="{{ $user->url . '/pet-logs' }}" class="{{ set_active($user->url . '/pet-logs*') }}">Pet Logs</a></div>
         <div class="sidebar-item"><a href="{{ $user->url . '/submissions' }}" class="{{ set_active($user->url . '/submissions*') }}">Submissions</a></div>
         <div class="sidebar-item"><a href="{{ $user->url . '/' . __('awards.award') . '-logs' }}" class="{{ set_active($user->url . '/award-logs*') }}">{{ ucfirst(ucfirst(__('awards.award'))) }} Logs</a></div>
+        <div class="sidebar-item"><a href="{{ $user->url.'/border-logs' }}" class="{{ set_active('user/'.$user->name.'/border-logs*') }}">Border Logs</a></div>
     </li>
 
     @if (Auth::check() && Auth::user()->hasPower('edit_user_info'))
