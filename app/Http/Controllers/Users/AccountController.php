@@ -2,33 +2,25 @@
 
 namespace App\Http\Controllers\Users;
 
-use File;
-use Image;
-use App\Models\Theme;
-
+use App\Http\Controllers\Controller;
 use App\Models\Character\BreedingPermission;
 use App\Models\Notification;
+use App\Models\Theme;
 use App\Models\User\User;
 use App\Models\User\UserAlias;
-
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
-use App\Models\ThemeEditor;
-
-use App\Services\UserService;
 use App\Services\LinkService;
+use App\Services\UserService;
 use BaconQrCode\Renderer\Color\Rgb;
 use BaconQrCode\Renderer\Image\SvgImageBackEnd;
 use BaconQrCode\Renderer\ImageRenderer;
 use BaconQrCode\Renderer\RendererStyle\Fill;
 use BaconQrCode\Renderer\RendererStyle\RendererStyle;
 use BaconQrCode\Writer;
+use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Fortify\Contracts\TwoFactorAuthenticationProvider;
 use Laravel\Fortify\RecoveryCode;
-
-use App\Http\Controllers\Controller;
 
 class AccountController extends Controller {
     /*
@@ -85,7 +77,7 @@ class AccountController extends Controller {
         $decoratorOptions = ['0' => 'Select Decorator Theme'] + Theme::where('is_active', 1)->where('theme_type', 'decorator')->where('is_user_selectable', 1)->get()->pluck('displayName', 'id')->toArray();
 
         return view('account.settings', [
-            'themeOptions' => $themeOptions + Auth::user()->themes()->where('theme_type', 'base')->get()->pluck('displayName', 'id')->toArray(),
+            'themeOptions'    => $themeOptions + Auth::user()->themes()->where('theme_type', 'base')->get()->pluck('displayName', 'id')->toArray(),
             'decoratorThemes' => $decoratorOptions + Auth::user()->themes()->where('theme_type', 'decorator')->get()->pluck('displayName', 'id')->toArray(),
         ]);
     }
@@ -114,26 +106,30 @@ class AccountController extends Controller {
         if ($service->updateAvatar($request->file('avatar'), Auth::user())) {
             flash('Avatar updated successfully.')->success();
         } else {
-            foreach ($service->errors()->getMessages()['error'] as $error) flash($error)->error();
+            foreach ($service->errors()->getMessages()['error'] as $error) {
+                flash($error)->error();
+            }
         }
+
         return redirect()->back();
     }
 
     /**
      * Edits the user's theme.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\RedirectResponse
      */
     public function postTheme(Request $request, UserService $service) {
         if ($service->updateTheme($request->only(['theme', 'decorator_theme']), Auth::user())) {
             flash('Theme updated successfully.')->success();
         } else {
-            foreach ($service->errors()->getMessages()['error'] as $error) flash($error)->error();
+            foreach ($service->errors()->getMessages()['error'] as $error) {
+                flash($error)->error();
+            }
         }
+
         return redirect()->back();
     }
-
 
     /**
      * Edits the user's username.
