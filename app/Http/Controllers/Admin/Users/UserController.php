@@ -85,7 +85,7 @@ class UserController extends Controller {
         ]);
     }
 
-    public function postUserBasicInfo(Request $request, $name) {
+    public function postUserBasicInfo(Request $request, UserService $service, $name) {
         $user = User::where('name', $name)->first();
         if (!$user) {
             flash('Invalid user.')->error();
@@ -104,7 +104,10 @@ class UserController extends Controller {
             $data = $request->only(['name'] + (!$user->isAdmin ? [1 => 'rank_id'] : []));
 
             $logData = ['old_name' => $user->name] + $data;
-            if ($user->update($data)) {
+            if($user->name != $data['name']) {
+                $service->createUsernameLog($user->id, $logData['old_name'], $data['name'], 1);
+            }
+            if($user->update($data)) {
                 UserUpdateLog::create(['staff_id' => Auth::user()->id, 'user_id' => $user->id, 'data' => json_encode($logData), 'type' => 'Name/Rank Change']);
                 flash('Updated user\'s information successfully.')->success();
             } else {

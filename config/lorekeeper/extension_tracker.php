@@ -112,5 +112,12 @@ return [
         ]),
         'version' => '1.1.0',
     ],
-
+    'user_username_changes' => [
+        'key' => 'user_username_changes',
+        'wiki_key' => 'User_Username_Changes',
+        'creators' => json_encode([
+            'AnimatedCritter' => 'https://github.com/animatedcritter/',
+        ]),
+        'version' => '1.0.0',
+    ],
 ];

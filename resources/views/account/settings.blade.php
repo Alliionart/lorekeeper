@@ -132,6 +132,37 @@
     </div>
 
     <div class="card p-3 mb-2">
+        <h3>Change Username</h3>
+        <p>
+            For security and moderation purposes, all usernames changes will be recorded in your username log.
+            @if($usernameCooldown > 0)
+                You may only change your username once {{ $usernameCooldown == 1 ? 'per day' : 'every '. $usernameCooldown .' days' }}.
+            @endif
+        </p>
+        @if($canChangeName)
+            {!! Form::open(['url' => 'account/username']) !!}
+                <div class="form-group row">
+                    <label class="col-md-2 col-form-label">New Username</label>
+                    <div class="col-md-10">
+                        {!! Form::text('username', Auth::user()->name, ['class' => 'form-control']) !!}
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-md-2 col-form-label">Password</label>
+                    <div class="col-md-10">
+                        {!! Form::password('password', ['class' => 'form-control']) !!}
+                    </div>
+                </div>
+                <div class="text-right">
+                    {!! Form::submit('Edit', ['class' => 'btn btn-primary']) !!}
+                </div>
+            {!! Form::close() !!}
+        @else
+            <p class="alert alert-warning">You must wait {{ $usernameCountdown }} more day{{ $usernameCountdown > 1 ? 's' : '' }} before you can change your username again.</p>
+        @endif
+    </div>
+        
+    <div class="card p-3 mb-2">
         <h3>Change Password</h3>
         {!! Form::open(['url' => 'account/password']) !!}
         <div class="form-group row">

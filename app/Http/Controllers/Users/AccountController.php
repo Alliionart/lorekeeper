@@ -2,12 +2,17 @@
 
 namespace App\Http\Controllers\Users;
 
+use File;
+use Settings;
+use Carbon\Carbon;
 use App\Http\Controllers\Controller;
 use App\Models\Character\BreedingPermission;
 use App\Models\Notification;
 use App\Models\Theme;
 use App\Models\User\User;
 use App\Models\User\UserAlias;
+use App\Models\User\UsernameLog;
+use Illuminate\Support\Facades\Storage;
 use App\Services\LinkService;
 use App\Services\UserService;
 use BaconQrCode\Renderer\Color\Rgb;
@@ -74,11 +79,17 @@ class AccountController extends Controller {
             $themeOptions = ['0' => 'Select Theme'] + Theme::where('is_active', 1)->where('theme_type', 'base')->where('is_user_selectable', 1)->get()->pluck('displayName', 'id')->toArray();
         }
 
+        $lastUsernameChange = UsernameLog::where('user_id', Auth::user()->id)->where('is_staff_edit', 0)->orderBy('updated_at', 'DESC')->first();
+        $daysSinceNameChange = isset($lastUsernameChange) ? Carbon::now()->diffInDays($lastUsernameChange->updated_at) : Settings::get('username_change_cooldown');
+        $usernameCooldown = Settings::get('username_change_cooldown');
         $decoratorOptions = ['0' => 'Select Decorator Theme'] + Theme::where('is_active', 1)->where('theme_type', 'decorator')->where('is_user_selectable', 1)->get()->pluck('displayName', 'id')->toArray();
 
         return view('account.settings', [
-            'themeOptions'    => $themeOptions + Auth::user()->themes()->where('theme_type', 'base')->get()->pluck('displayName', 'id')->toArray(),
-            'decoratorThemes' => $decoratorOptions + Auth::user()->themes()->where('theme_type', 'decorator')->get()->pluck('displayName', 'id')->toArray(),
+            'themeOptions'      => $themeOptions + Auth::user()->themes()->where('theme_type', 'base')->get()->pluck('displayName', 'id')->toArray(),
+            'decoratorThemes'   => $decoratorOptions + Auth::user()->themes()->where('theme_type', 'decorator')->get()->pluck('displayName', 'id')->toArray(),
+            'usernameCooldown'  => $usernameCooldown,
+            'canChangeName'     => $daysSinceNameChange >= $usernameCooldown,
+            'usernameCountdown' => $usernameCooldown - $daysSinceNameChange
         ]);
     }
 
@@ -110,7 +121,6 @@ class AccountController extends Controller {
                 flash($error)->error();
             }
         }
-
         return redirect()->back();
     }
 
@@ -134,17 +144,22 @@ class AccountController extends Controller {
     /**
      * Edits the user's username.
      *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  App\Services\UserService  $service
      * @return \Illuminate\Http\RedirectResponse
      */
     public function postUsername(Request $request, UserService $service) {
-        if ($service->updateUsername($request->get('username'), Auth::user())) {
-            flash('Username updated successfully.')->success();
-        } else {
-            foreach ($service->errors()->getMessages()['error'] as $error) {
-                flash($error)->error();
-            }
-        }
+        if($request['username'] == Auth::user()->name) flash("You are already using this username.");
+        $request->validate( [
+            'username' => 'required|string|min:3|max:255|alpha_dash|unique:users,name'
+        ]);
 
+        if($service->updateUsername($request->only(['username', 'password']), Auth::user())) {
+            flash('Username updated successfully.')->success();
+        }
+        else {
+            foreach($service->errors()->getMessages()['error'] as $error) flash($error)->error();
+        }
         return redirect()->back();
     }
 

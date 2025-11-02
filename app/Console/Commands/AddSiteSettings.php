@@ -113,6 +113,8 @@ class AddSiteSettings extends Command {
 
         $this->addSiteSetting('default_theme', 0, 'ID of the default theme users should see. 0: Disabled, shows default lorekeeper. This setting is overwritten by the users theme setting.');
 
+        $this->addSiteSetting('username_change_cooldown', 30, 'The number of days a user must wait before they can change their username.');
+
         /**
         * AFFILIATES
         * Setting determines whether affiliates are open or closed.

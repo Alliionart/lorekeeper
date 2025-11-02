@@ -79,6 +79,7 @@ Route::group(['prefix' => 'user', 'namespace' => 'Users'], function () {
 
     Route::get('{name}/'.__('awards.award').'-logs', 'UserController@getUserAwardLogs');
     Route::get('{name}/ownership', 'UserController@getUserOwnershipLogs');
+    Route::get('{name}/username-logs', 'UserController@getUsernameLogs');
     Route::get('{name}/submissions', 'UserController@getUserSubmissions');
     Route::get('{name}/gear-logs', 'UserController@getUserGearLogs');
     Route::get('{name}/weapon-logs', 'UserController@getUserWeaponLogs');

@@ -3,22 +3,29 @@
 namespace App\Services;
 
 use App\Facades\Notifications;
-use App\Facades\Settings;
+use DB;
+use Auth;
+use File;
+use Image;
+use Settings;
+use Carbon\Carbon;
+
+use App\Models\Rank\Rank;
 use App\Models\Character\CharacterDesignUpdate;
 use App\Models\Character\CharacterTransfer;
 use App\Models\Gallery\GallerySubmission;
 use App\Models\Invitation;
-use App\Models\Rank\Rank;
 use App\Models\Submission\Submission;
+use App\Models\User\UsernameLog;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
+use App\Services\SubmissionManager;
+use App\Services\GalleryManager;
+use App\Services\CharacterManager;
 use App\Models\Trade;
 use App\Models\User\User;
 use App\Models\User\UserUpdateLog;
-use Carbon\Carbon;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
-use Intervention\Image\Facades\Image;
 use Laravel\Fortify\Contracts\TwoFactorAuthenticationProvider;
 
 class UserService extends Service {
@@ -159,8 +166,63 @@ class UserService extends Service {
     }
 
     /**
-     * Updates the user's email and resends a verification email.
+     * Updates the user's display name. 
      *
+     * @param  array                  $data
+     * @param  \App\Models\User\User  $user
+     * @return bool
+     */
+    public function updateUsername($data, $user)
+    {
+
+        DB::beginTransaction();
+
+        try {
+            if(!Hash::check($data['password'], $user->password)) throw new \Exception("Please make sure you've entered your password correctly.");
+
+            $lastUsernameChange = UsernameLog::where('user_id', $user->id)->where('is_staff_edit', 0)->orderBy('updated_at', 'DESC')->first();
+            if($lastUsernameChange) {
+                $daysSinceNameChange = Carbon::now()->diffInDays($lastUsernameChange->updated_at);
+                if($daysSinceNameChange < Settings::get('username_change_cooldown')) throw new \Exception("You must wait for your cooldown to end before changing your username again.");
+            }
+
+            if(!$this->createUsernameLog($user->id, $user->name, $data['username'], 0)) throw new \Exception("Failed to create log.");
+
+            $user->name = $data['username'];
+            $user->save();
+
+            return $this->commitReturn(true);
+        } catch(\Exception $e) { 
+            $this->setError('error', $e->getMessage());
+        }
+        return $this->rollbackReturn(false);
+    }
+
+    /**
+     * Creates a username log.
+     *
+     * @param  int     $userId
+     * @param  string  $oldUsername
+     * @param  string  $newUsername
+     * @return  int
+     */
+    public function createUsernameLog($userId, $oldUsername, $NewUsername, $staffEdit)
+    {
+        return DB::table('username_log')->insert(
+            [
+                'user_id' => $userId,
+                'old_username' => $oldUsername,
+                'new_username' => $NewUsername,
+                'updated_at' => Carbon::now(),
+                'is_staff_edit' => $staffEdit
+            ]
+        );
+    }
+
+
+    /**
+     * Updates the user's email and resends a verification email. 
+     * 
      * @param array $data
      * @param User  $user
      *

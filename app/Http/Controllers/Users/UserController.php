@@ -565,6 +565,20 @@ class UserController extends Controller {
     }
 
     /**
+     * Shows a user's display name logs.
+     *
+     * @param  string  $name
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function getUsernameLogs($name)
+    {
+        return view('user.username_logs', [
+            'user' => $this->user,
+            'logs' => $this->user->getUsernameLogs()
+        ]);
+    }
+
+    /**
      * Shows a user's submissions.
      *
      * @param string $name

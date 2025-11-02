@@ -14,6 +14,9 @@ use App\Models\Claymore\WeaponLog;
 use App\Models\Comment\CommentLike;
 use App\Models\Currency\Currency;
 use App\Models\Currency\CurrencyLog;
+use App\Models\User\UserCharacterLog;
+use App\Models\User\UsernameLog;
+use App\Models\Submission\SubmissionCharacter;
 use App\Models\Gallery\GalleryCollaborator;
 use App\Models\Gallery\GalleryFavorite;
 use App\Models\Gallery\GallerySubmission;
@@ -848,6 +851,16 @@ class User extends Authenticatable implements MustVerifyEmail {
         } else {
             return $query->paginate(30);
         }
+    }
+
+    /**     
+     * Get the user's display name logs.
+     *
+     * @return \Illuminate\Pagination\LengthAwarePaginator
+     */
+    public function getUsernameLogs() {
+        $query = UsernameLog::where('user_id', $this->id)->orderBy('updated_at', 'DESC');
+        return $query->paginate(30);
     }
 
     /**

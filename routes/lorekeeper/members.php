@@ -25,6 +25,7 @@ Route::group(['prefix' => 'account', 'namespace' => 'Users'], function () {
     Route::post('profile', 'AccountController@postProfile');
     Route::post('theme', 'AccountController@postTheme');
     Route::post('password', 'AccountController@postPassword');
+    Route::post('username', 'AccountController@postUsername');
     Route::post('email', 'AccountController@postEmail');
     Route::post('avatar', 'AccountController@postAvatar');
     Route::post('theme', 'AccountController@postTheme');

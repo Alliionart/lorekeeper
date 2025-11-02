@@ -26,6 +26,7 @@
     </li>
     <li class="sidebar-section">
         <div class="sidebar-section-header">History</div>
+        <div class="sidebar-item"><a href="{{ $user->url.'/username-logs' }}" class="{{ set_active('user/'.$user->name.'/username-logs*') }}">Username History</a></div>        
         <div class="sidebar-item"><a href="{{ $user->url . '/ownership' }}" class="{{ $user->url . '/ownership*' }}">Ownership History</a></div>
         <div class="sidebar-item"><a href="{{ $user->url . '/item-logs' }}" class="{{ $user->url . '/currency-logs*' }}">Item Logs</a></div>
         <div class="sidebar-item"><a href="{{ $user->url . '/pet-logs' }}" class="{{ set_active($user->url . '/pet-logs*') }}">Pet Logs</a></div>
