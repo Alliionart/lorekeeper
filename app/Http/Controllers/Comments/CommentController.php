@@ -178,6 +178,7 @@ class CommentController extends Controller {
         $comment->edits()->create([
             'user_id'    => Auth::user()->id,
             'comment_id' => $comment->id,
+            'title'      => $comment->title,
             'data'       => json_encode([
                 'action'      => 'edit',
                 'old_comment' => config('lorekeeper.settings.wysiwyg_comments') ? parse($comment->comment) : $comment->comment,
