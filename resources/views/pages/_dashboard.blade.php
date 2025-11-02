@@ -344,9 +344,10 @@
                 <h5>Current Event</h5>
             </div>
             <div class="card-body">
-                <a href="https://wor-directory.weebly.com/reos-world-fair.html">
+                <p>There are no current events.</p>
+                <!-- <a href="https://wor-directory.weebly.com/reos-world-fair.html">
                     <img src="https://wor-keeper.com/files/front_page_banners/world%20fair%202025.png" class="img-fluid">
-                </a>
+                </a> -->
             </div>
         </div>
     </div>
