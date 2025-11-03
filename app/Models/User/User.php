@@ -248,6 +248,13 @@ class User extends Authenticatable implements MustVerifyEmail {
         return $this->belongsToMany('App\Models\Recipe\Recipe', 'user_recipes')->withPivot('id');
     }
 
+    /**     
+     * Returns user's foraging stats
+     */
+    public function foraging() {
+        return $this->hasOne('App\Models\User\UserForaging');
+    }
+    
     /**
      * Get all of the user's gallery submissions.
      */

@@ -384,5 +384,14 @@ Route::group(['prefix' => __('cultivation.cultivation')], function() {
     Route::post('plots/cultivate/{plotNumber}', 'CultivationController@postCultivatePlot');
     Route::post('plots/tend/{plotId}', 'CultivationController@postTendPlot');
     Route::post('plots/harvest/{plotId}', 'CultivationController@postHarvestPlot');
+});
 
+/**************************************************************************************************	
+    Foraging
+**************************************************************************************************/	
+Route::group(['prefix' => 'foraging', 'namespace' => 'Users'], function() {
+    Route::get('/', 'ForagingController@getIndex');
+    Route::post('/forage/{id}', 'ForagingController@postForage');
+    Route::post('/claim', 'ForagingController@postClaim');
+    Route::post('edit/character', 'ForagingController@postEditCharacter');
 });

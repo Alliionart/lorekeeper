@@ -272,4 +272,8 @@ class LootTable extends Model {
 
         return $rewards;
     }
+    
+    public function simpleRoll($quantity = 1) {
+        return rollRewards($this->loot, $quantity);
+    }
 }

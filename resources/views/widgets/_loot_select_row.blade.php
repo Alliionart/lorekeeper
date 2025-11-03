@@ -27,7 +27,7 @@
          $themes = \App\Models\Theme::orderBy('name')->where('is_user_selectable', 0)->pluck('name', 'id');
     }
     if (isset($showRecipes) && $showRecipes) {
-         $recipes = \App\Models\Recipe::orderBy('name')->where('is_user_selectable', 0)->pluck('name', 'id');
+         $recipes = \App\Models\Recipe\Recipe::orderBy('name')->pluck('name', 'id');
     }
 @endphp
 

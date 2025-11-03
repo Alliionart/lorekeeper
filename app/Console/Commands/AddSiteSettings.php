@@ -129,6 +129,8 @@ class AddSiteSettings extends Command {
 
         $this->addSiteSetting('user_shop_limit', 1, 'Number of user shops that a user can make in total set to 0 to allow infinite shops.');
 
+        $this->addSiteSetting('foraging_stamina', 1, 'How many times a user can forage a day.');
+
         /**
         * AFFILIATES
         * Setting determines whether affiliates are open or closed.
