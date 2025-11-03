@@ -198,6 +198,20 @@ class CharacterController extends Controller {
     }
 
     /**
+     * Shows a character's profile.
+     *
+     * @param string $slug
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function getBattleTracker($slug) {
+        return view('character.battle_tracker', [
+            'character'             => $this->character,
+            'extPrevAndNextBtnsUrl' => '/profile',
+        ]);
+    }
+
+    /**
      * Edits a character's profile.
      *
      * @param App\Services\CharacterManager $service
