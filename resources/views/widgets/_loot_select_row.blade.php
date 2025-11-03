@@ -8,6 +8,7 @@
     $currencies = \App\Models\Currency\Currency::where('is_user_owned', 1)
         ->orderBy('name')
         ->pluck('name', 'id');
+    $awards = \App\Models\Award\Award::orderBy('name')->pluck('name', 'id');
     $gears = \App\Models\Claymore\Gear::orderBy('name')->pluck('name', 'id');
     $weapons = \App\Models\Claymore\Weapon::orderBy('name')->pluck('name', 'id');
     $pets = \App\Models\Pet\Pet::orderBy('name')->pluck('name', 'id');
@@ -22,7 +23,6 @@
     if ($showRaffles) {
         $raffles = \App\Models\Raffle\Raffle::where('rolled_at', null)->where('is_active', 1)->orderBy('name')->pluck('name', 'id');
     }
-    $awards = \App\Models\Award\Award::orderBy('name')->pluck('name', 'id');
     if (isset($showThemes) && $showThemes) {
          $themes = \App\Models\Theme::orderBy('name')->where('is_user_selectable', 0)->pluck('name', 'id');
     }
