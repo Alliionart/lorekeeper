@@ -83,6 +83,8 @@ class AddSiteSettings extends Command {
 
         $this->addSiteSetting('comment_dislikes_enabled', 0, '0: Dislikes disabled, 1: Dislikes enabled.');
 
+        $this->addSiteSetting('is_queue_open', 1, '0: New queue submissions cannot be made (mods can work on the queue still), 1: Queue is submittable.');
+
         $this->line("\nSite settings up to date!");
     }
 

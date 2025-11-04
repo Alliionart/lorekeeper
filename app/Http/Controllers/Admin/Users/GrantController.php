@@ -16,6 +16,7 @@ use App\Services\CurrencyManager;
 use App\Services\InventoryManager;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Queue\QueueSubmission;
 
 class GrantController extends Controller {
     /**
@@ -103,6 +104,7 @@ class GrantController extends Controller {
             $designUpdates = CharacterDesignUpdate::whereIn('user_id', $userItems->pluck('user_id')->toArray())->whereNotNull('data')->get();
             $trades = Trade::whereIn('sender_id', $userItems->pluck('user_id')->toArray())->orWhereIn('recipient_id', $userItems->pluck('user_id')->toArray())->get();
             $submissions = Submission::whereIn('user_id', $userItems->pluck('user_id')->toArray())->whereNotNull('data')->get();
+             $queuesubmissions = QueueSubmission::whereIn('user_id', $userItems->pluck('user_id')->toArray())->whereNotNull('data')->get();
         }
 
         return view('admin.grants.item_search', [
@@ -115,6 +117,7 @@ class GrantController extends Controller {
             'designUpdates'  => $item ? $designUpdates : null,
             'trades'         => $item ? $trades : null,
             'submissions'    => $item ? $submissions : null,
+            'queuesubmissions' => $item ? $queuesubmissions : null,
         ]);
     }
 }

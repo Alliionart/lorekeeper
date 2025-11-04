@@ -62,6 +62,7 @@ Route::group(['prefix' => 'user', 'namespace' => 'Users'], function () {
     Route::get('{name}/item-logs', 'UserController@getUserItemLogs');
     Route::get('{name}/ownership', 'UserController@getUserOwnershipLogs');
     Route::get('{name}/submissions', 'UserController@getUserSubmissions');
+    Route::get('{name}/queue-submissions', 'UserController@getUserQueueSubmissions');
 });
 
 /**************************************************************************************************
@@ -126,6 +127,14 @@ Route::group(['prefix' => 'shops'], function () {
     Route::get('{id}/{stockId}', 'ShopController@getShopStock')->where(['id' => '[0-9]+', 'stockId' => '[0-9]+']);
 });
 
+         Route::group(['prefix' => 'queues'], function () {
+    Route::get('/', 'QueuesController@getIndex');
+    Route::get('queue-categories', 'QueuesController@getQueueCategories');
+    Route::get('queues', 'QueuesController@getQueues');
+    Route::get('{id}', 'QueuesController@getQueue');
+    Route::get('index/{key}', 'QueuesController@getQueueIndexPage');
+});
+
 /**************************************************************************************************
     Site Pages
 **************************************************************************************************/
@@ -171,4 +180,11 @@ Route::group(['prefix' => 'gallery'], function () {
 **************************************************************************************************/
 Route::group(['prefix' => 'reports', 'namespace' => 'Users'], function () {
     Route::get('/bug-reports', 'ReportController@getBugIndex');
+});
+
+/**************************************************************************************************
+    Queue Submissions
+**************************************************************************************************/
+Route::group(['prefix' => 'queue-submissions', 'namespace' => 'Users'], function() {
+    Route::get('view/{id}', 'QueueSubmissionController@getSubmission');
 });

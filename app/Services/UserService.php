@@ -20,6 +20,12 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Intervention\Image\Facades\Image;
 use Laravel\Fortify\Contracts\TwoFactorAuthenticationProvider;
+use Illuminate\Support\Facades\Storage;
+use App\Models\Queue\QueueSubmission;
+use App\Services\SubmissionManager;
+use App\Services\GalleryManager;
+use App\Services\CharacterManager;
+use App\Services\QueueSubmissionManager;
 
 class UserService extends Service {
     /*
@@ -451,7 +457,13 @@ class UserService extends Service {
                     $tradeManager->rejectTrade(['trade' => $trade, 'reason' => 'User has been banned from site activity.'], $staff);
                 }
 
-                UserUpdateLog::create(['staff_id' => $staff->id, 'user_id' => $user->id, 'data' => json_encode(['is_banned' => 'Yes', 'ban_reason' => $data['ban_reason'] ?? null]), 'type' => 'Ban']);
+                // 6. Queues
+                $qsubmissionManager = new QueueSubmissionManager;
+                $qsubmissions = QueueSubmission::where('user_id', $user->id)->where('status', 'Pending')->get();
+                foreach($qsubmissions as $qsubmission)
+                    $qsubmissionManager->rejectSubmission(['submission' => $qsubmission, 'staff_comments' => 'User has been banned from site activity.'], $staff);
+
+                UserUpdateLog::create(['staff_id' => $staff->id, 'user_id' => $user->id, 'data' => json_encode(['is_banned' => 'Yes', 'ban_reason' => isset($data['ban_reason']) ? $data['ban_reason'] : null]), 'type' => 'Ban']);
 
                 $user->settings->banned_at = Carbon::now();
 

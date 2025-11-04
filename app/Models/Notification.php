@@ -1,8 +1,9 @@
 <?php
-
 namespace App\Models;
 
 use App\Models\User\User;
+use App\Models\Model;
+use Config;
 
 class Notification extends Model {
     /**
@@ -157,4 +158,7 @@ class Notification extends Model {
     public const GALLERY_SUBMISSION_STAFF_COMMENTS = 513;
     public const GALLERY_SUBMISSION_EDITED = 514;
     public const GALLERY_SUBMISSION_PARTICIPANT = 515;
+    public const QUEUE_SUBMISSION_APPROVED         = 1116;
+    public const QUEUE_SUBMISSION_REJECTED         = 1117;
+    public const QUEUE_SUBMISSION_CANCELLED        = 1118;
 }

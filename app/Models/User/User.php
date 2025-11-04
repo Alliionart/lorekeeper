@@ -25,6 +25,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Fortify\TwoFactorAuthenticatable;
+use App\Models\Queue\QueueSubmission;
 
 class User extends Authenticatable implements MustVerifyEmail {
     use Commenter, Notifiable, TwoFactorAuthenticatable;
@@ -673,5 +674,16 @@ class User extends Authenticatable implements MustVerifyEmail {
      */
     public function hasBookmarked($character) {
         return CharacterBookmark::where('user_id', $this->id)->where('character_id', $character->id)->first();
+    }
+
+     /**
+     * Get the user's submissions.
+     *
+     * @param mixed|null $user
+     *
+     * @return \Illuminate\Pagination\LengthAwarePaginator
+     */
+    public function getQueueSubmissions($user = null) {
+        return QueueSubmission::with('user')->viewable($user ? $user : null)->where('user_id', $this->id)->orderBy('id', 'DESC');
     }
 }

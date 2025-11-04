@@ -15,6 +15,7 @@ use App\Models\User\UserItem;
 use App\Services\InventoryManager;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Queue\QueueSubmission;
 
 class InventoryController extends Controller {
     /*
@@ -184,6 +185,7 @@ class InventoryController extends Controller {
             $designUpdates = CharacterDesignUpdate::where('user_id', $user->id)->whereNotNull('data')->get();
             $trades = Trade::where('sender_id', $user->id)->orWhere('recipient_id', $user->id)->get();
             $submissions = Submission::where('user_id', $user->id)->whereNotNull('data')->get();
+            $queuesubmissions = QueueSubmission::where('user_id', $user->id)->whereNotNull('data')->get();
         }
 
         return view('home.account_search', [
@@ -195,6 +197,7 @@ class InventoryController extends Controller {
             'designUpdates'  => $item ? $designUpdates : null,
             'trades'         => $item ? $trades : null,
             'submissions'    => $item ? $submissions : null,
+            'queuesubmissions' => $item ? $queuesubmissions : null,
         ]);
     }
 
