@@ -171,6 +171,21 @@ return [
             'Mercury' => 'https://github.com/itinerare/',
         ]),
         'version' => '1.1.0',
-    ]
-
+    ],
+    'log_viewer' => [
+        'key' => 'log_viewer',
+        'wiki_key' => 'Log_Viewer',
+        'creators' => json_encode([
+            'Cylunny' => 'https://toyhou.se/cylunny',
+        ]),
+        'version' => '1.0.0', 
+    ],
+    'design_hub' => [
+        'key' => 'design_hub',
+        'wiki_key' => 'Design Hub & Genetics',
+        'creators' => json_encode([
+            'Cylunny' => 'https://github.com/Alliionart/',
+        ]),
+        'version' => '1.0.5', 
+    ],
 ];
