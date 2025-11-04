@@ -400,3 +400,14 @@ Route::group(['prefix' => 'foraging', 'namespace' => 'Users'], function() {
     Route::post('/claim', 'ForagingController@postClaim');
     Route::post('edit/character', 'ForagingController@postEditCharacter');
 });
+
+/**************************************************************************************************	
+    Higher or Lower
+**************************************************************************************************/
+
+Route::group(['prefix' => 'higher-or-lower'], function() {
+    Route::get('/', 'HolController@getIndex');
+
+    Route::get('play', 'HolController@playHol');
+    Route::post('play/guess', 'HolController@postGuess');
+});
