@@ -7,7 +7,6 @@ use DB;
 use Settings;
 use Config;
 use Carbon\Carbon;
-use Settings;
 use Illuminate\Http\Request;
 use Laravel\Socialite\Facades\Socialite;
 use App\Models\Gallery\GallerySubmission;
