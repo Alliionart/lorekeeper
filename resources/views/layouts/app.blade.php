@@ -133,6 +133,7 @@
     <div id="app">
         <div class="site-header-image" id="header" style="background-image: url('{{ $decoratorTheme?->headerImageUrl ?? $conditionalTheme?->headerImageUrl ?? $theme?->headerImageUrl ?? asset('images/header.png') }}'); position:relative;">
             @include('layouts._clock')
+            <img id="logo" src="{{ asset('images/logo.png') }}">
         </div>
 
         @include('layouts._nav')
