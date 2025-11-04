@@ -4,6 +4,10 @@ namespace App\Http\Controllers\Admin\Users;
 
 use App\Http\Controllers\Controller;
 use App\Models\Award\Award;
+use Settings;
+use Config;
+use App\Models\User\UserCurrency;
+use App\Models\SitePage;
 use App\Models\Character\Character;
 use App\Models\Character\CharacterDesignUpdate;
 use App\Models\Character\CharacterItem;

@@ -235,6 +235,13 @@ Route::group(['prefix' => __('cultivation.cultivation')], function() {
 Route::get('pets/pet/{id}', 'Users\PetController@getPetDrops');
 
 /**************************************************************************************************
+    Event Tools
+**************************************************************************************************/
+Route::group(['prefix' => 'event-tracking'], function() {
+    Route::get('/', 'EventController@getEventTracking');
+});
+
+/**************************************************************************************************
     Site Pages
 **************************************************************************************************/
 Route::get('credits', 'PageController@getCreditsPage');

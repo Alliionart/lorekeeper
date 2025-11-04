@@ -2,6 +2,7 @@
 
 namespace App\Models\User;
 
+use App\Models\EventTeam;
 use App\Models\Model;
 
 class UserSettings extends Model {
@@ -12,7 +13,7 @@ class UserSettings extends Model {
      */
     protected $fillable = [
         'is_fto', 'submission_count', 'banned_at', 'ban_reason', 'birthday_setting',
-        'deactivate_reason', 'deactivated_at', 'theme_id', 'border_settings',
+        'deactivate_reason', 'deactivated_at', 'theme_id', 'border_settings', 'team_id',
     ];
 
     /**
@@ -51,5 +52,13 @@ class UserSettings extends Model {
      */
     public function user() {
         return $this->belongsTo(User::class);
+    }
+
+    /**
+     * Get the team this set of settings belongs to.
+     */
+    public function team()
+    {
+        return $this->belongsTo(EventTeam::class, 'team_id');
     }
 }

@@ -32,4 +32,10 @@ return [
         'title' => 'Breeding',
         'text'  => 'This page will contain information about the breeding system on your site. This page is editable from the admin panel.',
     ],
+    'event-tracker' => [
+        'title' => 'Event Tracker',
+        'text' => 'This page will have information on the current event, to be displayed alongside information on a global event score. It does not need to be viewable, as it is automatically embedded into the event tracking page.'
+    ],
+
+
 ];

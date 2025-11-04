@@ -170,6 +170,10 @@ return [
                 'name' => 'Forages',
                 'url' => 'admin/data/forages'
             ],
+            [
+                'name' => 'Event Settings',
+                'url' => 'admin/event-settings'
+            ],
         ]
     ],
     'Masterlist' => [
