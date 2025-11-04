@@ -215,6 +215,7 @@ class PromptService extends Service {
                 'prompt_category_id', 'name', 'summary', 'description', 'parsed_description', 'is_active', 'start_at', 'end_at', 'hide_before_start', 'hide_after_end', 
                 'has_image', 'prefix', 'hide_submissions', 'staff_only', 'hash', 'level_req', 'form', 'public_queue', 'user_queue_limit',
                 'parent_id', 'parent_quantity', 'is_details_visible',
+                'limit', 'limit_period', 'limit_character',
                 ]));
 
             if ($image) {
@@ -287,6 +288,7 @@ class PromptService extends Service {
                 'prompt_category_id', 'name', 'summary', 'description', 'parsed_description', 'is_active', 'start_at', 'end_at', 'hide_before_start', 'hide_after_end', 
                 'has_image', 'prefix', 'hide_submissions', 'staff_only', 'hash', 'level_req', 'form', 'public_queue', 'user_queue_limit',
                 'parent_id', 'parent_quantity', 'is_details_visible',
+                'limit', 'limit_period', 'limit_character',
                 ]));
 
             if ($prompt) {
@@ -397,6 +399,9 @@ class PromptService extends Service {
         }
         if (!isset($data['is_details_visible'])) {
             $data['is_details_visible'] = 0;
+        }
+        if (!isset($data['limit_character'])) {
+            $data['limit_character'] = null;
         }
 
         if (isset($data['remove_image'])) {

@@ -128,6 +128,11 @@
                 </div>
             @endif
         </div>
+        <div class="text-right {{ $prompt->limit ? 'text-danger' : '' }}">
+            <p>{{ $prompt->limit ? 'You can submit this prompt ' . $prompt->limit . ' time(s)' : 'You can submit this prompt an unlimited number of times' }}
+                {{ $prompt->limit_period ? ' per ' . strtolower($prompt->limit_period) : '' }}
+                {{ $prompt->limit_character ? ' per character' : '' }}.</p>
+        </div>
         <div class="text-right">
             @if ($prompt->parent_id)
                 @if ($prompt->parent->getSubmissionCount(Auth::user() ?? null) < $prompt->parent_quantity)
