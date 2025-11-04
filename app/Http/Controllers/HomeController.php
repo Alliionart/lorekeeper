@@ -7,13 +7,13 @@ use DB;
 use Settings;
 use Config;
 use Carbon\Carbon;
-
+use Settings;
 use Illuminate\Http\Request;
 use Laravel\Socialite\Facades\Socialite;
 use App\Models\Gallery\GallerySubmission;
 use App\Models\SitePage;
 use App\Models\Affiliate;
-
+use App\Models\Character\Character;
 use App\Services\LinkService;
 use App\Services\DeviantArtService;
 use App\Services\UserService;
@@ -40,6 +40,12 @@ class HomeController extends Controller {
         } else {
             $gallerySubmissions = [];
         }
+        if(Settings::get('featured_character')) {
+            $character = Character::find(Settings::get('featured_character'));
+        } else {
+            $character = null;
+        }
+        
 
         return view('welcome', [
             'about'               => SitePage::where('key', 'about')->first(),
@@ -47,6 +53,7 @@ class HomeController extends Controller {
             'open' => intval(Settings::get('affiliates_open')),
             'affiliates' => Affiliate::where('status','Accepted')->featured(0)->inRandomOrder()->limit(10)->get(),
             'featured_affiliates' => Affiliate::where('status','Accepted')->featured(1)->get(),
+            'featured' => $character,
         ]);
     }
 

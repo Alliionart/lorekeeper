@@ -49,6 +49,8 @@ class Kernel extends ConsoleKernel {
             ->daily();
         $schedule->command('clean-donations')
             ->everyMinute();
+        $schedule->command('change-feature')
+                ->monthly();
     }
 
     /**

@@ -141,6 +141,8 @@ class AddSiteSettings extends Command {
 
         $this->addSiteSetting('event_weighting', 0, '0: Score is not weighted depending on number of team members, 1: Score is weighted. Does not impact raw currency amounts.');
 
+        $this->addSiteSetting('featured_character', 1, 'ID of the currently featured character.');
+
         /**
         * AFFILIATES
         * Setting determines whether affiliates are open or closed.
