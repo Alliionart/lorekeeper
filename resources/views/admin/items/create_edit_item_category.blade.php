@@ -41,6 +41,13 @@
         @endif
     </div>
 
+    @if(Config::get('lorekeeper.settings.donation_shop.item_donations') == 1 || Config::get('lorekeeper.settings.donation_shop.item_donations') == 3)
+        <div class="form-group">
+            {!! Form::checkbox('can_donate', 1, $category->can_donate, ['class' => 'form-check-input', 'data-toggle' => 'toggle', 'data-on' => 'Allow', 'data-off' => 'Disallow']) !!}
+            {!! Form::label('can_donate', 'Can Be Donated', ['class' => 'form-check-label ml-3']) !!} {!! add_help('This will allow users to donate items in this category to the Donation Shop.') !!}
+        </div>
+    @endif
+
     <div class="form-group">
         {!! Form::label('Description (Optional)') !!}
         {!! Form::textarea('description', $category->description, ['class' => 'form-control wysiwyg']) !!}

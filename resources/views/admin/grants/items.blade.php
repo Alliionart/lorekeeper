@@ -47,9 +47,16 @@
         {!! Form::text('notes', null, ['class' => 'form-control', 'maxlength' => 400]) !!}
     </div>
 
-    <div class="form-group">
-        {!! Form::checkbox('disallow_transfer', 1, 0, ['class' => 'form-check-input', 'data-toggle' => 'toggle']) !!}
-        {!! Form::label('disallow_transfer', 'Account-bound', ['class' => 'form-check-label ml-3']) !!} {!! add_help('If this is on, the recipient(s) will not be able to transfer this item to other users. Items that disallow transfers by default will still not be transferrable.') !!}
+    <div class="row">
+        <div class="col-md form-group">
+            {!! Form::checkbox('disallow_transfer', 1, 0, ['class' => 'form-check-input', 'data-toggle' => 'toggle']) !!}
+            {!! Form::label('disallow_transfer', 'Account-bound', ['class' => 'form-check-label ml-3']) !!} {!! add_help('If this is on, the recipient(s) will not be able to transfer this item to other users. Items that disallow transfers by default will still not be transferrable.') !!}
+        </div>
+
+        <div class="col-md form-group">
+            {!! Form::checkbox('direct_donate', 1, 0, ['class' => 'form-check-input', 'data-toggle' => 'toggle', 'data-onstyle' => 'danger']) !!}
+            {!! Form::label('direct_donate', 'Donate to Donation Shop', ['class' => 'form-check-label ml-3']) !!} {!! add_help('If this is on, the item(s) will be donated directly to the Donation Shop by the admin account and will <i>not</i> be granted to the selected recipients.') !!}
+        </div>
     </div>
 
     <div class="text-right">

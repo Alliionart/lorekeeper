@@ -47,6 +47,8 @@ class Kernel extends ConsoleKernel {
             ->monthly();
         $schedule->command('reset-foraging')
             ->daily();
+        $schedule->command('clean-donations')
+            ->everyMinute();
     }
 
     /**

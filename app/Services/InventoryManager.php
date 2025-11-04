@@ -2,15 +2,19 @@
 
 namespace App\Services;
 
+use App\Facades\Settings;
+use Carbon\Carbon;
+use App\Services\Service;
 use App\Facades\Notifications;
 use App\Models\Character\CharacterItem;
 use App\Models\Item\Item;
 use App\Models\Shop\UserShopStock;
 use App\Models\User\User;
 use App\Models\User\UserItem;
-use Carbon\Carbon;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
+use App\Models\Currency\Currency;
+use App\Models\Shop\UserItemDonation;
 
 class InventoryManager extends Service {
     /*
@@ -45,6 +49,17 @@ class InventoryManager extends Service {
             if (count($users) != count($data['names'])) {
                 throw new \Exception('An invalid user was selected.');
             }
+            if (isset($data['direct_donate']) && $data['direct_donate']) {
+                if (isset($data['disallow_transfer']) && $data['disallow_transfer']) {
+                    throw new \Exception('Account-bound items cannot be donated.');
+                }
+            } else {
+                // Process names
+                $users = User::find($data['names']);
+                if (count($users) != count($data['names'])) {
+                    throw new \Exception('An invalid user was selected.');
+                }
+            }
 
             $keyed_quantities = [];
             array_walk($data['item_ids'], function ($id, $key) use (&$keyed_quantities, $data) {
@@ -59,20 +74,44 @@ class InventoryManager extends Service {
                 throw new \Exception('No valid items found.');
             }
 
-            foreach ($users as $user) {
+            if (isset($data['direct_donate']) && $data['direct_donate']) {
+                if ($items->where('allow_transfer', 1)->count() < $items->count()) {
+                    throw new \Exception('One or more selected items are non-transferable and cannot be donated.');
+                }
+
+                $user = User::find(Settings::get('admin_user'));
+
+                // Grant items to the admin account and donate them directly
                 foreach ($items as $item) {
-                    if (!$this->logAdminAction($staff, 'Item Grant', 'Granted '.$keyed_quantities[$item->id].' '.$item->displayName.' to '.$user->displayname)) {
-                        throw new \Exception('Failed to log admin action.');
-                    }
-                    if ($this->creditItem($staff, $user, 'Staff Grant', Arr::only($data, ['data', 'disallow_transfer', 'notes']), $item, $keyed_quantities[$item->id])) {
-                        Notifications::create('ITEM_GRANT', $user, [
-                            'item_name'     => $item->name,
-                            'item_quantity' => $keyed_quantities[$item->id],
-                            'sender_url'    => $staff->url,
-                            'sender_name'   => $staff->name,
-                        ]);
+                    if ($this->creditItem($staff, $user, 'Staff Donation', Arr::only($data, ['data', 'disallow_transfer', 'notes']), $item, $keyed_quantities[$item->id])) {
+                        // Locate the relevant stack
+                        $stack = UserItem::where('user_id', $user->id)
+                            ->where('count', '>=', $keyed_quantities[$item->id])->where('item_id', $item->id)
+                            ->where('data->data', $data['data'])->where('data->notes', $data['notes'])
+                            ->first();
+
+                        $this->donateStack($user, [$stack], [$keyed_quantities[$item->id]]);
                     } else {
-                        throw new \Exception('Failed to credit items to '.$user->name.'.');
+                        throw new \Exception('Failed to directly donate items.');
+                    }
+                }
+            } else {
+                foreach ($users as $user) {
+                    foreach ($items as $item) {
+                        if (!$this->logAdminAction($staff, 'Item Grant', 'Granted '.$keyed_quantities[$item->id].' '.$item->displayName.' to '.$user->displayname)) {
+                            throw new \Exception('Failed to log admin action.');
+                        }
+                        if ($this->creditItem($staff, $user, 'Staff Grant', Arr::only($data, ['data', 'disallow_transfer', 'notes']), $item, $keyed_quantities[$item->id]))
+                        {
+                            Notifications::create('ITEM_GRANT', $user, [
+                                'item_name'     => $item->name,
+                                'item_quantity' => $keyed_quantities[$item->id],
+                                'sender_url'    => $staff->url,
+                                'sender_name'   => $staff->name
+                            ]);
+                        } else {
+                            throw new \Exception("Failed to credit items to ".$user->name.".");
+                        }
                     }
                 }
             }
@@ -453,6 +492,60 @@ class InventoryManager extends Service {
             $this->setError('error', $e->getMessage());
         }
 
+        return $this->rollbackReturn(false);
+    }
+
+    /**
+     * Donates items from stack.
+     *
+     * @param  \App\Models\User\User      $user
+     * @param  \App\Models\User\UserItem  $stacks
+     * @param  int                        $quantities
+     * @return bool
+     */
+    public function donateStack($user, $stacks, $quantities)
+    {
+        DB::beginTransaction();
+
+        try {
+            foreach($stacks as $key=>$stack) {
+                $quantity = $quantities[$key];
+                if(!$user->hasAlias) throw new \Exception("You need to have a linked social media account before you can perform this action.");
+                if(!$stack) throw new \Exception("An invalid item was selected.");
+                if($stack->user_id != $user->id && !$user->hasPower('edit_inventories')) throw new \Exception("You do not own one of the selected items.");
+                if($stack->count < $quantity) throw new \Exception("Quantity to donate exceeds item count.");
+                if(!$stack->item->canDonate) throw new \Exception ("This item cannot be donated.");
+                if((!$stack->item->allow_transfer || isset($stack->data['disallow_transfer'])) && !$user->hasPower('edit_inventories')) throw new \Exception("One of the selected items cannot be transferred.");
+
+                // Create or add to donated stock
+                $stock = UserItemDonation::where('stack_id', $stack->id)->where('item_id', $stack->item->id)->first();
+                if($stock) {
+                    $stock->update(['quantity' => $stock->stock += $quantity]);
+                }
+                else {
+                    $stock = UserItemDonation::create([
+                        'stack_id' => $stack->id,
+                        'item_id' => $stack->item->id,
+                        'stock' => $quantity
+                    ]);
+                }
+
+                // Debit item(s) from user
+                if($this->debitStack($stack->user, ($stack->user_id == $user->id ? 'Donated by User' : 'Donated by Staff'), ['data' => ($stack->user_id != $user->id ? 'Donated by '.$user->displayName : '')], $stack, $quantity))
+                {
+                    if($stack->user_id != $user->id)
+                        Notifications::create('ITEM_REMOVAL', $stack->user, [
+                            'item_name' => $stack->item->name,
+                            'item_quantity' => $quantity,
+                            'sender_url' => $user->url,
+                            'sender_name' => $user->name
+                        ]);
+                }
+            }
+            return $this->commitReturn(true);
+        } catch(\Exception $e) {
+            $this->setError('error', $e->getMessage());
+        }
         return $this->rollbackReturn(false);
     }
 
