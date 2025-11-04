@@ -2,7 +2,7 @@
     {!! Form::open(['method' => 'GET']) !!}
     <div class="form-inline justify-content-end">
         <div class="form-group mr-3 mb-3">
-            {!! Form::label('name', 'Character Name/Code: ', ['class' => 'mr-2']) !!}
+            {!! Form::label('name', ucwords(__('lorekeeper.character')) . ' Name/Code: ', ['class' => 'mr-2']) !!}
             {!! Form::text('name', Request::get('name'), ['class' => 'form-control']) !!}
         </div>
         <div class="form-group mb-3 mr-1">

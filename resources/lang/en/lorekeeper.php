@@ -12,13 +12,13 @@ return [
     |
     */
 
-    'character'   => 'character', // Incomplete
-    'characters'  => 'characters', // Incomplete
-    'characters_' => 'character|characters', // Incomplete
+    'character'   => 'reosean', // Incomplete
+    'characters'  => 'reoseans', // Incomplete
+    'characters_' => 'reosean|reoseans', // Incomplete
 
-    'myo'   => 'MYO', // Incomplete
-    'myos'  => 'MYOs', // Incomplete
-    'myos_' => 'MYO|MYOs', // Incomplete
+    'myo'   => 'genotype', // Incomplete
+    'myos'  => 'genotypes', // Incomplete
+    'myos_' => 'genotype|genotypes', // Incomplete
 
     'subtype'   => 'subtype',
     'subtypes'  => 'subtypes',

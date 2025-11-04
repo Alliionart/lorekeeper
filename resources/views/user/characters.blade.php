@@ -1,15 +1,15 @@
 @extends('user.layout')
 
 @section('profile-title')
-    {{ $user->name }}'s Characters
+    {{ $user->name }}'s {{ ucwords( __('lorekeeper.characters')) }}
 @endsection
 
 @section('profile-content')
     {!! breadcrumbs(['Users' => 'users', $user->name => $user->url, 'Characters' => $user->url . '/characters']) !!}
 
     <h1>
-        {!! $user->displayName !!}'s Characters
+        {!! $user->displayName !!}'s {{ ucwords( __('lorekeeper.characters')) }}
     </h1>
 
-    @include('user._characters', ['characters' => $characters, 'myo' => false, 'owner' => true, 'userpage_exts' => true])
+    @include('user._characters', [ ucwords( __('lorekeeper.characters')) => $characters, 'myo' => false, 'owner' => true, 'userpage_exts' => true])
 @endsection

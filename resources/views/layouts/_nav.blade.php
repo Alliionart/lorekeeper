@@ -32,10 +32,10 @@
 
                         <div class="dropdown-menu" aria-labelledby="inventoryDropdown">
                             <a class="dropdown-item" href="{{ url('characters') }}">
-                                My Characters
+                                My {{ ucwords( __('lorekeeper.characters')) }}
                             </a>
                             <a class="dropdown-item" href="{{ url('characters/myos') }}">
-                                My Genotypes
+                                My {{ ucwords( __('lorekeeper.myos')) }}
                             </a>
                             <a class="dropdown-item" href="{{ url('breeding-permissions') }}">
                                 Breeding Permissions
@@ -119,10 +119,10 @@
                             Users
                         </a>
                         <a class="dropdown-item" href="{{ url('masterlist') }}">
-                            Character Masterlist
+                            {{ ucwords( __('lorekeeper.characters')) }} Masterlist
                         </a>
                         <a class="dropdown-item" href="{{ url('myos') }}">
-                            MYO Slot Masterlist
+                            {{ ucwords( __('lorekeeper.myos')) }} Masterlist
                         </a>
                         <div class="dropdown-divider"></div>
                         <a class="dropdown-item" href="{{ url('raffles') }}">

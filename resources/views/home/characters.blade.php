@@ -1,28 +1,21 @@
 @extends('home.layout')
 
 @section('home-title')
-    My Characters
+    My {{ ucwords( __('lorekeeper.characters')) }}
 @endsection
 
 @section('home-content')
-    {!! breadcrumbs(['My Characters' => 'characters']) !!}
+    {!! breadcrumbs(['My ' . ucwords( __('lorekeeper.characters')) => 'characters']) !!}
 
     <h1>
-        My Characters
+        My {{ ucwords( __('lorekeeper.characters')) }}
     </h1>
 
     <p>This is a list of characters you own. Drag and drop to rearrange them.</p>
 
     <div id="sortable" class="row sortable">
         @foreach ($characters as $character)
-            <div class="col-md-3 col-6 text-center mb-2" data-id="{{ $character->id }}">
-                <div>
-                    <a href="{{ $character->url }}"><img src="{{ $character->image->thumbnailUrl }}" class="img-thumbnail" alt="Thumbnail for {{ $character->fullName }}" /></a>
-                </div>
-                <div class="mt-1 h5">
-                    {!! $character->displayName !!}
-                </div>
-            </div>
+            @include('browse._character_box', ['character' => $character])
         @endforeach
     </div>
     {!! Form::open(['url' => 'characters/sort', 'class' => 'text-right']) !!}

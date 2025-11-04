@@ -11,5 +11,5 @@
         @endif
     </div>
 @else
-    <p>No {{ $myo ? 'Genotypes' : 'characters' }} found.</p>
+    <p>No {{ $myo ? ucwords( __('lorekeeper.myos')) : ucwords( __('lorekeeper.characters')) }} found.</p>
 @endif

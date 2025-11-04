@@ -1,4 +1,4 @@
-<h1>MYO Slot Settings</h1>
+<h1>{{ __('lorekeeper.genotype') }} Slot Settings</h1>
 
 <h3>Basic Information</h3>
 <div class="form-group">

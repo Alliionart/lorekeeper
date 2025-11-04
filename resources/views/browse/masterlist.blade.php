@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('title')
-    Character Masterlist
+    {{ ucwords(__('lorekeeper.character')) }} Masterlist
 @endsection
 
 @section('sidebar')
@@ -9,10 +9,10 @@
 @endsection
 
 @section('content')
-    {!! breadcrumbs(['Character Masterlist' => 'masterlist']) !!}
-    <h1>Character Masterlist</h1>
+    {!! breadcrumbs([ __('lorekeeper.character') . ' Masterlist' => 'masterlist']) !!}
+    <h1>{{ __('lorekeeper.character') }} Masterlist</h1>
 
-    @include('browse._masterlist_content', ['characters' => $characters])
+    @include('browse._masterlist_content', [ __('lorekeeper.characters') => $characters])
 @endsection
 
 @section('scripts')
