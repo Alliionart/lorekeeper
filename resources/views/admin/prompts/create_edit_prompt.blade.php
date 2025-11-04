@@ -86,12 +86,6 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-md-2 form-group">
-            {!! Form::label('User Queue Limit (Optional)') !!} {!! add_help('Limits how many prompt entries can be submitted at once. Leave blank for no limit.') !!}
-            {!! Form::number('user_queue_limit', $prompt->user_queue_limit, ['class' => 'form-control', 'min' => 1, 'placeholder' => 'No limit']) !!}
-        </div>
-    </div>
-    <div class="row">
         <div class="col-md-6 form-group">
             {!! Form::checkbox('hide_before_start', 1, $prompt->id ? $prompt->hide_before_start : 0, ['class' => 'form-check-input', 'data-toggle' => 'toggle']) !!}
             {!! Form::label('hide_before_start', 'Hide Before Start Time', ['class' => 'form-check-label ml-3']) !!} {!! add_help('If hidden, the prompt will not be shown on the prompt list before the starting time is reached. A starting time needs to be set.') !!}
@@ -157,6 +151,13 @@
     <div class="form-group">
         {!! Form::checkbox('limit_character', 1, $prompt->limit_character, ['class' => 'form-check-input', 'data-toggle' => 'toggle']) !!}
         {!! Form::label('limit_character', 'Per Character', ['class' => 'form-check-label ml-3']) !!} {!! add_help('If turned on, they can submit once per character they own on the masterlist.') !!}
+    </div>
+    <h3>Limit Cocurrent Submissions</h3>
+    <div class="row">
+        <div class="col-md-6 form-group">
+            {!! Form::label('User Queue Limit (Optional)') !!} {!! add_help('Limits how many prompt entries can be submitted at once. Leave blank for no limit.') !!}
+            {!! Form::number('user_queue_limit', $prompt->user_queue_limit, ['class' => 'form-control', 'min' => 1, 'placeholder' => 'No limit']) !!}
+        </div>
     </div>
 
     <h3>Rewards</h3>
