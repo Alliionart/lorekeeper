@@ -45,6 +45,21 @@
         {!! Form::select('prompt_category_id', $categories, $prompt->prompt_category_id, ['class' => 'form-control']) !!}
     </div>
 
+    <div class="row">
+        <div class="col-md-6 form-group">
+            {!! Form::label('Prompt Parent (Optional)') !!} {!! add_help('A parent prompt means the user will be required to have an approved submission from the parent before they can enter this prompt.') !!}
+            {!! Form::select('parent_id', $prompts, $prompt->parent_id, ['class' => 'form-control']) !!}
+        </div>
+        <div class="col-md-2 form-group">
+            {!! Form::label('Quantity') !!} {!! add_help('How many times they should have completed it.') !!}
+            {!! Form::number('parent_quantity', $prompt->parent_quantity ? $prompt->parent_quantity : 1, ['class' => 'form-control', 'min' => 1]) !!}
+        </div>
+        <div class="col-md-2 form-group">
+            {!! Form::label('Allow Users to See Details?', null, ['class' => 'form-check-label']) !!} {!! add_help('If this is set, users will be able to see the prompt details even if they have not completed the parent prompt.') !!}
+            {!! Form::checkbox('is_details_visible', 1, $prompt->is_details_visible, ['class' => 'form-check-input', 'data-toggle' => 'toggle']) !!}
+        </div>
+    </div>
+
     <div class="form-group">
         {!! Form::label('Summary (Optional)') !!} {!! add_help('This is a short blurb that shows up on the consolidated prompts page. HTML cannot be used here.') !!}
         {!! Form::text('summary', $prompt->summary, ['class' => 'form-control', 'maxLength' => 250]) !!}

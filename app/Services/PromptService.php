@@ -187,6 +187,14 @@ class PromptService extends Service {
                 throw new \Exception('The selected prompt category is invalid.');
             }
 
+            // parent prompt validation
+            if (isset($data['parent_id']) && $data['parent_id'] == 'none') {
+                $data['parent_id'] = null;
+            }
+            if ((isset($data['parent_id']) && $data['parent_id']) && !Prompt::where('id', $data['parent_id'])->exists()) {
+                throw new \Exception('The selected parent prompt is invalid.');
+            }
+
             $data = $this->populateData($data);
 
             $image = null;
@@ -203,7 +211,11 @@ class PromptService extends Service {
                 $data['hide_submissions'] = 0;
             }
 
-            $prompt = Prompt::create(Arr::only($data, ['prompt_category_id', 'name', 'summary', 'description', 'parsed_description', 'is_active', 'start_at', 'end_at', 'hide_before_start', 'hide_after_end', 'has_image', 'prefix', 'hide_submissions', 'staff_only', 'hash', 'level_req', 'form', 'public_queue', 'user_queue_limit']));
+            $prompt = Prompt::create(Arr::only($data, [
+                'prompt_category_id', 'name', 'summary', 'description', 'parsed_description', 'is_active', 'start_at', 'end_at', 'hide_before_start', 'hide_after_end', 
+                'has_image', 'prefix', 'hide_submissions', 'staff_only', 'hash', 'level_req', 'form', 'public_queue', 'user_queue_limit',
+                'parent_id', 'parent_quantity', 'is_details_visible',
+                ]));
 
             if ($image) {
                 $this->handleImage($image, $prompt->imagePath, $prompt->imageFileName);
@@ -249,6 +261,14 @@ class PromptService extends Service {
                 throw new \Exception('That prefix has already been taken.');
             }
 
+            // parent prompt validation
+            if (isset($data['parent_id']) && $data['parent_id'] == 'none') {
+                $data['parent_id'] = null;
+            }
+            if ((isset($data['parent_id']) && $data['parent_id']) && !Prompt::where('id', $data['parent_id'])->exists()) {
+                throw new \Exception('The selected parent prompt is invalid.');
+            }
+
             $data = $this->populateData($data, $prompt);
 
             $image = null;
@@ -263,7 +283,11 @@ class PromptService extends Service {
                 $data['hide_submissions'] = 0;
             }
 
-            $prompt->update(Arr::only($data, ['prompt_category_id', 'name', 'summary', 'description', 'parsed_description', 'is_active', 'start_at', 'end_at', 'hide_before_start', 'hide_after_end', 'has_image', 'prefix', 'hide_submissions', 'staff_only', 'hash', 'level_req', 'form', 'public_queue', 'user_queue_limit']));
+            $prompt->update(Arr::only($data, [
+                'prompt_category_id', 'name', 'summary', 'description', 'parsed_description', 'is_active', 'start_at', 'end_at', 'hide_before_start', 'hide_after_end', 
+                'has_image', 'prefix', 'hide_submissions', 'staff_only', 'hash', 'level_req', 'form', 'public_queue', 'user_queue_limit',
+                'parent_id', 'parent_quantity', 'is_details_visible',
+                ]));
 
             if ($prompt) {
                 $this->handleImage($image, $prompt->imagePath, $prompt->imageFileName);
@@ -295,6 +319,9 @@ class PromptService extends Service {
             // Check first if the category is currently in use
             if (Submission::where('prompt_id', $prompt->id)->exists()) {
                 throw new \Exception('A submission under this prompt exists. Deleting the prompt will break the submission page - consider setting the prompt to be not active instead.');
+            }
+            if (Prompt::where('parent_id', $prompt->id)->exists()) {
+                throw new \Exception('A prompt currently has this prompt as its parent.');
             }
 
             $prompt->rewards()->delete();
@@ -367,6 +394,9 @@ class PromptService extends Service {
         }
         if (!isset($data['public_queue'])) {
             $data['public_queue'] = 0;
+        }
+        if (!isset($data['is_details_visible'])) {
+            $data['is_details_visible'] = 0;
         }
 
         if (isset($data['remove_image'])) {

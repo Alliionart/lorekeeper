@@ -3,6 +3,7 @@
 namespace App\Models\Prompt;
 
 use App\Models\Model;
+use App\Models\Submission\Submission;
 use Carbon\Carbon;
 
 class Prompt extends Model {
@@ -15,6 +16,7 @@ class Prompt extends Model {
         'prompt_category_id', 'name', 'summary', 'description', 'parsed_description', 'is_active',
         'start_at', 'end_at', 'hide_before_start', 'hide_after_end', 'has_image', 'prefix',
         'hide_submissions', 'staff_only', 'hash', 'level_req', 'form', 'public_queue', 'user_queue_limit',
+        'parent_id', 'parent_quantity', 'is_details_visible',
     ];
 
     /**
@@ -88,6 +90,27 @@ class Prompt extends Model {
      */
     public function skills() {
         return $this->hasMany(PromptSkill::class, 'prompt_id');
+    }
+
+    /**     
+     * Get the prompts parent.
+     */
+    public function parent() {
+        return $this->belongsTo('App\Models\Prompt\Prompt', 'parent_id');
+    }
+
+    /**
+     * Get the prompts children.
+     */
+    public function children() {
+        return $this->hasMany('App\Models\Prompt\Prompt', 'parent_id');
+    }
+
+    /**
+     * Get the submissions for this prompt.
+     */
+    public function submissions() {
+        return $this->hasMany(Submission::class, 'prompt_id');
     }
 
     /**********************************************************************************************
@@ -331,5 +354,20 @@ class Prompt extends Model {
      */
     public function getAdminPowerAttribute() {
         return 'edit_data';
+    }
+
+    /**********************************************************************************************
+
+        OTHER FUNCTIONS
+
+    **********************************************************************************************/
+
+    /**
+     * Returns the count of approved submissions for this prompt by a user.
+     *
+     * @param mixed $user
+     */
+    public function getSubmissionCount($user) {
+        return $this->submissions()->where('user_id', $user->id)->where('status', 'approved')->count();
     }
 }

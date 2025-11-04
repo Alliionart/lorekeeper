@@ -73,6 +73,12 @@ class SubmissionManager extends Service {
                         throw new \Exception('You are not high enough level to enter this prompt');
                     }
                 }
+                if ($prompt->parent_id) {
+                    $submission = Submission::where('user_id', $user->id)->where('prompt_id', $prompt->parent_id)->where('status', 'Approved')->count();
+                    if ($submission < $prompt->parent_quantity) {
+                        throw new \Exception('Please complete the prerequisite.');
+                    }
+                }
             } else {
                 $prompt = null;
             }

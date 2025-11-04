@@ -108,6 +108,34 @@
             @if ($prompt->level_req)
                 <p class="text-danger">This prompt requires you to be at least level {{ $prompt->level_req }}</p>
             @endif
+            @if ($prompt->children->count())
+                <h4 class="mt-2">Unlocks The Following Prompts:</h4>
+                <div class="row">
+                    @foreach ($prompt->children as $children)
+                        <div class="col-md-6">
+                            <div class="card mb-3">
+                                <div class="card-body">
+                                    <h5 class="card-title">
+                                        {!! $children->displayname !!}
+                                    </h5>
+                                    <p class="card-text">
+                                        {!! $children->summary !!}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            @endif
+        </div>
+        <div class="text-right">
+            @if ($prompt->parent_id)
+                @if ($prompt->parent->getSubmissionCount(Auth::user() ?? null) < $prompt->parent_quantity)
+                    <p class="text-danger">You have not unlocked this prompt yet. You must complete {!! $prompt->parent->displayName !!} {{ $prompt->parent_quantity }} {{ $prompt->parent_quantity > 1 ? 'times' : 'time' }}.</p>
+                @else
+                    <p class="text-success">You have unlocked this prompt by completing {!! $prompt->parent->displayName !!} {{ $prompt->parent_quantity }} {{ $prompt->parent_quantity > 1 ? 'times' : 'time' }}.</p>
+                @endif
+            @endif
             @if ($prompt->end_at && $prompt->end_at->isPast())
                 <span class="text-secondary">This prompt has ended.</span>
             @elseif($prompt->start_at && $prompt->start_at->isFuture())

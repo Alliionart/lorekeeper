@@ -49,9 +49,27 @@
         {!! $prompts->render() !!}
         @foreach ($prompts as $prompt)
             <div class="card mb-3">
-                <div class="card-body">
-                    @include('prompts._prompt_entry', ['prompt' => $prompt])
-                </div>
+                @if ($prompt->parent_id)
+                    @if ($prompt->parent->getSubmissionCount(Auth::user() ?? null) < $prompt->parent_quantity)
+                        <div class="card-body" style="background-color:#ddd;">
+                            <div class="card-body">
+                                @if ($prompt->is_details_visible)
+                                    @include('prompts._prompt_entry', ['prompt' => $prompt])
+                                @else
+                                    @include('prompts._prompt_denied_entry', ['prompt' => $prompt])
+                                @endif
+                            </div>
+                        </div>
+                    @else
+                        <div class="card-body">
+                            @include('prompts._prompt_entry', ['prompt' => $prompt])
+                        </div>
+                    @endif
+                @else
+                    <div class="card-body">
+                        @include('prompts._prompt_entry', ['prompt' => $prompt])
+                    </div>
+                @endif
             </div>
         @endforeach
         {!! $prompts->render() !!}
