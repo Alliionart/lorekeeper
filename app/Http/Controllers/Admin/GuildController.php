@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Controller;
+use App\Models\Guild\Guild;
 use Illuminate\Http\Request;
 
 class GuildController extends Controller {

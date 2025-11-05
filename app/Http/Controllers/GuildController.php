@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Guild\Guild;
+use App\Models\Guild\GuildShop;
 use Illuminate\Http\Request;
 
 class GuildController extends Controller {
@@ -62,4 +64,69 @@ class GuildController extends Controller {
      */
     public function postGuildEdit($id) {
     }
+
+    /**
+     * Shows the guild shop page should the shop be active
+     * 
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function getGuildShop($id) {
+        $guild = Guild::active()->where('id', $id)->first();
+
+        return view('guilds.shop', [
+            'guild' => $guild,
+            //TODO: add shop variables and data
+            //TODO: make shop not viewable if the shop is not active
+        ]);
+    }
+
+    /**
+     * Shows the guild character index
+     * 
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function getGuildCharacters($id) {
+        $guild = Guild::active()->where('id', $id)->first();
+
+        return view('guilds.characters', [
+            'guild' => $guild,
+            //TODO Add guild character variables and data
+        ]);
+    }
+
+    /**
+     * Shows the guild member index, including member ranks
+     * 
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function getGuildMembers($id) {
+        $guild = Guild::active()->where('id', $id)->first();
+
+        return view('guilds.members', [
+            'guild' => $guild,
+            //TODO Get guild members and their ranks
+        ]);
+    }
+
+    /**
+     * Shows the guild inventory
+     * 
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function getGuildInventory($id) {
+        $guild = Guild::active()->where('id', $id)->first();
+
+        return view('guilds.inventory', [
+            'guild' => $guild,
+            //TODO get guild inventory
+            //Possible TODO: get guild bank on this page as well
+        ]);
+    }
+
+    //Future TODO:
+    /**
+     * Guild armory
+     * Guild events
+     * 
+     */
 }
