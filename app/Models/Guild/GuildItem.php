@@ -3,7 +3,6 @@
 namespace App\Models\Guild;
 
 use App\Models\Item\Item;
-use App\Models\Guild\Guild;
 use App\Models\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 

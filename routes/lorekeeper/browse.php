@@ -192,10 +192,9 @@ Route::group(['prefix' => 'queue-submissions', 'namespace' => 'Users'], function
 /**************************************************************************************************
     Guilds
 **************************************************************************************************/
-Route::group(['prefix' => __('guilds.guilds')], function() {
+Route::group(['prefix' => __('guilds.guilds')], function () {
     Route::get('/', 'GuildController@getGuildIndex');
     Route::get('view/{id}', 'GuildController@getGuild');
     Route::get('edit/{id}', 'GuildController@getGuildEdit');
     Route::post('edit/{id}', 'GuildController@postGuildEdit');
 });
-

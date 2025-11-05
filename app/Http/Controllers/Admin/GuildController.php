@@ -1,15 +1,10 @@
 <?php
+
 namespace App\Http\Controllers\Admin;
 
-use App\Facades\Settings;
-use App\Models\Queue\Queue;
-use App\Models\Queue\QueueCategory;
-use App\Models\Guilds\Guilds;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
-class GuildController extends Controller
-{
+class GuildController extends Controller {
     /*
     |--------------------------------------------------------------------------
     | Queues Controller
@@ -39,7 +34,7 @@ class GuildController extends Controller
     public function getEditGuild(Request $request, $id) {
         $guild = Guild::active()->where('id', $id)->first();
 
-        if (! $guild) {
+        if (!$guild) {
             abort(404);
         }
 
@@ -56,7 +51,5 @@ class GuildController extends Controller
      * @return \Illuminate\Contracts\Support\Renderable
      */
     public function postEditGuild(Request $request, $id) {
-        
     }
-
 }

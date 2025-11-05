@@ -4,9 +4,6 @@ namespace App\Models\Guild;
 
 use App\Models\Model;
 use App\Models\User\User;
-use App\Models\Character\Character;
-use App\Models\Shop\Shop;
-use App\Models\Guild\GuildItem;
 use Carbon\Carbon;
 
 class Guild extends Model {
