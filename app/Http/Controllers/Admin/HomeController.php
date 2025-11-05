@@ -9,6 +9,7 @@ use App\Models\Character\CharacterDesignUpdate;
 use App\Models\Character\CharacterTransfer;
 use App\Models\Currency\Currency;
 use App\Models\Gallery\GallerySubmission;
+use App\Models\Queue\QueueSubmission;
 use App\Models\Report\Report;
 use App\Models\Submission\Submission;
 use App\Models\Trade;
@@ -16,10 +17,8 @@ use App\Models\User\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use App\Models\Queue\QueueSubmission;
 
-class HomeController extends Controller
-{
+class HomeController extends Controller {
     /**
      * Show the admin dashboard.
      *

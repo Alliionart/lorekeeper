@@ -4,11 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Character\Character;
-use App\Models\Currency\Currency;
 use App\Models\Item\Item;
-use App\Models\Loot\LootTable;
 use App\Models\Queue\QueueCategory;
-use App\Models\Raffle\Raffle;
 use App\Models\Queue\QueueSubmission;
 use App\Services\QueueSubmissionManager;
 use Illuminate\Http\Request;
@@ -23,7 +20,6 @@ class QueueSubmissionController extends Controller {
      * @return \Illuminate\Contracts\Support\Renderable
      */
     public function getSubmissionIndex(Request $request, $status = null) {
-
         $submissions = QueueSubmission::with('queue')->where('status', $status ? ucfirst($status) : 'Pending')->whereNotNull('queue_id');
         $data = $request->only(['queue_category_id', 'sort']);
         if (isset($data['queue_category_id']) && $data['queue_category_id'] != 'none') {
@@ -68,7 +64,7 @@ class QueueSubmissionController extends Controller {
 
         return view('admin.queues.submission', [
             'submission'       => $submission,
-            'queue'       => $queue,
+            'queue'            => $queue,
             'inventory'        => $inventory,
             'itemsrow'         => Item::all()->keyBy('id'),
             'page'             => 'submission',
@@ -78,19 +74,16 @@ class QueueSubmissionController extends Controller {
         ] : []));
     }
 
-
-
     /**
      * Creates a new submission.
      *
      * @param App\Services\QueueSubmissionManager $service
-     * @param int                            $id
-     * @param string                         $action
+     * @param int                                 $id
+     * @param string                              $action
      *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function postSubmission(Request $request, QueueSubmissionManager $service, $id, $action) {
-
         $data = $request->all();
         if ($action == 'reject' && $service->rejectSubmission($request->only(['staff_comments']) + ['id' => $id], Auth::user())) {
             flash('Submission rejected successfully.')->success();

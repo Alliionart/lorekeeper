@@ -12,6 +12,7 @@ use App\Models\Gallery\GalleryCharacter;
 use App\Models\Gallery\GallerySubmission;
 use App\Models\Item\Item;
 use App\Models\Item\ItemCategory;
+use App\Models\Queue\Queue;
 use App\Models\User\User;
 use App\Models\User\UserCurrency;
 use App\Models\User\UserUpdateLog;
@@ -19,8 +20,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\View;
 use Route;
-use App\Models\Character\CharacterCategory;
-use App\Models\Queue\Queue;
 
 class UserController extends Controller {
     /*
@@ -353,7 +352,7 @@ class UserController extends Controller {
         ]);
     }
 
-        /**
+    /**
      * Shows a user's submissions.
      *
      * @param string $name
@@ -372,7 +371,7 @@ class UserController extends Controller {
         return view('user.queue_logs', [
             'user'    => $this->user,
             'logs'    => $logs->paginate(30)->appends($request->query()),
-            'queues' => Queue::active()->pluck('name', 'id'),
+            'queues'  => Queue::active()->pluck('name', 'id'),
         ]);
     }
 }

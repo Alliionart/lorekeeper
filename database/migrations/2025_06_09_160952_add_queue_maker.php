@@ -4,15 +4,11 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddQueueMaker extends Migration
-{
+class AddQueueMaker extends Migration {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
-    {
+    public function up() {
         //we're gonna be duplicating a few prompt tables,
         //which is probably suboptimal, but i'm unsure how much fuckery this ext wil lresult in,
         //so it's better to separate the madness and make prompts nto involved in that
@@ -71,7 +67,6 @@ class AddQueueMaker extends Migration
             $table->integer('hide_submissions')->unsigned()->default(0);
             $table->boolean('staff_only')->default(0);
             $table->boolean('has_image')->default(0);
-
         });
 
         Schema::create('queue_submissions', function (Blueprint $table) {
@@ -101,16 +96,12 @@ class AddQueueMaker extends Migration
 
             $table->longText('data')->nullable()->default(null);
         });
-
     }
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
-    public function down()
-    {
+    public function down() {
         Schema::dropIfExists('queue_categories');
         Schema::dropIfExists('queue_submissions');
         Schema::dropIfExists('queue_submission_characters');

@@ -462,9 +462,8 @@ Route::group(['prefix' => 'designs', 'middleware' => 'power:manage_characters'],
 });
 Route::get('{type}/{status}', 'DesignController@getDesignIndex')->where('type', 'myo-approvals|design-approvals')->where('status', 'pending|approved|rejected');
 
-
-# SUBMISSIONS
-Route::group(['prefix' => 'queue-submissions', 'middleware' => 'power:manage_submissions'], function() {
+// SUBMISSIONS
+Route::group(['prefix' => 'queue-submissions', 'middleware' => 'power:manage_submissions'], function () {
     Route::get('/', 'QueueSubmissionController@getSubmissionIndex');
     Route::get('/{status}', 'QueueSubmissionController@getSubmissionIndex')->where('status', 'pending|approved|rejected');
     Route::get('edit/{id}', 'QueueSubmissionController@getSubmission');
