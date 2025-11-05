@@ -470,3 +470,11 @@ Route::group(['prefix' => 'queue-submissions', 'middleware' => 'power:manage_sub
     Route::get('edit/{id}', 'QueueSubmissionController@getSubmission');
     Route::post('edit/{id}/{action}', 'QueueSubmissionController@postSubmission')->where('action', 'approve|reject');
 });
+
+// GUILDS
+Route::group(['prefix' => 'guilds', 'middleware' => 'power:manage_guilds'], function () {
+    Route::get('/', 'GuildController@getGuildIndex');
+    Route::get('/{status}', 'GuildController@getGuildIndex')->where('status', 'inactive|active|pending');
+    Route::get('edit/{id}', 'GuildController@getGuild');
+    Route::post('edit/{id}/{action}', 'GuildController@postGuild')->where('action', 'inactive|active|pending');
+});

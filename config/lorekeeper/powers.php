@@ -67,4 +67,8 @@ return [
         'name'        => 'Comment on Sales',
         'description' => 'Allow rank to comment on sales in preview mode.',
     ],
+    'manage_guilds' => [
+        'name'        => 'Manage Guilds',
+        'description' => 'Allow the user to manage guilds without being apart of the guild. Also allows the editing of global guild settings.',
+    ],
 ];
