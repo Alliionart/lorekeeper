@@ -47,6 +47,9 @@
                             <a class="dropdown-item" href="{{ url('comments/liked') }}">
                                 Liked Comments
                             </a>
+                            <a class="dropdown-item" href="{{ url( 'my-' . __('guilds.guilds') ) }}">
+                                My {{ ucwords(__('guilds.guilds')) }}
+                            </a>
                         </div>
                     </li>
                     <li class="nav-item dropdown">
@@ -121,6 +124,9 @@
                         </a>
                         <a class="dropdown-item" href="{{ url('shops') }}">
                             Shops
+                        </a>
+                        <a class="dropdown-item" href="{{ url( __('guilds.guilds') ) }}">
+                            {{ ucwords(__('guilds.guilds')) }}
                         </a>
                     </div>
                 </li>

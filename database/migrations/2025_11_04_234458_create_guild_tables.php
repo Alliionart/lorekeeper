@@ -17,8 +17,18 @@ return new class extends Migration
             $table->string('name')->default('Unknown');
             $table->integer('owner_id')->nullable();
             $table->string('status')->default('inactive');
+            $table->text('description')->nullable();
+            $table->text('parsed_description')->nullable();
             $table->string('location')->nullable();
             $table->integer('reputation')->default(0);
+            $table->integer('max_users')->nullable();
+            $table->integer('max_characters')->nullable();
+            $table->boolean('open_new_users')->default(1);
+            $table->boolean('automatic_app_approval')->default(0);
+            $table->boolean('open_inventory')->default(0);
+            $table->boolean('open_bank')->default(0);
+            $table->boolean('open_pets')->default(0);
+            $table->boolean('open_armory')->default(0);
             $table->timestamps();
         });
 
@@ -61,7 +71,7 @@ return new class extends Migration
             $table->integer('count')->default(1);
             $table->text('data')->nullable();
             $table->timestamps();
-            //$table->timestamp('deleted_at', precision: 0);
+            $table->timestamp('deleted_at', precision: 0)->nullable();
         });
 
         Schema::create('guild_pets', function (Blueprint $table) {
