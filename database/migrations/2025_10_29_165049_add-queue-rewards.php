@@ -4,16 +4,11 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddQueueRewards extends Migration
-{
+class AddQueueRewards extends Migration {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
-    {
-
+    public function up() {
         Schema::table('queues', function (Blueprint $table) {
             $table->longtext('output')->nullable()->default(null);
             $table->integer('limit_concurrent')->nullable()->default(null);
@@ -29,11 +24,8 @@ class AddQueueRewards extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
-    public function down()
-    {
+    public function down() {
         Schema::table('queues', function (Blueprint $table) {
             $table->dropColumn('output');
             $table->dropColumn('limit_concurrent');

@@ -8,6 +8,7 @@ use App\Models\Character\CharacterDesignUpdate;
 use App\Models\Character\CharacterItem;
 use App\Models\Item\Item;
 use App\Models\Item\ItemCategory;
+use App\Models\Queue\QueueSubmission;
 use App\Models\Submission\Submission;
 use App\Models\Trade;
 use App\Models\User\User;
@@ -15,7 +16,6 @@ use App\Models\User\UserItem;
 use App\Services\InventoryManager;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Models\Queue\QueueSubmission;
 
 class InventoryController extends Controller {
     /*
@@ -189,14 +189,14 @@ class InventoryController extends Controller {
         }
 
         return view('home.account_search', [
-            'item'           => $item ? $item : null,
-            'items'          => Item::orderBy('name')->released()->pluck('name', 'id'),
-            'userItems'      => $item ? $userItems : null,
-            'characterItems' => $item ? $characterItems : null,
-            'characters'     => $item ? $characters : null,
-            'designUpdates'  => $item ? $designUpdates : null,
-            'trades'         => $item ? $trades : null,
-            'submissions'    => $item ? $submissions : null,
+            'item'             => $item ? $item : null,
+            'items'            => Item::orderBy('name')->released()->pluck('name', 'id'),
+            'userItems'        => $item ? $userItems : null,
+            'characterItems'   => $item ? $characterItems : null,
+            'characters'       => $item ? $characters : null,
+            'designUpdates'    => $item ? $designUpdates : null,
+            'trades'           => $item ? $trades : null,
+            'submissions'      => $item ? $submissions : null,
             'queuesubmissions' => $item ? $queuesubmissions : null,
         ]);
     }

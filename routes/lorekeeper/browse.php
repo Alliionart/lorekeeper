@@ -127,7 +127,7 @@ Route::group(['prefix' => 'shops'], function () {
     Route::get('{id}/{stockId}', 'ShopController@getShopStock')->where(['id' => '[0-9]+', 'stockId' => '[0-9]+']);
 });
 
-         Route::group(['prefix' => 'queues'], function () {
+Route::group(['prefix' => 'queues'], function () {
     Route::get('/', 'QueuesController@getIndex');
     Route::get('queue-categories', 'QueuesController@getQueueCategories');
     Route::get('queues', 'QueuesController@getQueues');
@@ -185,7 +185,7 @@ Route::group(['prefix' => 'reports', 'namespace' => 'Users'], function () {
 /**************************************************************************************************
     Queue Submissions
 **************************************************************************************************/
-Route::group(['prefix' => 'queue-submissions', 'namespace' => 'Users'], function() {
+Route::group(['prefix' => 'queue-submissions', 'namespace' => 'Users'], function () {
     Route::get('view/{id}', 'QueueSubmissionController@getSubmission');
 });
 

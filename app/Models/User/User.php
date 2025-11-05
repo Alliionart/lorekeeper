@@ -14,6 +14,7 @@ use App\Models\Gallery\GallerySubmission;
 use App\Models\Item\Item;
 use App\Models\Item\ItemLog;
 use App\Models\Notification;
+use App\Models\Queue\QueueSubmission;
 use App\Models\Rank\Rank;
 use App\Models\Rank\RankPower;
 use App\Models\Shop\ShopLog;
@@ -25,7 +26,6 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Fortify\TwoFactorAuthenticatable;
-use App\Models\Queue\QueueSubmission;
 
 class User extends Authenticatable implements MustVerifyEmail {
     use Commenter, Notifiable, TwoFactorAuthenticatable;
@@ -676,7 +676,7 @@ class User extends Authenticatable implements MustVerifyEmail {
         return CharacterBookmark::where('user_id', $this->id)->where('character_id', $character->id)->first();
     }
 
-     /**
+    /**
      * Get the user's submissions.
      *
      * @param mixed|null $user

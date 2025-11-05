@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models\Queue;
 
 use App\Models\Item\Item;
@@ -6,8 +7,7 @@ use App\Models\Model;
 use App\Services\Queue\GeneralService;
 use Carbon\Carbon;
 
-class Queue extends Model
-{
+class Queue extends Model {
     /**
      * The attributes that are mass assignable.
      *
@@ -76,16 +76,14 @@ class Queue extends Model
     /**
      * Get the category the queue belongs to.
      */
-    public function category()
-    {
+    public function category() {
         return $this->belongsTo(QueueCategory::class, 'queue_category_id');
     }
 
     /**
      * Get the submissions that belong to this queue.
      */
-    public function submissions()
-    {
+    public function submissions() {
         return $this->hasMany(QueueSubmission::class, 'queue_id');
     }
 
@@ -102,18 +100,17 @@ class Queue extends Model
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeActive($query)
-    {
+    public function scopeActive($query) {
         return $query->where('is_active', 1)
             ->where(function ($query) {
                 $query->whereNull('start_at')->orWhere('start_at', '<', Carbon::now())->orWhere(function ($query) {
                     $query->where('start_at', '>=', Carbon::now())->where('hide_before_start', 0);
                 });
             })->where(function ($query) {
-            $query->whereNull('end_at')->orWhere('end_at', '>', Carbon::now())->orWhere(function ($query) {
-                $query->where('end_at', '<=', Carbon::now())->where('hide_after_end', 0);
+                $query->whereNull('end_at')->orWhere('end_at', '>', Carbon::now())->orWhere(function ($query) {
+                    $query->where('end_at', '<=', Carbon::now())->where('hide_after_end', 0);
+                });
             });
-        });
     }
 
     /**
@@ -124,8 +121,7 @@ class Queue extends Model
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeOpen($query, $isOpen)
-    {
+    public function scopeOpen($query, $isOpen) {
         if ($isOpen) {
             $query->where(function ($query) {
                 $query->whereNull('end_at')->where('start_at', '<', Carbon::now());
@@ -153,8 +149,7 @@ class Queue extends Model
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeStaffOnly($query, $user)
-    {
+    public function scopeStaffOnly($query, $user) {
         if ($user && $user->isStaff) {
             return $query;
         }
@@ -170,8 +165,7 @@ class Queue extends Model
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeSortAlphabetical($query, $reverse = false)
-    {
+    public function scopeSortAlphabetical($query, $reverse = false) {
         return $query->orderBy('name', $reverse ? 'DESC' : 'ASC');
     }
 
@@ -182,8 +176,7 @@ class Queue extends Model
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeSortCategory($query)
-    {
+    public function scopeSortCategory($query) {
         if (QueueCategory::all()->count()) {
             return $query->orderBy(QueueCategory::select('sort')->whereColumn('queues.queue_category_id', 'queue_categories.id'), 'DESC');
         }
@@ -198,8 +191,7 @@ class Queue extends Model
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeSortNewest($query)
-    {
+    public function scopeSortNewest($query) {
         return $query->orderBy('id', 'DESC');
     }
 
@@ -210,8 +202,7 @@ class Queue extends Model
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeSortOldest($query)
-    {
+    public function scopeSortOldest($query) {
         return $query->orderBy('id');
     }
 
@@ -223,8 +214,7 @@ class Queue extends Model
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeSortStart($query, $reverse = false)
-    {
+    public function scopeSortStart($query, $reverse = false) {
         return $query->orderBy('start_at', $reverse ? 'DESC' : 'ASC');
     }
 
@@ -236,8 +226,7 @@ class Queue extends Model
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeSortEnd($query, $reverse = false)
-    {
+    public function scopeSortEnd($query, $reverse = false) {
         return $query->orderBy('end_at', $reverse ? 'DESC' : 'ASC');
     }
 
@@ -245,12 +234,10 @@ class Queue extends Model
      * Scope a query to sort queues by end date.
      *
      * @param \Illuminate\Database\Eloquent\Builder $query
-     * @param bool                                  $reverse
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeSplash($query)
-    {
+    public function scopeSplash($query) {
         $query->whereHas('category', function ($query) {
             $query->where('key', null);
         })->orWhere('queue_category_id', null);
@@ -267,9 +254,8 @@ class Queue extends Model
      *
      * @return string
      */
-    public function getDisplayNameAttribute()
-    {
-        return '<a href="' . $this->url . '" class="display-queue">' . $this->name . '</a>';
+    public function getDisplayNameAttribute() {
+        return '<a href="'.$this->url.'" class="display-queue">'.$this->name.'</a>';
     }
 
     /**
@@ -277,8 +263,7 @@ class Queue extends Model
      *
      * @return string
      */
-    public function getImageDirectoryAttribute()
-    {
+    public function getImageDirectoryAttribute() {
         return 'images/data/queues';
     }
 
@@ -287,9 +272,8 @@ class Queue extends Model
      *
      * @return string
      */
-    public function getImageFileNameAttribute()
-    {
-        return $this->id . '-' . $this->hash . '-image.png';
+    public function getImageFileNameAttribute() {
+        return $this->id.'-'.$this->hash.'-image.png';
     }
 
     /**
@@ -297,8 +281,7 @@ class Queue extends Model
      *
      * @return string
      */
-    public function getImagePathAttribute()
-    {
+    public function getImagePathAttribute() {
         return public_path($this->imageDirectory);
     }
 
@@ -307,13 +290,12 @@ class Queue extends Model
      *
      * @return string
      */
-    public function getImageUrlAttribute()
-    {
-        if (! $this->has_image) {
+    public function getImageUrlAttribute() {
+        if (!$this->has_image) {
             return null;
         }
 
-        return asset($this->imageDirectory . '/' . $this->imageFileName);
+        return asset($this->imageDirectory.'/'.$this->imageFileName);
     }
 
     /**
@@ -321,9 +303,8 @@ class Queue extends Model
      *
      * @return string
      */
-    public function getUrlAttribute()
-    {
-        return url('queues/queues?name=' . $this->name);
+    public function getUrlAttribute() {
+        return url('queues/queues?name='.$this->name);
     }
 
     /**
@@ -331,9 +312,8 @@ class Queue extends Model
      *
      * @return string
      */
-    public function getIdUrlAttribute()
-    {
-        return url('queues/' . $this->id);
+    public function getIdUrlAttribute() {
+        return url('queues/'.$this->id);
     }
 
     /**
@@ -341,8 +321,7 @@ class Queue extends Model
      *
      * @return string
      */
-    public function getAssetTypeAttribute()
-    {
+    public function getAssetTypeAttribute() {
         return 'queues';
     }
 
@@ -351,9 +330,8 @@ class Queue extends Model
      *
      * @return string
      */
-    public function getAdminUrlAttribute()
-    {
-        return url('admin/data/queues/edit/' . $this->id);
+    public function getAdminUrlAttribute() {
+        return url('admin/data/queues/edit/'.$this->id);
     }
 
     /**
@@ -361,8 +339,7 @@ class Queue extends Model
      *
      * @return string
      */
-    public function getAdminPowerAttribute()
-    {
+    public function getAdminPowerAttribute() {
         return 'edit_data';
     }
 
@@ -371,20 +348,19 @@ class Queue extends Model
      *
      * @return mixed
      */
-    public function getServiceAttribute()
-    {
-        $class = 'App\Services\Queue\\' . str_replace(' ', '', ucwords(str_replace('_', ' ', $this->queue_type))) . 'Service';
-        return (new $class());
+    public function getServiceAttribute() {
+        $class = 'App\Services\Queue\\'.str_replace(' ', '', ucwords(str_replace('_', ' ', $this->queue_type))).'Service';
+
+        return new $class();
     }
 
     /**
-     * Get the config data
+     * Get the config data.
      *
      * @return mixed
      */
-    public function getConfigInfoAttribute()
-    {
-        return config('lorekeeper.queue_types.' . $this->queue_type);
+    public function getConfigInfoAttribute() {
+        return config('lorekeeper.queue_types.'.$this->queue_type);
     }
 
     /**
@@ -392,19 +368,19 @@ class Queue extends Model
      *
      * @return string
      */
-    public function getCustomImageDirectoryAttribute()
-    {
+    public function getCustomImageDirectoryAttribute() {
         return 'images/data/queues/images';
     }
 
     /**
      * Gets the file name of the model's image.
      *
+     * @param mixed $key
+     *
      * @return string
      */
-    public function customImageFileName($key)
-    {
-        return $this->id . '-' . $key . '.png';
+    public function customImageFileName($key) {
+        return $this->id.'-'.$key.'.png';
     }
 
     /**
@@ -412,48 +388,49 @@ class Queue extends Model
      *
      * @return string
      */
-    public function getCustomImagePathAttribute()
-    {
+    public function getCustomImagePathAttribute() {
         return public_path($this->customImageDirectory);
     }
 
     /**
      * Gets the URL of the model's image.
      *
-     * @return string
-     */
-    public function customImageUrl($key)
-    {
-        return asset($this->customImageDirectory . '/' . $this->CustomImageFileName($key));
-    }
-
-    /**
-     * Check that custom image exists
+     * @param mixed $key
      *
      * @return string
      */
-    public function customImageExists($key)
-    {
-        return file_exists($this->customImagePath . '/' . $this->CustomImageFileName($key));
+    public function customImageUrl($key) {
+        return asset($this->customImageDirectory.'/'.$this->CustomImageFileName($key));
     }
 
     /**
-     * Get the general service
+     * Check that custom image exists.
      *
-     * @return mixed
+     * @param mixed $key
+     *
+     * @return string
      */
-    public function getGeneralServiceAttribute()
-    {
-        return (new GeneralService());
+    public function customImageExists($key) {
+        return file_exists($this->customImagePath.'/'.$this->CustomImageFileName($key));
     }
 
     /**
-     * Get the config data
+     * Get the general service.
      *
      * @return mixed
      */
-    public function configSet($key)
-    {
+    public function getGeneralServiceAttribute() {
+        return new GeneralService();
+    }
+
+    /**
+     * Get the config data.
+     *
+     * @param mixed $key
+     *
+     * @return mixed
+     */
+    public function configSet($key) {
         if (isset($this->configInfo[$key]) && $this->configInfo[$key] == true) {
             return true;
         }
@@ -462,12 +439,10 @@ class Queue extends Model
     }
 
     /**
-     * Retrieves any data that should be used in the holiday type on the user side
-     *
+     * Retrieves any data that should be used in the holiday type on the user side.
      */
-    public function getItemsAttribute()
-    {
-        if (! isset($this->data['items'])) {
+    public function getItemsAttribute() {
+        if (!isset($this->data['items'])) {
             return [];
         }
 
@@ -483,8 +458,7 @@ class Queue extends Model
     OTHER
      **********************************************************************************************/
 
-    public function checkLimit($user)
-    {
+    public function checkLimit($user) {
         //categories supersede all.
         if ($this->queue_category_id && isset($this->category->limit)) {
             return $this->category->checkLimit($user);
@@ -494,15 +468,13 @@ class Queue extends Model
             if ($this->logCount($user) >= $this->limit) {
                 return false;
             }
-
         }
+
         return true;
     }
 
-    public function logCount($user)
-    {
+    public function logCount($user) {
         if (isset($this->limit)) {
-
             switch ($this->limit_period) {
                 case null:
                     return QueueSubmission::submitted($this->id, $user->id)->count();
@@ -523,13 +495,12 @@ class Queue extends Model
                     return QueueSubmission::submitted($this->id, $user->id)->where('created_at', '>=', now()->startOfYear())->count();
                     break;
             }
-
         }
+
         return null;
     }
 
-    public function checkConcurrent($user)
-    {
+    public function checkConcurrent($user) {
         //categories supersede all.
         if ($this->queue_category_id && isset($this->category->limit_concurrent)) {
             return $this->category->checkConcurrent($user);
@@ -539,18 +510,17 @@ class Queue extends Model
             if (QueueSubmission::pending($this->id, $user->id)->count() >= $this->limit_concurrent) {
                 return false;
             }
-
         }
+
         return true;
     }
 
     /**
-     * Gets the decoded output json
+     * Gets the decoded output json.
      *
      * @return array
      */
-    public function getRewardsAttribute()
-    {
+    public function getRewardsAttribute() {
         $rewards = [];
         if (isset($this->output['users'])) {
             $assets = $this->getRewardItemsAttribute();
@@ -566,26 +536,25 @@ class Queue extends Model
                 }
             }
         }
+
         return $rewards;
     }
 
     /**
-     * Interprets the json output and retrieves the corresponding items
+     * Interprets the json output and retrieves the corresponding items.
      *
      * @return array
      */
-    public function getRewardItemsAttribute()
-    {
+    public function getRewardItemsAttribute() {
         return parseAssetData($this->output['users']);
     }
 
     /**
-     * Gets the decoded output json
+     * Gets the decoded output json.
      *
      * @return array
      */
-    public function getCharacterRewardsAttribute()
-    {
+    public function getCharacterRewardsAttribute() {
         $rewards = [];
         if (isset($this->output['characters'])) {
             $assets = $this->getCharacterRewardItemsAttribute();
@@ -601,17 +570,16 @@ class Queue extends Model
                 }
             }
         }
+
         return $rewards;
     }
 
     /**
-     * Interprets the json output and retrieves the corresponding items
+     * Interprets the json output and retrieves the corresponding items.
      *
      * @return array
      */
-    public function getCharacterRewardItemsAttribute()
-    {
+    public function getCharacterRewardItemsAttribute() {
         return parseAssetData($this->output['characters']);
     }
-
 }

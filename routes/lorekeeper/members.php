@@ -217,8 +217,6 @@ Route::group(['prefix' => 'queue-submissions', 'namespace' => 'Users'], function
     Route::post('draft/{id}/cancel', 'QueueSubmissionController@postCancelSubmission');
 });
 
-
-
 /**************************************************************************************************
     Shops
 **************************************************************************************************/
