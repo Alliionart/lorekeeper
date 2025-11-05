@@ -54,9 +54,12 @@
             <div class="col-sm-6">
                 <div class="card mb-3">
                     <div class="card-body">
-                        <h5 class="card-title">Queue Submissions @if($queueCount)<span class="badge badge-primary">{{ $queueCount }}</span>@endif</h5>
+                        <h5 class="card-title">Queue Submissions @if ($queueCount)
+                                <span class="badge badge-primary">{{ $queueCount }}</span>
+                            @endif
+                        </h5>
                         <p class="card-text">
-                            @if($queueCount)
+                            @if ($queueCount)
                                 {{ $queueCount }} custom submission{{ $queueCount == 1 ? '' : 's' }} awaiting processing.
                             @else
                                 The custom submission queue is clear. Hooray!

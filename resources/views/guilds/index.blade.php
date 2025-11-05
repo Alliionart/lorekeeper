@@ -5,7 +5,7 @@
 @endsection
 
 @section('content')
-    {!! breadcrumbs([ ucwords(__('guilds.guilds')) => __('guilds.guilds') ]) !!}
+    {!! breadcrumbs([ucwords(__('guilds.guilds')) => __('guilds.guilds')]) !!}
 
     <h1>{{ ucwords(__('guilds.guilds')) }}</h1>
     <div class="row">

@@ -74,7 +74,8 @@
             <div class="card-body">
                 @if ($queue->configSet('character_submit') && View::exists('home.queues.types.characters.' . $queue->queue_type . '_select_entry'))
                     <div id="characters" class="mb-3">
-                        @if (count($submission->characters()->whereRelation('character', 'deleted_at', null)->get()) != count($submission->characters()->get()))
+                        @if (count(
+                                $submission->characters()->whereRelation('character', 'deleted_at', null)->get()) != count($submission->characters()->get()))
                             <div class="alert alert-warning">
                                 Some characters have been deleted since this submission was created.
                             </div>
