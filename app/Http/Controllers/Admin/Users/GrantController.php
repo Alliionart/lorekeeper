@@ -8,6 +8,7 @@ use App\Models\Character\CharacterDesignUpdate;
 use App\Models\Character\CharacterItem;
 use App\Models\Currency\Currency;
 use App\Models\Item\Item;
+use App\Models\Queue\QueueSubmission;
 use App\Models\Submission\Submission;
 use App\Models\Trade;
 use App\Models\User\User;
@@ -103,18 +104,20 @@ class GrantController extends Controller {
             $designUpdates = CharacterDesignUpdate::whereIn('user_id', $userItems->pluck('user_id')->toArray())->whereNotNull('data')->get();
             $trades = Trade::whereIn('sender_id', $userItems->pluck('user_id')->toArray())->orWhereIn('recipient_id', $userItems->pluck('user_id')->toArray())->get();
             $submissions = Submission::whereIn('user_id', $userItems->pluck('user_id')->toArray())->whereNotNull('data')->get();
+            $queuesubmissions = QueueSubmission::whereIn('user_id', $userItems->pluck('user_id')->toArray())->whereNotNull('data')->get();
         }
 
         return view('admin.grants.item_search', [
-            'item'           => $item ? $item : null,
-            'items'          => Item::orderBy('name')->pluck('name', 'id'),
-            'userItems'      => $item ? $userItems : null,
-            'characterItems' => $item ? $characterItems : null,
-            'users'          => $item ? $users : null,
-            'characters'     => $item ? $characters : null,
-            'designUpdates'  => $item ? $designUpdates : null,
-            'trades'         => $item ? $trades : null,
-            'submissions'    => $item ? $submissions : null,
+            'item'             => $item ? $item : null,
+            'items'            => Item::orderBy('name')->pluck('name', 'id'),
+            'userItems'        => $item ? $userItems : null,
+            'characterItems'   => $item ? $characterItems : null,
+            'users'            => $item ? $users : null,
+            'characters'       => $item ? $characters : null,
+            'designUpdates'    => $item ? $designUpdates : null,
+            'trades'           => $item ? $trades : null,
+            'submissions'      => $item ? $submissions : null,
+            'queuesubmissions' => $item ? $queuesubmissions : null,
         ]);
     }
 }

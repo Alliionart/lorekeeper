@@ -8,6 +8,7 @@ use App\Models\Character\CharacterDesignUpdate;
 use App\Models\Character\CharacterTransfer;
 use App\Models\Gallery\GallerySubmission;
 use App\Models\Invitation;
+use App\Models\Queue\QueueSubmission;
 use App\Models\Rank\Rank;
 use App\Models\Submission\Submission;
 use App\Models\Trade;
@@ -449,6 +450,13 @@ class UserService extends Service {
                 })->get();
                 foreach ($trades as $trade) {
                     $tradeManager->rejectTrade(['trade' => $trade, 'reason' => 'User has been banned from site activity.'], $staff);
+                }
+
+                // 6. Queues
+                $qsubmissionManager = new QueueSubmissionManager;
+                $qsubmissions = QueueSubmission::where('user_id', $user->id)->where('status', 'Pending')->get();
+                foreach ($qsubmissions as $qsubmission) {
+                    $qsubmissionManager->rejectSubmission(['submission' => $qsubmission, 'staff_comments' => 'User has been banned from site activity.'], $staff);
                 }
 
                 UserUpdateLog::create(['staff_id' => $staff->id, 'user_id' => $user->id, 'data' => json_encode(['is_banned' => 'Yes', 'ban_reason' => $data['ban_reason'] ?? null]), 'type' => 'Ban']);

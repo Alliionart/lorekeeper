@@ -12,6 +12,7 @@ use App\Models\Gallery\GalleryCharacter;
 use App\Models\Gallery\GallerySubmission;
 use App\Models\Item\Item;
 use App\Models\Item\ItemCategory;
+use App\Models\Queue\Queue;
 use App\Models\User\User;
 use App\Models\User\UserCurrency;
 use App\Models\User\UserUpdateLog;
@@ -348,6 +349,29 @@ class UserController extends Controller {
             'user'       => $this->user,
             'characters' => true,
             'favorites'  => $this->user->characters->count() ? GallerySubmission::whereIn('id', $userFavorites)->whereIn('id', GalleryCharacter::whereIn('character_id', $userCharacters)->pluck('gallery_submission_id')->toArray())->visible(Auth::check() ? Auth::user() : null)->orderBy('created_at', 'DESC')->paginate(20)->appends($request->query()) : null,
+        ]);
+    }
+
+    /**
+     * Shows a user's submissions.
+     *
+     * @param string $name
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function getUserQueueSubmissions(Request $request, $name) {
+        $logs = $this->user->getQueueSubmissions(Auth::user() ?? null);
+        if ($request->get('queue_ids')) {
+            $logs->whereIn('queue_id', $request->get('queue_ids'));
+        }
+        if ($request->get('sort')) {
+            $logs->orderBy('created_at', $request->get('sort') == 'newest' ? 'DESC' : 'ASC');
+        }
+
+        return view('user.queue_logs', [
+            'user'    => $this->user,
+            'logs'    => $logs->paginate(30)->appends($request->query()),
+            'queues'  => Queue::active()->pluck('name', 'id'),
         ]);
     }
 }

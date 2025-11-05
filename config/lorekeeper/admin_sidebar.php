@@ -99,6 +99,10 @@ return [
                 'name' => 'Claim Submissions',
                 'url'  => 'admin/claims',
             ],
+            [
+                'name' => 'Queue Submissions',
+                'url'  => 'admin/queue-submissions',
+            ],
         ],
     ],
     'Grants'     => [
@@ -193,6 +197,10 @@ return [
             [
                 'name' => 'Items',
                 'url'  => 'admin/data/items',
+            ],
+            [
+                'name' => 'Queues',
+                'url'  => 'admin/data/queues',
             ],
         ],
     ],

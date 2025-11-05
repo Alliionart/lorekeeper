@@ -437,4 +437,25 @@ return [
         'message' => '<a href="{sender_url}">{sender}</a> has added you as a participant on a gallery submission. (<a href="{url}">View Submission</a>)',
         'url'     => 'gallery/view/{submission_id}',
     ],
+
+    // QUEUE_SUBMISSION_APPROVED
+    1116 => [
+        'name'    => 'Queue Submission Approved',
+        'message' => 'Your submission (#{submission_id}) was approved by <a href="{staff_url}">{staff_name}</a>. (<a href="{url}">View Submission</a>)',
+        'url'     => 'queue-submissions/view/{submission_id}',
+    ],
+
+    // QUEUE_SUBMISSION_REJECTED
+    1117 => [
+        'name'    => 'Queue Submission Rejected',
+        'message' => 'Your submission (#{submission_id}) was rejected by <a href="{staff_url}">{staff_name}</a>. (<a href="{url}">View Submission</a>)',
+        'url'     => 'queue-submissions/view/{submission_id}',
+    ],
+
+    // QUEUE_SUBMISSION_CANCELLED
+    1118 => [
+        'name'    => 'Queue Submission Cancelled',
+        'message' => 'Your submission (#{submission_id}) was cancelled and sent back to drafts by <a href="{staff_url}">{staff_name}</a>. (<a href="{url}">View Submission</a>)',
+        'url'     => 'queue-submissions/view/{submission_id}',
+    ],
 ];
