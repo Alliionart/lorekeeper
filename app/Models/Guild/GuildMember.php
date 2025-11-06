@@ -2,8 +2,8 @@
 
 namespace App\Models\Guild;
 
-use App\Models\User\User;
 use App\Models\Model;
+use App\Models\User\User;
 
 class GuildMember extends Model {
     /**
@@ -12,7 +12,7 @@ class GuildMember extends Model {
      * @var array
      */
     protected $fillable = [
-        'guild_id', 'user_id', 'rank', 'reputation', 'joined_at'
+        'guild_id', 'user_id', 'rank', 'reputation', 'joined_at',
     ];
 
     /**
@@ -27,7 +27,6 @@ class GuildMember extends Model {
      *
      * @var string
      */
-
     protected $casts = [
         'joined_at' => 'datetime',
     ];
@@ -59,6 +58,4 @@ class GuildMember extends Model {
         ACCESSORS
 
     **********************************************************************************************/
-
-
 }

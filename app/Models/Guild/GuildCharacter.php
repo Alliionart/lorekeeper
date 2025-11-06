@@ -12,7 +12,7 @@ class GuildCharacter extends Model {
      * @var array
      */
     protected $fillable = [
-        'guild_id', 'character_id', 'rank', 'reputation', 'joined_at'
+        'guild_id', 'character_id', 'rank', 'reputation', 'joined_at',
     ];
 
     /**
@@ -22,16 +22,16 @@ class GuildCharacter extends Model {
      */
     protected $table = 'guild_characters';
 
+    protected $casts = [
+        'joined_at' => 'datetime',
+    ];
+
     /**
      * Whether the model contains timestamps to be saved and updated.
      *
      * @var string
      */
     public $timestamps = false;
-
-    protected $casts = [
-        'joined_at' => 'datetime',
-    ];
 
     /**********************************************************************************************
 
@@ -58,6 +58,4 @@ class GuildCharacter extends Model {
         ACCESSORS
 
     **********************************************************************************************/
-
-
 }

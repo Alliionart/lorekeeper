@@ -7,14 +7,14 @@
             <div class="col-md-9">
                 <div class="d-flex justify-content-between align-items-center">
                     <h2>{{ $guild->name }}</h2>
-                    
+
                     <div>
-                        @if($guild->status  === 'active')
+                        @if ($guild->status === 'active')
                             <span class="h6 p-1 rounded bg-success text-white">Active</span>
                         @else
                             <span class="h6 p-1 rounded bg-secondary text-white">Inactive</span>
                         @endif
-                            <span class="h6 p-1 rounded border ml-2 {{ $guild->open_new_users ? 'border-success text-success' : 'border-danger text-danger' }}">{{ $guild->open_new_users ? 'Open Applications' : 'Closed Applications' }}</span>
+                        <span class="h6 p-1 rounded border ml-2 {{ $guild->open_new_users ? 'border-success text-success' : 'border-danger text-danger' }}">{{ $guild->open_new_users ? 'Open Applications' : 'Closed Applications' }}</span>
                     </div>
                 </div>
                 <div class="row">
