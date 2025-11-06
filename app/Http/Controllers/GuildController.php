@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Facades\Settings;
 use App\Models\Guild\Guild;
 use App\Services\GuildManager;
-use Illuminate\Http\Request;
 use Auth;
-use App\Facades\Settings;
+use Illuminate\Http\Request;
 
 class GuildController extends Controller {
     /*
