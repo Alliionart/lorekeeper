@@ -14,8 +14,7 @@
     <div class="jumbotron guild-banner jumbotron-fluid text-left pb-0 rounded bg-dark mb-5" {{ $guild->has_banner ? 'style="'.$guild->getBannerUrlAttribute().'"' : '' }}>
         <div class="jumbo-inner py-3 px-5 d-flex align-items-center" style="transform:translateY(45px)">
             @if ($guild->has_logo)
-                <!-- <img class="guild-logo" src="{{ $guild->getLogoUrlAttribute() }}" /> -->
-                <img class="img-fluid mr-4 guild-logo" src="https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/ba785f76-4d2a-4ab7-9f8d-35755bf45263/demenzd-73e7eac1-5db2-496a-b4e6-c739528c68db.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiIvZi9iYTc4NWY3Ni00ZDJhLTRhYjctOWY4ZC0zNTc1NWJmNDUyNjMvZGVtZW56ZC03M2U3ZWFjMS01ZGIyLTQ5NmEtYjRlNi1jNzM5NTI4YzY4ZGIucG5nIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.0NO9q5Qy-kBPvie71MVyVW61pKhNI6_c9vgP35OWRTg"/>
+                <img class="guild-logo" src="{{ $guild->getLogoUrlAttribute() }}" />
             @endif
             <h1 class="display-5 text-white">{{ $guild->name }}</h1>
         </div>
