@@ -93,14 +93,14 @@ class GuildController extends Controller {
             abort(404);
         }
 
-        if(($guild->owner_id !== Auth::user()->id) || !Auth::user()->isStaff) {
+        if (($guild->owner_id !== Auth::user()->id) || !Auth::user()->isStaff) {
             return redirect('/guilds/view'.$guild->id)->with('error', 'You do not have permission to edit this guild.');
         }
 
         return view('guilds.guild_settings', [
             'guild'                 => $guild,
-            'global_max_players'    =>  Settings::get('guilds_max_players'),
-            'global_max_characters' =>  Settings::get('guilds_max_characters'),
+            'global_max_players'    => Settings::get('guilds_max_players'),
+            'global_max_characters' => Settings::get('guilds_max_characters'),
         ]);
     }
 
@@ -108,7 +108,7 @@ class GuildController extends Controller {
      * Shows the edit page for an individual guild.
      *
      * @param App\Services\GuildManager $service
-     * @param int|null                   $id
+     * @param int|null                  $id
      *
      * @return \Illuminate\Http\RedirectResponse
      */
@@ -118,13 +118,12 @@ class GuildController extends Controller {
             'name', 'description', 'location', 'image', 'remove_image',
             'location', 'max_players', 'max_characters',
             'open_new_users', 'automatical_app_approval', 'open_inventory',
-            'open_bank', 'open_pets', 'open_armory'
+            'open_bank', 'open_pets', 'open_armory',
         ]);
 
         $automatic_update = Settings::get('guilds_enable_automatic_updates');
         $enable_inventory = Settings::get('guilds_enable_inventory');
         $enable_shop = Settings::get('guilds_enable_shop');
-
 
         //Need to add validation to check if the site has guilds_enable_automatic_updates true before allowing this to directly post.
         //Do another auth check for owners/mods/staff here and return with error if false

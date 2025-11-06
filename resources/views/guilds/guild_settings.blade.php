@@ -14,7 +14,7 @@
     <h1>Edit {{ $guild->name }}</h1>
     <p>Edit your {{ __('guilds.guild') }} below. Only {{ __('guilds.guild') }} owners and mods may edit the guild. Staff may edit your guild as well.</p>
 
-    {!! Form::open(['url' => '/guilds/edit/'.$guild->id, 'id' => 'guildSettingForm']) !!}
+    {!! Form::open(['url' => '/guilds/edit/' . $guild->id, 'id' => 'guildSettingForm']) !!}
 
     <div class="form-group">
         {!! Form::label('name', 'Name') !!}
@@ -22,35 +22,36 @@
     </div>
 
     <div class="form-group">
-        {!! Form::label('description', 'Description (Optional)') !!} {!! add_help('Give info about your '.__('guilds.guild').'! This can include images, tables, or other bootrap v4 content.') !!}
+        {!! Form::label('description', 'Description (Optional)') !!} {!! add_help('Give info about your ' . __('guilds.guild') . '! This can include images, tables, or other bootrap v4 content.') !!}
         {!! Form::textarea('description', $guild->description, ['class' => 'form-control wysiwyg']) !!}
     </div>
 
     <div class="row">
         <div class="col-md-6">
             <div class="form-group">
-                {!! Form::label('location', 'Location (Optional)') !!} {!! add_help('If your '.__('guilds.guild').' resides in a specific location, enter it here!') !!}
+                {!! Form::label('location', 'Location (Optional)') !!} {!! add_help('If your ' . __('guilds.guild') . ' resides in a specific location, enter it here!') !!}
                 {!! Form::text('location', $guild->location, ['class' => 'form-control']) !!}
             </div>
         </div>
         <div class="col-md-3">
             <div class="form-group">
-                {!! Form::label('max_users', 'Maximum Players') !!} {!! add_help('The maximum players your '.__('guilds.guild').' will accept. If your '.__('guilds.guild').' is already at max, any applications will be rejected.') !!}
+                {!! Form::label('max_users', 'Maximum Players') !!} {!! add_help('The maximum players your ' . __('guilds.guild') . ' will accept. If your ' . __('guilds.guild') . ' is already at max, any applications will be rejected.') !!}
                 {!! Form::number('max_users', $guild->max_users, ['class' => 'form-control', 'min' => 1, 'max' => $global_max_players]) !!}
             </div>
         </div>
         <div class="col-md-3">
             <div class="form-group">
-                {!! Form::label('max_characters', 'Maximum Characters') !!} {!! add_help('The maximum characters your '.__('guilds.guild').' will accept. If your '.__('guilds.guild').' is already at max, players attempting to add a character will not be able to.') !!}
+                {!! Form::label('max_characters', 'Maximum Characters') !!} {!! add_help('The maximum characters your ' . __('guilds.guild') . ' will accept. If your ' . __('guilds.guild') . ' is already at max, players attempting to add a character will not be able to.') !!}
                 {!! Form::number('max_characters', $guild->max_characters, ['class' => 'form-control', 'min' => 1, 'max' => $global_max_characters]) !!}
             </div>
         </div>
     </div>
 
-    <hr/>
+    <hr />
 
     <h4>Permissions & Other Settings</h4>
-    <p>Settings below will enable or disable attributes of your {{ __('guilds.guild') }}. If you for example have items in the {{ __('guilds.guild') }}'s inventory - this will only disable players being able to add more items or view it. But owners and mods may still see it.</p>
+    <p>Settings below will enable or disable attributes of your {{ __('guilds.guild') }}. If you for example have items in the {{ __('guilds.guild') }}'s inventory - this will only disable players being able to add more items or view it. But owners and
+        mods may still see it.</p>
 
     <div class="row">
         <div class="col-md-4">
@@ -96,15 +97,13 @@
     </div>
 
     {!! Form::close() !!}
-
-    
 @endsection
 
 @section('scripts')
     @parent
     <script>
         $(document).ready(function() {
-            
+
         });
     </script>
 @endsection
