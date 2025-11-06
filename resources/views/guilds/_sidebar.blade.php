@@ -10,7 +10,7 @@
         <div class="sidebar-item"><a href="{{ $guild->getViewUrlAttribute() . '/members' }}" class="{{ set_active('*members') }}">Members</a></div>
         <div class="sidebar-item"><a href="{{ $guild->getViewUrlAttribute() . '/characters' }}" class="{{ set_active('*characters') }}">Characters</a></div>
     </li>
-    @if( $guild->owner_id === Auth::user()->id )
+    @if ($guild->owner_id === Auth::user()->id)
         <li class="sidebar-section">
             <div class="sidebar-section-header">Admin</div>
             <div class="sidebar-item"><a href="{{ $guild->getEditUrlAttribute() }}" class="{{ set_active('*settings') }}">Settings</a></div>

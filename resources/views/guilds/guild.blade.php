@@ -9,7 +9,6 @@
 @endsection
 
 @section('content')
-
     {!! breadcrumbs([ucwords(__('guilds.guilds')) => __('guilds.guilds'), $guild->name => $guild->name]) !!}
 
     <div class="jumbotron jumbotron-fluid text-center rounded bg-dark mb-5">
@@ -27,18 +26,18 @@
             <div class="card">
                 <h4 class="card-header">Details</h4>
                 <div class="card-body">
-                    @if($guild->status  === 'active')
+                    @if ($guild->status === 'active')
                         <span class="h6 p-1 rounded bg-success text-white">Active</span>
                     @else
                         <span class="h6 p-1 rounded bg-secondary text-white">Inactive</span>
                     @endif
-                        <span class="h6 p-1 rounded border ml-2 {{ $guild->open_new_users ? 'border-success text-success' : 'border-danger text-danger' }}">{{ $guild->open_new_users ? 'Open Applications' : 'Closed Applications' }}</span>
+                    <span class="h6 p-1 rounded border ml-2 {{ $guild->open_new_users ? 'border-success text-success' : 'border-danger text-danger' }}">{{ $guild->open_new_users ? 'Open Applications' : 'Closed Applications' }}</span>
                 </div>
             </div>
         </div>
     </div>
 
-    <hr> 
+    <hr>
 
     <!--basic info -->
     <div class="row">
@@ -49,7 +48,7 @@
                     <a href="{{ $guild->getViewUrlAttribute() . '/members' }}" class="btn btn-outline-primary">View All Members</a>
                 </div>
                 <div class="card-body">
-                    @if($guild->members)
+                    @if ($guild->members)
                         @include('guilds._member_table', ['members' => $guild->members, 'limit' => 5])
                     @endif
                 </div>
@@ -62,14 +61,11 @@
                     <a href="{{ $guild->getViewUrlAttribute() . '/characters' }}" class="btn btn-outline-primary">View All Characters</a>
                 </div>
                 <div class="card-body">
-                    @if($guild->characters)
+                    @if ($guild->characters)
                         @include('guilds._characters', ['characters' => $guild->characters, 'limit' => 5])
                     @endif
                 </div>
             </div>
         </div>
     </div>
-
-       
-
 @endsection

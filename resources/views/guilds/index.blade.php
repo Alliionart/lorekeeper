@@ -39,13 +39,13 @@
     <div class="row">
         <div class="col-md col-md-12">
 
-        @if($guilds)
-            @foreach($guilds as $guild)
-                @include('guilds._guild_box', ['guild' => $guild])
-            @endforeach
-        @else
-            <p>There are currently no guilds or there were no guilds that matched your results.</p>
-        @endif
+            @if ($guilds)
+                @foreach ($guilds as $guild)
+                    @include('guilds._guild_box', ['guild' => $guild])
+                @endforeach
+            @else
+                <p>There are currently no guilds or there were no guilds that matched your results.</p>
+            @endif
 
         </div>
     </div>

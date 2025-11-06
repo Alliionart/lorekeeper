@@ -15,8 +15,8 @@
             </div>
             {!! $character->getDisplayOwnerAttribute() !!}
         </div>
-        @if($i === $limit - 1)
-            @break
-        @endif
-    @endforeach
+        @if ($i === $limit - 1)
+        @break
+    @endif
+@endforeach
 </div>
