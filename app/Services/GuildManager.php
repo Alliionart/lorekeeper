@@ -3,17 +3,8 @@
 namespace App\Services;
 
 use App\Models\Guild\Guild;
-use App\Models\Guild\GuildMember;
-use App\Models\Guild\GuildCharacter;
-use App\Models\Guild\GuildShop;
-use App\Models\Guild\GuildApps;
-use App\Models\Guild\GuildItem;
-use App\Models\Guild\GuildShopLog;
-use App\Models\Guild\GuildShopStock;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
-use Request;
-use Auth;
 
 class GuildManager extends Service {
     /*
@@ -49,7 +40,7 @@ class GuildManager extends Service {
                 $data['has_image'] = 0;
             }
 
-            $guild = Guild::create(Arr::only($data, ['name', 'summary', 'description', 'parsed_description',]));
+            $guild = Guild::create(Arr::only($data, ['name', 'summary', 'description', 'parsed_description']));
 
             if ($image) {
                 $this->handleImage($image, $guild->imagePath, $guild->imageFileName);
@@ -67,8 +58,8 @@ class GuildManager extends Service {
      * Updates a prompt.
      *
      * @param \App\Models\Guild\Guild $guild
-     * @param array                     $data
-     * @param \App\Models\User\User     $user
+     * @param array                   $data
+     * @param \App\Models\User\User   $user
      *
      * @return \App\Models\Guild\Guild|bool
      */
@@ -91,7 +82,7 @@ class GuildManager extends Service {
                 unset($data['image']);
             }
 
-            $guild->update(Arr::only($data, ['name', 'summary', 'description', 'parsed_description',]));
+            $guild->update(Arr::only($data, ['name', 'summary', 'description', 'parsed_description']));
 
             if ($guild) {
                 $this->handleImage($image, $guild->imagePath, $guild->imageFileName);
@@ -116,10 +107,10 @@ class GuildManager extends Service {
         DB::beginTransaction();
 
         try {
-            if($guild->members) {
+            if ($guild->members) {
                 //Delete the members rows from the guild_users table here
             }
-            if($guild->characters) {
+            if ($guild->characters) {
                 //Delete the members rows from the guild_characters table here
             }
             //Delete other relational data besides bank/inv
@@ -135,7 +126,7 @@ class GuildManager extends Service {
     /**
      * Processes user input for creating/updating a guild.
      *
-     * @param array                     $data
+     * @param array                   $data
      * @param \App\Models\Guild\Guild $guild
      *
      * @return array
@@ -174,5 +165,4 @@ class GuildManager extends Service {
 
         return $data;
     }
-
 }
