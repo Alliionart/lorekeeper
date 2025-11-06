@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Guild\Guild;
+use App\Services\GuildManager;
 use Illuminate\Http\Request;
 use App\Facades\Settings;
 use Illuminate\Support\Facades\Auth;
@@ -87,16 +88,61 @@ class GuildController extends Controller {
      * @return \Illuminate\Contracts\Support\Renderable
      */
     public function getGuildEdit($id) {
+        $guild = Guild::where('id', $id)->first();
+
+        if (!$guild) {
+            abort(404);
+        }
+
+        if(($guild->owner_id !== Auth::user()->id) || !Auth::user()->isStaff) {
+            return redirect('/guilds/view'.$guild->id)->with('error', 'You do not have permission to edit this guild.');
+        }
+
+        return view('guilds.guild_settings', [
+            'guild'                 => $guild,
+            'global_max_players'    =>  Settings::get('guilds_max_players'),
+            'global_max_characters' =>  Settings::get('guilds_max_characters'),
+        ]);
     }
 
     /**
      * Shows the edit page for an individual guild.
      *
-     * @param mixed $id
+     * @param App\Services\GuildManager $service
+     * @param int|null                   $id
      *
-     * @return \Illuminate\Contracts\Support\Renderable
+     * @return \Illuminate\Http\RedirectResponse
      */
-    public function postGuildEdit($id) {
+    public function postGuildEdit(Request $request, GuildManager $service, $id = null) {
+        $id ? $request->validate(Guild::$updateRules) : $request->validate(Guild::$createRules);
+        $data = $request->only([
+            'name', 'description', 'location', 'image', 'remove_image',
+            'location', 'max_players', 'max_characters',
+            'open_new_users', 'automatical_app_approval', 'open_inventory',
+            'open_bank', 'open_pets', 'open_armory'
+        ]);
+
+        $automatic_update = Settings::get('guilds_enable_automatic_updates');
+        $enable_inventory = Settings::get('guilds_enable_inventory');
+        $enable_shop = Settings::get('guilds_enable_shop');
+
+
+        //Need to add validation to check if the site has guilds_enable_automatic_updates true before allowing this to directly post.
+        //Do another auth check for owners/mods/staff here and return with error if false
+
+        if ($id && $service->updateGuild(Guild::find($id), $data, Auth::user())) {
+            flash('Guild updated successfully.')->success();
+        } elseif (!$id && $category = $service->updateGuild($data, Auth::user())) {
+            flash('Guild created successfully.')->success();
+
+            return redirect()->to('guilds/edit/'.$guild->id);
+        } else {
+            foreach ($service->errors()->getMessages()['error'] as $error) {
+                flash($error)->error();
+            }
+        }
+
+        return redirect()->back();
     }
 
     /**

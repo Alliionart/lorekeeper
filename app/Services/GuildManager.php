@@ -1,0 +1,178 @@
+<?php
+
+namespace App\Services;
+
+use App\Models\Guild\Guild;
+use App\Models\Guild\GuildMember;
+use App\Models\Guild\GuildCharacter;
+use App\Models\Guild\GuildShop;
+use App\Models\Guild\GuildApps;
+use App\Models\Guild\GuildItem;
+use App\Models\Guild\GuildShopLog;
+use App\Models\Guild\GuildShopStock;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
+use Request;
+use Auth;
+
+class GuildManager extends Service {
+    /*
+    |--------------------------------------------------------------------------
+    | Guild Service
+    |--------------------------------------------------------------------------
+    |
+    | Handles the creation and editing of prompt categories and prompts.
+    |
+    */
+
+    /**
+     * Creates a new prompt.
+     *
+     * @param array                 $data
+     * @param \App\Models\User\User $user
+     *
+     * @return \App\Models\Guild\Guild|bool
+     */
+    public function createGuild($data, $user) {
+        DB::beginTransaction();
+
+        try {
+            $data = $this->populateData($data);
+
+            $image = null;
+            if (isset($data['image']) && $data['image']) {
+                $data['has_image'] = 1;
+                $data['hash'] = randomString(10);
+                $image = $data['image'];
+                unset($data['image']);
+            } else {
+                $data['has_image'] = 0;
+            }
+
+            $guild = Guild::create(Arr::only($data, ['name', 'summary', 'description', 'parsed_description',]));
+
+            if ($image) {
+                $this->handleImage($image, $guild->imagePath, $guild->imageFileName);
+            }
+
+            return $this->commitReturn($guild);
+        } catch (\Exception $e) {
+            $this->setError('error', $e->getMessage());
+        }
+
+        return $this->rollbackReturn(false);
+    }
+
+    /**
+     * Updates a prompt.
+     *
+     * @param \App\Models\Guild\Guild $guild
+     * @param array                     $data
+     * @param \App\Models\User\User     $user
+     *
+     * @return \App\Models\Guild\Guild|bool
+     */
+    public function updateGuild($guild, $data, $user) {
+        DB::beginTransaction();
+
+        try {
+            // More specific validation
+            if (Guild::where('name', $data['name'])->where('id', '!=', $guild->id)->exists()) {
+                throw new \Exception('The name has already been taken.');
+            }
+
+            $data = $this->populateData($data, $guild);
+
+            $image = null;
+            if (isset($data['image']) && $data['image']) {
+                $data['has_image'] = 1;
+                $data['hash'] = randomString(10);
+                $image = $data['image'];
+                unset($data['image']);
+            }
+
+            $guild->update(Arr::only($data, ['name', 'summary', 'description', 'parsed_description',]));
+
+            if ($guild) {
+                $this->handleImage($image, $guild->imagePath, $guild->imageFileName);
+            }
+
+            return $this->commitReturn($guild);
+        } catch (\Exception $e) {
+            $this->setError('error', $e->getMessage());
+        }
+
+        return $this->rollbackReturn(false);
+    }
+
+    /**
+     * Disbands a guild.
+     *
+     * @param \App\Models\Guild\Guild $guild
+     *
+     * @return bool
+     */
+    public function disbandGuild($guild) {
+        DB::beginTransaction();
+
+        try {
+            if($guild->members) {
+                //Delete the members rows from the guild_users table here
+            }
+            if($guild->characters) {
+                //Delete the members rows from the guild_characters table here
+            }
+            //Delete other relational data besides bank/inv
+
+            return $this->commitReturn(true);
+        } catch (\Exception $e) {
+            $this->setError('error', $e->getMessage());
+        }
+
+        return $this->rollbackReturn(false);
+    }
+
+    /**
+     * Processes user input for creating/updating a guild.
+     *
+     * @param array                     $data
+     * @param \App\Models\Guild\Guild $guild
+     *
+     * @return array
+     */
+    private function populateData($data, $guild = null) {
+        if (isset($data['description']) && $data['description']) {
+            $data['parsed_description'] = parse($data['description']);
+        }
+
+        if (!isset($data['open_inventory'])) {
+            $data['open_inventory'] = 0;
+        }
+        if (!isset($data['open_bank'])) {
+            $data['open_bank'] = 0;
+        }
+        if (!isset($data['open_pets'])) {
+            $data['open_pets'] = 0;
+        }
+        if (!isset($data['open_armory'])) {
+            $data['open_armory'] = 0;
+        }
+        if (!isset($data['open_new_users'])) {
+            $data['open_new_users'] = 0;
+        }
+        if (!isset($data['automatic_app_approval'])) {
+            $data['automatic_app_approval'] = 0;
+        }
+
+        if (isset($data['remove_image'])) {
+            if ($guild && $guild->has_image && $data['remove_image']) {
+                $data['has_image'] = 0;
+                $this->deleteImage($guild->imagePath, $guild->imageFileName);
+            }
+            unset($data['remove_image']);
+        }
+
+        return $data;
+    }
+
+}
