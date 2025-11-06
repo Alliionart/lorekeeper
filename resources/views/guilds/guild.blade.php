@@ -11,7 +11,7 @@
 @section('content')
     {!! breadcrumbs([ucwords(__('guilds.guilds')) => __('guilds.guilds'), $guild->name => $guild->name]) !!}
 
-    <div class="jumbotron guild-banner jumbotron-fluid text-left pb-0 rounded bg-dark mb-5" {{ $guild->has_banner ? 'style="'.$guild->getBannerUrlAttribute().'"' : '' }}>
+    <div class="jumbotron guild-banner jumbotron-fluid text-left pb-0 rounded bg-dark mb-5" {{ $guild->has_banner ? 'style="' . $guild->getBannerUrlAttribute() . '"' : '' }}>
         <div class="jumbo-inner py-3 px-5 d-flex align-items-center" style="transform:translateY(45px)">
             @if ($guild->has_logo)
                 <img class="guild-logo" src="{{ $guild->getLogoUrlAttribute() }}" />
@@ -74,32 +74,33 @@
         </div>
     </div>
 
-<style>
-    .guild-banner {
-        position:relative;
-        background-size:cover;
-        background-repeat:no-repeat;
-    }
-    .guild-banner::after {
-        content: "";
-        width:100%;
-        height:100%;
-        position:absolute;
-        top:0;
-        left:0;
-        background-image:linear-gradient(0deg,rgba(0, 0, 0, 0.7) 20%, rgba(0, 0, 0, 0) 100%);
-        mix-blend-mode: multiply;
-        z-index:1;
-        border-radius:5px;
-    }
-    .guild-banner .jumbo-inner {
-        position: relative;
-        z-index:2;
-    }
-    .guild-logo {
-        filter: drop-shadow(2px 4px 6px rgba(0,0,0,0.25));
-    }
-</style>
+    <style>
+        .guild-banner {
+            position: relative;
+            background-size: cover;
+            background-repeat: no-repeat;
+        }
+
+        .guild-banner::after {
+            content: "";
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.7) 20%, rgba(0, 0, 0, 0) 100%);
+            mix-blend-mode: multiply;
+            z-index: 1;
+            border-radius: 5px;
+        }
+
+        .guild-banner .jumbo-inner {
+            position: relative;
+            z-index: 2;
+        }
+
+        .guild-logo {
+            filter: drop-shadow(2px 4px 6px rgba(0, 0, 0, 0.25));
+        }
+    </style>
 @endsection
-
-
