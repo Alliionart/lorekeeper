@@ -4,6 +4,16 @@
         <div class="sidebar-section-header">Inventory</div>
         <div class="sidebar-item"><a href="{{ $guild->getViewUrlAttribute() . '/inventory' }}" class="{{ set_active('*inventory') }}">Inventory</a></div>
         <div class="sidebar-item"><a href="{{ $guild->getViewUrlAttribute() . '/bank' }}" class="{{ set_active('*bank') }}">Bank</a></div>
+        <?php
+            $pets_exists = class_exists('App\Models\Pet\Pet');
+            $gear_exists = class_exists('App\Models\Claymore\Gear');
+        ?>
+        @if ($pets_exists)
+            <div class="sidebar-item"><a href="{{ $guild->getViewUrlAttribute() . '/' . strtolower(__('guilds.playpen')) }}" class="{{ set_active('*'.strtolower(__('guilds.playpen'))) }}">{{ __('guilds.playpen') }}</a></div>
+        @endif
+        @if ($gear_exists)
+            <div class="sidebar-item"><a href="{{ $guild->getViewUrlAttribute() . '/armory' }}" class="{{ set_active('*pets') }}">{{ __('guilds.playpen') }}</a></div>
+        @endif
     </li>
     <li class="sidebar-section">
         <div class="sidebar-section-header">Members</div>
