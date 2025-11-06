@@ -22,7 +22,7 @@
                         <h5>Formed</h5>
                     </div>
                     <div class="col-md-4">
-                        <p class="mb-0">{!! pretty_date($guild->created_at) !!}</p>
+                        <p class="mb-0">{{ $guild->created_at }}</p>
                     </div>
                     <div class="col-md-2">
                         <h5>Players</h5>

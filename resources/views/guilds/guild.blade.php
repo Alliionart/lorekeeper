@@ -11,12 +11,18 @@
 @section('content')
     {!! breadcrumbs([ucwords(__('guilds.guilds')) => __('guilds.guilds'), $guild->name => $guild->name]) !!}
 
-    <div class="jumbotron jumbotron-fluid text-center rounded bg-dark mb-5">
-        <h1 class="display-5 text-white">{{ $guild->name }}</h1>
+    <div class="jumbotron guild-banner jumbotron-fluid text-left pb-0 rounded bg-dark mb-5" {{ $guild->has_banner ? 'style="'.$guild->getBannerUrlAttribute().'"' : '' }}>
+        <div class="jumbo-inner py-3 px-5 d-flex align-items-center" style="transform:translateY(45px)">
+            @if ($guild->has_logo)
+                <!-- <img class="guild-logo" src="{{ $guild->getLogoUrlAttribute() }}" /> -->
+                <img class="img-fluid mr-4 guild-logo" src="https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/ba785f76-4d2a-4ab7-9f8d-35755bf45263/demenzd-73e7eac1-5db2-496a-b4e6-c739528c68db.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiIvZi9iYTc4NWY3Ni00ZDJhLTRhYjctOWY4ZC0zNTc1NWJmNDUyNjMvZGVtZW56ZC03M2U3ZWFjMS01ZGIyLTQ5NmEtYjRlNi1jNzM5NTI4YzY4ZGIucG5nIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.0NO9q5Qy-kBPvie71MVyVW61pKhNI6_c9vgP35OWRTg"/>
+            @endif
+            <h1 class="display-5 text-white">{{ $guild->name }}</h1>
+        </div>
     </div>
 
     <!-- Details -->
-    <div class="row">
+    <div class="row mt-5">
         <div class="col-md col-md-8">
             <h3>About {{ $guild->name }}</h3>
             {!! $guild->parsed_description !!}
@@ -68,4 +74,33 @@
             </div>
         </div>
     </div>
+
+<style>
+    .guild-banner {
+        position:relative;
+        background-size:cover;
+        background-repeat:no-repeat;
+    }
+    .guild-banner::after {
+        content: "";
+        width:100%;
+        height:100%;
+        position:absolute;
+        top:0;
+        left:0;
+        background-image:linear-gradient(0deg,rgba(0, 0, 0, 0.7) 20%, rgba(0, 0, 0, 0) 100%);
+        mix-blend-mode: multiply;
+        z-index:1;
+        border-radius:5px;
+    }
+    .guild-banner .jumbo-inner {
+        position: relative;
+        z-index:2;
+    }
+    .guild-logo {
+        filter: drop-shadow(2px 4px 6px rgba(0,0,0,0.25));
+    }
+</style>
 @endsection
+
+

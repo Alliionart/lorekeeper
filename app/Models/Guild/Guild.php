@@ -17,6 +17,7 @@ class Guild extends Model {
         'parsed_description', 'location', 'reputation',
         'max_users', 'max_characters',
         'open_new_users', 'automatic_app_approval', 'open_inventory', 'open_bank', 'open_inventory', 'open_pets', 'open_armory',
+        'has_logo', 'has_banner'
     ];
 
     /**
@@ -32,6 +33,10 @@ class Guild extends Model {
      */
     public $timestamps = false;
 
+    protected $casts = [
+        'joined_at' => 'datetime',
+    ];
+
     /**
      * Validation rules for guild creation.
      *
@@ -39,7 +44,8 @@ class Guild extends Model {
      */
     public static $createRules = [
         'description' => 'nullable',
-        'image'       => 'mimes:png',
+        'logo'       => 'nullable|image|mimes:png,gif|max:200',
+        'banner'     => 'nullable|image|mimes:png,gif|max:800',
     ];
 
     /**
@@ -49,7 +55,8 @@ class Guild extends Model {
      */
     public static $updateRules = [
         'description' => 'nullable',
-        'image'       => 'mimes:png',
+        'logo'       => 'nullable|image|mimes:png,gif|max:200',
+        'banner'     => 'nullable|image|mimes:png,gif|max:800',
     ];
 
     /**********************************************************************************************
@@ -232,28 +239,65 @@ class Guild extends Model {
     }
 
     /**
-     * Get the rewards for the submission/claim.
+     * Gets the file directory containing the model's image.
      *
-     * @return array
+     * @return string
      */
-    public function getRewardsAttribute() {
-        if (isset($this->data['rewards'])) {
-            $assets = parseAssetData($this->data['rewards']);
-        } else {
-            $assets = parseAssetData($this->data);
-        }
-        $rewards = [];
-        foreach ($assets as $type => $a) {
-            $class = getAssetModelString($type, false);
-            foreach ($a as $id => $asset) {
-                $rewards[] = (object) [
-                    'rewardable_type' => $class,
-                    'rewardable_id'   => $id,
-                    'quantity'        => $asset['quantity'],
-                ];
-            }
+    public function getImageDirectoryAttribute() {
+        return 'images/data/guilds';
+    }
+
+    /**
+     * Gets the file name of the model's image.
+     *
+     * @return string
+     */
+    public function getLogoFileNameAttribute() {
+        return $this->id.'-logo.png';
+    }
+
+    /**
+     * Gets the file name of the model's banner.
+     *
+     * @return string
+     */
+    public function getBannerFileNameAttribute() {
+        return $this->id.'-banner.png';
+    }
+
+    /**
+     * Gets the path to the file directory containing the model's image.
+     *
+     * @return string
+     */
+    public function getImagePathAttribute() {
+        return public_path($this->imageDirectory);
+    }
+
+    /**
+     * Gets the URL of the model's image.
+     *
+     * @return string
+     */
+    public function getLogoUrlAttribute() {
+        if (!$this->has_logo) {
+            return null;
         }
 
-        return $rewards;
+        return asset($this->imageDirectory.'/'.$this->LogoFileName);
     }
+
+    /**
+     * Gets the URL of the model's image.
+     *
+     * @return string
+     */
+    public function getBannerUrlAttribute() {
+        if (!$this->has_banner) {
+            return null;
+        }
+
+        return asset($this->imageDirectory.'/'.$this->BannerFileName);
+    }
+    
 }

@@ -66,26 +66,39 @@ class GuildManager extends Service {
     public function updateGuild($guild, $data, $user) {
         DB::beginTransaction();
 
+        \Log::info(public_path('images/data/guilds/'));
+
         try {
             // More specific validation
             if (Guild::where('name', $data['name'])->where('id', '!=', $guild->id)->exists()) {
                 throw new \Exception('The name has already been taken.');
             }
 
-            $data = $this->populateData($data, $guild);
+            \Log::info($data);
 
-            $image = null;
-            if (isset($data['image']) && $data['image']) {
-                $data['has_image'] = 1;
-                $data['hash'] = randomString(10);
-                $image = $data['image'];
-                unset($data['image']);
+            $logo = null;
+            if (isset($data['logo']) && $data['logo']) {
+                $data['has_logo'] = 1;
+                $logo = $data['logo'];
+                unset($data['logo']);
             }
+
+            $banner = null;
+            if (isset($data['banner']) && $data['banner']) {
+                $data['has_banner'] = 1;
+                $logo = $data['banner'];
+                unset($data['banner']);
+            }
+
+            $data = $this->populateData($data, $guild);
 
             $guild->update(Arr::only($data, ['name', 'summary', 'description', 'parsed_description']));
 
-            if ($guild) {
-                $this->handleImage($image, $guild->imagePath, $guild->imageFileName);
+            if ($guild && $logo) {
+                $this->handleImage($logo, $guild->imagePath, $guild->imageFileName);
+            }
+            if ($guild && $banner) {
+                $this->handleImage($banner, $guild->imagePath, $guild->imageFileName);
             }
 
             return $this->commitReturn($guild);

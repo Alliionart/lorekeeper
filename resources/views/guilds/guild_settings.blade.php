@@ -14,7 +14,7 @@
     <h1>Edit {{ $guild->name }}</h1>
     <p>Edit your {{ __('guilds.guild') }} below. Only {{ __('guilds.guild') }} owners and mods may edit the guild. Staff may edit your guild as well.</p>
 
-    {!! Form::open(['url' => '/guilds/edit/' . $guild->id, 'id' => 'guildSettingForm']) !!}
+    {!! Form::open(['url' => '/guilds/edit/' . $guild->id, 'id' => 'guildSettingForm', 'files' => true]) !!}
 
     <div class="form-group">
         {!! Form::label('name', 'Name') !!}
@@ -24,6 +24,41 @@
     <div class="form-group">
         {!! Form::label('description', 'Description (Optional)') !!} {!! add_help('Give info about your ' . __('guilds.guild') . '! This can include images, tables, or other bootrap v4 content.') !!}
         {!! Form::textarea('description', $guild->description, ['class' => 'form-control wysiwyg']) !!}
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-group">
+                {!! Form::label('Guild Logo (Optional)') !!} {!! add_help('A logo to represent your guild.') !!}
+                <div class="custom-file">
+                    {!! Form::label('logo', $guild->has_logo ? $guild->getLogoFileNameAttribute() : 'Choose file...', ['class' => 'custom-file-label']) !!}
+                    {!! Form::file('logo', ['class' => 'custom-file-input']) !!}
+                </div>
+                <div class="text-muted">Recommended size: 200px x 200px</div>
+                @if ($guild->has_logo)
+                    <div class="form-check">
+                        {!! Form::checkbox('remove_logo', 1, false, ['class' => 'form-check-input']) !!}
+                        {!! Form::label('remove_logo', 'Remove current logo', ['class' => 'form-check-label']) !!}
+                    </div>
+                @endif
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                {!! Form::label('Banner (Optional)') !!} {!! add_help('This banner is only shown on the guild\'s main page.') !!}
+                <div class="custom-file">
+                    {!! Form::label('banner', $guild->has_banner ? $guild->getBannerFileNameAttribute() : 'Choose file...', ['class' => 'custom-file-label']) !!}
+                    {!! Form::file('banner', ['class' => 'custom-file-input']) !!}
+                </div>
+                <div class="text-muted">Recommended size: 800 x 400px</div>
+                @if ($guild->has_banner)
+                    <div class="form-check">
+                        {!! Form::checkbox('remove_banner', 1, false, ['class' => 'form-check-input']) !!}
+                        {!! Form::label('remove_banner', 'Remove current banner', ['class' => 'form-check-label']) !!}
+                    </div>
+                @endif
+            </div>
+        </div>
     </div>
 
     <div class="row">
