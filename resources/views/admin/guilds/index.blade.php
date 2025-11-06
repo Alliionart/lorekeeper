@@ -10,7 +10,4 @@
     <h1>Guilds</h1>
 
     <p>Here you can find all guilds created by players
-
-    
-
-@endsection
+    @endsection

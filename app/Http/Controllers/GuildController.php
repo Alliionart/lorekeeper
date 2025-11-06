@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Guild\Guild;
-use App\Models\Guild\GuildShop;
 use Illuminate\Http\Request;
 use App\Facades\Settings;
 use Illuminate\Support\Facades\Auth;
@@ -101,8 +100,10 @@ class GuildController extends Controller {
     }
 
     /**
-     * Shows the guild shop page should the shop be active
-     * 
+     * Shows the guild shop page should the shop be active.
+     *
+     * @param mixed $id
+     *
      * @return \Illuminate\Contracts\Support\Renderable
      */
     public function getGuildShop($id) {
@@ -116,8 +117,10 @@ class GuildController extends Controller {
     }
 
     /**
-     * Shows the guild character index
-     * 
+     * Shows the guild character index.
+     *
+     * @param mixed $id
+     *
      * @return \Illuminate\Contracts\Support\Renderable
      */
     public function getGuildCharacters($id) {
@@ -130,8 +133,10 @@ class GuildController extends Controller {
     }
 
     /**
-     * Shows the guild member index, including member ranks
-     * 
+     * Shows the guild member index, including member ranks.
+     *
+     * @param mixed $id
+     *
      * @return \Illuminate\Contracts\Support\Renderable
      */
     public function getGuildMembers($id) {
@@ -144,8 +149,10 @@ class GuildController extends Controller {
     }
 
     /**
-     * Shows the guild inventory
-     * 
+     * Shows the guild inventory.
+     *
+     * @param mixed $id
+     *
      * @return \Illuminate\Contracts\Support\Renderable
      */
     public function getGuildInventory($id) {
@@ -172,9 +179,9 @@ class GuildController extends Controller {
     }
 
     //Future TODO:
-    /**
+    /*
      * Guild armory
      * Guild events
-     * 
+     *
      */
 }
