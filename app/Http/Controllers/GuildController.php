@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Guild\Guild;
 use App\Services\GuildManager;
 use Illuminate\Http\Request;
+use Auth;
+use App\Facades\Settings;
 
 class GuildController extends Controller {
     /*
