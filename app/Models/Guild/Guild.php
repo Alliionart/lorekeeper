@@ -4,7 +4,6 @@ namespace App\Models\Guild;
 
 use App\Models\Model;
 use App\Models\User\User;
-use App\Models\Guild\GuildMember;
 use Carbon\Carbon;
 
 class Guild extends Model {
@@ -211,7 +210,7 @@ class Guild extends Model {
      * @return string
      */
     public function getViewUrlAttribute() {
-        return url( __('guilds.guilds') .'/view/'.$this->id);
+        return url(__('guilds.guilds').'/view/'.$this->id);
     }
 
     /**
@@ -220,7 +219,7 @@ class Guild extends Model {
      * @return string
      */
     public function getEditUrlAttribute() {
-        return url( __('guilds.guilds') .'/edit/'.$this->id);
+        return url(__('guilds.guilds').'/edit/'.$this->id);
     }
 
     /**

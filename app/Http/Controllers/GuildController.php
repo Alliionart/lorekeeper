@@ -4,8 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Guild\Guild;
 use Illuminate\Http\Request;
-use App\Facades\Settings;
-use Illuminate\Support\Facades\Auth;
 
 class GuildController extends Controller {
     /*
@@ -24,7 +22,6 @@ class GuildController extends Controller {
      * @return \Illuminate\Contracts\Support\Renderable
      */
     public function getGuildIndex(Request $request) {
-
         $query = Guild::query();
         $sort = $request->only(['sort']);
 
@@ -165,8 +162,10 @@ class GuildController extends Controller {
     }
 
     /**
-     * Shows the guild bank
-     * 
+     * Shows the guild bank.
+     *
+     * @param mixed $id
+     *
      * @return \Illuminate\Contracts\Support\Renderable
      */
     public function getGuildBank($id) {
