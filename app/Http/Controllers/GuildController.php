@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Guild\Guild;
 use App\Models\Guild\GuildShop;
 use Illuminate\Http\Request;
+use App\Facades\Settings;
+use Illuminate\Support\Facades\Auth;
 
 class GuildController extends Controller {
     /*
@@ -22,8 +24,41 @@ class GuildController extends Controller {
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getGuildIndex() {
-        return view('guilds.index');
+    public function getGuildIndex(Request $request) {
+
+        $query = Guild::query();
+        $sort = $request->only(['sort']);
+
+        if ($request->get('name')) {
+            $query->where(function ($query) use ($request) {
+                $query->where('guilds.name', 'LIKE', '%'.$request->get('name').'%');
+            });
+        }
+
+        switch ($sort['sort'] ?? null) {
+            default:
+                $query->orderBy('created_at', 'DESC');
+                break;
+            case 'alpha':
+                $query->orderBy('name');
+                break;
+            case 'alpha-reverse':
+                $query->orderBy('name', 'DESC');
+                break;
+            case 'reputation':
+                $query->orderBy('ranks.sort', 'DESC')->orderBy('name');
+                break;
+            case 'newest':
+                $query->orderBy('created_at', 'DESC');
+                break;
+            case 'oldest':
+                $query->orderBy('created_at', 'ASC');
+                break;
+        }
+
+        return view('guilds.index', [
+            'guilds'    => $query->paginate(30)->appends($request->query()),
+        ]);
     }
 
     /**
@@ -34,7 +69,7 @@ class GuildController extends Controller {
      * @return \Illuminate\Contracts\Support\Renderable
      */
     public function getGuild(Request $request, $id) {
-        $guild = Guild::active()->where('id', $id)->first();
+        $guild = Guild::where('id', $id)->first();
 
         if (!$guild) {
             abort(404);
@@ -71,7 +106,7 @@ class GuildController extends Controller {
      * @return \Illuminate\Contracts\Support\Renderable
      */
     public function getGuildShop($id) {
-        $guild = Guild::active()->where('id', $id)->first();
+        $guild = Guild::where('id', $id)->first();
 
         return view('guilds.shop', [
             'guild' => $guild,
@@ -86,7 +121,7 @@ class GuildController extends Controller {
      * @return \Illuminate\Contracts\Support\Renderable
      */
     public function getGuildCharacters($id) {
-        $guild = Guild::active()->where('id', $id)->first();
+        $guild = Guild::where('id', $id)->first();
 
         return view('guilds.characters', [
             'guild' => $guild,
@@ -100,7 +135,7 @@ class GuildController extends Controller {
      * @return \Illuminate\Contracts\Support\Renderable
      */
     public function getGuildMembers($id) {
-        $guild = Guild::active()->where('id', $id)->first();
+        $guild = Guild::where('id', $id)->first();
 
         return view('guilds.members', [
             'guild' => $guild,
@@ -114,12 +149,25 @@ class GuildController extends Controller {
      * @return \Illuminate\Contracts\Support\Renderable
      */
     public function getGuildInventory($id) {
-        $guild = Guild::active()->where('id', $id)->first();
+        $guild = Guild::where('id', $id)->first();
 
         return view('guilds.inventory', [
             'guild' => $guild,
             //TODO get guild inventory
-            //Possible TODO: get guild bank on this page as well
+        ]);
+    }
+
+    /**
+     * Shows the guild bank
+     * 
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function getGuildBank($id) {
+        $guild = Guild::where('id', $id)->first();
+
+        return view('guilds.bank', [
+            'guild' => $guild,
+            //TODO get guild bank
         ]);
     }
 

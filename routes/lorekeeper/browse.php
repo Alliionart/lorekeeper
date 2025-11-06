@@ -202,4 +202,5 @@ Route::group(['prefix' => __('guilds.guilds')], function () {
     Route::get('view/{id}/members', 'GuildController@getGuildMembers');
     Route::get('view/{id}/characters', 'GuildController@getGuildCharacters');
     Route::get('view/{id}/inventory', 'GuildController@getGuildInventory');
+    Route::get('view/{id}/bank', 'GuildController@getGuildBank');
 });

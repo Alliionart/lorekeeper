@@ -9,12 +9,12 @@
 @endsection
 
 @section('content')
-    {!! breadcrumbs([ucwords(__('guilds.guilds')) => __('guilds.guilds'), $guild->name => $guild->name]) !!}
+    {!! breadcrumbs([ucwords(__('guilds.guilds')) => __('guilds.guilds')]) !!}
 
-    <h1>{{ $guild->name }}'s Shop</h1>
+    <h1>{{ $guild->name }}'s Bank</h1>
     <div class="row">
         <div class="col-md col-md-12">
-            Shop content here
+            Content here
         </div>
     </div>
 @endsection

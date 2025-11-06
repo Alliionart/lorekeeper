@@ -4,6 +4,7 @@ namespace App\Models\Guild;
 
 use App\Models\Model;
 use App\Models\User\User;
+use App\Models\Guild\GuildMember;
 use Carbon\Carbon;
 
 class Guild extends Model {
@@ -30,7 +31,7 @@ class Guild extends Model {
      *
      * @var string
      */
-    public $timestamps = true;
+    public $timestamps = false;
 
     /**
      * Validation rules for guild creation.
@@ -59,31 +60,31 @@ class Guild extends Model {
     **********************************************************************************************/
 
     /**
-     * Get the user this submission is for.
+     * Get the owner of the guild.
      */
     public function owner() {
         return $this->belongsTo(User::class, 'owner_id');
     }
 
     /**
-     * Get the user who made the submission.
+     * Get the guild inventory.
      */
     public function inventory() {
         return $this->belongsTo(User::class, 'user_id');
     }
 
     /**
-     * Get the staff who processed the submission.
+     * Get the characters attached to the guild.
      */
-    public function staff() {
-        return $this->belongsTo(User::class, 'staff_id');
+    public function characters() {
+        return $this->hasMany(GuildCharacter::class, 'guild_id');
     }
 
     /**
-     * Get the characters attached to the submission.
+     * Get the members in the guild.
      */
-    public function characters() {
-        return $this->hasMany(SubmissionCharacter::class, 'submission_id');
+    public function members() {
+        return $this->hasMany(GuildMember::class, 'user_id');
     }
 
     /**********************************************************************************************
@@ -205,12 +206,21 @@ class Guild extends Model {
     }
 
     /**
-     * Get the viewing URL of the submission/claim.
+     * Get the viewing URL of the guild.
      *
      * @return string
      */
     public function getViewUrlAttribute() {
-        return url(($this->prompt_id ? 'submissions' : 'claims').'/view/'.$this->id);
+        return url( __('guilds.guilds') .'/view/'.$this->id);
+    }
+
+    /**
+     * Get the editing URL of the guild.
+     *
+     * @return string
+     */
+    public function getEditUrlAttribute() {
+        return url( __('guilds.guilds') .'/edit/'.$this->id);
     }
 
     /**
@@ -219,7 +229,7 @@ class Guild extends Model {
      * @return string
      */
     public function getAdminUrlAttribute() {
-        return url('admin/'.($this->prompt_id ? 'submissions' : 'claims').'/edit/'.$this->id);
+        return url('admin/guilds/edit/'.$this->id);
     }
 
     /**

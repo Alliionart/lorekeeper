@@ -4,6 +4,10 @@
     {{ ucwords(__('guilds.guilds')) }}
 @endsection
 
+@section('sidebar')
+    @include('guilds._sidebar')
+@endsection
+
 @section('content')
     {!! breadcrumbs([ucwords(__('guilds.guilds')) => __('guilds.guilds')]) !!}
 
