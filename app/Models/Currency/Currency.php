@@ -11,9 +11,9 @@ class Currency extends Model {
      * @var array
      */
     protected $fillable = [
-        'is_user_owned', 'is_character_owned',
+        'is_user_owned', 'is_character_owned', 'is_guild_owned',
         'name', 'abbreviation', 'description', 'parsed_description', 'sort_user', 'sort_character',
-        'is_displayed', 'allow_user_to_user', 'allow_user_to_character', 'allow_character_to_user',
+        'is_displayed', 'allow_user_to_user', 'allow_user_to_character', 'allow_character_to_user', 'allow_user_to_guild', 'allow_guild_to_user',
         'has_icon', 'has_image', 'hash',
     ];
 

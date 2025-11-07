@@ -69,9 +69,9 @@ class CurrencyController extends Controller {
     public function postCreateEditCurrency(Request $request, CurrencyService $service, $id = null) {
         $id ? $request->validate(Currency::$updateRules) : $request->validate(Currency::$createRules);
         $data = $request->only([
-            'is_user_owned', 'is_character_owned',
+            'is_user_owned', 'is_character_owned', 'is_guild_owned',
             'name', 'abbreviation', 'description',
-            'is_displayed', 'allow_user_to_user', 'allow_user_to_character', 'allow_character_to_user',
+            'is_displayed', 'allow_user_to_user', 'allow_user_to_character', 'allow_character_to_user', 'allow_user_to_guild', 'allow_guild_to_user',
             'icon', 'image', 'remove_icon', 'remove_image',
         ]);
         if ($id && $service->updateCurrency(Currency::find($id), $data, Auth::user())) {
