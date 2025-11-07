@@ -47,6 +47,12 @@
                 {!! Form::select('parent_id', $gears, $gear->parent_id, ['class' => 'form-control']) !!}
             </div>
         </div>
+        <div class="col-md">
+            <div class="form-group">
+                {!! Form::label('ability_id', 'Battle Ability (Optional)', ['class' => 'mb-0']) !!} {!! add_help('Rolls the ability when HIT.') !!}
+                {!! Form::select('ability_id', $abilities, $gear->ability_id ?? null, ['class' => 'form-control selectize']) !!}
+            </div>
+        </div>
     </div>
 
     <div class="row">
@@ -110,7 +116,7 @@
             {!! Form::close() !!}
         @endif
 
-        @include('widgets._add_typing', ['object' => $gear, 'info' => 'Typings are used to determine effectiveness in battles.'])
+        <!-- @include('widgets._add_typing', ['object' => $gear, 'info' => 'Typings are used to determine effectiveness in battles.']) -->
 
         <h3>Preview</h3>
         <div class="card mb-3">

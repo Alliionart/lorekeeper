@@ -492,6 +492,7 @@ class PetService extends Service {
             $evolution->update([
                 'evolution_name'  => $data['evolution_name'],
                 'evolution_stage' => $data['evolution_stage'],
+                'ability_id'      => isset($data['ability_id']) ? $data['ability_id'] : null,
             ]);
 
             if ($image) {

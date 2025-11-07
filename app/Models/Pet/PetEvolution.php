@@ -3,6 +3,7 @@
 namespace App\Models\Pet;
 
 use App\Models\Model;
+use App\Models\Claymore\Ability;
 use Illuminate\Support\Facades\File;
 
 class PetEvolution extends Model {
@@ -12,7 +13,7 @@ class PetEvolution extends Model {
      * @var array
      */
     protected $fillable = [
-        'pet_id', 'evolution_name', 'evolution_stage',
+        'pet_id', 'evolution_name', 'evolution_stage', 'ability_id'
     ];
 
     /**
@@ -40,6 +41,13 @@ class PetEvolution extends Model {
      */
     public function pet() {
         return $this->belongsTo(Pet::class);
+    }
+
+    /**
+     * Get the pet evolutions's ability.
+     */
+    public function ability() {
+        return $this->belongsTo(Ability::class, 'ability_id', 'id');
     }
 
     /**********************************************************************************************

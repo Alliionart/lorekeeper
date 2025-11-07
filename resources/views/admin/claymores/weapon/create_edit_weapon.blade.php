@@ -47,6 +47,12 @@
                 {!! Form::select('parent_id', $weapons, $weapon->parent_id, ['class' => 'form-control']) !!}
             </div>
         </div>
+        <div class="col-md">
+            <div class="form-group">
+                {!! Form::label('ability_id', 'Battle Ability (Optional)', ['class' => 'mb-0']) !!} {!! add_help('Rolls the ability when hitting a target.') !!}
+                {!! Form::select('ability_id', $abilities, $weapon->ability_id ?? null, ['class' => 'form-control selectize']) !!}
+            </div>
+        </div>
     </div>
 
     <div class="row">

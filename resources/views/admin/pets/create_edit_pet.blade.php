@@ -58,6 +58,13 @@
         {!! Form::number('limit', $pet->limit, ['class' => 'col-md-9 form-control px-2']) !!}
     </div>
 
+    <div class="form-group row no-gutters align-items-center">
+        <div class="col-md col-form-label">
+            {!! Form::label('ability_id', 'Battle Ability (Optional)', ['class' => 'mb-0']) !!} {!! add_help('If this Pet classifies as a battle familiar, then enter an ability here. If this pet has evolutions any unique abilities for the current evolution will override this one.') !!}
+        </div>
+        {!! Form::select('ability_id', $abilities, $pet->ability_id ?? null, ['class' => 'col-md-9 form-control selectize']) !!}
+    </div>
+
     <div class="form-group">
         {!! Form::label('Description (Optional)') !!}
         {!! Form::textarea('description', $pet->description, ['class' => 'form-control wysiwyg']) !!}
@@ -179,6 +186,9 @@
     @parent
     <script>
         $(document).ready(function() {
+
+            $('.selectize').selectize();
+
             $('.delete-pet-button').on('click', function(e) {
                 e.preventDefault();
                 loadModal("{{ url('admin/data/pets/delete') }}/{{ $pet->id }}", 'Delete Pet');

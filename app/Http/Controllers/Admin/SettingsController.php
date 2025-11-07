@@ -14,7 +14,7 @@ class SettingsController extends Controller {
      */
     public function getIndex() {
         return view('admin.settings.settings', [
-            'settings' => DB::table('site_settings')->orderBy('key')->paginate(20),
+            'settings' => DB::table('site_settings')->where('description', '!=', 'Auto-Generated')->orderBy('key')->paginate(20),
         ]);
     }
 

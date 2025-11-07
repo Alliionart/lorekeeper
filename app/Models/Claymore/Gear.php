@@ -6,6 +6,7 @@ use App\Models\Currency\Currency;
 use App\Models\Model;
 use App\Models\User\User;
 use App\Models\User\UserGear;
+use App\Models\Claymore\Ability;
 
 class Gear extends Model {
     /**
@@ -15,7 +16,7 @@ class Gear extends Model {
      */
     protected $fillable = [
         'gear_category_id', 'name', 'has_image', 'description', 'parsed_description', 'allow_transfer',
-        'parent_id', 'currency_id', 'cost', 'is_visible',
+        'parent_id', 'currency_id', 'cost', 'is_visible', 'ability_id'
     ];
 
     protected $appends = ['image_url'];
@@ -90,6 +91,13 @@ class Gear extends Model {
      */
     public function currency() {
         return $this->belongsTo(Currency::class);
+    }
+
+    /**
+     * Get the gear's ability.
+     */
+    public function ability() {
+        return $this->belongsTo(Ability::class, 'ability_id', 'id');
     }
 
     /**********************************************************************************************

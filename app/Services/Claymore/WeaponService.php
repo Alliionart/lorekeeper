@@ -385,6 +385,10 @@ class WeaponService extends Service {
             $data['is_visible'] = 0;
         }
 
+        if (isset($data['ability_id']) && $data['ability_id'] == 0) {
+            $data['ability_id'] = null;
+        }
+
         if (isset($data['remove_image'])) {
             if ($weapon && $weapon->has_image && $data['remove_image']) {
                 $data['has_image'] = 0;

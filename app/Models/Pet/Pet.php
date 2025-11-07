@@ -4,6 +4,7 @@ namespace App\Models\Pet;
 
 use App\Models\Model;
 use App\Models\User\UserPet;
+use App\Models\Claymore\Ability;
 use Illuminate\Support\Facades\DB;
 
 class Pet extends Model {
@@ -13,7 +14,7 @@ class Pet extends Model {
      * @var array
      */
     protected $fillable = [
-        'pet_category_id', 'name', 'has_image', 'description', 'parsed_description', 'allow_transfer', 'limit', 'evolution_stage', 'is_visible',
+        'pet_category_id', 'name', 'has_image', 'description', 'parsed_description', 'allow_transfer', 'limit', 'evolution_stage', 'is_visible', 'ability_id'
     ];
 
     /**
@@ -79,6 +80,13 @@ class Pet extends Model {
      */
     public function dropData() {
         return $this->hasOne(PetDropData::class);
+    }
+
+    /**
+     * Get the pet's base ability. (Overridden by evolutions)
+     */
+    public function ability() {
+        return $this->belongsTo(Ability::class, 'ability_id', 'id');
     }
 
     /**********************************************************************************************

@@ -76,7 +76,7 @@ return [
 
     // Staff Rewards - Mercury
     'staff_rewards' => [
-        'enabled'     => 0,
+        'enabled'     => 1,
         'currency_id' => 1,
     ],
 

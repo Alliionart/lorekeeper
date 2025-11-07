@@ -13,6 +13,7 @@ use App\Models\Pet\PetLevelPet;
 use App\Models\Pet\PetVariant;
 use App\Models\Pet\PetVariantDropData;
 use App\Models\User\UserPet;
+use App\Models\Claymore\Ability;
 use App\Services\PetDropService;
 use App\Services\PetService;
 use Illuminate\Http\Request;
@@ -192,6 +193,7 @@ class PetController extends Controller {
         return view('admin.pets.create_edit_pet', [
             'pet'        => new Pet,
             'categories' => ['none' => 'No category'] + PetCategory::orderBy('sort', 'DESC')->pluck('name', 'id')->toArray(),
+            'abilities' => [0 => 'None'] + Ability::pluck('name', 'id')->toArray(),
         ]);
     }
 
@@ -211,6 +213,7 @@ class PetController extends Controller {
         return view('admin.pets.create_edit_pet', [
             'pet'        => $pet,
             'categories' => ['none' => 'No category'] + PetCategory::orderBy('sort', 'DESC')->pluck('name', 'id')->toArray(),
+            'abilities' => [0 => 'None'] + Ability::pluck('name', 'id')->toArray(),
         ]);
     }
 
@@ -225,7 +228,7 @@ class PetController extends Controller {
     public function postCreateEditPet(Request $request, PetService $service, $id = null) {
         $id ? $request->validate(Pet::$updateRules) : $request->validate(Pet::$createRules);
         $data = $request->only([
-            'name', 'allow_transfer', 'pet_category_id', 'description', 'image', 'remove_image', 'limit', 'is_visible',
+            'name', 'allow_transfer', 'pet_category_id', 'description', 'image', 'remove_image', 'limit', 'is_visible', 'ability_id'
         ]);
         if ($id && $service->updatePet(Pet::find($id), $data, Auth::user())) {
             flash('Pet updated successfully.')->success();
@@ -336,6 +339,7 @@ class PetController extends Controller {
         return view('admin.pets._create_edit_pet_evolution', [
             'pet'       => Pet::find($pet_id),
             'evolution' => $id ? PetEvolution::find($id) : new PetEvolution,
+            'abilities' => [0 => 'None'] + Ability::pluck('name', 'id')->toArray(),
         ]);
     }
 
@@ -349,7 +353,7 @@ class PetController extends Controller {
      * @return \Illuminate\Http\RedirectResponse
      */
     public function postCreateEditEvolution(Request $request, PetService $service, $pet_id, $id = null) {
-        $data = $request->only(['evolution_name', 'evolution_image', 'evolution_stage', 'delete', 'variant_id', 'variant_image']);
+        $data = $request->only(['evolution_name', 'evolution_image', 'evolution_stage', 'delete', 'variant_id', 'variant_image', 'ability_id']);
         if ($id && $service->editEvolution(PetEvolution::findOrFail($id), $data)) {
             // we dont flash in case we are deleting the evolution
         } elseif (!$id && $service->createEvolution(Pet::find($pet_id), $data)) {

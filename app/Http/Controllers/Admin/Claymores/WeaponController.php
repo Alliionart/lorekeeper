@@ -8,6 +8,7 @@ use App\Models\Claymore\Weapon;
 use App\Models\Claymore\WeaponCategory;
 use App\Models\Currency\Currency;
 use App\Models\Stat\Stat;
+use App\Models\Claymore\Ability;
 use App\Services\Claymore\WeaponService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -45,6 +46,7 @@ class WeaponController extends Controller {
             'weapons'    => ['none' => 'No Parent '] + Weapon::orderBy('name', 'DESC')->pluck('name', 'id')->toArray(),
             'categories' => ['none' => 'No category'] + WeaponCategory::orderBy('sort', 'DESC')->pluck('name', 'id')->toArray(),
             'currencies' => ['none' => 'No Parent ', 0 => 'Stat Points'] + Currency::where('is_user_owned', 1)->orderBy('name')->pluck('name', 'id')->toArray(),
+            'abilities' => [0 => 'None'] + Ability::pluck('name', 'id')->toArray(),
         ]);
     }
 
@@ -67,6 +69,7 @@ class WeaponController extends Controller {
             'categories' => ['none' => 'No category'] + WeaponCategory::orderBy('sort', 'DESC')->pluck('name', 'id')->toArray(),
             'currencies' => ['none' => 'No Parent ', 0 => 'Stat Points'] + Currency::where('is_user_owned', 1)->orderBy('name')->pluck('name', 'id')->toArray(),
             'stats'      => Stat::orderBy('name')->get(),
+            'abilities' => [0 => 'None'] + Ability::pluck('name', 'id')->toArray(),
         ]);
     }
 
@@ -81,7 +84,7 @@ class WeaponController extends Controller {
     public function postCreateEditWeapon(Request $request, WeaponService $service, $id = null) {
         $id ? $request->validate(Weapon::$updateRules) : $request->validate(Weapon::$createRules);
         $data = $request->only([
-            'name', 'allow_transfer', 'weapon_category_id', 'description', 'image', 'remove_image', 'currency_id', 'cost', 'parent_id', 'is_visible',
+            'name', 'allow_transfer', 'weapon_category_id', 'description', 'image', 'remove_image', 'currency_id', 'cost', 'parent_id', 'is_visible', 'ability_id',
         ]);
         if ($id && $service->updateWeapon(Weapon::find($id), $data, Auth::user())) {
             flash('Weapon updated successfully.')->success();

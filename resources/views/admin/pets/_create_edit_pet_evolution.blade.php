@@ -13,6 +13,11 @@
 </div>
 
 <div class="form-group">
+    {!! Form::label('ability_id', 'Battle Ability (Optional)', ['class' => 'mb-0']) !!} {!! add_help('If this Pet classifies as a battle familiar, then enter an ability here. Overrides the main ability.') !!}
+    {!! Form::select('ability_id', $abilities, $evolution->ability_id ?? null, ['class' => 'form-control selectize']) !!}
+</div>
+
+<div class="form-group">
     {!! Form::label('Image (Required)') !!}
     <div>{!! Form::file('evolution_image') !!}</div>
     <div class="text-muted">Recommended size: 200px x 200px</div>
