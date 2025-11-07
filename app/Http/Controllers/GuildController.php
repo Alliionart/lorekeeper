@@ -119,7 +119,7 @@ class GuildController extends Controller {
             'location', 'max_players', 'max_characters',
             'open_new_users', 'automatical_app_approval', 'open_inventory',
             'open_bank', 'open_pets', 'open_armory',
-            'logo', 'remove_logo', 'banner', 'remove_banner'
+            'logo', 'remove_logo', 'banner', 'remove_banner',
         ]);
 
         $automatic_update = Settings::get('guilds_enable_automatic_updates');

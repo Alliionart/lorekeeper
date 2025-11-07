@@ -17,7 +17,7 @@ class Guild extends Model {
         'parsed_description', 'location', 'reputation',
         'max_users', 'max_characters',
         'open_new_users', 'automatic_app_approval', 'open_inventory', 'open_bank', 'open_inventory', 'open_pets', 'open_armory',
-        'has_logo', 'has_banner'
+        'has_logo', 'has_banner',
     ];
 
     /**
@@ -26,16 +26,16 @@ class Guild extends Model {
      * @var string
      */
     protected $table = 'guilds';
+
+    protected $casts = [
+        'joined_at' => 'datetime',
+    ];
     /**
      * Whether the model contains timestamps to be saved and updated.
      *
      * @var string
      */
     public $timestamps = false;
-
-    protected $casts = [
-        'joined_at' => 'datetime',
-    ];
 
     /**
      * Validation rules for guild creation.
@@ -44,8 +44,8 @@ class Guild extends Model {
      */
     public static $createRules = [
         'description' => 'nullable',
-        'logo'       => 'nullable|image|mimes:png,gif|max:200',
-        'banner'     => 'nullable|image|mimes:png,gif|max:800',
+        'logo'        => 'nullable|image|mimes:png,gif|max:200',
+        'banner'      => 'nullable|image|mimes:png,gif|max:800',
     ];
 
     /**
@@ -55,8 +55,8 @@ class Guild extends Model {
      */
     public static $updateRules = [
         'description' => 'nullable',
-        'logo'       => 'nullable|image|mimes:png,gif|max:200',
-        'banner'     => 'nullable|image|mimes:png,gif|max:800',
+        'logo'        => 'nullable|image|mimes:png,gif|max:200',
+        'banner'      => 'nullable|image|mimes:png,gif|max:800',
     ];
 
     /**********************************************************************************************
@@ -299,5 +299,4 @@ class Guild extends Model {
 
         return asset($this->imageDirectory.'/'.$this->BannerFileName);
     }
-    
 }
