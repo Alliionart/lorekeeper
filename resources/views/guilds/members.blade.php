@@ -36,7 +36,7 @@
             {!! Form::select(
                 'rank',
                 [
-                    ''      => 'All',
+                    '' => 'All',
                     'Owner' => 'Owner',
                     'Mod' => 'Mod',
                     'Member' => 'Member',

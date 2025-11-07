@@ -112,7 +112,7 @@
         </div>
     </div>
 
-    
+
 
     <div class="text-right mt-4">
         {!! Form::submit('Update', ['class' => 'btn btn-primary update-guild']) !!}

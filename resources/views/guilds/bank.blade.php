@@ -9,10 +9,10 @@
 @endsection
 
 @section('content')
-    {!! breadcrumbs([ucwords(__('guilds.guilds')) => __('guilds.guilds'), $guild->name => __('guilds.guilds') .'/view/'. $guild->id, 'Bank' => 'bank']) !!}
+    {!! breadcrumbs([ucwords(__('guilds.guilds')) => __('guilds.guilds'), $guild->name => __('guilds.guilds') . '/view/' . $guild->id, 'Bank' => 'bank']) !!}
 
     <h1>{{ $guild->name }}'s Bank</h1>
-    
+
     <h3>
         @if (Auth::check() && Auth::user()->hasPower('edit_inventories'))
             <a href="#" class="float-right btn btn-outline-info btn-sm" id="grantButton" data-toggle="modal" data-target="#grantModal"><i class="fas fa-cog"></i> Admin</a>
@@ -55,7 +55,7 @@
         </div>
     @endif
 
-    @if (Auth::check() && Auth::user()->id === $guild->owner_id && isset($takeCurrencyOptions) && isset($giveCurrencyOptions) )
+    @if (Auth::check() && Auth::user()->id === $guild->owner_id && isset($takeCurrencyOptions) && isset($giveCurrencyOptions))
         <h3>
             Take/Give Currency
         </h3>
@@ -91,5 +91,5 @@
         </div>
         {!! Form::close() !!}
     @endif
-    
+
 @endsection

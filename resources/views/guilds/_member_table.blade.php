@@ -17,8 +17,8 @@
                 <td>{!! pretty_date($member->joined_at) !!}</td>
             </tr>
             @if (isset($limit) && $i === $limit)
-                @break
-            @endif
+            @break
+        @endif
         <?php $i++; ?>
     @endforeach
 </tbody>
