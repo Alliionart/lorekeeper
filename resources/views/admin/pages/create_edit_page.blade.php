@@ -25,10 +25,15 @@
             {!! Form::label('Title') !!}
             {!! Form::text('title', $page->title, ['class' => 'form-control']) !!}
         </div>
-
-        <div class="col-md-6 form-group">
+        <div class="col-md-3 form-group">
             {!! Form::label('Key') !!} {!! add_help('This is a unique name used to form the URL of the page. Only alphanumeric characters, dash and underscore (no spaces) can be used.') !!}
             {!! Form::text('key', $page->key, ['class' => 'form-control']) !!}
+        </div>
+        <div class="col-md-3">
+            <div class="form-group">
+                {!! Form::label('Page Category (Optional)') !!}
+                {!! Form::select('page_category_id', $categories, $page->page_category_id, ['class' => 'form-control']) !!}
+            </div>
         </div>
     </div>
 

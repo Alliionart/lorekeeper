@@ -13,6 +13,21 @@
         important pages such as the terms of service and privacy policy cannot be deleted. You can, however, edit their names and visibility.</p>
 
     <div class="text-right mb-3"><a class="btn btn-primary" href="{{ url('admin/pages/create') }}"><i class="fas fa-plus"></i> Create New Page</a></div>
+    
+    <div>
+        {!! Form::open(['method' => 'GET', 'class' => 'form-inline justify-content-end']) !!}
+            <div class="form-group mr-3 mb-3">
+                {!! Form::text('name', Request::get('name'), ['class' => 'form-control', 'placeholder' => 'Title']) !!}
+            </div>
+            <div class="form-group mr-3 mb-3">
+                {!! Form::select('page_category_id', $categories, Request::get('name'), ['class' => 'form-control']) !!}
+            </div>
+            <div class="form-group mb-3">
+                {!! Form::submit('Search', ['class' => 'btn btn-primary']) !!}
+            </div>
+        {!! Form::close() !!}
+    </div>
+    
     @if (!count($pages))
         <p>No pages found.</p>
     @else
@@ -20,8 +35,11 @@
         <div class="mb-4 logs-table">
             <div class="logs-table-header">
                 <div class="row">
-                    <div class="col-12 col-md-5">
+                    <div class="col-12 col-md-3">
                         <div class="logs-table-cell">Title</div>
+                    </div>
+                    <div class="col-3 col-md-2">
+                        <div class="logs-table-cell">Category</div>
                     </div>
                     <div class="col-3 col-md-3">
                         <div class="logs-table-cell">Key</div>
@@ -35,8 +53,11 @@
                 @foreach ($pages as $page)
                     <div class="logs-table-row">
                         <div class="row flex-wrap">
-                            <div class="col-12 col-md-5">
+                            <div class="col-12 col-md-3">
                                 <div class="logs-table-cell"><a href="{{ $page->url }}">{{ $page->title }}</a></div>
+                            </div>
+                            <div class="col-12 col-md-2">
+                                {{ $page->category ? $page->category->name : '' }}
                             </div>
                             <div class="col-3 col-md-3">
                                 <div class="logs-table-cell">{{ $page->key }}</div>
