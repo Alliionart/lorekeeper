@@ -16,9 +16,9 @@
                 <td>{{ $member->reputation }}</td>
                 <td>{!! pretty_date($member->joined_at) !!}</td>
             </tr>
-            @if ($i === $limit)
-            @break
-        @endif
+            @if (isset($limit) && $i === $limit)
+                @break
+            @endif
         <?php $i++; ?>
     @endforeach
 </tbody>

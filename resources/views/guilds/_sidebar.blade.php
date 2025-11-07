@@ -24,6 +24,7 @@
         <li class="sidebar-section">
             <div class="sidebar-section-header">Admin</div>
             <div class="sidebar-item"><a href="{{ $guild->getEditUrlAttribute() }}" class="{{ set_active('*settings') }}">Settings</a></div>
+            <div class="sidebar-item"><a href="{{ $guild->getEditRankUrlAttribute() }}" class="{{ set_active('*edit-ranks') }}">Edit Ranks</a></div>
         </li>
     @endif
 </ul>

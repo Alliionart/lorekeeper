@@ -16,6 +16,7 @@
 
 Route::get('items/{id}', 'Users\InventoryController@getStack');
 Route::get('items/character/{id}', 'Users\InventoryController@getCharacterStack');
+Route::get('items/guild/{id}', 'Users\InventoryController@getGuildStack');
 
 /**************************************************************************************************
     News
@@ -197,6 +198,8 @@ Route::group(['prefix' => __('guilds.guilds')], function () {
     Route::get('view/{id}', 'GuildController@getGuild');
     Route::get('edit/{id}', 'GuildController@getGuildEdit');
     Route::post('edit/{id}', 'GuildController@postGuildEdit');
+    Route::get('edit-ranks/{id}', 'GuildController@getGuildEditRanks');
+    Route::post('edit-ranks/{id}', 'GuildController@postGuildEditRanks');
 
     Route::get('view/{id}/shop', 'GuildController@getGuildShop');
     Route::get('view/{id}/members', 'GuildController@getGuildMembers');

@@ -8,6 +8,7 @@ use App\Models\Character\CharacterDesignUpdate;
 use App\Models\Character\CharacterItem;
 use App\Models\Item\Item;
 use App\Models\Item\ItemCategory;
+use App\Models\Guild\GuildItem;
 use App\Models\Queue\QueueSubmission;
 use App\Models\Submission\Submission;
 use App\Models\Trade;
@@ -107,6 +108,37 @@ class InventoryController extends Controller {
             'readOnly'  => $readOnly,
             'character' => $character,
             'owner_id'  => $ownerId ?? null,
+        ]);
+    }
+
+    /**
+     * Shows the inventory stack modal, for guilds.
+     *
+     * @param int $id
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function getGuildStack(Request $request, $id) {
+        $first_instance = GuildItem::withTrashed()->where('id', $id)->first();
+        $stack = GuildItem::where([['guild_id', $first_instance->guild_id], ['item_id', $first_instance->item_id], ['count', '>', 0]])->get();
+        $item = Item::where('id', $first_instance->item_id)->first();
+
+        $guild = $first_instance->guild;
+        isset($stack->first()->guild->id) ?
+        $ownerId = $stack->first()->guild->id : null;
+
+        $hasPower = Auth::check() ? Auth::user()->hasPower('edit_inventories') : false;
+        $readOnly = $request->get('read_only') ?: ((Auth::check() && $first_instance && (isset($ownerId) == true || $hasPower == true)) ? 0 : 1);
+
+        return view('guilds._inventory_stack', [
+            'stack'     => $stack,
+            'item'      => $item,
+            'user'      => Auth::user(),
+            'has_power' => $hasPower,
+            'readOnly'  => $readOnly,
+            'guild'     => $guild,
+            'owner_id'  => $ownerId ?? null,
+            'allowed_users' => null //Get users who can edit the guild here (Owner and Mods)!
         ]);
     }
 

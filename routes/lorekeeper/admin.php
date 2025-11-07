@@ -476,4 +476,5 @@ Route::group(['prefix' => 'guilds', 'middleware' => 'power:manage_guilds'], func
     Route::get('/{status}', 'GuildController@getGuildIndex')->where('status', 'inactive|active|pending');
     Route::get('edit/{id}', 'GuildController@getEditGuild');
     Route::post('edit/{id}/{action}', 'GuildController@postGuild')->where('action', 'inactive|active|pending');
+    Route::post('{id}/grant-items', 'GrantController@postGuildItems');
 });

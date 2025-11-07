@@ -4,6 +4,8 @@ namespace App\Models\Guild;
 
 use App\Models\Model;
 use App\Models\User\User;
+use App\Models\Character\Character;
+use App\Models\Item\Item;
 use Carbon\Carbon;
 
 class Guild extends Model {
@@ -75,8 +77,8 @@ class Guild extends Model {
     /**
      * Get the guild inventory.
      */
-    public function inventory() {
-        return $this->belongsTo(User::class, 'user_id');
+    public function items() {
+        return $this->belongsToMany(Item::class, 'guild_items')->withPivot('count', 'data', 'updated_at', 'id')->whereNull('guild_items.deleted_at');
     }
 
     /**
@@ -179,16 +181,7 @@ class Guild extends Model {
         ACCESSORS
 
     **********************************************************************************************/
-
-    /**
-     * Get the data attribute as an associative array.
-     *
-     * @return array
-     */
-    public function getDataAttribute() {
-        return json_decode($this->attributes['data'], true);
-    }
-
+        
     /**
      * Gets the inventory of the user for selection.
      *
@@ -227,6 +220,15 @@ class Guild extends Model {
      */
     public function getEditUrlAttribute() {
         return url(__('guilds.guilds').'/edit/'.$this->id);
+    }
+
+    /**
+     * Get the rank editing URL of the guild.
+     *
+     * @return string
+     */
+    public function getEditRankUrlAttribute() {
+        return url(__('guilds.guilds').'/edit-ranks/'.$this->id);
     }
 
     /**
