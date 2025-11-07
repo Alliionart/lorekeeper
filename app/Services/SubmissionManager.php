@@ -474,7 +474,7 @@ class SubmissionManager extends Service {
 
             // Get the updated set of rewards
             $rewards = $this->processRewards($data, false, true);
-
+            $loots = $rewards['loot_tables'];
             // Logging data
             $promptLogType = $submission->prompt_id ? 'Prompt Rewards' : 'Claim Rewards';
             $promptData = [
@@ -612,6 +612,7 @@ class SubmissionManager extends Service {
                     'rewards' => getDataReadyAssets($rewards),
                     'skills'  => $skills ?? null,
                     'gallery_submission_id' => $submission->data['gallery_submission_id'] ?? null,
+                    'loot_tables' => isset($rewards['loot']) ? $rewards['loot'] : [],
                 ]), // list of rewards
             ]);
 

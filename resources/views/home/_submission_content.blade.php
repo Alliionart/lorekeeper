@@ -29,7 +29,7 @@
             </div>
             <div class="col-md-10"><a href="{{ $submission->url }}">{{ $submission->url }}</a></div>
         </div>
-        @if (config('lorekeeper.settings.allow_gallery_submissions_on_prompts') && $submission->data['gallery_submission_id'])
+        @if (config('lorekeeper.settings.allow_gallery_submissions_on_prompts') && isset($submission->data['gallery_submission_id']) && $submission->data['gallery_submission_id'])
             <div class="row mb-2 no-gutters">
                 <div class="col-md-2">
                     <h5 class="mb-0">Gallery Submission</h5>
@@ -192,6 +192,62 @@
         @endforeach
     </div>
 </div>
+
+@if(isset($submission->data['loot_tables']))
+<h2>Loot Tables Rolled</h2>
+<table class="table table-sm">
+    <thead>
+        <tr>
+            <th width="30%">Loot Table</th>
+            <th width="40%">Reward</th>
+            <th width="30%">Amount</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach($submission->data['loot_tables'] as $id => $type)
+        @php $loot = \App\Models\Loot\LootTable::find($id); @endphp
+        @if($submission->data['loot_tables'][$id] == [])
+            <tr>
+                <td>{!! $loot->displayName !!}</td>
+                <td>None</td>
+                <td>N/A</td>
+            </tr>
+        @else
+            @foreach($type as $key => $assets)
+                @foreach($assets as $asset)
+                <tr>
+                    @php $model = getAssetModelString($key); if($asset) $reward = $model::find($asset['asset']); @endphp
+                    <td>{!! $loot->displayName !!}</td>
+                    <td>{!! $reward ? $reward->displayName : 'Deleted Asset' !!}</td>
+                    <td>{{ $asset['quantity'] }}</td>
+                </tr>
+                @endforeach
+            @endforeach
+        @endif
+        @endforeach
+    </tbody>
+</table>
+@endif
+
+<h2>Rewards</h2>
+<table class="table table-sm">
+    <thead>
+        <tr>
+            <th width="70%">Reward</th>
+            <th width="30%">Amount</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach(parseAssetData( isset($submission->data['rewards']) ? $submission->data['rewards'] : $submission->data ) as $type)
+            @foreach($type as $asset)
+                <tr>
+                    <td>{!! $asset['asset'] ? $asset['asset']->displayName : 'Deleted Asset' !!}</td>
+                    <td>{{ $asset['quantity'] }}</td>
+                </tr>
+            @endforeach
+        @endforeach
+    </tbody>
+</table>
 
 
 @if (isset($inventory['user_items']) && array_filter($inventory['user_items']))
