@@ -2,10 +2,9 @@
 
 namespace App\Models\Guild;
 
+use App\Models\Item\Item;
 use App\Models\Model;
 use App\Models\User\User;
-use App\Models\Character\Character;
-use App\Models\Item\Item;
 use Carbon\Carbon;
 
 class Guild extends Model {
@@ -181,7 +180,7 @@ class Guild extends Model {
         ACCESSORS
 
     **********************************************************************************************/
-        
+
     /**
      * Gets the inventory of the user for selection.
      *

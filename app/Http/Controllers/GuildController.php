@@ -3,18 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Facades\Settings;
+use App\Models\Currency\Currency;
 use App\Models\Guild\Guild;
-use App\Models\Guild\GuildMember;
 use App\Models\Guild\GuildCharacter;
+use App\Models\Guild\GuildCurrency;
 use App\Models\Guild\GuildItem;
+use App\Models\Guild\GuildMember;
 use App\Models\Item\Item;
 use App\Models\Item\ItemCategory;
-use App\Models\Currency\Currency;
-use App\Models\Guild\GuildCurrency;
-use App\Models\Guild\GuildApps;
-use App\Models\Guild\GuildShop;
-use App\Models\Guild\GuildShopLog;
-use App\Models\Guild\GuildShopStock;
 use App\Services\GuildManager;
 use Auth;
 use Illuminate\Http\Request;
@@ -190,7 +186,7 @@ class GuildController extends Controller {
     public function postGuildEditRanks(Request $request, GuildManager $service, $id = null) {
         $id ? $request->validate(Guild::$updateRules) : $request->validate(Guild::$createRules);
         $data = $request->only([
-            'rank_name', 'reputation_threshold'
+            'rank_name', 'reputation_threshold',
         ]);
 
         if ($id && $service->updateGuildRanks(Guild::find($id), $data, Auth::user())) {
@@ -238,13 +234,13 @@ class GuildController extends Controller {
         $query = GuildCharacter::query();
         $sort = $request->only(['sort']);
         $rank = $request->only(['rank']);
-        
+
         if ($request->get('name')) {
             $query->join('characters', 'guild_characters.character_id', '=', 'characters.id')
-                ->where('characters.name', 'LIKE', '%' . $request->get('name') . '%');
+                ->where('characters.name', 'LIKE', '%'.$request->get('name').'%');
         }
 
-        if($rank && $rank !== '') {
+        if ($rank && $rank !== '') {
             $query->where('rank', $rank);
         }
 
@@ -270,9 +266,9 @@ class GuildController extends Controller {
         }
 
         return view('guilds.characters', [
-            'guild' => $guild,
+            'guild'      => $guild,
             'characters' => $query->paginate(30)->appends($request->query()),
-            'ranks' => ['' => 'All Ranks'] + [], //Once guild ranks are built this should pull from that!
+            'ranks'      => ['' => 'All Ranks'] + [], //Once guild ranks are built this should pull from that!
             //TODO Add guild character variables and data
         ]);
     }
@@ -293,10 +289,10 @@ class GuildController extends Controller {
 
         if ($request->get('name')) {
             $query->join('users', 'guild_users.user_id', '=', 'users.id')
-                ->where('users.name', 'LIKE', '%' . $request->get('name') . '%');
+                ->where('users.name', 'LIKE', '%'.$request->get('name').'%');
         }
 
-        if($rank !== '') {
+        if ($rank !== '') {
             $query->where('rank', $rank);
         }
 
@@ -322,7 +318,7 @@ class GuildController extends Controller {
         }
 
         return view('guilds.members', [
-            'guild' => $guild,
+            'guild'   => $guild,
             'members' => $query->paginate(30)->appends($request->query()),
             // TODO: Make the _member_table blade configurable with extra columns: Rank, # of characters, others?
         ]);
@@ -359,8 +355,8 @@ class GuildController extends Controller {
             'guild'         => $guild,
             'categories'    => $categories->keyBy('id'),
             'items'         => $items,
-            'logs'          => [] /** $guild->getItemLogs() */,
-            ] + (Auth::check() && (Auth::user()->hasPower('edit_inventories') || Auth::user()->id == $this->character->user_id) ? [
+            'logs'          => [] /* $guild->getItemLogs() */,
+        ] + (Auth::check() && (Auth::user()->hasPower('edit_inventories') || Auth::user()->id == $this->character->user_id) ? [
             'itemOptions'       => $itemOptions->pluck('name', 'id'),
             'guildInventory'    => GuildItem::with('item')->whereIn('item_id', $itemOptions->pluck('id'))->whereNull('deleted_at')->where('count', '>', '0')->where('guild_id', $guild->id)->get()->filter(function ($guildItem) {
                 return $guildItem->isTransferrable == true;
@@ -380,7 +376,7 @@ class GuildController extends Controller {
         $guild = Guild::where('id', $id)->first();
 
         return view('guilds.bank', [
-            'guild'             => $guild,
+            'guild'                 => $guild,
             'currencies'            => $guild->getCurrencies(true),
             'logs'                  => [] /**$guild->getCurrencyLogs() */,
         ] + (Auth::check() && Auth::user()->id == $guild->ownner_id ? [
