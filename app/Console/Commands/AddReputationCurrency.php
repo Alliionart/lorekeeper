@@ -2,32 +2,29 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
-use DB;
-use Settings;
 use App\Models\User\User;
-use App\Models\Character\Character;
-use App\Models\Currency\Currency;
 use App\Services\CurrencyService;
-use App\Services\CurrencyManager;
+use DB;
+use Illuminate\Console\Command;
+use Settings;
 
 class AddReputationCurrency extends Command {
     /**
-     * The name and signature of the console command
+     * The name and signature of the console command.
+     *
      * @var string
      */
     protected $signature = 'add-reputation-currency';
 
     /**
      * The console command description.
+     *
      * @var string
      */
     protected $description = 'Adds the reputation currency able to be held by users, characters and guilds.';
 
     /**
      * Create a new command instance.
-     * @return void
-     * 
      */
     public function __construct() {
         parent::__construct();
@@ -41,7 +38,7 @@ class AddReputationCurrency extends Command {
         $this->line('This command will create a new currency which tracks reputation by users, characters and guilds. It will add a site setting for the currency.\n');
         $this->line('This command should only be run once.');
 
-        if($this->confirm('Do you want to continue?')) {
+        if ($this->confirm('Do you want to continue?')) {
             $this->line('By default all Users, Characters and Guilds can hold Reputation. This may be changed later in the currency settings.');
             $this->line('Adding reputation...');
 
@@ -55,18 +52,18 @@ class AddReputationCurrency extends Command {
             ];
 
             $currency = (new CurrencyService)->createCurrency($data, User::find(Settings::get('admin_user')));
-            $this->info("Added: Reputation");
+            $this->info('Added: Reputation');
 
             //Add to site settings
             $this->line("Adding site setting...\n");
 
-            if(!DB::table('site_settings')->where('key', 'guild_reputation_currency')->exists()) {
+            if (!DB::table('site_settings')->where('key', 'guild_reputation_currency')->exists()) {
                 DB::table('site_settings')->insert([
-                   [
-                    'key'    => 'guild_reputation_currency',
-                    'value'  => $currency->id,
-                    'description' => 'The ID of the reputation currency.'
-                   ]
+                    [
+                        'key'         => 'guild_reputation_currency',
+                        'value'       => $currency->id,
+                        'description' => 'The ID of the reputation currency.',
+                    ],
                 ]);
                 $this->info('Added: guild_reputation_currency');
             } else {
@@ -75,6 +72,5 @@ class AddReputationCurrency extends Command {
 
             $this->line('Done!');
         }
-
     }
 }
