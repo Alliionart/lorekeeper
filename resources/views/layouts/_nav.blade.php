@@ -89,9 +89,15 @@
                             <a class="dropdown-item" href="{{ url(__('dailies.dailies')) }}">
                                 {{__('dailies.dailies')}}
                             </a>
-                            <a class="dropdown-item" href="{{ url('crafting') }}">
-                                Crafting
-                            </a>
+                            <div class="dropdown-submenu">
+                                <a class="dropdown-item" tabindex="-1" href="#">Crafting</a>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" tabindex="-1" href="{{ url('crafting/1') }}">Cooking</a></li>
+                                    <li><a class="dropdown-item" href="{{ url('crafting/2') }}">Alchemy</a></li>
+                                    <li><a class="dropdown-item" href="{{ url('crafting/3') }}">Artisan Crafts</a></li>
+                                    <li><a class="dropdown-item" href="{{ url('crafting/4') }}">Blacksmithing</a></li>
+                                </ul>
+                            </div>
                             <a class="dropdown-item" href="{{ url('foraging') }}">
                                 Foraging
                             </a>

@@ -31,7 +31,7 @@ class CraftingController extends Controller {
      * @return \Illuminate\Contracts\Support\Renderable
      */
     public function getIndex(Request $request) {
-
+        $categories = RecipeCategory::orderBy('sort', 'DESC')->get();
         $userRecipes = count($categories) ? Auth::user()->recipes()->orderByRaw('FIELD(recipe_category_id,'.implode(',', $categories->pluck('id')->toArray()).')')->orderBy('name')->get()->groupBy('recipe_category_id') :
                 Auth::user()->recipes()->orderBy('name')->get()->groupBy('collection_category_id');
 
@@ -39,6 +39,24 @@ class CraftingController extends Controller {
             'default' => Recipe::where('needs_unlocking', '0')->get(),
             'userRecipes' => $userRecipes,
             'categories' => $categories->keyBy('id'),
+        ]);
+    }
+
+    /**
+     * Shows the user's recipes from selected category.
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function getCategoryIndex(Request $request, $category_id) {
+        $category = RecipeCategory::where('id', '=', $category_id)->get();
+        $userRecipes = count($category) ? Auth::user()->recipes()->orderByRaw('FIELD(recipe_category_id,'.implode(',', $category->pluck('id')->toArray()).')')->orderBy('name')->get()->groupBy('recipe_category_id') :
+                Auth::user()->recipes()->orderBy('name')->get()->groupBy('collection_category_id');
+
+        return view('home.crafting.category_index', [
+            'default' => Recipe::where('needs_unlocking', '0')->where('recipe_category_id', $category_id)->get(),
+            'userRecipes' => $userRecipes,
+            'categories' => $category->keyBy('id'),
+            'category'  => RecipeCategory::where('id', '=', $category_id)->first(),
         ]);
     }
 
