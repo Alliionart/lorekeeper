@@ -1,13 +1,15 @@
 <div class="card mb-3">
     <div class="card-header h2">
         Level Information
-        <span class="badge badge-{{ $level->nextLevel ? 'dark' : 'success' }} text-white mx-1 float-right" data-toggle="tooltip" title="Level {{ $level->current_level }}">
-            {{ $level->nextLevel ? 'Current Lvl: ' . $level->current_level : 'Max Level' }}
-        </span>
+        @if ($level)
+            <span class="badge badge-{{ $level->nextLevel ? 'dark' : 'success' }} text-white mx-1 float-right" data-toggle="tooltip" title="Level {{ $level->current_level }}">
+                {{ $level->nextLevel ? 'Current Lvl: ' . $level->current_level : 'Max Level' }}
+            </span>
+        @endif
     </div>
     <div class="card-body">
         <div class="container text-center mb-3">
-            @if ($level->nextLevel)
+            @if (isset($level->nextLevel) && $level->nextLevel)
                 <p><b>Next Level:</b> {{ $level->nextLevel->level }}</p>
                 {{ $level->current_exp }}/{{ $level->nextLevel->exp_required }}
                 <div class="progress">
@@ -16,7 +18,7 @@
                         {{ $level->current_exp }}/{{ $level->nextLevel->exp_required }}
                     </div>
                 </div>
-                @if ($level->current_exp >= $level->nextLevel->exp_required && Auth::check() && ($level->user ?? Auth::user()->id == $level->character?->user_id))
+                @if (isset($level->current_exp) && $level->current_exp >= $level->nextLevel->exp_required && Auth::check() && ($level->user ?? Auth::user()->id == $level->character?->user_id))
                     <div class="text-center m-1">
                         <b>
                             <p>You have enough EXP to advance to the next level!</p>
@@ -29,12 +31,14 @@
                     {!! Form::close() !!}
                 @endif
             @else
-                {{ $level->current_exp }} Exp (Max Level)
-                <div class="progress">
-                    <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="{{ $level->current_exp }}" aria-valuemin="0" aria-valuemax="{{ $level->current_exp }}" style="width:100%">
-                        {{ $level->current_exp }}
+                @if(isset($level->current_exp))
+                    {{ $level->current_exp }} Exp (Max Level)
+                    <div class="progress">
+                        <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="{{ $level->current_exp }}" aria-valuemin="0" aria-valuemax="{{ $level->current_exp }}" style="width:100%">
+                            {{ $level->current_exp }}
+                        </div>
                     </div>
-                </div>
+                @endif
             @endif
         </div>
     </div>

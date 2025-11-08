@@ -205,9 +205,12 @@ class CharacterController extends Controller {
      * @return \Illuminate\Contracts\Support\Renderable
      */
     public function getBattleTracker($slug) {
+
+        $character_pets = $this->character->pets;
+
         return view('character.battle_tracker', [
             'character'             => $this->character,
-            'extPrevAndNextBtnsUrl' => '/profile',
+            'pets'                  => $this->character->getBattlePets(),
         ]);
     }
 

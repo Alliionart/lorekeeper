@@ -907,6 +907,33 @@ class Character extends Model {
     }
 
     /**
+     * Get the character's associated battle pets.
+     */
+    public function getBattlePets() {
+        $pets = $this->pets;
+        $battle_pets = [];
+        foreach ($pets as $cPet) {
+            $pet = $cPet->pet;
+            $evolutions = $pet->evolutions;
+            $battle_pets[$pet->name] = $evolutions;
+            if($evolutions) {
+                $battle_pets[] = $evolutions;
+            }
+            // if($pet->ability_id) {
+            //     $battle_pets[] = $cPet;
+            // } else {
+            //     $evolutions = $cPet->evolutions;
+            //     if($evolutions) {
+            //         $battle_pets[] = $evolutions;
+            //     }
+            // }
+        }
+
+        
+        return $battle_pets;
+    }
+
+    /**
      * Get the Phenotype/Genotype of the character.
      *
      * @param mixed $type

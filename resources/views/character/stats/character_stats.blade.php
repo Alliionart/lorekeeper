@@ -23,9 +23,11 @@
     <div class="card mb-3">
         <div class="card-header h2">
             Stat Information
-            <span class="badge badge-dark text-white mx-1 float-right" data-toggle="tooltip" title="Current Stat Points">
-                Available Stat Points: {{ $character->level->current_points }}
-            </span>
+            @if(isset($character->level->current_points) && $character->level->current_points)
+                <span class="badge badge-dark text-white mx-1 float-right" data-toggle="tooltip" title="Current Stat Points">
+                    Available Stat Points: {{ $character->level->current_points }}
+                </span>
+            @endif
         </div>
         <div class="card-body">
             @foreach ($character->stats->chunk(4) as $chunk)

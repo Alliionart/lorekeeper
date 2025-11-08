@@ -14,31 +14,31 @@
                     @if (Auth::check() && Auth::user()->is_news_unread && config('lorekeeper.extensions.navbar_news_notif'))
                         <a class="nav-link d-flex text-warning" href="{{ url('news') }}"><strong>News</strong><i class="fas fa-bell"></i></a>
                     @else
-                        <a class="nav-link" href="{{ url('news') }}">News</a>
+                        <a class="nav-link" href="{{ url('news') }}"><i class="fas fa-newspaper"></i> News</a>
                     @endif
                 </li>
                 <li class="nav-item">
                     @if (Auth::check() && Auth::user()->is_sales_unread && config('lorekeeper.extensions.navbar_news_notif'))
                         <a class="nav-link d-flex text-warning" href="{{ url('sales') }}"><strong>Sales</strong><i class="fas fa-bell"></i></a>
                     @else
-                        <a class="nav-link" href="{{ url('sales') }}">Sales</a>
+                        <a class="nav-link" href="{{ url('sales') }}"><i class="fas fa-coins"></i> Sales</a>
                     @endif
                 </li>
                 @if (Auth::check())
                     <li class="nav-item dropdown">
                         <a id="inventoryDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
-                            Home
+                            <i class="fas fa-home"></i> Home
                         </a>
 
                         <div class="dropdown-menu" aria-labelledby="inventoryDropdown">
                             <a class="dropdown-item" href="{{ url('characters') }}">
                                 My {{ ucwords( __('lorekeeper.characters')) }}
                             </a>
-                            <a class="dropdown-item" href="{{ url('characters/myos') }}">
-                                My {{ ucwords( __('lorekeeper.myos')) }}
-                            </a>
                             <a class="dropdown-item" href="{{ url('breeding-permissions') }}">
                                 Breeding Permissions
+                            </a>
+                            <a class="dropdown-item" href="{{ url('characters/myos') }}">
+                                My {{ ucwords( __('lorekeeper.myos')) }}
                             </a>
                             <a class="dropdown-item" href="{{ url('pets') }}">
                                 My Pets
@@ -50,24 +50,21 @@
                             <a class="dropdown-item" href="{{ url('bank') }}">
                                 Bank
                             </a>
-                            <a class="dropdown-item" href="{{ url('userstats') }}">
-                                Stat Information
-                            </a>
                             <a class="dropdown-item" href="{{ url('awardcase') }}">
                                 {{ ucfirst(__('awards.awards')) }}
+                            </a>
+                            <a class="dropdown-item" href="{{ url('userstats') }}">
+                                Stat Information
                             </a>
                             <div class="dropdown-divider"></div>
                             <a class="dropdown-item" href="{{ url('comments/liked') }}">
                                 Liked Comments
                             </a>
-                            <a class="dropdown-item" href="{{ url('higher-or-lower') }}">
-                                Higher or Lower
-                            </a>
                         </div>
                     </li>
                     <li class="nav-item dropdown">
                         <a id="queueDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
-                            Activity
+                            <i class="fas fa-seedling"></i> Activities
                         </a>
                         <div class="dropdown-menu" aria-labelledby="queueDropdown">
                             <a class="dropdown-item" href="{{ url('submissions') }}">
@@ -79,39 +76,52 @@
                             <a class="dropdown-item" href="{{ url('claims') }}">
                                 Claims
                             </a>
-                            <a class="dropdown-item" href="{{ url('reports') }}">
-                                Reports
-                            </a>
-                            <a class="dropdown-item" href="{{ url('designs') }}">
-                                Design Approvals
-                            </a>
-                            <a class="dropdown-item" href="{{ url('crafting') }}">
-                                Crafting
-                            </a>
-                            <div class="dropdown-divider"></div>
                             <a class="dropdown-item" href="{{ url('characters/transfers/incoming') }}">
                                 Character Transfers
                             </a>
                             <a class="dropdown-item" href="{{ url('trades/open') }}">
                                 Trades
                             </a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="{{ url('designs') }}">
+                                Design Approvals
+                            </a>
+                            <a class="dropdown-item" href="{{ url(__('dailies.dailies')) }}">
+                                {{__('dailies.dailies')}}
+                            </a>
+                            <a class="dropdown-item" href="{{ url('crafting') }}">
+                                Crafting
+                            </a>
+                            <a class="dropdown-item" href="{{ url('foraging') }}">
+                                Foraging
+                            </a>
                         </div>
                     </li>
                 @endif
                 <li class="nav-item dropdown">
                     <a id="designhubDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
-                        Design Guides
+                        <i class="fas fa-horse-head"></i> Design Guides
                     </a>
 
                     <div class="dropdown-menu" aria-labelledby="designhubDropdown">
+                        <a class="dropdown-item" href="{{ url('info/designing-your-import') }}">
+                            Designing Your Import
+                        </a>
+                        <a class="dropdown-item" href="{{ url('design-hub/base-coats') }}">
+                            Base Coats
+                        </a>
+                        <div class="dropdown-divider"></div>
                         <a class="dropdown-item" href="{{ url('design-hub') }}">
                             Design Hub
+                        </a>
+                        <a class="dropdown-item" href="{{ url('info/design-approval-checklist') }}">
+                            Design Approval Checklist
                         </a>
                     </div>
                 </li>
                 <li class="nav-item dropdown">
                     <a id="browseDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
-                        Browse
+                        <i class="fas fa-list"></i> Browse
                     </a>
 
                     <div class="dropdown-menu" aria-labelledby="browseDropdown">
@@ -136,12 +146,12 @@
                 </li>
                 <li class="nav-item dropdown">
                     <a id="loreDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
-                        World
+                        <i class="fas fa-globe-americas"></i> World
                     </a>
 
                     <div class="dropdown-menu" aria-labelledby="loreDropdown">
                         <a class="dropdown-item" href="{{ url('world') }}">
-                            Encyclopedia
+                            Codex
                         </a>
                         <a class="dropdown-item" href="{{ url('prompts/prompts') }}">
                             Prompts
@@ -149,12 +159,6 @@
                         <div class="dropdown-divider"></div>
                         <a class="dropdown-item" href="{{ url('shops') }}">
                             Shops
-                        </a>
-                        <a class="dropdown-item" href="{{ url(__('dailies.dailies')) }}">
-                            {{__('dailies.dailies')}}
-                        </a>
-                        <a class="dropdown-item" href="{{ url(__('cultivation.cultivation')) }}">
-                            {{__('cultivation.cultivation')}}
                         </a>
                         <a class="dropdown-item" href="{{ url('user-shops/shop-index') }}">
                             User Shops
@@ -164,13 +168,24 @@
                                 My Shops
                             </a>
                         @endif
-                        <a class="dropdown-item" href="{{ url('foraging') }}">
-                            Foraging
+                    </div>
+                </li>
+                <li class="nav-item dropdown">
+                    <a id="loreDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
+                        <i class="fas fa-gamepad"></i> Games
+                    </a>
+
+                    <div class="dropdown-menu" aria-labelledby="loreDropdown">
+                        <a class="dropdown-item" href="{{ url('higher-or-lower') }}">
+                            Higher or Lower
+                        </a>
+                        <a class="dropdown-item" href="{{ url(__('cultivation.cultivation')) }}">
+                            {{__('cultivation.cultivation')}}
                         </a>
                     </div>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ url('gallery') }}">Gallery</a>
+                    <a class="nav-link" href="{{ url('gallery') }}"><i class="fas fa-images"></i> Gallery</a>
                 </li>
             </ul>
 

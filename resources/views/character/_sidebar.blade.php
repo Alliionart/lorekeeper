@@ -12,10 +12,16 @@
             <div class="sidebar-item"><a href="{{ $character->url . '/lineage' }}" class="{{ set_active('character/' . $character->slug . '/lineage') }}">Lineage</a></div>
         @endif
         <div class="sidebar-item"><a href="{{ $character->url . '/breeding-permissions' }}" class="{{ set_active('character/' . $character->slug . '/breeding-permissions') }}">Breeding Permissions</a></div>
-        <div class="sidebar-item"><a href="{{ $character->url . '/stats' }}" class="{{ set_active('character/' . $character->slug . '/stats') }}">Stat Information</a></div>
-        <div class="sidebar-item"><a href="{{ $character->url . '/status-effects' }}" class="{{ set_active('character/' . $character->slug . '/status-effects') }}">Status Effects</a></div>
         <div class="sidebar-item"><a href="{{ $character->url . '/' . __('awards.awardcase') }}" class="{{ set_active('character/' . $character->slug . '/' . __('awards.awardcase')) }}">{{ ucfirst(__('awards.awards')) }}</a></div>
     </li>
+    @if (!$character->isMyo)
+        <li class="sidebar-section">
+            <div class="sidebar-section-header">Battle</div>
+            <div class="sidebar-item"><a href="{{ $character->url . '/battle-tracker' }}" class="{{ set_active('character/' . $character->slug . '/battle-tracker') }}">Battle Tracker</a></div>
+            <div class="sidebar-item"><a href="{{ $character->url . '/stats' }}" class="{{ set_active('character/' . $character->slug . '/stats') }}">Stat Information</a></div>
+            <div class="sidebar-item"><a href="{{ $character->url . '/status-effects' }}" class="{{ set_active('character/' . $character->slug . '/status-effects') }}">Status Effects</a></div>
+        </li>
+    @endif
     <li class="sidebar-section">
         <div class="sidebar-section-header">History</div>
         <div class="sidebar-item"><a href="{{ $character->url . '/images' }}" class="{{ set_active('character/' . $character->slug . '/images') }}">Images</a></div>
