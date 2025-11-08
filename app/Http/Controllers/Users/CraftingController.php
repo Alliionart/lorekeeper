@@ -8,6 +8,9 @@ use App\Models\Item\ItemCategory;
 use App\Models\Recipe\Recipe;
 use App\Models\User\User;
 use App\Models\User\UserItem;
+use App\Models\Currency\Currency;
+use App\Models\Recipe\RecipeCategory;
+use App\Services\RecipeService;
 use App\Services\RecipeManager;
 use Auth;
 use Illuminate\Http\Request;
@@ -28,8 +31,14 @@ class CraftingController extends Controller {
      * @return \Illuminate\Contracts\Support\Renderable
      */
     public function getIndex(Request $request) {
+
+        $userRecipes = count($categories) ? Auth::user()->recipes()->orderByRaw('FIELD(recipe_category_id,'.implode(',', $categories->pluck('id')->toArray()).')')->orderBy('name')->get()->groupBy('recipe_category_id') :
+                Auth::user()->recipes()->orderBy('name')->get()->groupBy('collection_category_id');
+
         return view('home.crafting.index', [
             'default' => Recipe::where('needs_unlocking', '0')->get(),
+            'userRecipes' => $userRecipes,
+            'categories' => $categories->keyBy('id'),
         ]);
     }
 

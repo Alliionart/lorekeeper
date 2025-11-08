@@ -193,6 +193,7 @@ Route::group(['prefix' => 'world'], function () {
     Route::get('traits/modal/{id}', 'WorldController@getFeatureDetail')->where(['id' => '[0-9]+']);
     Route::get('recipes', 'WorldController@getRecipes');
     Route::get('recipes/{id}', 'WorldController@getRecipe');
+    Route::get('recipe-categories', 'WorldController@getRecipeCategories');
     
     Route::get('border-categories', 'WorldController@getBorderCategories');
     Route::get('borders', 'WorldController@getBorders');
