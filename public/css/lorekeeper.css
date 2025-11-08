@@ -719,7 +719,11 @@ tr.outflow {
 }
 
 .user-banner {
-    min-height: 150px;
+    min-height: 250px;
+}
+
+.user-info {
+	margin-top: -100px;
 }
 
 /* INVENTORY *************************************************************************************/
