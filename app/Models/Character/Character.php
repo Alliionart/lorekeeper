@@ -915,20 +915,21 @@ class Character extends Model {
         foreach ($pets as $cPet) {
             $pet = $cPet->pet;
             $evolutions = $pet->evolutions;
-            $battle_pets[$pet->name] = $evolutions;
-            if($evolutions) {
-                $battle_pets[] = $evolutions;
+            if(count($evolutions) > 0) {
+                //If the pet has evolutions check that at least one evolutions has an ability
+                foreach($evolutions as $evo) {
+                    if($evo->ability_id) {
+                        $battle_pets[] = $cPet;
+                        break 1;
+                    }
+                }
+            } else {
+                //If the pet has no evolutions, then just check the main ability
+                if($pet->ability_id) {
+                    $battle_pets[] = $cPet;
+                }
             }
-            // if($pet->ability_id) {
-            //     $battle_pets[] = $cPet;
-            // } else {
-            //     $evolutions = $cPet->evolutions;
-            //     if($evolutions) {
-            //         $battle_pets[] = $evolutions;
-            //     }
-            // }
         }
-
         
         return $battle_pets;
     }

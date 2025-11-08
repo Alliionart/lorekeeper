@@ -886,6 +886,16 @@ Route::group(['prefix' => 'gear', 'namespace' => 'Claymores', 'middleware' => 'p
     Route::post('gear-categories/edit/{id?}', 'GearController@postCreateEditGearCategory');
     Route::post('gear-categories/delete/{id}', 'GearController@postDeleteGearCategory');
     Route::post('gear-categories/sort', 'GearController@postSortGearCategory');
+
+    // sets
+    Route::get('gear-sets', 'GearController@getGearSetIndex');
+    Route::get('gear-sets/create', 'GearController@getCreateGearSet');
+    Route::get('gear-sets/edit/{id}', 'GearController@getEditGearSet');
+    Route::get('gear-sets/delete/{id}', 'GearController@getDeleteGearSet');
+    Route::post('gear-sets/create', 'GearController@postCreateEditGearSet');
+    Route::post('gear-sets/edit/{id?}', 'GearController@postCreateEditGearSet');
+    Route::post('gear-sets/delete/{id}', 'GearController@postDeleteGearSet');
+    Route::post('gear-sets/sort', 'GearController@postSortGearSet');
 });
 
 // WEAPONS

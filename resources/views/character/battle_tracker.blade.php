@@ -52,24 +52,94 @@
             <div class="card mt-3">
                 <h4 class="card-header">Equipment</h4>
                 <div class="card-body">
+                    @if($character->equipmennt)
 
+                    @else
+                        <p>This character has not equipped any armor or weapons.</p>
+                    @endif
                 </div>
             </div>
 
             <div class="card mt-3">
                 <h4 class="card-header">Familiars</h4>
                 <div class="card-body">
-                    <pre class="bg-white">
-                        {{ print_r($pets, true) }}
-                    </pre>
+                    @if($character->pets)
+                        @foreach ($character->pets as $pet)
+                            <div class="p-2 d-flex justify-content-between align-items-center border border-dark rounded mb-2">
+                                <a href="{{ $pet->pageUrl() }}" class="inventory-stack">
+                                    <img src="{{ $pet->pet->variantImage($pet->id) }}" style="max-width:100px" class="rounded img-fluid" />
+                                </a>
+                                <div class="text-left w-100 ml-3">
+                                    <div class="mb-2 h5">
+                                        @if ($pet->pet_name)
+                                            <a href="{{ $pet->pageUrl() }}">{!! $pet->pet_name !!}</a> the
+                                        @endif
+                                        {!! $pet->pet->displayName !!} {!! $pet->level ? '(' . $pet->level->levelName . ')' : '' !!}
+                                    </div>
+                                    @if(count($pet->pet->evolutions) > 0)
+                                        <h5 class="text-muted"><span class="badge badge-secondary">Ability</span> - {!! $pet->evolution->ability->name !!}</h5>
+                                        <div>
+                                            {!! $pet->evolution->ability->description !!}
+                                        </div>
+                                    @else
+                                        <h5 class="text-muted"><span class="badge badge-secondary">Ability</span> - {!! $pet->pet->ability->name !!}</h5>
+                                        <div>
+                                            {!! $pet->pet->ability->description !!}
+                                        </div>
+                                    @endif
+                                </div>
+                            </div>
+                        @endforeach
+                    @else
+                        <p>This character has not bonded with any battle familiars.</p>
+                    @endif
+                </div>
+            </div>
+
+            <div class="card mt-3">
+                <h4 class="card-header">Battle Skills</h4>
+                <div class="card-body">
+                    
                 </div>
             </div>
 
         </div>
-        <div class="col-md-4">
+        <div class="col-md-4 position-relative">
             <canvas id="statChart"></canvas>
+
+            <div class="mt-3">
+                <div class="card">
+                    <h4 class="card-header">Battle-Ready Progress</h4>
+                    <div class="card-body">
+                        <h5>Required</h5>
+                        <ul class="list-unstyled">
+                            <li><i class="fas fa-check text-success mr-2"></i> At least Exemplar status</li>
+                            <li><i class="fas fa-check text-success mr-2"></i> Has High Class Task</li>
+                            <li><i class="fas fa-check text-success mr-2"></i> Equipped with a full set of armor</li>
+                            <li><i class="fas fa-times text-danger mr-2"></i> Equipped with a single weapon</li>
+                        </ul>
+                        <h5>Optional</h5>
+                        <ul class="list-unstyled">
+                            <li><i class="fas fa-times text-danger mr-2"></i> Has a Specialty Class Task</li>
+                            <li><i class="fas fa-times text-danger mr-2"></i> Has upgraded their Magi Path</li>
+                            <li><i class="fas fa-times text-danger mr-2"></i> Have battle skills</li>
+                            <li><i class="fas {{ $character->pets ? 'fa-check text-success' : 'fa-times text-danger' }} mr-2"></i> Have battle familiars</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
         </div>
-    </div>    
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card mt-3">
+                <h4 class="card-header">Abilities</h4>
+                <div class="card-body">
+                    
+                </div>
+            </div>
+        </div>
+    </div> 
 @endsection
 @section('scripts')
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -109,7 +179,7 @@
                                 display: false
                             },
                             suggestedMin: 1,
-                            suggestedMax: 80,
+                            suggestedMax: 65,
                             ticks: {
                                 display: false
                             },

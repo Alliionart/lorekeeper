@@ -41,6 +41,16 @@ class CharacterClassService extends Service {
                 $data['has_image'] = 0;
             }
 
+            if (isset($data['abilities']) && $data['abilities']) {
+                if( count($data['abilities']) > 1 ) {
+                    $data['ability_choice'] = json_encode($data['abilities']);
+                    $data['ability_id'] = null;
+                } else {
+                    $data['ability_id'] = $data['abilities'][0];
+                    $data['ability_choice'] = null;
+                }
+            }
+
             $class = CharacterClass::create($data);
 
             if ($image) {
@@ -78,6 +88,16 @@ class CharacterClassService extends Service {
                 $data['has_image'] = 1;
                 $image = $data['image'];
                 unset($data['image']);
+            }
+
+            if (isset($data['abilities']) && $data['abilities']) {
+                if( count($data['abilities']) > 1 ) {
+                    $data['ability_choice'] = json_encode($data['abilities']);
+                    $data['ability_id'] = null;
+                } else {
+                    $data['ability_id'] = $data['abilities'][0];
+                    $data['ability_choice'] = null;
+                }
             }
 
             $class->update($data);

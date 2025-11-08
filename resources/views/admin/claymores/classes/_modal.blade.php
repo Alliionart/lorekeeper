@@ -1,7 +1,7 @@
 {!! Form::open(['url' => 'characters/class/edit/' . $character->id]) !!}
 <div class="form-group">
     {!! Form::label('Class') !!}
-    {!! Form::select('class_id', $classes, $character->class_id, ['class' => 'form-control']) !!}
+    {!! Form::select('class_id', $classes, $character->class_id, ['class' => 'form-control selectize']) !!}
 </div>
 
 <div class="text-right">
@@ -9,4 +9,8 @@
 </div>
 {!! Form::close() !!}
 
-<script></script>
+<script>
+    $(document).ready(function() {
+        $(".selectize").selectize();
+    });
+</script>

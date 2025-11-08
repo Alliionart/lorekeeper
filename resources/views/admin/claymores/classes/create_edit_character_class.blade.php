@@ -54,20 +54,25 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-3">
             <div class="form-group">
                 {!! Form::label('Class Type') !!}
-                {!! Form::select('class_type', $classes, $class->parent_class_id, ['class' => 'form-control']) !!}
+                {!! Form::select('class_type', $class_types, $class->class_type, ['class' => 'form-control']) !!}
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="form-group">
+                {!! Form::label('Class Subtype') !!}
+                {!! Form::select('class_subtype', $class_types, $class->class_subtype, ['class' => 'form-control']) !!}
             </div>
         </div>
         <div class="col-md-6">
             <div class="form-group">
-                {!! Form::label('abilities', 'Linked Abilities') !!} {!! add_help('Select applicable abilities for this class. If there are multiple options you may select up to 5. Note that if there ARE multiple options, characters will be required to choose one.') !!}
-                {!! Form::select('abilities', $abilities, $class->ability_id, ['class' => 'form-control', 'id' => 'abilities', 'multiple']) !!}
+                {!! Form::label('abilities[]', 'Linked Abilities') !!} {!! add_help('Select applicable abilities for this class. If there are multiple options you may select up to 5. Note that if there ARE multiple options, characters will be required to choose one.') !!}
+                {!! Form::select('abilities[]', $abilities, $c_ability, ['class' => 'form-control', 'id' => 'abilities', 'multiple']) !!}
             </div>
         </div>
     </div>
-
 
 
     <div class="text-right">

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin\Claymores;
 
 use App\Http\Controllers\Controller;
 use App\Models\Character\CharacterClass;
+use App\Models\Character\CharacterClassType;
 use App\Models\Claymore\Ability;
 use App\Services\Claymore\CharacterClassService;
 use Illuminate\Http\Request;
@@ -37,6 +38,8 @@ class CharacterClassController extends Controller {
     public function getCreateCharacterClass() {
         return view('admin.claymores.classes.create_edit_character_class', [
             'class'     => new CharacterClass,
+            'classes'   => [0 => 'No Parent'] + CharacterClass::pluck('name', 'id')->toArray(),
+            'class_types'   => [0 => 'None'] + CharacterClassType::pluck('name', 'id')->toArray(),
             'abilities' => [0 => 'None'] + Ability::pluck('name', 'id')->toArray(),
         ]);
     }
@@ -53,11 +56,14 @@ class CharacterClassController extends Controller {
         if (!$class) {
             abort(404);
         }
+        $choices = $class->ability_choice ? json_decode($class->ability_choice) : null;
 
         return view('admin.claymores.classes.create_edit_character_class', [
             'class'     => $class,
             'classes'   => [0 => 'None'] + CharacterClass::pluck('name', 'id')->toArray(),
+            'class_types'   => [0 => 'None'] + CharacterClassType::pluck('name', 'id')->toArray(),
             'abilities' => [0 => 'None'] + Ability::pluck('name', 'id')->toArray(),
+            'c_ability' => $class->ability_id ?? $choices ?? null,
         ]);
     }
 
@@ -72,7 +78,7 @@ class CharacterClassController extends Controller {
     public function postCreateEditCharacterClass(Request $request, CharacterClassService $service, $id = null) {
         $id ? $request->validate(CharacterClass::$updateRules) : $request->validate(CharacterClass::$createRules);
         $data = $request->only([
-            'code', 'name', 'description', 'image', 'remove_image', 'masterlist_sub_id', 'is_visible',
+            'code', 'name', 'description', 'image', 'remove_image', 'masterlist_sub_id', 'is_visible', 'abilities', 'class_type', 'class_subtype'
         ]);
         if ($id && $service->updateCharacterClass(CharacterClass::find($id), $data)) {
             flash('Class updated successfully.')->success();
