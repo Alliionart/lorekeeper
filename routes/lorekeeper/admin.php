@@ -969,3 +969,18 @@ Route::group(['prefix' => 'abilities', 'namespace' => 'Claymores', 'middleware' 
     Route::post('types/edit/{id?}', 'AbilityController@postCreateEditAbilityType');
     Route::post('types/delete/{id}', 'AbilityController@postDeleteAbilityType');
 });
+
+// DISCORD
+Route::group(['prefix' => 'discord', 'middleware' => 'power:manage_discord'], function () {
+    // levels
+    Route::get('levels', 'DiscordController@getDiscordLevelIndex');
+    // rewards
+    Route::get('rewards', 'DiscordController@getDiscordRewardIndex');
+    Route::get('rewards/create', 'DiscordController@getCreateReward');
+    Route::get('rewards/edit/{id}', 'DiscordController@getEditReward');
+    Route::post('rewards', 'DiscordController@postCreateReward');
+    Route::post('rewards/create', 'DiscordController@postCreateEditReward');
+    Route::post('rewards/edit/{id?}', 'DiscordController@postCreateEditReward');
+    Route::get('rewards/delete/{id}', 'DiscordController@getDeleteReward');
+    Route::post('rewards/delete/{id}', 'DiscordController@postDeleteReward');
+});

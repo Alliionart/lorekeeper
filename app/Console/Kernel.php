@@ -46,14 +46,15 @@ class Kernel extends ConsoleKernel {
         $schedule->command('distribute-birthday-rewards')
             ->monthly();
         $schedule->command('reset-foraging')
-            ->daily();
+            ->weekly();
         $schedule->command('clean-donations')
             ->everyMinute();
         $schedule->command('change-feature')
-                ->monthly();
+            ->monthly();
         $schedule->command('reset-hol')
             ->daily();
-
+        $schedule->command('generate-rank-card-back')
+            ->daily();
     }
 
     /**

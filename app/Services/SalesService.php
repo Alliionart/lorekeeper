@@ -60,6 +60,22 @@ class SalesService extends Service {
 
             if ($sales->is_visible) {
                 $this->alertUsers();
+
+                $response = (new DiscordManager)->handleWebhook(
+                    'A new sales post has been created!',
+                    $sales->title,
+                    $user,
+                    $sales->url,
+                    [
+                        'name'  => ($sales->is_open && !$sales->comments_open_at) ? 'Open' : 'Preview',
+                        'value' => 'Open'.(!$sales->comments_open_at ? ' now.' : 's on '.$sales->comments_open_at->toDayDateTimeString()),
+                    ]
+                );
+
+                if (is_array($response)) {
+                    flash($response['error'])->error();
+                    throw new \Exception('Failed to create webhook.');
+                }
             }
 
             return $this->commitReturn($sales);
@@ -156,8 +172,28 @@ class SalesService extends Service {
             DB::beginTransaction();
 
             try {
+                $saleses = Sales::shouldBeVisible()->get();
                 Sales::shouldBeVisible()->update(['is_visible' => 1]);
                 $this->alertUsers();
+
+                foreach ($saleses as $sales) {
+                    $response = (new DiscordManager)->handleWebhook(
+                        'A new sales post has been created!',
+                        $sales->title,
+                        $sales->parsed_text,
+                        $sales->user,
+                        $sales->url,
+                        [
+                            'name'  => ($sales->is_open && !$sales->comments_open_at) ? 'Open' : 'Preview',
+                            'value' => 'Open'.(!$sales->comments_open_at ? ' now.' : 's on '.$sales->comments_open_at->toDayDateTimeString()),
+                        ]
+                    );
+
+                    if (is_array($response)) {
+                        flash($response['error'])->error();
+                        throw new \Exception('Failed to create webhook.');
+                    }
+                }
 
                 return $this->commitReturn(true);
             } catch (\Exception $e) {
