@@ -221,8 +221,15 @@ class FileController extends Controller {
      * @return \Illuminate\Contracts\Support\Renderable
      */
     public function getSiteImages() {
+        if (glob('images/data/user-banners/default-banner*')) {
+            $defaultBanner = glob('images/data/user-banners/default-banner*')[0];
+        } else {
+            $defaultBanner = null;
+        }
+
         return view('admin.files.images', [
             'images' => config('lorekeeper.image_files'),
+            'banner' => $defaultBanner,
         ]);
     }
 
@@ -245,6 +252,46 @@ class FileController extends Controller {
             foreach ($service->errors()->getMessages()['error'] as $error) {
                 flash($error)->error();
             }
+        }
+
+        return redirect()->back();
+    }
+
+    /**
+     * Uploads a default user profile banner file.
+     *
+     * @param App\Services\FileManager $service
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function postUploadBanner(Request $request, FileManager $service) {
+        $request->validate(['file' => 'required|file|mimes:png,jpg,gif,bmp,webp']);
+        $file = $request->file('file');
+
+        if ($service->uploadBanner($file)) {
+            flash('Banner uploaded successfully.')->success();
+        } else {
+            foreach ($service->errors()->getMessages()['error'] as $error) {
+                flash($error)->error();
+            }
+        }
+
+        return redirect()->back();
+    }
+
+    /**
+     * Deletes a default user profile banner file.
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function postDeleteBanner(Request $request) {
+        $request->validate(['banner' => 'required']);
+        $banner = $request->get('banner');
+
+        if (!unlink($banner)) {
+            throw new \Exception('Failed to unlink old default banner.');
+        } else {
+            flash('Banner deleted successfully.')->success();
         }
 
         return redirect()->back();

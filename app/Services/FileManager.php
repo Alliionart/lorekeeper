@@ -109,6 +109,43 @@ class FileManager extends Service {
     }
 
     /**
+     * Uploads a default banner.
+     *
+     * @param array $file
+     *
+     * @return bool
+     */
+    public function uploadBanner($file) {
+        $directory = 'images/data/user-banners/';
+        $filename = 'default-banner.'.$file->getClientOriginalExtension();
+
+        if (!file_exists($directory)) {
+            if (!mkdir($directory, 0755, true)) {
+                $this->setError('error', 'Failed to create image directory.');
+
+                return false;
+            }
+            chmod($directory, 0755);
+        }
+
+        if (glob($directory.'default-banner*')) {
+            $oldBanner = glob($directory.'default-banner*')[0];
+
+            if (!unlink($oldBanner)) {
+                throw new \Exception('Failed to unlink old default banner.');
+            }
+        }
+
+        if ($file) {
+            if (!$file->move(public_path($directory), $filename)) {
+                throw new \Exception('Failed to move file.');
+            }
+        }
+
+        return true;
+    }
+
+    /**
      * Uploads a custom CSS file.
      *
      * @param array $file

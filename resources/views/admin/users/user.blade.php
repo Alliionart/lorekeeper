@@ -85,6 +85,19 @@
         {!! Form::close() !!}
     </div>
 
+    @if ($user->banner)
+        <div class="card p-3 mb-2">
+            <h3>Banner Image</h3>
+            @include('widgets._user_banner', ['user' => $user])
+
+            {!! Form::open(['url' => 'admin/users/' . $user->name . '/banner']) !!}
+            <div class="text-right">
+                {!! Form::submit('Delete Banner', ['class' => 'btn btn-primary']) !!}
+            </div>
+            {!! Form::close() !!}
+        </div>
+    @endif
+
     <div class="card p-3 mb-2">
         <h3>Birthdate</h3>
         @if ($user->birthday)

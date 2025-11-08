@@ -155,6 +155,66 @@ class AccountController extends Controller {
     }
 
     /**
+     * Edits the user's banner.
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function postBanner(Request $request, UserService $service) {
+        if ($service->updateBanner($request->file('banner'), Auth::user())) {
+            flash('Banner updated successfully.')->success();
+        } else {
+            foreach ($service->errors()->getMessages()['error'] as $error) {
+                flash($error)->error();
+            }
+        }
+
+        return redirect()->back();
+    }
+
+    /**
+     * Edits the user's banner styling.
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function postBannerStyling(Request $request, UserService $service) {
+        $request->validate([
+            'attachment'    => 'nullable|in:fixed,scroll',
+            'repeat'        => 'nullable|in:repeat,repeat-x,repeat-y,space,round,no-repeat',
+            'size_type'     => 'nullable|in:keyword,numerical',
+            'position_type' => 'nullable|in:keyword,numerical',
+        ]);
+        $data = $request->only([
+            'attachment', 'size_type', 'size_1', 'size_2', 'repeat', 'position_type', 'position_x', 'position_y',
+        ]);
+        if ($service->updateBannerStyling($data, Auth::user())) {
+            flash('Header styling updated successfully.')->success();
+        } else {
+            foreach ($service->errors()->getMessages()['error'] as $error) {
+                flash($error)->error();
+            }
+        }
+
+        return redirect()->back();
+    }
+
+    /**
+     * Deletes the user's banner and styling.
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function postDeleteBanner(Request $request, UserService $service) {
+        if ($service->deleteBanner(Auth::user()->banner, Auth::user())) {
+            flash('Banner deleted successfully.')->success();
+        } else {
+            foreach ($service->errors()->getMessages()['error'] as $error) {
+                flash($error)->error();
+            }
+        }
+
+        return redirect()->back();
+    }
+
+    /**
      * Edits the user's username.
      *
      * @param  \Illuminate\Http\Request  $request

@@ -375,6 +375,195 @@ class UserService extends Service {
     }
 
     /**
+     * Updates the user's banner image.
+     *
+     * @param \App\Models\User\User $user
+     * @param mixed                 $banner
+     *
+     * @return bool
+     */
+    public function updateBanner($banner, $user) {
+        DB::beginTransaction();
+
+        try {
+            if (!$banner) {
+                throw new \Exception('Please upload a file.');
+            }
+            $directory = 'images/data/user-banners/';
+            $filename = $user->id.'-banner.'.$banner->getClientOriginalExtension();
+
+            if ($user->banner) {
+                $file = $directory.$user->banner;
+
+                if (File::exists($file)) {
+                    if (!unlink($file)) {
+                        throw new \Exception('Failed to unlink old banner.');
+                    }
+                }
+            }
+
+            if ($banner) {
+                // Make image directory if needed
+                if (!file_exists($directory)) {
+                    // Create the directory.
+                    if (!mkdir($directory, 0755, true)) {
+                        $this->setError('error', 'Failed to create image directory.');
+
+                        return false;
+                    }
+                    chmod($directory, 0755);
+                }
+
+                if ($banner->getClientOriginalExtension() == 'gif') {
+                    if (!$banner->move(public_path($directory), $filename)) {
+                        throw new \Exception('Failed to move file.');
+                    }
+                } else {
+                    if (!Image::make($banner)->save(public_path($directory.$filename))) {
+                        throw new \Exception('Failed to process banner.');
+                    }
+                }
+            }
+
+            $user->banner = $filename;
+            $user->save();
+
+            return $this->commitReturn($banner);
+        } catch (\Exception $e) {
+            $this->setError('error', $e->getMessage());
+        }
+
+        return $this->rollbackReturn(false);
+    }
+
+    /**
+     * Updates the user's banner styling.
+     *
+     * @param \App\Models\User\User $user
+     * @param array                 $data
+     *
+     * @return bool
+     */
+    public function updateBannerStyling($data, $user) {
+        DB::beginTransaction();
+
+        try {
+            // Keyword Size Handling
+            if (isset($data['size_type']) && $data['size_type'] == 'keyword') {
+                // Keyword Size Validation
+                if (!preg_match('/auto|cover|contain/i', $data['size_1'])) {
+                    throw new \Exception('Invalid size value. Size must be auto, cover, or contain.');
+                }
+            }
+
+            // Numerical Size Handling
+            if (isset($data['size_type']) && $data['size_type'] == 'numerical') {
+                // Numerical Size Validation
+                if (!preg_match('/auto|cover|contain|\d+(px|em|rem|vw|vh|%)/i', $data['size_1'])) {
+                    throw new \Exception('Invalid size value. Size one must be auto, cover, contain, or a numerical value with a units px, em, rem, vw, vh, or %.');
+                } elseif (isset($data['size_2']) && preg_match('/cover|contain/i', $data['size_2'])) {
+                    throw new \Exception('Invalid size value. Size two cannot be cover or contain.');
+                } elseif (isset($data['size_2']) && !preg_match('/auto|\d+(px|em|rem|vw|vh|%)/i', $data['size_2'])) {
+                    throw new \Exception('Invalid size value. Size two must be auto or a numerical value with a units px, em, rem, vw, vh, or %.');
+                }
+
+                // If only size one is set, set size two to auto
+                if (isset($data['size_1']) && !isset($data['size_2'])) {
+                    $size_2 = 'auto';
+                } else {
+                    $size_2 = $data['size_2'];
+                }
+            } else {
+                $size_2 = null;
+            }
+
+            // Keyword Position Handling
+            if (isset($data['position_type']) && $data['position_type'] == 'keyword') {
+                // Keyword Position Validation
+                if (!preg_match('/top|bottom|left|right|center/i', $data['position_x'])) {
+                    throw new \Exception('Invalid position value. Position keyword must be top, bottom, left, right, or center.');
+                }
+            }
+
+            // Numerical Position Handling
+            if (isset($data['position_type']) && $data['position_type'] == 'numerical') {
+                // Numerical Position Validation
+                if (!isset($data['position_x']) && isset($data['position_y'])) {
+                    throw new \Exception('Invalid position values. If you are setting a Y value, please define an X value.');
+                } elseif (preg_match('/top|bottom/i', $data['position_x']) && preg_match('/top|bottom/i', $data['position_y'])) {
+                    throw new \Exception('Invalid position values. If one value is top or bottom, then the other value cannot also be top or bottom.');
+                } elseif (preg_match('/right|left/i', $data['position_x']) && preg_match('/right|left/i', $data['position_y'])) {
+                    throw new \Exception('Invalid position values. If one value is left or right, then the other value cannot also be left or right.');
+                } elseif (preg_match('/\d+(px|em|rem|vw|vh|%)/i', $data['position_x']) && preg_match('/right|left/i', $data['position_y'])) {
+                    throw new \Exception('Invalid position values. If the X value is a numerical value, then the Y value cannot be left or right.');
+                } elseif (preg_match('/top|bottom/i', $data['position_x']) && preg_match('/\d+(px|em|rem|vw|vh|%)/i', $data['position_y'])) {
+                    throw new \Exception('Invalid position values. If the Y value is a numerical value, then the X value cannot be top or bottom.');
+                } elseif (!preg_match('/top|bottom|left|right|center|\d+(px|em|rem|vw|vh|%)/i', $data['position_x']) || isset($data['position_y']) && !preg_match('/top|bottom|center|\d+(px|em|rem|vw|vh|%)/i', $data['position_y'])) {
+                    throw new \Exception('Invalid position value. Position values must be top, bottom, left, right, center, or a numerical value with a units px, em, rem, vw, vh, or %.');
+                }
+
+                if (isset($data['position_x']) && !isset($data['position_y'])) {
+                    $position_y = '50%';
+                } else {
+                    $position_y = $data['position_y'];
+                }
+            } else {
+                $position_y = null;
+            }
+
+            $styling = json_encode([
+                'attachment'    => isset($data['attachment']) && $data['attachment'] ? $data['attachment'] : null,
+                'size_type'     => isset($data['size_type']) && $data['size_type'] ? $data['size_type'] : null,
+                'size_1'        => isset($data['size_1']) && $data['size_1'] ? $data['size_1'] : null,
+                'size_2'        => $size_2 ? $size_2 : null,
+                'repeat'        => isset($data['repeat']) && $data['repeat'] ? $data['repeat'] : null,
+                'position_type' => isset($data['position_type']) && $data['position_type'] ? $data['position_type'] : null,
+                'position_x'    => isset($data['position_x']) && $data['position_x'] ? $data['position_x'] : null,
+                'position_y'    => $position_y ? $position_y : null,
+            ]);
+
+            $user->banner_styling = $styling;
+            $user->save();
+
+            return $this->commitReturn(true);
+        } catch (\Exception $e) {
+            $this->setError('error', $e->getMessage());
+        }
+
+        return $this->rollbackReturn(false);
+    }
+
+    /**
+     * Deletes the user's banner image.
+     *
+     * @param \App\Models\User\User $user
+     * @param mixed                 $banner
+     *
+     * @return bool
+     */
+    public function deleteBanner($banner, $user) {
+        DB::beginTransaction();
+
+        try {
+            if (!$banner) {
+                throw new \Exception('You do not have a banner set.');
+            } else {
+                $this->deleteImage('images/data/user-banners/', $banner);
+            }
+
+            $user->banner = null;
+            $user->banner_styling = null;
+            $user->save();
+
+            return $this->commitReturn(true);
+        } catch (\Exception $e) {
+            $this->setError('error', $e->getMessage());
+        }
+
+        return $this->rollbackReturn(false);
+    }
+
+    /**
      * Updates a user's username.
      *
      * @param string $username

@@ -2,6 +2,8 @@
     <div style="filter:grayscale(1); opacity:0.75">
 @endif
 
+@include('widgets._user_banner', ['user' => $user])
+
 <div class="row mb-3">
     <div class="col-md-2 text-center">
         <!-- User Icon -->

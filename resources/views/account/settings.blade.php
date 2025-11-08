@@ -9,7 +9,6 @@
 
     <h1>Settings</h1>
 
-
     <div class="card p-3 mb-2">
         <h3>Avatar</h3>
         @if (Auth::user()->isStaff)
@@ -25,6 +24,126 @@
             {!! Form::submit('Edit', ['class' => 'btn btn-primary']) !!}
         </div>
         {!! Form::close() !!}
+    </div>
+
+    <div class="card p-3 mb-2">
+        <h3>Banner Image</h3>
+        <p>You can set a banner image here to decorate your profile with, and adjust its styling once uploaded. Filetypes supported are JPG, PNG, GIF, BMP, and WebP.</p>
+
+        {!! Form::open(['url' => 'account/banner', 'files' => true]) !!}
+        <div class="form-group row">
+            {!! Form::label('banner', 'Update Header Image', ['class' => 'col-md-2 col-form-label']) !!}
+            <div class="col-md-10">
+                {!! Form::file('banner', ['class' => 'form-control']) !!}
+            </div>
+        </div>
+        <div class="text-right">
+            {!! Form::submit('Edit', ['class' => 'btn btn-primary']) !!}
+        </div>
+        {!! Form::close() !!}
+
+        @if (Auth::user()->banner)
+            <h3>Banner Image Preview & Styling</h3>
+            @include('widgets._user_banner', ['user' => Auth::user()])
+
+            <div class="alert alert-info">Styling options such as <b>fixed background attachment</b> may be better previewed on your profile page, as it is fixed relative to the viewport.</div>
+
+            {!! Form::open(['url' => 'account/banner-styling']) !!}
+            <div class="row">
+                <div class="col-md">
+                    <div class="form-group">
+                        {!! Form::label('Background Attachment') !!}
+                        {!! Form::select('attachment', ['scroll' => 'Scroll', 'fixed' => 'Fixed'], isset(Auth::user()->bannerData['attachment']) ? Auth::user()->bannerData['attachment'] : 'scroll', ['class' => 'form-control']) !!}
+                    </div>
+                </div>
+                <div class="col-md">
+                    <div class="form-group">
+                        {!! Form::label('Background Repeat') !!}
+                        {!! Form::select(
+                            'repeat',
+                            ['repeat' => 'Repeat', 'repeat-x' => 'Repeat X', 'repeat-y' => 'Repeat Y', 'space' => 'Space', 'round' => 'Round', 'no-repeat' => 'No Repeat'],
+                            isset(Auth::user()->bannerData['repeat']) ? Auth::user()->bannerData['repeat'] : null,
+                            ['class' => 'form-control'],
+                        ) !!}
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        {!! Form::label('Background Size Type') !!} {!! add_help('Keyword will allow you to select from keywords auto, cover, and contain. Two Values will allow you to enter up to two valid numerical values.') !!}
+                        {!! Form::select('size_type', ['keyword' => 'Single Keyword', 'numerical' => 'Two Values'], isset(Auth::user()->bannerData['size_type']) ? Auth::user()->bannerData['size_type'] : null, [
+                            'class' => 'form-control banner-size-select',
+                            'placeholder' => 'Select Background Size Type',
+                        ]) !!}
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="banner-size-options"></div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        {!! Form::label('Background Position Type') !!} {!! add_help('Keyword will allow you to select from keywords. Two Values will allow you to enter up to two valid numerical or keyword values.') !!}
+                        {!! Form::select('position_type', ['keyword' => 'Single Keyword', 'numerical' => 'Two Values'], isset(Auth::user()->bannerData['position_type']) ? Auth::user()->bannerData['position_type'] : null, [
+                            'class' => 'form-control banner-position-select',
+                            'placeholder' => 'Select Background Position Type',
+                        ]) !!}
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="banner-position-options"></div>
+                </div>
+            </div>
+
+            <div class="d-flex flex-column flex-sm-row align-items-end align-items-sm-center justify-content-end">
+                {!! Form::submit('Edit Banner Styling', ['class' => 'btn btn-primary mr-sm-2 mb-1 mb-sm-0']) !!}
+                {!! Form::close() !!}
+
+                {!! Form::open(['url' => 'account/banner-delete']) !!}
+                {!! Form::submit('Delete Banner Image', ['class' => 'btn btn-danger']) !!}
+                {!! Form::close() !!}
+            </div>
+
+            <div class="hide">
+                <div class="form-group banner-size-keyword">
+                    {!! Form::label('Keyword') !!}
+                    {!! Form::select('size_1', ['auto' => 'Auto', 'cover' => 'Cover', 'contain' => 'Contain'], isset(Auth::user()->bannerData['size_1']) ? Auth::user()->bannerData['size_1'] : 'auto', ['class' => 'form-control']) !!}
+                </div>
+
+                <div class="form-group row no-gutters banner-size-numerical mb-2">
+                    <div class="col pr-2">
+                        {!! Form::label('Value One') !!} {!! add_help('The value must either be auto or ending with a valid unit, such as %, px, em, etc.') !!}
+                        {!! Form::text('size_1', isset(Auth::user()->bannerData['size_1']) ? Auth::user()->bannerData['size_1'] : null, ['class' => 'form-control']) !!}
+                    </div>
+                    <div class="col">
+                        {!! Form::label('Value Two (Opt.)') !!} {!! add_help('The value must either be auto or ending with a valid unit, such as %, px, em, etc. If you do not set this value, it will default to auto.') !!}
+                        {!! Form::text('size_2', isset(Auth::user()->bannerData['size_2']) ? Auth::user()->bannerData['size_2'] : null, ['class' => 'form-control']) !!}
+                    </div>
+                </div>
+
+                <div class="form-group banner-position-keyword">
+                    {!! Form::label('Keyword') !!} {!! add_help('If a keyword is selected, then the Y axis is assumed to be 50%') !!}
+                    {!! Form::select('position_x', ['top' => 'Top', 'bottom' => 'Bottom', 'left' => 'Left', 'right' => 'Right', 'center' => 'Center'], isset(Auth::user()->bannerData['position_x']) ? Auth::user()->bannerData['position_x'] : 'top', [
+                        'class' => 'form-control',
+                    ]) !!}
+                </div>
+
+                <div class="form-group row no-gutters banner-position-numerical mb-2">
+                    <div class="col pr-2">
+                        {!! Form::label('X Value') !!} {!! add_help('The value must either be left, right, or center, or end with a valid unit, such as %, px, em, etc.') !!}
+                        {!! Form::text('position_x', isset(Auth::user()->bannerData['position_x']) ? Auth::user()->bannerData['position_x'] : null, ['class' => 'form-control']) !!}
+                    </div>
+                    <div class="col">
+                        {!! Form::label('Y Value (Opt.)') !!} {!! add_help('The value must either be top, bottom, or center, such as %, px, em, etc. If you do not set this value, it will default to 50%.') !!}
+                        {!! Form::text('position_y', isset(Auth::user()->bannerData['position_y']) ? Auth::user()->bannerData['position_y'] : null, ['class' => 'form-control']) !!}
+                    </div>
+                </div>
+            </div>
+        @endif
     </div>
 
     @if (config('lorekeeper.settings.allow_username_changes'))
@@ -293,6 +412,50 @@
     <script>
         $(document).ready(function() {
             refreshBorder();
+
+            var $bannerSizeKeyword = $('.banner-size-keyword');
+            var $bannerSizeNumerical = $('.banner-size-numerical');
+            var $bannerPositionKeyword = $('.banner-position-keyword');
+            var $bannerPositionNumerical = $('.banner-position-numerical');
+            var $sizeCell = $('.banner-size-options');
+            var $positionCell = $('.banner-position-options');
+
+            @if (isset(Auth::user()->bannerData['size_type']))
+                if ('{{ Auth::user()->bannerData['size_type'] }}' == 'keyword') $sizeCell.append($bannerSizeKeyword);
+                if ('{{ Auth::user()->bannerData['size_type'] }}' == 'numerical') $sizeCell.append($bannerSizeNumerical);
+            @endif
+
+            @if (isset(Auth::user()->bannerData['position_type']))
+                if ('{{ Auth::user()->bannerData['position_type'] }}' == 'keyword') $positionCell.append($bannerPositionKeyword);
+                if ('{{ Auth::user()->bannerData['position_type'] }}' == 'numerical') $positionCell.append($bannerPositionNumerical);
+            @endif
+
+            $('.banner-size-select').on('change', function(e) {
+                var val = $(this).val();
+
+                var $clone = null;
+                if (val == 'keyword') $clone = $bannerSizeKeyword.clone();
+                else if (val == 'numerical') $clone = $bannerSizeNumerical.clone();
+
+                $sizeCell.html('');
+                $sizeCell.append($clone);
+            });
+
+            $('.banner-position-select').on('change', function(e) {
+                var val = $(this).val();
+
+                var $clone = null;
+                if (val == 'keyword') $clone = $bannerPositionKeyword.clone();
+                else if (val == 'numerical') $clone = $bannerPositionNumerical.clone();
+
+                $positionCell.html('');
+                $positionCell.append($clone);
+            });
+
+            $('body').tooltip({
+                selector: '.help-icon'
+            });
+
         });
 
         $("#border").change(function() {

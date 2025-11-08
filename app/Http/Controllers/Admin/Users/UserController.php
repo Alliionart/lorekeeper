@@ -189,6 +189,31 @@ class UserController extends Controller {
         return redirect()->back();
     }
 
+    public function postDeleteBanner(Request $request, $name) {
+        $user = User::where('name', $name)->first();
+
+        if (!$user) {
+            flash('Invalid user.')->error();
+        } elseif (!$user->banner) {
+            flash('User does not have a banner.')->error();
+        }
+
+        $service = new UserService;
+
+        if ($service->deleteBanner($user->banner, $user)) {
+            if (!(new UserService)->logAdminAction(Auth::user(), 'Edited User', 'Deleted '.$user->displayname.' banner image')) {
+                flash('Failed to log admin action.')->error();
+
+                return redirect()->back();
+            }
+
+            UserUpdateLog::create(['staff_id' => Auth::user()->id, 'user_id' => $user->id, 'data' => json_encode(['image' => 'Banner']), 'type' => 'Banner Deletion']);
+            flash('Updated user\'s banner image deleted successfully.')->success();
+        }
+
+        return redirect()->back();
+    }
+
     public function postUserBirthday(Request $request, $name) {
         $user = User::where('name', $name)->first();
         if (!$user) {
@@ -196,8 +221,6 @@ class UserController extends Controller {
         }
 
         $service = new UserService;
-        // Make birthday into format we can store
-        $date = $request->input('dob');
 
         $formatDate = Carbon::parse($date);
         $logData = ['old_date' => $user->birthday ? $user->birthday->isoFormat('DD-MM-YYYY') : Carbon::now()->isoFormat('DD-MM-YYYY')] + ['new_date' => $date];

@@ -26,6 +26,7 @@ Route::group(['prefix' => 'users', 'namespace' => 'Users'], function () {
         Route::post('{name}/basic', 'UserController@postUserBasicInfo');
         Route::post('{name}/alias/{id}', 'UserController@postUserAlias');
         Route::post('{name}/account', 'UserController@postUserAccount');
+        Route::post('{name}/banner', 'UserController@postDeleteBanner');
         Route::post('{name}/birthday', 'UserController@postUserBirthday');
         Route::get('{name}/updates', 'UserController@getUserUpdates');
 
@@ -103,6 +104,8 @@ Route::group(['prefix' => 'images', 'middleware' => 'power:edit_site_settings'],
 
     Route::post('upload/css', 'FileController@postUploadCss');
     Route::post('upload', 'FileController@postUploadImage');
+    Route::post('upload-banner', 'FileController@postUploadBanner');
+    Route::post('delete-banner', 'FileController@postDeleteBanner');
     Route::post('reset', 'FileController@postResetFile');
 });
 

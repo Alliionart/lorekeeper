@@ -35,6 +35,41 @@
         </div>
     @endforeach
 
+    <div class="card mb-3">
+        <div class="card-body">
+            <div class="d-flex">
+                @if ($banner)
+                    <div class="mr-2" style="width: 200px;"><img src="{{ asset($banner) }}" class="mw-100" alt="Site image: Default Banner" /></div>
+                @endif
+                <div style="width: 100%;">
+                    <h3 class="card-heading">
+                        User Profile Banner
+                        @if ($banner)
+                            <a href="{{ asset($banner) }}" class="btn btn-info btn-sm float-right">View Current</a>
+                        @endif
+                    </h3>
+                    <p>You may define a default user profile banner here. If a default banner is not uploaded, then user profiles will not display a banner until a user sets one for themself. The default banner widget is set at a height of 150px, which
+                        may be adjusted with CSS. Filetypes supported are JPG, PNG, GIF, BMP, and WebP.</p>
+                    {!! Form::open(['url' => 'admin/images/upload-banner', 'files' => true]) !!}
+                    <div class="d-flex">
+                        {!! Form::file('file', ['class' => 'form-control mr-2']) !!}
+                        {!! Form::submit('Upload', ['class' => 'btn btn-primary']) !!}
+                    </div>
+                    {!! Form::close() !!}
+
+                    @if ($banner)
+                        {!! Form::open(['url' => 'admin/images/delete-banner']) !!}
+                        <div class="text-right mt-2">
+                            {!! Form::hidden('banner', $banner) !!}
+                            {!! Form::submit('Delete Banner', ['class' => 'btn btn-sm btn-danger']) !!}
+                        </div>
+                        {!! Form::close() !!}
+                    @endif
+                </div>
+            </div>
+        </div>
+    </div>
+
     <h1>Site CSS</h1>
 
     <p>A custom CSS file can be uploaded here. This will be added to the page after the inclusion of other CSS files, and reuploading the file will replace the original. Making changes to the site code is recommended for large changes to the layout, but
