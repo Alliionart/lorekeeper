@@ -66,49 +66,87 @@
                         <a id="queueDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
                             <i class="fas fa-seedling"></i> Activities
                         </a>
-                        <div class="dropdown-menu" aria-labelledby="queueDropdown">
-                            <a class="dropdown-item" href="{{ url('submissions') }}">
-                                Prompt Submissions
-                            </a>
-                            <a class="dropdown-item" href="{{ url('queues') }}">
-                                Queues
-                            </a>
-                            <a class="dropdown-item" href="{{ url('claims') }}">
-                                Claims
-                            </a>
-                            <a class="dropdown-item" href="{{ url('characters/transfers/incoming') }}">
-                                Character Transfers
-                            </a>
-                            <a class="dropdown-item" href="{{ url('trades/open') }}">
-                                Trades
-                            </a>
-                            <div class="dropdown-divider"></div>
-                            <a class="dropdown-item" href="{{ url('designs') }}">
-                                Design Approvals
-                            </a>
-                            <a class="dropdown-item" href="{{ url(__('dailies.dailies')) }}">
-                                {{__('dailies.dailies')}}
-                            </a>
-                            <div class="dropdown-submenu">
-                                <a class="dropdown-item" tabindex="-1" href="#">Crafting</a>
-                                <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item" tabindex="-1" href="{{ url('crafting/1') }}">Cooking</a></li>
-                                    <li><a class="dropdown-item" href="{{ url('crafting/2') }}">Alchemy</a></li>
-                                    <li><a class="dropdown-item" href="{{ url('crafting/3') }}">Artisan Crafts</a></li>
-                                    <li><a class="dropdown-item" href="{{ url('crafting/4') }}">Blacksmithing</a></li>
-                                </ul>
+                        <div class="dropdown-menu mega-menu" aria-labelledby="queueDropdown">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <h5><i class="fas fa-th-list mr-2"></i> Submissions</h5>
+                                    <a class="dropdown-item" href="{{ url('submissions') }}">
+                                        Prompt Submissions
+                                    </a>
+                                    <a class="dropdown-item" href="{{ url('queues') }}">
+                                        Queues
+                                    </a>
+                                    <a class="dropdown-item" href="{{ url('claims') }}">
+                                        Claims
+                                    </a>
+                                    <a class="dropdown-item" href="{{ url('characters/transfers/incoming') }}">
+                                        Character Transfers
+                                    </a>
+                                    <a class="dropdown-item" href="{{ url('trades/open') }}">
+                                        Trades
+                                    </a>
+
+                                    <div class="dropdown-divider"></div>
+                                    <h5><i class="fas fa-hammer mr-2"></i> Crafting</h5>
+                                    <a class="dropdown-item" href="{{ url('crafting/2') }}">Alchemy</a>
+                                    <a class="dropdown-item" href="{{ url('crafting/4') }}">Blacksmithing</a>
+                                    <a class="dropdown-item" href="{{ url('crafting/3') }}">Artisan Crafts</a>
+                                    <a class="dropdown-item" tabindex="-1" href="{{ url('crafting/1') }}">Cooking</a>
+                                </div>
+                                <div class="col-md-4">
+                                    <h5><i class="fas fa-medal mr-2"></i> Core Activities</h5>
+                                    <a class="dropdown-item" href="#">
+                                        Purity Trials
+                                    </a>
+                                    <a class="dropdown-item" href="#">
+                                        Training
+                                    </a>
+                                    <a class="dropdown-item" href="#">
+                                        Bonding
+                                    </a>
+                                    <a class="dropdown-item" href="#">
+                                        Classes
+                                    </a>
+                                    <a class="dropdown-item" href="#">
+                                        Magic Awakening
+                                    </a>
+
+                                    <div class="dropdown-divider"></div>
+                                    <h5><i class="fas fa-chess-knight mr-2"></i> Other Activities</h5>
+                                    <a class="dropdown-item" href="{{ url('designs') }}">
+                                        Design Approvals
+                                    </a>
+                                    <a class="dropdown-item" href="{{ url(__('dailies.dailies')) }}">
+                                        {{__('dailies.dailies')}}
+                                    </a>
+                                    <a class="dropdown-item" href="{{ url('foraging') }}">
+                                        Foraging
+                                    </a>
+                                    <a class="dropdown-item" href="#">
+                                        Breeding
+                                    </a>
+                                </div>
+                                <div class="col-md-4">
+                                    <h5><i class="fas fa-redo-alt mr-2"></i> Repeat Activities</h5>
+                                    <a class="dropdown-item" href="#">
+                                        Questing
+                                    </a>
+                                    <a class="dropdown-item" href="#">
+                                        Hunting
+                                    </a>
+                                    <a class="dropdown-item" href="#">
+                                        Monthly Prompt
+                                    </a>
+                                </div>
                             </div>
-                            <a class="dropdown-item" href="{{ url('foraging') }}">
-                                Foraging
-                            </a>
+                    
                         </div>
                     </li>
                 @endif
                 <li class="nav-item dropdown">
                     <a id="designhubDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
-                        <i class="fas fa-horse-head"></i> Design Guides
+                        <i class="fas fa-horse-head"></i> Design Hub
                     </a>
-
                     <div class="dropdown-menu" aria-labelledby="designhubDropdown">
                         <a class="dropdown-item" href="{{ url('info/designing-your-import') }}">
                             Designing Your Import
@@ -163,17 +201,15 @@
                             Prompts
                         </a>
                         <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="{{ url('shops') }}">
-                            Shops
-                        </a>
-                        <a class="dropdown-item" href="{{ url('user-shops/shop-index') }}">
-                            User Shops
-                        </a>
-                        @if (Auth::check())
-                            <a class="dropdown-item" href="{{ url('user-shops') }}">
-                                My Shops
-                            </a>
-                        @endif
+                        <div class="dropdown-submenu">
+                            <a class="dropdown-item" tabindex="-1" href="{{ url('shops') }}">Shops</a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="{{ url('user-shops/shop-index') }}">User Shops</a></li>
+                                @if (Auth::check())
+                                    <li><a class="dropdown-item" href="{{ url('user-shops') }}">My Shops</a></li>
+                                @endif
+                            </ul>
+                        </div>
                     </div>
                 </li>
                 <li class="nav-item dropdown">
