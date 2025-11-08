@@ -94,7 +94,7 @@
                                     <a class="dropdown-item" tabindex="-1" href="{{ url('crafting/1') }}">Cooking</a>
                                 </div>
                                 <div class="col-md-4">
-                                    <h5><i class="fas fa-medal mr-2"></i> Core Activities</h5>
+                                    <h5><i class="fas fa-medal mr-2"></i> Core</h5>
                                     <a class="dropdown-item" href="#">
                                         Purity Trials
                                     </a>
@@ -112,7 +112,7 @@
                                     </a>
 
                                     <div class="dropdown-divider"></div>
-                                    <h5><i class="fas fa-chess-knight mr-2"></i> Other Activities</h5>
+                                    <h5><i class="fas fa-chess-knight mr-2"></i> Other</h5>
                                     <a class="dropdown-item" href="{{ url('designs') }}">
                                         Design Approvals
                                     </a>
@@ -127,7 +127,7 @@
                                     </a>
                                 </div>
                                 <div class="col-md-4">
-                                    <h5><i class="fas fa-redo-alt mr-2"></i> Repeat Activities</h5>
+                                    <h5><i class="fas fa-redo-alt mr-2"></i> Repeat</h5>
                                     <a class="dropdown-item" href="#">
                                         Questing
                                     </a>
@@ -223,6 +223,22 @@
                         </a>
                         <a class="dropdown-item" href="{{ url(__('cultivation.cultivation')) }}">
                             {{__('cultivation.cultivation')}}
+                        </a>
+                    </div>
+                </li>
+                <li class="nav-item dropdown">
+                    <a id="toolDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
+                        <i class="fas fa-wrench"></i> Tools
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="toolDropdown">
+                        <a class="dropdown-item" target="_blank" href="http://worldofreos.livard.com/ACCalc.html">
+                            Adoption Calulator
+                        </a>
+                        <a class="dropdown-item" target="_blank" href="http://worldofreos.livard.com/breedinggenerator.html">
+                            Breeding Comment Generator
+                        </a>
+                        <a class="dropdown-item" target="_blank" href="https://worldofreos.com/assets/external/semigenerator/index.html">
+                            Semi-Custom Generator
                         </a>
                     </div>
                 </li>
