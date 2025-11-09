@@ -33,6 +33,7 @@ use App\Models\User\UserCharacterLog;
 use App\Models\User\UserGear;
 use App\Models\User\UserPet;
 use App\Models\User\UserWeapon;
+use App\Models\Character\CharacterClass;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Settings;
@@ -932,6 +933,36 @@ class Character extends Model {
         }
         
         return $battle_pets;
+    }
+
+    /**
+     * Get the character's associated class tree.
+     */
+    public function getClassTree() {
+        $current_class = CharacterClass::where('id', $this->class_id)->first();
+
+        $test = $current_class->name;
+
+        $tree = [];
+        if ($current_class->parent_class_id) {
+            //Has parent, NOT a ICQ
+            $parent_class = CharacterClass::where('id', $current_class->parent_class_id)->first();
+            if ($parent_class->parent_class_id) {
+                //This is an ICQ or HCT
+                $grandparent_class = CharacterClass::where('id', $parent_class->parent_class_id)->first();
+                $tree['sct'] = $current_class;
+                $tree['hct'] = $parent_class;
+                $tree['icq'] = $grandparent_class;
+            } else {
+                //This is a HCT
+                $tree['icq'] = $parent_class;
+                $tree['hct'] = $current_class;
+            }
+        } else {
+            //This is the FIRST class / has no parent (ICQ)
+            $tree['icq'] = $current_class;
+        }
+        return $tree;
     }
 
     /**

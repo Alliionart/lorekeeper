@@ -211,6 +211,7 @@ class CharacterController extends Controller {
         return view('character.battle_tracker', [
             'character'             => $this->character,
             'pets'                  => $this->character->getBattlePets(),
+            'class_tree'            => $this->character->getClassTree(),
         ]);
     }
 

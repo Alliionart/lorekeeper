@@ -10,6 +10,7 @@ use App\Models\User\User;
 use App\Models\User\UserGear;
 use App\Models\User\UserWeapon;
 use App\Services\Claymore\WeaponManager;
+use App\Services\Claymore\GearManager;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 

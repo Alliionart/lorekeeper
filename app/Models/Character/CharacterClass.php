@@ -3,6 +3,7 @@
 namespace App\Models\Character;
 
 use App\Models\Model;
+use App\Models\Claymore\Ability;
 
 class CharacterClass extends Model {
     /**
@@ -48,6 +49,13 @@ class CharacterClass extends Model {
         RELATIONS
 
     **********************************************************************************************/
+
+    /**
+     * Get the user-editable profile data of the character.
+     */
+    public function ability() {
+        return $this->hasOne(Ability::class, 'id');
+    }
 
     /**********************************************************************************************
 

@@ -52,8 +52,23 @@
             <div class="card mt-3">
                 <h4 class="card-header">Equipment</h4>
                 <div class="card-body">
-                    @if($character->equipmennt)
-
+                    @if($character->equipment())
+                        <div class="d-flex justify-content-between align-items-stretch">
+                            @foreach ($character->equipment() as $equipment)
+                                <div class="card w-100 mx-2">
+                                    <div class="card-body">
+                                        @if ($equipment->has_image)
+                                            <img class="rounded" src="{{ $equipment->imageUrl }}" data-toggle="tooltip" title="{{ $equipment->equipment->name }}" style="max-width: 75px;" />
+                                        @elseif($equipment->equipment->imageurl)
+                                            <img class="rounded" src="{{ $equipment->equipment->imageUrl }}" data-toggle="tooltip" title="{{ $equipment->equipment->name }}" style="max-width: 75px;" />
+                                        @endif
+                                    </div>
+                                    <div class="card-footer bg-dark">
+                                        {!! $equipment->equipment->displayName !!}
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
                     @else
                         <p>This character has not equipped any armor or weapons.</p>
                     @endif
@@ -114,13 +129,13 @@
                         <h5>Required</h5>
                         <ul class="list-unstyled">
                             <li><i class="fas fa-check text-success mr-2"></i> At least Exemplar status</li>
-                            <li><i class="fas fa-check text-success mr-2"></i> Has High Class Task</li>
+                            <li><i class="fas {{ isset($class_tree['hct']) && $class_tree['hct'] ? 'fa-check text-success' : 'fa-times text-danger' }} mr-2"></i> Has High Class Task</li>
                             <li><i class="fas fa-check text-success mr-2"></i> Equipped with a full set of armor</li>
                             <li><i class="fas fa-times text-danger mr-2"></i> Equipped with a single weapon</li>
                         </ul>
                         <h5>Optional</h5>
                         <ul class="list-unstyled">
-                            <li><i class="fas fa-times text-danger mr-2"></i> Has a Specialty Class Task</li>
+                            <li><i class="fas {{ isset($class_tree['sct']) && $class_tree['sct'] ? 'fa-check text-success' : 'fa-times text-danger' }} mr-2"></i> Has a Specialty Class Task</li>
                             <li><i class="fas fa-times text-danger mr-2"></i> Has upgraded their Magi Path</li>
                             <li><i class="fas fa-times text-danger mr-2"></i> Have battle skills</li>
                             <li><i class="fas {{ $character->pets ? 'fa-check text-success' : 'fa-times text-danger' }} mr-2"></i> Have battle familiars</li>
@@ -135,7 +150,62 @@
             <div class="card mt-3">
                 <h4 class="card-header">Abilities</h4>
                 <div class="card-body">
-                    
+                    <div class="row">
+                        <?php
+                            $classes = count($class_tree) ?? 0;
+                            $col = ($classes === 3 ? 'col-md-4' : ($classes === 2 ? 'col-md-6' : 'col-md-12'));
+                        ?>
+                        @if (isset($class_tree['icq']) && $class_tree['icq'])
+                            <div class="{{ $col }}">
+                                <div class="card mb-3">
+                                    <div class="card-header">
+                                        <h5 class="text-muted">Initial Class Quest</h5>
+                                        <h4>{{ $class_tree['icq']->name }}</h4>
+                                    </div>
+                                    @if ($class_tree['icq']->ability)
+                                        <div class="card-body">
+                                            <h5 class="text-muted">{{ $class_tree['icq']->ability->name }}</h5>
+                                            {!! $class_tree['icq']->ability->description !!}
+                                        </div>
+                                    @endif
+                                </div>
+                            </div>
+                        @endif
+                        
+                        @if (isset($class_tree['hct']) && $class_tree['hct'])
+                            <div class="{{ $col }}">
+                                <div class="card mb-3">
+                                    <div class="card-header">
+                                        <h5 class="text-muted">High Class Task</h5>
+                                        <h4>{{ $class_tree['hct']->name }}</h4>
+                                    </div>
+                                    @if ($class_tree['hct']->ability)
+                                        <div class="card-body">
+                                            <h5 class="text-muted">{{ $class_tree['hct']->ability->name }}</h5>
+                                            {!! $class_tree['hct']->ability->description !!}
+                                        </div>
+                                    @endif
+                                </div>
+                            </div>
+                        @endif
+
+                        @if (isset($class_tree['sct']) && $class_tree['sct'])
+                            <div class="{{ $col }}">
+                                <div class="card mb-3">
+                                    <div class="card-header">
+                                        <h5 class="text-muted">Specialty Class Task</h5>
+                                        <h4>{{ $class_tree['sct']->name }}</h4>
+                                    </div>
+                                    @if ($class_tree['sct']->ability)
+                                        <div class="card-body">
+                                            <h5 class="text-muted">{{ $class_tree['sct']->ability->name }}</h5>
+                                            {!! $class_tree['sct']->ability->description !!}
+                                        </div>
+                                    @endif
+                                </div>
+                            </div>
+                        @endif
+                    </div>
                 </div>
             </div>
         </div>
