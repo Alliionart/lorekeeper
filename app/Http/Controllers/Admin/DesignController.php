@@ -20,7 +20,7 @@ class DesignController extends Controller {
      */
     public function getDesignIndex(Request $request, $type, $status) {
         $requests = CharacterDesignUpdate::where('status', ucfirst($status));
-        $data = $request->only(['sort']);
+        $data = $request->only(['sort', 'category']);
         if (isset($data['sort'])) {
             switch ($data['sort']) {
                 case 'newest':
@@ -33,15 +33,44 @@ class DesignController extends Controller {
         } else {
             $requests->sortOldest();
         }
+        if (isset($data['category'])) {
+            switch ($data['category']) {
+                case 'all':
+                default:
+                    break;
+                case 'new_design':
+                    $requests->where('update_category', 'new_design');
+                    break;
+                case 'design_corrections':
+                    $requests->where('update_category', 'design_corrections');
+                    break;
+                case 'do_over':
+                    $requests->where('update_category', 'do_over');
+                    break;
+                case 'import_edits':
+                    $requests->where('update_category', 'import_edits');
+                    break;
+            }
+        }
+
         if ($type == 'myo-approvals') {
             $requests = $requests->myos();
+            $category_options = [
+                'new_design'            => 'New Design',
+                'design_corrections'    => 'Design Corrections'
+            ];
         } else {
             $requests = $requests->characters();
+            $category_options = [
+                'do_over'            => 'Do-Over / Touch-Up',
+                'import_edits'       => 'Import Edits'
+            ];
         }
 
         return view('admin.designs.index', [
             'requests' => $requests->paginate(30)->appends($request->query()),
             'isMyo'    => ($type == 'myo-approvals'),
+            'category_options'  => ['all' => 'All'] + $category_options,
         ]);
     }
 

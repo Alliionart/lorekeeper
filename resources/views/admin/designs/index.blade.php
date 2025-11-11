@@ -28,6 +28,8 @@
         <div class="form-inline justify-content-end">
             <div class="form-group ml-3 mb-3">
                 {!! Form::select(
+                    'category', $category_options ,Request::get('category') ?: 'all', ['class' => 'form-control mr-2']) !!}
+                {!! Form::select(
                     'sort',
                     [
                         'newest' => 'Newest First',

@@ -115,9 +115,14 @@ class DesignUpdateManager extends Service {
         DB::beginTransaction();
 
         try {
+            if (!isset($data['update_category']) || $data['update_category'] == 0) {
+                throw new \Exception('You must select a submission type in order to proceed.');
+            }
+
             // Update the comments section
             $request->comments = (isset($data['comments']) && $data['comments']) ? $data['comments'] : null;
             $request->has_comments = 1;
+            $request->update_category = $data['update_category'] ?? 'new_design';
             $request->save();
 
             return $this->commitReturn(true);

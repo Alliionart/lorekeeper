@@ -71,8 +71,22 @@ class DesignController extends Controller {
             abort(404);
         }
 
+        $is_myo = $r->character->is_myo_slot;
+        if($is_myo) {
+            $category_options = [
+                'new_design'            => 'New Design',
+                'design_corrections'    => 'Design Corrections'
+            ];
+        } else {
+            $category_options = [
+                'do_over'            => 'Do-Over / Touch-Up',
+                'import_edits'       => 'Import Edits'
+            ];
+        }
+
         return view('character.design.comments', [
             'request' => $r,
+            'category_options'  => [0 => 'Select type...'] + $category_options
         ]);
     }
 
@@ -93,7 +107,7 @@ class DesignController extends Controller {
             abort(404);
         }
 
-        if ($service->saveRequestComment($request->only(['comments']), $r)) {
+        if ($service->saveRequestComment($request->only(['comments', 'update_category']), $r)) {
             flash('Request edited successfully.')->success();
         } else {
             foreach ($service->errors()->getMessages()['error'] as $error) {
