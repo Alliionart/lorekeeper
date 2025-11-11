@@ -169,6 +169,12 @@ main > .row {
     -moz-border-radius: 6px 0 6px 6px;
     border-radius: 6px 0 6px 6px;
 }
+.mega-menu {
+	min-width: 45vw;
+}
+.mega-menu h5 {
+	padding: .25rem 1.5rem;
+}
 
 /* Sidebar */
 

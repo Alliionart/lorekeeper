@@ -144,7 +144,7 @@
                     </li>
                 @endif
                 <li class="nav-item dropdown">
-                    <a id="designhubDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
+                    <a id="designhubDropdown" class="nav-link dropdown-toggle" href="{{ url('design-hub') }}" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
                         <i class="fas fa-horse-head"></i> Design Hub
                     </a>
                     <div class="dropdown-menu" aria-labelledby="designhubDropdown">

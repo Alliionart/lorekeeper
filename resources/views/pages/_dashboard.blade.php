@@ -258,17 +258,17 @@
                         </a>
                     </li>
                     <li class="list-group-item">
-                        <a href="https://www.deviantart.com/world-of-reos/journal/Genetics-Info-615978178">
+                        <a href="{{ url('design-hub') }}">
                             Genetics Info
                         </a>
                     </li>
                     <li class="list-group-item">
-                        <a href="https://sta.sh/2i3ek90cwl9">
+                        <a href="{{ url('design-hub/base-coats') }}">
                             Coat Colors
                         </a>
                     </li>
                     <li class="list-group-item">
-                        <a href="https://wor-directory.weebly.com/markings--genotypes.html">
+                        <a href="{{ url('design-hub') }}">
                             Markings/Genotypes
                         </a>
                     </li>

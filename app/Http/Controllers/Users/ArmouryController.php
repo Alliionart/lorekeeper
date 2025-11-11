@@ -11,6 +11,9 @@ use App\Models\User\UserGear;
 use App\Models\User\UserWeapon;
 use App\Services\Claymore\WeaponManager;
 use App\Services\Claymore\GearManager;
+use App\Models\Item\Item;
+use App\Models\User\UserItem;
+use Settings;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -64,6 +67,10 @@ class ArmouryController extends Controller {
 
         $readOnly = $request->get('read_only') ?: ((Auth::check() && $stack && !$stack->deleted_at && ($stack->user_id == Auth::user()->id || Auth::user()->hasPower('edit_inventories'))) ? 0 : 1);
 
+        $remove_item_id = Settings::get('soulbound_armor_item_id');
+        $soul_remove_item = UserItem::where('user_id', $stack->user_id)->whereIn('item_id', $remove_item_id)->get();
+        \Log::info($soul_remove_item);
+
         return view('home._armoury_stack', [
             'stack'       => $stack,
             'chara'       => $chara,
@@ -72,6 +79,7 @@ class ArmouryController extends Controller {
             'readOnly'    => $readOnly,
             'type'        => $type,
             'displayType' => ucfirst($type == 'weapons' ? 'weapon' : $type),
+            'remove_item' => null,
         ]);
     }
 

@@ -41,6 +41,9 @@
                                 [ADMIN]
                             @endif Detach Equipment from Character
                         </a>
+                        <pre class="bg-white">
+                            {{ print_r($remove_item, true) }}
+                        </pre>
                         {!! Form::open(['url' => 'armoury/' . $type . '/detach/' . $stack->id, 'id' => 'attachForm', 'class' => 'collapse']) !!}
                         <p>This equipment is currently attached to {!! getDisplayName(\App\Models\Character\Character::class, $stack->character_id) !!}, do you want to detach them?</p>
                         <div class="text-right">

@@ -147,6 +147,8 @@ class AddSiteSettings extends Command {
 
         $this->addSiteSetting('featured_character', 1, 'ID of the currently featured character.');
 
+        $this->addSiteSetting('soulbound_armor_item_id', 1, 'ID of the item that allows a user to remove a Soulbound Armor/Weapon from a character.');
+
         /**
         * AFFILIATES
         * Setting determines whether affiliates are open or closed.
