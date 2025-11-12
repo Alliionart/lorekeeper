@@ -6,15 +6,14 @@ use Auth;
 use Config;
 use Settings;
 use Illuminate\Http\Request;
-
 use App\Models\Rarity;
 use App\Models\Adoption\Surrender;
 use App\Models\Character\Character;
 use App\Models\Currency\Currency;
-
 use App\Services\SurrenderManager;
-
 use App\Http\Controllers\Controller;
+use App\Models\Character\CharacterMarking;
+use App\Models\Marking\Marking;
 
 class SurrenderController extends Controller
 {
@@ -60,6 +59,7 @@ class SurrenderController extends Controller
         $totalcost = 0; // set this to be whatever your base price should be
         // getting all the traits for the character that the surrender form is for
         $features = $surrender->character->image->features()->get();
+        $markings = $surrender->character->markings()->get();
         // since a character can have multiple traits, we need to use a foreach to calculate each trait one by one 
         foreach ($features as $traits) {
             // find rarities attached to trait
