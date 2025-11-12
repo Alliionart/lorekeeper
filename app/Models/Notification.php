@@ -143,6 +143,8 @@ class Notification extends Model {
     public const AFFILIATE_PENDING = 107; // URI - Affiliates
     public const SUBMISSION_CANCELLED = 108;
     public const CLAIM_CANCELLED = 109;
+    public const SURRENDER_APPROVED = 218;
+    public const SURRENDER_REJECTED = 219;
     public const REPORT_ASSIGNED = 220;
     public const REPORT_CLOSED = 221;
     public const COMMENT_MADE = 239;

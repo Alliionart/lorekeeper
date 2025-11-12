@@ -14,6 +14,7 @@ use App\Models\Claymore\WeaponLog;
 use App\Models\Comment\CommentLike;
 use App\Models\Currency\Currency;
 use App\Models\Currency\CurrencyLog;
+use App\Models\Adoption\AdoptionLog;
 use App\Models\User\UserCharacterLog;
 use App\Models\User\UsernameLog;
 use App\Models\Submission\SubmissionCharacter;
@@ -1041,6 +1042,21 @@ class User extends Authenticatable implements MustVerifyEmail {
             return $query->paginate(30);
         }
     }
+
+    /**
+     * Get the user's adopt purchase logs.
+     *
+     * @param  int  $limit
+     * @return \Illuminate\Support\Collection|\Illuminate\Pagination\LengthAwarePaginator
+     */
+    public function getAdoptionLogs($limit = 10)
+    {
+        $user = $this;
+        $query = AdoptionLog::where('user_id', $this->id)->with('character')->with('adoption')->with('adopt')->with('currency')->orderBy('id', 'DESC');
+        if($limit) return $query->take($limit)->get();
+        else return $query->paginate(30);
+    }
+
 
     /**
      * Get the user's character ownership logs.

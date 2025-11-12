@@ -137,6 +137,9 @@
                                     <a class="dropdown-item" href="#">
                                         Monthly Prompt
                                     </a>
+                                    <a class="dropdown-item" href="{{ url('surrenders') }}">
+                                        Adoption & Surrenders
+                                    </a>
                                 </div>
                             </div>
                     
@@ -240,6 +243,9 @@
                         <a class="dropdown-item" target="_blank" href="https://worldofreos.com/assets/external/semigenerator/index.html">
                             Semi-Custom Generator
                         </a>
+                        <a class="dropdown-item" href="{{ url('adoptions') }}">
+                            Adoption Center
+                        </a>
                     </div>
                 </li>
                 <li class="nav-item">
@@ -283,6 +289,9 @@
                             </a>
                             <a class="dropdown-item" href="{{ url('claims/new') }}">
                                 Submit Claim
+                            </a>
+                            <a class="dropdown-item" href="{{ url('surrenders/new') }}">
+                                Submit Surrender
                             </a>
                             <a class="dropdown-item" href="{{ url('reports/new') }}">
                                 Submit Report

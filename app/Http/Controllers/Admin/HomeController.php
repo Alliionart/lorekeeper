@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Facades\Settings;
 use App\Http\Controllers\Controller;
 use App\Models\AdminLog;
+use App\Models\Adoption\Surrender;
 use App\Models\Character\CharacterDesignUpdate;
 use App\Models\Character\CharacterTransfer;
 use App\Models\Currency\Currency;
@@ -39,6 +40,7 @@ class HomeController extends Controller {
             'openTransfersQueue'     => $openTransfersQueue,
             'transferCount'          => $openTransfersQueue ? CharacterTransfer::active()->where('is_approved', 0)->count() : 0,
             'tradeCount'             => $openTransfersQueue ? Trade::where('status', 'Pending')->count() : 0,
+            'surrenderCount'         => Surrender::where('status', 'Pending')->count(),
             'galleryRequireApproval' => $galleryRequireApproval,
             'galleryCurrencyAwards'  => $galleryCurrencyAwards,
             'gallerySubmissionCount' => GallerySubmission::collaboratorApproved()->where('status', 'Pending')->count(),

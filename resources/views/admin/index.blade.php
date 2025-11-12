@@ -56,7 +56,7 @@
             <div class="col-sm-6">
                 <div class="card mb-3">
                     <div class="card-body">
-                        <h5 class="card-title">Design Updates @if ($designCount)
+                        <h5 class="card-title">Import Edits & Design Updates @if ($designCount)
                                 <span class="badge badge-primary">{{ $designCount }}</span>
                             @endif
                         </h5>
@@ -76,7 +76,7 @@
             <div class="col-sm-6">
                 <div class="card mb-3">
                     <div class="card-body">
-                        <h5 class="card-title">MYO Approvals @if ($myoCount)
+                        <h5 class="card-title">Design Approvals @if ($myoCount)
                                 <span class="badge badge-primary">{{ $myoCount }}</span>
                             @endif
                         </h5>
@@ -93,6 +93,25 @@
                     </div>
                 </div>
             </div>
+            @if(Auth::user()->hasPower('manage_characters') && Auth::user()->hasPower('manage_submissions'))
+            <div class="col-sm-6">
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Surrender Submissions @if($surrenderCount)<span class="badge badge-primary">{{ $surrenderCount }}</span>@endif</h5>
+                        <p class="card-text">
+                            @if($surrenderCount)
+                                {{ $surrenderCount }} surrender{{ $surrenderCount == 1 ? '' : 's' }} awaiting processing.
+                            @else
+                                The surrender queue is clear. Hooray!
+                            @endif
+                        </p>
+                        <div class="text-right">
+                            <a href="{{ url('admin/surrenders/pending') }}" class="card-link">View Queue <span class="fas fa-caret-right ml-1"></span></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @endif
             @if ($openTransfersQueue)
                 <div class="col-sm-6">
                     <div class="card mb-3">

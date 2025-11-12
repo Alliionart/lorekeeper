@@ -2022,7 +2022,6 @@ class CharacterManager extends Service {
             } else {
                 throw new \Exception('Please enter a recipient for the transfer.');
             }
-
             // If the character is in an active transfer, cancel it
             $transfer = CharacterTransfer::active()->where('character_id', $character->id)->first();
             if ($transfer) {

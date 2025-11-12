@@ -307,16 +307,18 @@ Route::group(['prefix' => 'data', 'namespace' => 'Data', 'middleware' => 'power:
     // misc
     Route::get('shops/stock-type', 'ShopController@getShopStockType');
 
-    // FEATURES (TRAITS)
-    Route::get('trait-categories', 'FeatureController@getIndex');
-    Route::get('trait-categories/create', 'FeatureController@getCreateFeatureCategory');
-    Route::get('trait-categories/edit/{id}', 'FeatureController@getEditFeatureCategory');
-    Route::get('trait-categories/delete/{id}', 'FeatureController@getDeleteFeatureCategory');
-    Route::post('trait-categories/create', 'FeatureController@postCreateEditFeatureCategory');
-    Route::post('trait-categories/edit/{id?}', 'FeatureController@postCreateEditFeatureCategory');
-    Route::post('trait-categories/delete/{id}', 'FeatureController@postDeleteFeatureCategory');
-    Route::post('trait-categories/sort', 'FeatureController@postSortFeatureCategory');
+    # ADOPTIONS
+    Route::get('adoptions', 'AdoptionController@getIndex');
+    Route::get('stock', 'AdoptionController@getStockIndex');
+    Route::get('adoptions/edit/{id}', 'AdoptionController@getEditAdoption');
+    Route::get('stock/create', 'AdoptionController@getCreateStock');
+    Route::get('stock/edit/{id}', 'AdoptionController@getEditStock');
+    Route::post('adoptions/edit/{id?}', 'AdoptionController@postCreateEditAdoption');
+    Route::post('stock/{id}', 'AdoptionController@postEditAdoptionStock');
+    Route::post('stock/create/new', 'AdoptionController@postCreateStock');
+    Route::post('stock/delete/{id}', 'AdoptionController@postDeleteStock');
 
+    // FEATURES (TRAITS)
     Route::get('traits', 'FeatureController@getFeatureIndex');
     Route::get('traits/create', 'FeatureController@getCreateFeature');
     Route::get('traits/edit/{id}', 'FeatureController@getEditFeature');
@@ -792,6 +794,14 @@ Route::group(['prefix' => 'gallery', 'middleware' => 'power:manage_submissions']
     Route::get('/currency', 'GalleryController@getCurrencyIndex');
     Route::get('/currency/{status}', 'GalleryController@getCurrencyIndex')->where('status', 'pending|valued');
     Route::post('edit/{id}/{action}', 'GalleryController@postEditSubmission')->where('action', 'accept|reject|comment|move|value');
+});
+
+# SURRENDERS
+Route::group(['prefix' => 'surrenders', 'middleware' => ['power:manage_submissions', 'power:manage_characters']], function() {
+    Route::get('/', 'SurrenderController@getSurrenderIndex');
+    Route::get('/{status}', 'SurrenderController@getSurrenderIndex')->where('status', 'pending|approved|rejected');
+    Route::get('edit/{id}', 'SurrenderController@getSurrender');
+    Route::post('edit/{id}/{action}', 'SurrenderController@postSurrender')->where('action', 'approve|reject');
 });
 
 // REPORTS
