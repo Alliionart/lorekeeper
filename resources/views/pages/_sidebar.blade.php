@@ -16,4 +16,6 @@
             <p>There is no featured character.</p>
         @endif
     </li>
+
+    @include('widgets._current_weather')
 </ul>
