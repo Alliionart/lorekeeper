@@ -149,6 +149,12 @@ class AddSiteSettings extends Command {
 
         $this->addSiteSetting('soulbound_armor_item_id', 1, 'ID of the item that allows a user to remove a Soulbound Armor/Weapon from a character.');
 
+        $this->addSiteSetting('site_season', 0, 'ID of the season the site is currently experiencing.');
+
+        $this->addSiteSetting('site_weather', 0, 'ID of the weather the site is currently experiencing.');
+
+        $this->addSiteSetting('site_weather_cycle', 0, '0 = Do not cycle, 1 = Daily, 2 = Weekly, 3 = Monthly');
+
         /**
         * AFFILIATES
         * Setting determines whether affiliates are open or closed.

@@ -314,6 +314,10 @@ return [
                 'name' => 'User Borders',
                 'url' => 'admin/data/borders'
             ],
+            [
+                'name' => 'Weather',
+                'url' => 'admin/weather/weathers'
+            ]
         ],
     ],
     'Breedings'  => [

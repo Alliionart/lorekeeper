@@ -984,3 +984,25 @@ Route::group(['prefix' => 'discord', 'middleware' => 'power:manage_discord'], fu
     Route::get('rewards/delete/{id}', 'DiscordController@getDeleteReward');
     Route::post('rewards/delete/{id}', 'DiscordController@postDeleteReward');
 });
+
+//WEATHER
+Route::group(['prefix' => 'weather', 'namespace' => 'Data', 'middleware' => 'power:edit_data'], function() {
+    # SEASONS
+    Route::get('seasons', 'WeatherController@getIndex');
+    Route::get('seasons/create', 'WeatherController@getCreateSeason');
+    Route::get('seasons/edit/{id}', 'WeatherController@getEditSeason');
+    Route::get('seasons/delete/{id}', 'WeatherController@getDeleteSeason');
+    Route::get('seasons/roll/{id}', 'WeatherController@getRollSeason');
+    Route::post('seasons/create', 'WeatherController@postCreateEditSeason');
+    Route::post('seasons/edit/{id?}', 'WeatherController@postCreateEditSeason');
+    Route::post('seasons/delete/{id}', 'WeatherController@postDeleteSeason');
+
+    # weather
+    Route::get('weathers', 'WeatherController@getWeatherIndex');
+    Route::get('weathers/create', 'WeatherController@getCreateWeather');
+    Route::get('weathers/edit/{id}', 'WeatherController@getEditWeather');
+    Route::get('weathers/delete/{id}', 'WeatherController@getDeleteWeather');
+    Route::post('weathers/create', 'WeatherController@postCreateEditWeather');
+    Route::post('weathers/edit/{id?}', 'WeatherController@postCreateEditWeather');
+    Route::post('weathers/delete/{id}', 'WeatherController@postDeleteWeather');
+});

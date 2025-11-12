@@ -199,6 +199,10 @@ Route::group(['prefix' => 'world'], function () {
     Route::get('borders', 'WorldController@getBorders');
     Route::get('borders/{id}', 'WorldController@getBorder');
     Route::get('check-border', 'WorldController@getBorderPreview');
+    
+    Route::get('seasons', 'WorldController@getSeasons');
+    Route::get('weathers', 'WorldController@getWeather');
+    Route::get('forecast', 'WorldController@getForecast');
 });
 
 Route::group(['prefix' => 'prompts'], function () {

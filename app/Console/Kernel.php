@@ -55,6 +55,11 @@ class Kernel extends ConsoleKernel {
             ->daily();
         $schedule->command('generate-rank-card-back')
             ->daily();
+        $schedule->command('cycle-site-weather')
+                ->daily();
+        $schedule->command('change-site-season')
+                ->everyMinute();
+
     }
 
     /**
