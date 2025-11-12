@@ -60,6 +60,9 @@
                             <a class="dropdown-item" href="{{ url('comments/liked') }}">
                                 Liked Comments
                             </a>
+                            <a class="dropdown-item" href="{{ url('surrenders') }}">
+                                My Surrenders
+                            </a>
                         </div>
                     </li>
                     <li class="nav-item dropdown">
@@ -137,8 +140,8 @@
                                     <a class="dropdown-item" href="#">
                                         Monthly Prompt
                                     </a>
-                                    <a class="dropdown-item" href="{{ url('surrenders') }}">
-                                        Adoption & Surrenders
+                                    <a class="dropdown-item" href="{{ url('adoptions') }}">
+                                        Adoption Center
                                     </a>
                                 </div>
                             </div>
