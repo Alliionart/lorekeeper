@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\Guild\Guild;
 use Illuminate\Http\Request;
 use Settings;
-use Auth;
 
 class GuildController extends Controller {
     /*
