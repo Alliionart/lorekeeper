@@ -27,7 +27,7 @@
             {!! Form::select(
                 'type',
                 [
-                    'all'     => 'All',
+                    'all' => 'All',
                     'creation' => 'New Guild Requests',
                     'update' => 'Update Requests',
                 ],
@@ -52,7 +52,7 @@
         {!! Form::close() !!}
     </div>
 
-    @if(isset($requests) && $requests)
+    @if (isset($requests) && $requests)
         <div class="row">
             <div class="col-md col-md-12">
                 {!! $requests->render() !!}
