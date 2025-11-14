@@ -13,7 +13,7 @@
         {!! Form::select('recipient_id', $userOptions, null, ['class' => 'form-control', 'placeholder' => 'Select a Recipient', 'id' => 'recipientField']) !!}
     </div>
 
-    @if( $breedingPermission->quantity > 1 )
+    @if ($breedingPermission->quantity > 1)
         <div class="form-group">
             {!! Form::label('quantity', 'Quantity to Transfer') !!} {!! add_help('You may transfer a portion of the available breeding permissions. Doing this will split the permission into two.') !!}
             {!! Form::number('quantity', 1, ['class' => 'form-control', 'min' => 1, 'max' => $breedingPermission->quantity, 'autocomplete' => 'off']) !!}
