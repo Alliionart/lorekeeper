@@ -555,8 +555,8 @@ class CharacterController extends Controller {
 
         $request->validate(BreedingPermission::$createRules);
 
-        if ($service->createBreedingPermission($request->only(['recipient_id', 'type', 'description']), $this->character, Auth::user())) {
-            flash('Breeding permission created successfully.')->success();
+        if ($service->createBreedingPermission($request->only(['recipient_id', 'type', 'description', 'quantity']), $this->character, Auth::user())) {
+            flash('Breeding permission(s) created successfully.')->success();
         } else {
             foreach ($service->errors()->getMessages()['error'] as $error) {
                 flash($error)->error();
@@ -576,8 +576,9 @@ class CharacterController extends Controller {
      * @return \Illuminate\Http\RedirectResponse
      */
     public function postTransferBreedingPermission(Request $request, CharacterManager $service, $slug, $id) {
-        if ($service->transferBreedingPermission($this->character, BreedingPermission::where('id', $id)->first(), User::where('id', $request->only(['recipient_id']))->first(), Auth::user())) {
-            flash('Breeding permission transferred successfully.')->success();
+        $data = $request->only(['recipient_id', 'quantity']);
+        if ($service->transferBreedingPermission($this->character, BreedingPermission::where('id', $id)->first(), User::where('id', $data['recipient_id'])->first(), Auth::user(), $data['quantity'] ?? 1)) {
+            flash('Breeding permission(s) transferred successfully.')->success();
 
             return redirect()->back();
         } else {
