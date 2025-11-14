@@ -11,7 +11,7 @@ class BreedingPermission extends Model {
      * @var array
      */
     protected $fillable = [
-        'character_id', 'recipient_id', 'type', 'is_used', 'description',
+        'character_id', 'recipient_id', 'type', 'quantity', 'is_used', 'description',
     ];
 
     /**
@@ -37,6 +37,7 @@ class BreedingPermission extends Model {
         'recipient_id' => 'required',
         'type'         => 'required',
         'description'  => 'string|nullable|max:500',
+        'quantity'     => 'required|integer|min:1|max:10',
     ];
 
     /**********************************************************************************************

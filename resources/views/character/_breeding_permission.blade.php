@@ -31,7 +31,8 @@
                         @if (!isset($isCharacter) || $isCharacter)
                             Granted to: {!! $permission->recipient->displayName !!} ・
                         @endif
-                        Type: {{ $permission->type }}
+                        Type: {{ $permission->type }} ・
+                        Remaining: {{ $permission->quantity }}
                     </small>
                 </h5>
 

@@ -6,9 +6,19 @@
         {!! Form::select('recipient_id', $userOptions, $breedingPermission->recipient_id, ['class' => 'form-control', 'placeholder' => 'Select a Recipient', 'id' => 'recipientField']) !!}
     </div>
 
-    <div class="form-group">
-        {!! Form::label('type', 'Type') !!}
-        {!! Form::select('type', ['Full' => 'Full', 'Split' => 'Split'], $breedingPermission->type, ['class' => 'form-control', 'placeholder' => 'Select a Type']) !!}
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-group">
+                {!! Form::label('type', 'Type') !!}
+                {!! Form::select('type', ['Full' => 'Full', 'Split' => 'Split'], $breedingPermission->type, ['class' => 'form-control', 'placeholder' => 'Select a Type']) !!}
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                {!! Form::label('quantity', 'Quantity') !!}
+                {!! Form::number('quantity', $breedingPermission->quantity ?? 1, ['class' => 'form-control', 'value' => 1, 'min' => 1, 'max' => 10]) !!}
+            </div>
+        </div>
     </div>
 
     <div class="form-group">

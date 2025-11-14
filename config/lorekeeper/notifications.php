@@ -441,7 +441,7 @@ return [
     // BREEDING_PERMISSION_GRANTED
     517 => [
         'name'    => 'Breeding Permission Granted',
-        'message' => '<a href="{sender_url}">{sender_name}</a> has granted you a {type} breeding permission for <a href="character/{character_slug}">{character_name}</a>. (<a href="{url}">View Breeding Permissions</a>)',
+        'message' => '<a href="{sender_url}">{sender_name}</a> has granted you x{quantity} {type} breeding permission(s) for <a href="character/{character_slug}">{character_name}</a>. (<a href="{url}">View Breeding Permissions</a>)',
         'url'     => 'breeding-permissions',
     ],
 
@@ -455,14 +455,14 @@ return [
     // BREEDING_PERMISSION_TRANSFER
     519 => [
         'name'    => 'Breeding Permission Transfer',
-        'message' => '<a href="{sender_url}">{sender_name}</a> has transferred a {type} breeding permission for <a href="character/{character_slug}">{character_name}</a> to you. (<a href="{url}">View Breeding Permissions</a>)',
+        'message' => '<a href="{sender_url}">{sender_name}</a> has transferred x{quantity} {type} breeding permission for <a href="character/{character_slug}">{character_name}</a> to you. (<a href="{url}">View Breeding Permissions</a>)',
         'url'     => 'breeding-permissions',
     ],
 
     // FORCED_BREEDING_PERMISSION_TRANSFER
     520 => [
         'name'    => 'Forced Breeding Permission Transfer',
-        'message' => '<a href="{sender_url}">{sender_name}</a> has transferred a {type} breeding permission for <a href="character/{character_slug}">{character_name}</a> from you. (<a href="{url}">View Breeding Permissions</a>)',
+        'message' => '<a href="{sender_url}">{sender_name}</a> has transferred x{quantity} {type} breeding permission for <a href="character/{character_slug}">{character_name}</a> from you. (<a href="{url}">View Breeding Permissions</a>)',
         'url'     => 'breeding-permissions',
     ],
 ];
