@@ -1171,7 +1171,7 @@ class CharacterManager extends Service {
             }
 
             // Update the permission
-            if($permission->quantity > 1) {
+            if ($permission->quantity > 1) {
                 // If there are multiple uses, just decrement the quantity
                 $permission->decrement('quantity', 1);
             } else {
@@ -1214,6 +1214,7 @@ class CharacterManager extends Service {
      * @param \App\Models\Character\BreedingPermission $permission
      * @param \App\Models\User\User                    $recipient
      * @param \App\Models\User\User                    $user
+     * @param mixed                                    $quantity
      *
      * @return bool
      */
