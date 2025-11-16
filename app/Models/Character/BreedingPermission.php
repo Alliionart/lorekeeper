@@ -34,10 +34,10 @@ class BreedingPermission extends Model {
      * @var array
      */
     public static $createRules = [
-        'recipient_id' => 'required',
-        'type'         => 'required',
-        'description'  => 'string|nullable|max:500',
-        'quantity'     => 'required|integer|min:1|max:10',
+        'recipient_id'  => 'required',
+        'type'          => 'required',
+        'description'   => 'string|nullable|max:500',
+        'quantity'      => 'required|integer|min:1|max:10',
         'full_quantity' => 'required|integer|min:1|max:10',
     ];
 

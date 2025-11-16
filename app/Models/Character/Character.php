@@ -388,7 +388,6 @@ class Character extends Model {
      * @return int
      */
     public function getAvailableBreedingPermissionsAttribute() {
-
         return $this->maxBreedingPermissions - $this->breedingPermissions->sum('full_quantity');
     }
 
