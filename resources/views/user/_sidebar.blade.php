@@ -38,6 +38,9 @@
         <div class="sidebar-item"><a href="{{ $user->url . '/recipe-logs' }}" class="{{ set_active($user->url . '/recipe-logs*') }}">Recipe Logs</a></div>
         <div class="sidebar-item"><a href="{{ $user->url . '/pet-logs' }}" class="{{ set_active($user->url . '/pet-logs*') }}">Pet Logs</a></div>
         <div class="sidebar-item"><a href="{{ $user->url . '/submissions' }}" class="{{ set_active($user->url . '/submissions*') }}">Submissions</a></div>
+        @auth
+            <div class="sidebar-item"><a href="{{ $user->url . '/forum' }}" class="{{ $user->url . '/forum*' }}">Forum Posts</a></div>
+        @endauth
         <div class="sidebar-item"><a href="{{ $user->url . '/' . __('awards.award') . '-logs' }}" class="{{ set_active($user->url . '/award-logs*') }}">{{ ucfirst(ucfirst(__('awards.award'))) }} Logs</a></div>
         <div class="sidebar-item"><a href="{{ $user->url.'/border-logs' }}" class="{{ set_active('user/'.$user->name.'/border-logs*') }}">Border Logs</a></div>
     </li>

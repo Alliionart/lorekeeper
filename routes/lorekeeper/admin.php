@@ -1016,3 +1016,13 @@ Route::group(['prefix' => 'weather', 'namespace' => 'Data', 'middleware' => 'pow
     Route::post('weathers/edit/{id?}', 'WeatherController@postCreateEditWeather');
     Route::post('weathers/delete/{id}', 'WeatherController@postDeleteWeather');
 });
+// FORUMS
+Route::group(['prefix' => 'forums', 'middleware' => 'power:edit_data'], function () {
+    Route::get('/', 'ForumController@getIndex');
+    Route::get('create', 'ForumController@getCreateForum');
+    Route::get('edit/{id}', 'ForumController@getEditForum');
+    Route::get('delete/{id}', 'ForumController@getDeleteForum');
+    Route::post('create', 'ForumController@postCreateEditForum');
+    Route::post('edit/{id?}', 'ForumController@postCreateEditForum');
+    Route::post('delete/{id}', 'ForumController@postDeleteForum');
+});

@@ -333,6 +333,10 @@ return [
             [
                 'name' => 'Weather',
                 'url' => 'admin/weather/weathers'
+            ],
+            [
+                'name' => 'Forums',
+                'url'  => 'admin/forums',
             ]
         ],
     ],

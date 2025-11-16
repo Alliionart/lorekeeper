@@ -11,4 +11,5 @@ return [
     'App\Models\Gallery\GallerySubmission',
     'App\Models\Submission\Submission',
     'App\Models\Character\CharacterDesignUpdate',
+    'App\Models\Forum',
 ];
