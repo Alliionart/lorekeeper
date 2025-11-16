@@ -188,6 +188,9 @@
                         <a class="dropdown-item" href="{{ url('raffles') }}">
                             Raffles
                         </a>
+                        <a class="dropdown-item" href="{{ url('forum') }}">
+                            Forums
+                        </a>
                         <div class="dropdown-divider"></div>
                         <a class="dropdown-item" href="{{ url('reports/bug-reports') }}">
                             Bug Reports
@@ -253,9 +256,6 @@
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{{ url('gallery') }}"><i class="fas fa-images"></i> Gallery</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ url('forum') }}">Forums</a>
                 </li>
             </ul>
 
