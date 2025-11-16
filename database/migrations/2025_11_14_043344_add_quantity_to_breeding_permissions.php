@@ -11,6 +11,7 @@ return new class extends Migration {
     public function up(): void {
         Schema::table('breeding_permissions', function (Blueprint $table) {
             $table->integer('quantity')->default(1)->after('type');
+            $table->integer('full_quantity')->default(1)->after('quantity');
         });
     }
 
@@ -20,6 +21,7 @@ return new class extends Migration {
     public function down(): void {
         Schema::table('breeding_permissions', function (Blueprint $table) {
             $table->dropColumn('quantity');
+            $table->dropColumn('full_quantity');
         });
     }
 };

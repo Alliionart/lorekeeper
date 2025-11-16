@@ -1329,6 +1329,7 @@ class CharacterManager extends Service {
                     'recipient_id' => $recipient->id,
                     'type'         => $permission->type,
                     'quantity'     => $quantity,
+                    'full_quantity'=> $quantity,
                     'description'  => $permission->description,
                 ]);
                 if (!$newPermission) {
@@ -1337,6 +1338,7 @@ class CharacterManager extends Service {
 
                 // Decrement the original permission
                 $permission->decrement('quantity', $quantity);
+                $permission->decrement('full_quantity', $quantity);
 
                 // Create a log for the old permission
                 if (!$this->createBreedingPermissionLog($permission->recipient->id, $recipient->id, $permission->id, '- x'.$quantity.' Breeding Permission', 'Transferred by '.$user->displayName)) {
