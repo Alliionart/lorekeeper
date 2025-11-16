@@ -31,6 +31,12 @@ return [
         'background_color' => '#cbbd8a',
     ],
 
+    'startertoken' => [
+        'name'             => 'Starter Token',
+        'text_color'       => '#2f1008ff',
+        'background_color' => '#b19105ff',
+    ],
+
     'coupon' => [
         'name'             => 'Coupon',
         'text_color'       => '#ffffff',
