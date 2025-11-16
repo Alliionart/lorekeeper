@@ -18,6 +18,7 @@ use App\Models\User\UserItem;
 use App\Services\InventoryManager;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Config;
 
 class InventoryController extends Controller {
     /*

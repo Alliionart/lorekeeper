@@ -3,6 +3,7 @@
 namespace App\Models\Item;
 
 use DB;
+use Config;
 use App\Models\Model;
 use App\Models\Cultivation\CultivationPlot;
 use App\Models\Cultivation\CultivationArea;

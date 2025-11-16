@@ -90,7 +90,7 @@ class PetController extends Controller {
             'userOptions'       => ['' => 'Select User'] + User::visible()->where('id', '!=', $stack ? $stack->user_id : 0)->orderBy('name')->get()->pluck('verified_name', 'id')->toArray(),
             'readOnly'          => $readOnly,
             'splices'           => $splices,
-            'traps'             => $traps->pluck('item.name', 'id')->toArray(),
+            'traps'             => ['' => 'Select Trap'] + $traps->pluck('item.name', 'id')->toArray(),
             'userCreditOptions' => ['' => 'Select User'] + User::visible()->orderBy('name')->get()->pluck('verified_name', 'id')->toArray(),
         ]);
     }
@@ -189,8 +189,13 @@ class PetController extends Controller {
         if ($service->detachStack(UserPet::find($id), $stack_id['trap'] ?? null)) {
             flash('Pet trapped and returned to your inventory.')->success();
         } else {
-            foreach ($service->errors()->getMessages()['error'] as $error) {
-                flash($error)->error();
+            if($service->errors()->getMessages()) {
+                foreach ($service->errors()->getMessages()['error'] as $error) {
+                    flash($error)->error();
+                }
+            } else {
+                // No error but pet escaped
+                flash('Unfortunately, your familiar escaped its trap and ran away.')->error();
             }
         }
 

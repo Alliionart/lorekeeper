@@ -361,6 +361,9 @@ class PetManager extends Service {
                 throw new \Exception('You do not own this pet.');
             }
 
+            $pet['character_id'] = null;
+            $pet->save();
+
             if ($stack_id) {
                 $stack = UserItem::find($stack_id);
                 if (!$stack) {
@@ -375,19 +378,16 @@ class PetManager extends Service {
 
                 if ($rolled > $chance) {
                     // Pet is lost
-                    \Log::info('Calling debitStack for pet:', ['pet' => $pet]);
-                    //Remove the item from the user inventory
+                    // -- Remove the item from the user inventory
                     $invMan = new InventoryManager;
                     $item_removed = $invMan->debitStack($pet->user, 'Trap used', ['data' => 'Trap used for familiar trapping.'], $stack, 1);
-                    \Log::info('Removed Item:', [$item_removed]);
-                    //Remove the pet
+                    
+                    // -- Remove the pet
                     $this->debitStack($pet->user, 'Pet Escaped', ['data' => 'The pet escaped its trap.'], $pet);
-                    throw new \Exception('Unfortunately your familiar escaped its trap and ran away...');
+                    session()->flash('error', 'Unfortunately, your familiar escaped its trap and ran away.');
+                    return $this->rollbackReturn(false);
                 }
             }
-
-            $pet['character_id'] = null;
-            $pet->save();
 
             return $this->commitReturn(true);
         } catch (\Exception $e) {
