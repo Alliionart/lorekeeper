@@ -2,9 +2,6 @@
 
 namespace App\Models\Guild;
 
-use App\Models\Guild\Guild;
-use App\Models\Guild\GuildMember;
-use App\Models\Guild\GuildCharacter;
 use App\Models\Model;
 
 class GuildRank extends Model {
@@ -14,7 +11,7 @@ class GuildRank extends Model {
      * @var array
      */
     protected $fillable = [
-        'guild_id', 'name', 'level', 'required_reputation', 'description', 'for_character', 'for_user', 'has_image', 'hash'
+        'guild_id', 'name', 'level', 'required_reputation', 'description', 'for_character', 'for_user', 'has_image', 'hash',
     ];
 
     /**
