@@ -1,14 +1,14 @@
 @extends('admin.layout')
 
 @section('admin-title')
-    {{ $isMyo ? 'MYO Approval' : 'Design Update' }} Queue
+    {{ $isMyo ? 'Design Approval' : 'Design Update' }} Queue
 @endsection
 
 @section('admin-content')
-    {!! breadcrumbs(['Admin Panel' => 'admin', ($isMyo ? 'MYO Approval' : 'Design Update') . ' Queue' => 'admin/designs/pending']) !!}
+    {!! breadcrumbs(['Admin Panel' => 'admin', ($isMyo ? 'Design Approval' : 'Design Update') . ' Queue' => 'admin/designs/pending']) !!}
 
     <h1>
-        {{ $isMyo ? 'MYO Approval' : 'Design Update' }} Queue
+        {{ $isMyo ? 'Design Approval' : 'Design Update' }} Queue
     </h1>
 
     <ul class="nav nav-tabs mb-3">
@@ -25,6 +25,9 @@
 
     <div>
         {!! Form::open(['method' => 'GET', 'class' => 'form-inline justify-content-end']) !!}
+        <div class="form-inline justify-content-end mb-3" style="min-width:150px">
+            {!! Form::select('user_ids', $users, Request::get('user_ids'), ['class' => 'form-control selectize w-100']) !!}
+        </div>
         <div class="form-inline justify-content-end">
             <div class="form-group ml-3 mb-3">
                 {!! Form::select(
@@ -120,4 +123,13 @@
     {!! $requests->render() !!}
 
     <div class="text-center mt-4 small text-muted">{{ $requests->total() }} result{{ $requests->total() == 1 ? '' : 's' }} found.</div>
+@endsection
+
+@section('scripts')
+    @parent
+    <script>
+        $(document).ready(function() {
+            $('.selectize').selectize();
+        });
+    </script>
 @endsection

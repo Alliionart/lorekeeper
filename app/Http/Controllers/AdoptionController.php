@@ -38,11 +38,20 @@ class AdoptionController extends Controller
     {
         $adoption = Adoption::where('id', 1)->where('is_active', 1)->first();
         if(!$adoption) abort(404);
+
+        $stocks = AdoptionStock::visible()->whereHas('character', function($query) {
+            $query->where('is_myo_slot', 0);
+        })->get();
+        $myo_stocks = AdoptionStock::visible()->whereHas('character', function($query) {
+            $query->where('is_myo_slot', 1);
+        })->get();
+
         return view('adoptions.adoption', [
             'adoption' => $adoption,
             'adoptions' => Adoption::where('is_active', 1)->get(),
             'currencies' => Currency::whereIn('id', AdoptionCurrency::pluck('currency_id')->toArray())->get()->keyBy('id'),
-            'stocks' => AdoptionStock::visible()->get()
+            'stocks' => $stocks,
+            'myo_stocks' => $myo_stocks,
         ]);
     }
 

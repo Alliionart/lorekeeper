@@ -29,6 +29,9 @@
     </ul>
 
     {!! Form::open(['method' => 'GET', 'class' => 'form-inline justify-content-end']) !!}
+    <div class="form-inline justify-content-end mb-3" style="min-width:150px">
+        {!! Form::select('user_ids', $users, Request::get('user_ids'), ['class' => 'form-control selectize w-100']) !!}
+    </div>
     <div class="form-inline justify-content-end">
         @if (!$isClaims)
             <div class="form-group ml-3 mb-3">
@@ -112,4 +115,13 @@
     </div>
     {!! $submissions->render() !!}
     <div class="text-center mt-4 small text-muted">{{ $submissions->total() }} result{{ $submissions->total() == 1 ? '' : 's' }} found.</div>
+@endsection
+
+@section('scripts')
+    @parent
+    <script>
+        $(document).ready(function() {
+            $('.selectize').selectize();
+        });
+    </script>
 @endsection

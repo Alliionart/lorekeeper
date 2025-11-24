@@ -43,8 +43,8 @@
     <div class="card mb-3">
         <div class="card-body">
             <div class="row">
-                <div class="col-sm-4">
-                <img src="{{ $surrender->character->image->thumbnailurl }}">
+                <div class="col-sm-2">
+                <img class="img-fluid" src="{{ $surrender->character->image->thumbnailurl }}">
                 </div>
                 <div class="col-sm-4">
                     <a href="{{ $surrender->character->url }}"><h3 class="text-uppercase">{!! $surrender->character->displayname !!}</h3></a>
@@ -61,17 +61,32 @@
                             <div>No traits listed.</div>
                     @endif
                 </div>
-                <div class="col-sm-4">
+                <div class="col-sm-6">
                     <h5>User Suggested worth:</h5>
                     {{ $surrender->worth }} @if($surrender->worth) {{ $worth->name }} @endif
                     <br>
                     <br>
                     @if($estimate == NULL)
-                    Calculate by traits is off
+                        Calculate by traits is off
                     @else
-                    <h5>Estimated worth:</h5>
-                    <div class="alert alert-warning">The estimated worth will always be the amount granted to the user. If you believe more / less is the worth, edit the grant amount area.</div>
-                    {{ $estimate }}
+                        <div class="alert alert-warning">The estimated worth will always be the amount granted to the user. If you believe more / less is the worth, edit the grant amount area.</div>
+
+                        @if(isset($breakdown))
+                            @foreach ($breakdown as $category => $items)
+                                <h4>{{ ucfirst($category) }}</h4>
+                                <ul>
+                                    @foreach ($items as $item => $value)
+                                        @if($category !== 'markings' && $category !== 'skills')
+                                            <li><strong>{{ $item }}:</strong> {{ $value }}</li>
+                                        @else
+                                            <li><strong>{{ $item }} (x{{ $value['count'] }}):</strong> {{ $value['cost'] }}</li>
+                                        @endif
+                                    @endforeach
+                                </ul>
+                            @endforeach
+                        @endif
+                        <h5>Estimated worth: {{ $estimate }}</h5>
+
                     @endif
                 </div>
             </div>

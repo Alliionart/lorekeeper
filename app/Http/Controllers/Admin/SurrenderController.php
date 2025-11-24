@@ -55,38 +55,45 @@ class SurrenderController extends Controller
         $surrender = Surrender::where('id', $id)->first();
         if(!$surrender) abort(404);
         
-        if(Settings::get('calculate_by_traits')) {
-        $totalcost = 0; // set this to be whatever your base price should be
-        // getting all the traits for the character that the surrender form is for
-        $features = $surrender->character->image->features()->get();
-        $markings = $surrender->character->markings()->get();
-        // since a character can have multiple traits, we need to use a foreach to calculate each trait one by one 
-        foreach ($features as $traits) {
-            // find rarities attached to trait
-            // You can also set this to something else , just make sure to change the variables
-            $rarity = Rarity::where('id', $traits->rarity_id)->first();
+        // if(Settings::get('calculate_by_traits')) {
+        // $totalcost = 0; // set this to be whatever your base price should be
+        // // getting all the traits for the character that the surrender form is for
+        // $features = $surrender->character->image->features()->get();
+        // $markings = $surrender->character->markings()->get();
+        // // since a character can have multiple traits, we need to use a foreach to calculate each trait one by one 
+        // foreach ($features as $traits) {
+        //     // find rarities attached to trait
+        //     // You can also set this to something else , just make sure to change the variables
+        //     $rarity = Rarity::where('id', $traits->rarity_id)->first();
 
-            switch ($rarity->name) {
-                // e.g if the rarity name returns rare, the cost is 100
-                // the following are example / placeholder worth
-                case 'common':
-                    $totalcost += 10;
-                break;
-                case 'uncommon':
-                    $totalcost += 50;
-                break;
-                case 'rare':
-                    $totalcost += 100;
-                break;
-                }
-            }
+        //     switch ($rarity->name) {
+        //         // e.g if the rarity name returns rare, the cost is 100
+        //         // the following are example / placeholder worth
+        //         case 'common':
+        //             $totalcost += 10;
+        //         break;
+        //         case 'uncommon':
+        //             $totalcost += 50;
+        //         break;
+        //         case 'rare':
+        //             $totalcost += 100;
+        //         break;
+        //         }
+        //     }
+        // }
+        // else {
+        //     $totalcost = null;
+        // }
+
+        $cost_result = Surrender::getCharacterValue($surrender->character->id);
+        if($cost_result) {
+            $cost_result = json_decode($cost_result->getContent(), true);
         }
-        else {
-            $totalcost = null;
-        }
+
         return view('admin.surrenders.surrender', [
             'surrender' => $surrender,
-            'estimate' => $totalcost,
+            'estimate' => $cost_result['estimated_worth'] ?? null,
+            'breakdown' => $cost_result['breakdown'] ?? null,
         ] + ($surrender->status == 'Pending' ? [
             'worth' => Currency::find($surrender->currency_id),
             'currencies' => Currency::where('is_user_owned', 1)->orderBy('name')->pluck('name', 'id'),

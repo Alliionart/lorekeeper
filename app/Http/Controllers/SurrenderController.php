@@ -11,6 +11,9 @@ use App\Http\Controllers\Controller;
 use App\Services\SurrenderManager;
 
 use App\Models\Rarity;
+use App\Models\Feature\FeatureCategory;
+use App\Models\Marking\Marking;
+use App\Models\Character\CharacterMarking;
 use App\Models\Adoption\Adoption;
 use App\Models\Adoption\Surrender;
 use App\Models\Adoption\AdoptionStock;
@@ -57,9 +60,10 @@ class SurrenderController extends Controller
         if(!$adoption) abort(404);
         return view('adoptions.surrender_form', [
             'adoption' => $adoption,
-            'characters' => $characters,
+            'characters' =>  $characters,
             'adoptions' => Adoption::where('is_active', 1)->get(),
             'currencies' => Currency::orderBy('name')->pluck('name', 'id'),
+            'primaryCurrency' => Settings::get('background_location_change_currency'),
         ]);
     }
     /**
@@ -94,29 +98,22 @@ class SurrenderController extends Controller
         if(!$surrender) abort(404);
         $features = $surrender->character->image->features()->get();
 
-        $totalcost = 0;
-        foreach ($features as $traits) {
-            $rarity = Rarity::where('id', $traits->rarity_id)->first();
-
-            switch ($rarity->name) {
-
-                case 'common':
-                    $totalcost += 10;
-                break;
-                case 'uncommon':
-                    $totalcost += 50;
-                break;
-                case 'rare':
-                    $totalcost += 100;
-                break;
-                }
-            }
+        $cost_result = json_decode($this->getCharacterValue($surrender->character->id)->getContent(), true);
         return view('home.surrender', [
-            'estimate' => $totalcost,
+            'estimate' => $cost_result,
             'surrender' => $surrender,
             'user' => $surrender->user,
             'worth' => Currency::find($surrender->currency_id),
         ]);
+    }
+
+    /**
+     * Gets the estimated worth of a character.
+     */
+    public function getCharacterValue($id) {
+        $result = Surrender::getCharacterValue($id);
+
+        return $result;
     }
 
 }

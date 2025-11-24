@@ -277,6 +277,7 @@ Route::group(['prefix' => 'claims', 'namespace' => 'Users'], function () {
 });
 Route::group(['prefix' => 'surrender'], function() {
     Route::get('view/{id}', 'SurrenderController@getPublicSurrender');
+    Route::get('get-value/{id}', 'SurrenderController@getCharacterValue');
 });
 
 /**************************************************************************************************
@@ -336,6 +337,8 @@ Route::group(['prefix' => 'breeding'], function () {
     Route::get('/', 'BreedingController@getBreedingIndex');
     Route::get('submit', 'BreedingController@getBreedingFormEntry');
     Route::get('permission', 'BreedingController@getBreedingCharacter');
+    Route::get('starter', 'BreedingController@getStartersByToken');
+    Route::get('get-character', 'BreedingController@getCharacterById');
     Route::get('/{id}', 'BreedingController@getBreedingPage');
 });
 

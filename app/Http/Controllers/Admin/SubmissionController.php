@@ -28,10 +28,15 @@ class SubmissionController extends Controller {
      */
     public function getSubmissionIndex(Request $request, $status = null) {
         $submissions = Submission::with('prompt')->where('status', $status ? ucfirst($status) : 'Pending')->whereNotNull('prompt_id');
-        $data = $request->only(['prompt_category_id', 'sort']);
+        $data = $request->only(['prompt_category_id', 'sort', 'user_ids']);
         if (isset($data['prompt_category_id']) && $data['prompt_category_id'] != 'none') {
             $submissions->whereHas('prompt', function ($query) use ($data) {
                 $query->where('prompt_category_id', $data['prompt_category_id']);
+            });
+        }
+        if (isset($data['user_ids']) && $data['user_ids'] != 'none') {
+            $submissions->whereHas('user', function ($query) use ($data) {
+                $query->whereIn('id', explode(',', $data['user_ids']));
             });
         }
         if (isset($data['sort'])) {
@@ -51,6 +56,11 @@ class SubmissionController extends Controller {
             'submissions' => $submissions->paginate(30)->appends($request->query()),
             'categories'  => ['none' => 'Any Category'] + PromptCategory::orderBy('sort', 'DESC')->pluck('name', 'id')->toArray(),
             'isClaims'    => false,
+            'users'       => ['none' => 'Any User'] + Submission::distinct()
+                            ->whereNotNull('prompt_id')
+                            ->join('users', 'submissions.user_id', '=', 'users.id')
+                            ->pluck('users.name', 'users.id')
+                            ->toArray(),
         ]);
     }
 
@@ -119,7 +129,7 @@ class SubmissionController extends Controller {
      */
     public function getClaimIndex(Request $request, $status = null) {
         $submissions = Submission::where('status', $status ? ucfirst($status) : 'Pending')->whereNull('prompt_id');
-        $data = $request->only(['sort']);
+        $data = $request->only(['sort', 'user_ids']);
         if (isset($data['sort'])) {
             switch ($data['sort']) {
                 case 'newest':
@@ -132,10 +142,20 @@ class SubmissionController extends Controller {
         } else {
             $submissions->sortOldest();
         }
+        if (isset($data['user_ids']) && $data['user_ids'] != 'none') {
+            $submissions->whereHas('user', function ($query) use ($data) {
+                $query->whereIn('id', explode(',', $data['user_ids']));
+            });
+        }
 
         return view('admin.submissions.index', [
             'submissions' => $submissions->paginate(30),
             'isClaims'    => true,
+            'users'       => ['none' => 'Any User'] + Submission::distinct()
+                            ->whereNotNull('prompt_id')
+                            ->join('users', 'submissions.user_id', '=', 'users.id')
+                            ->pluck('users.name', 'users.id')
+                            ->toArray(),
         ]);
     }
 

@@ -343,6 +343,7 @@ class CharacterController extends Controller {
             'transferrable_at', 'marking_id', 'is_dominant', 'base', 'secondary_base', 'side_id',
             'marking_color_0', 'marking_color_1', 'sex',
         ]);
+        \Log::info($data);
         $this->character = Character::where('slug', $slug)->first();
         if (!$this->character) {
             abort(404);
@@ -375,7 +376,7 @@ class CharacterController extends Controller {
         $data = $request->only([
             'name',
             'is_giftable', 'is_tradeable', 'is_sellable', 'sale_value',
-            'transferrable_at', 'marking_id', 'is_dominant', 'base', 'secondary_base', 'side_id', 'marking_color_0', 'marking_color_1',
+            'transferrable_at', 'marking_id', 'is_dominant', 'base', 'secondary_base', 'side_id', 'marking_color_0', 'marking_color_1', 'sex',
         ]);
         $this->character = Character::where('is_myo_slot', 1)->where('id', $id)->first();
         if (!$this->character) {

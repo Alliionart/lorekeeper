@@ -61,3 +61,25 @@
         </div>
     </div>
 </div>
+<div class="card mt-3">
+    <h3 class="card-header">Worth Calculation</h3>
+    <div class="card-body">
+        @if(isset($breakdown['breakdown']))
+            @foreach ($breakdown['breakdown'] as $category => $items)
+                <h4>{{ ucfirst($category) }}</h4>
+                <ul>
+                    @foreach ($items as $item => $value)
+                        @if($category !== 'markings' && $category !== 'skills')
+                            <li><strong>{{ $item }}:</strong> {{ $value }}</li>
+                        @else
+                            <li><strong>{{ $item }} (x{{ $value['count'] }}):</strong> {{ $value['cost'] }}</li>
+                        @endif
+                    @endforeach
+                </ul>
+            @endforeach
+        @endif
+    </div>
+    <div class="card-footer border-0">
+        <h4>Calculated Worth: {{ $breakdown['estimated_worth'] }} @if($surrender->worth) {{ $worth->name }} @endif</h4>
+    </div>
+</div>

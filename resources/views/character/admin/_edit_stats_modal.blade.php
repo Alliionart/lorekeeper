@@ -108,7 +108,7 @@
                     </select>
                 </div>
                 <?php
-                $is_glint = $marking->marking_id == 5 ? true : false; // Glint marking
+                $is_glint = $marking->marking_id == 1 ? true : false; // Glint marking
                 if ($is_glint) {
                     $glint_1 = isset(explode('|', $marking->data)[0]) ? explode('|', $marking->data)[0] : $marking->data;
                 } else {
@@ -118,11 +118,11 @@
                 ?>
                 <div class="form-group mb-0 mx-2" connect="Glint" style="min-width: 10vw;{{ $is_glint ? '' : 'display:none;' }}">
                     {!! Form::label('Marking Color') !!}
-                    {!! Form::select('marking_color_0[]', $bases, array_key_first($glint_bases), ['class' => 'form-control']) !!}
+                    {!! Form::select('marking_color_0[]', $bases, $is_glint ? array_key_first($glint_bases) : null, ['class' => 'form-control']) !!}
                 </div>
                 <div class="form-group mb-0 mx-2 dominant" connect="Glint" style="min-width: 10vw;{{ $is_glint && $glint_2 ? '' : 'display:none;' }}">
                     {!! Form::label('Secondary Marking Color') !!}
-                    {!! Form::select('marking_color_1[]', $bases, array_keys($glint_bases)[1] ?? null, ['class' => 'form-control']) !!}
+                    {!! Form::select('marking_color_1[]', $bases, $is_glint && array_key_exists(1, $glint_bases) ? array_keys($glint_bases)[1] : null, ['class' => 'form-control']) !!}
                 </div>
                 <a href="#" class="remove-marking btn btn-danger mb-2">×</a>
             </div>
@@ -144,37 +144,15 @@
                 <option value="1" data-code="1">Side 2</option>
             </select>
         </div>
-        <div class="form-group mb-0 mx-2" connect="Glint" style="min-width: 10vw; display:none;">
+        <div class="form-group mb-0 mx-2" connect="Glint" style="min-width: 10vw; {{ $has_glint ? '' : 'display:none;' }}">
             {!! Form::label('Marking Color') !!}
-            {!! Form::select('marking_color_0[]', $bases, old('marking_color_0'), ['class' => 'form-control']) !!}
+            {!! Form::select('marking_color_0[]', $bases, array_key_first($glint_bases), ['class' => 'form-control']) !!}
         </div>
-        <div class="form-group mb-0 mx-2 dominant" connect="Glint" style="min-width: 10vw; display:none;">
+        <div class="form-group mb-0 mx-2 dominant" connect="Glint" style="min-width: 10vw; {{ $has_glint && count($glint_bases) > 1 ? '' : 'display:none;' }}">
             {!! Form::label('Secondary Marking Color') !!}
-            {!! Form::select('marking_color_1[]', $bases, old('marking_color_1'), ['class' => 'form-control']) !!}
+            {!! Form::select('marking_color_1[]', $bases, array_keys($glint_bases)[1] ?? null, ['class' => 'form-control']) !!}
         </div>
         <a href="#" class="remove-marking btn btn-danger mb-2">×</a>
-    </div>
-</div>
-
-<div class="card mb-3 glint-color" {{ $has_glint ? '' : 'style=display:none;' }}>
-    <div class="card-header">
-        <h3>Glint</h3>
-    </div>
-    <div class="card-body">
-        <div class="row">
-            <div class="col-md-6">
-                <div class="form-group">
-                    {!! Form::label('Glint Color') !!}
-                    {!! Form::select('glint_1', $bases, array_key_first($glint_bases), ['class' => 'form-control', 'id' => 'glint_1']) !!}
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="form-group glint_dom" {{ count($glint_bases) > 1 ? '' : 'style=display:none;' }}>
-                    {!! Form::label('Secondary Glint Color') !!}
-                    {!! Form::select('glint_2', $bases, array_keys($glint_bases)[1] ?? null, ['class' => 'form-control', 'id' => 'glint_2']) !!}
-                </div>
-            </div>
-        </div>
     </div>
 </div>
 

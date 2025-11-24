@@ -23,7 +23,7 @@
 
         <div class="row">
             <div class="col-md-6">
-                <div class="card mb-3">
+                <div class="card mb-3" id="parent_1">
                     <div class="card-header">
                         <h4>Parent #1</h4>
                     </div>
@@ -33,8 +33,36 @@
                             {{ print_r($permissions, true) }}
                         </pre>
 
-                        {!! Form::label('Select Slot') !!} {!! add_help('Select a slot from your breeding permissions.') !!}
-                        {!! Form::select('permission_1', $permissions, null, ['class' => 'form-control characterSelect', 'id' => 'permission_1', 'slot_id' => '1']) !!}
+                        {!! Form::label('I would like to use:') !!}
+                        {!! Form::select('breeding_perm_type_1', [
+                            ''         => 'Select an option',
+                            'own' => 'One of my own characters',
+                            'permission' => 'A character I have a breeding permission for',
+                            'starter'    => 'A group starter from a token'
+                            ], null, ['class' => 'form-control perm_select']) !!}
+
+                        
+                        <div class="my-2 hide" slot_type="permission">
+                            {!! Form::label('Select Permission') !!} {!! add_help('Select a slot from your breeding permissions.') !!}
+                            {!! Form::select('permission_1', $permissions, null, ['class' => 'form-control characterSelect selectize', 'id' => 'permission_1', 'slot_id' => '1']) !!}
+                        </div>
+                        <div class="my-2 hide" slot_type="own">
+                            {!! Form::label('Select Character') !!} {!! add_help('Select a slot from your breeding permissions.') !!}
+                            {!! Form::select('permission_1', $own_characters, null, ['class' => 'form-control ownSelect selectize', 'id' => 'permission_1', 'slot_id' => '1']) !!}
+                        </div>
+                        <div class="my-2 hide" slot_type="starter">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    {!! Form::label('Select Token') !!} {!! add_help('Select a token that contains group starters.') !!}
+                                    {!! Form::select('starter_token_1', $tokens, null, ['class' => 'form-control tokenSelect', 'id' => 'starter_token_1', 'slot_id' => '1']) !!}
+                                </div>
+                                <div class="col-md-6">
+                                    {!! Form::label('Select Starter') !!} {!! add_help('Select a starter from the selected token.') !!}
+                                    {!! Form::select('starter_1', [], null, ['class' => 'form-control selectize', 'id' => 'starter_1']) !!}
+                                </div>
+                            </div>
+                        </div>
+                        
 
                         <div id="character_1_display" class="mt-3 rounded p-3 border border-secondary hide">
                             <div class="row">
@@ -58,7 +86,7 @@
                 </div>
             </div>
             <div class="col-md-6">
-                <div class="card mb-3">
+                <div class="card mb-3" id="parent_2">
                     <div class="card-header">
                         <h4>Parent #2</h4>
                     </div>
@@ -68,8 +96,34 @@
                             {{ print_r($permissions, true) }}
                         </pre>
 
-                        {!! Form::label('Select Slot') !!} {!! add_help('Select a slot from your breeding permissions.') !!}
-                        {!! Form::select('permission_2', $permissions, null, ['class' => 'form-control characterSelect', 'id' => 'permission_2', 'slot_id' => '2']) !!}
+                        {!! Form::label('I would like to use:') !!}
+                        {!! Form::select('breeding_perm_type_1', [
+                            ''         => 'Select an option',
+                            'own' => 'One of my own characters',
+                            'permission' => 'A character I have a breeding permission for',
+                            'starter'    => 'A group starter from a token'
+                            ], null, ['class' => 'form-control perm_select']) !!}
+
+                        <div class="my-2 hide" slot_type="permission">
+                            {!! Form::label('Select Permission') !!} {!! add_help('Select a slot from your breeding permissions.') !!}
+                            {!! Form::select('permission_2', $permissions, null, ['class' => 'form-control characterSelect selectize', 'id' => 'permission_2', 'slot_id' => '2']) !!}
+                        </div>
+                        <div class="my-2 hide" slot_type="own">
+                            {!! Form::label('Select Character') !!} {!! add_help('Select a slot from your breeding permissions.') !!}
+                            {!! Form::select('permission_2', $own_characters, null, ['class' => 'form-control ownSelect selectize', 'id' => 'permission_2', 'slot_id' => '2']) !!}
+                        </div>
+                        <div class="my-2 hide" slot_type="starter">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    {!! Form::label('Select Token') !!} {!! add_help('Select a token that contains group starters.') !!}
+                                    {!! Form::select('starter_token_2', $tokens, null, ['class' => 'form-control tokenSelect', 'id' => 'starter_token_2', 'slot_id' => '2']) !!}
+                                </div>
+                                <div class="col-md-6">
+                                    {!! Form::label('Select Starter') !!} {!! add_help('Select a starter from the selected token.') !!}
+                                    {!! Form::select('starter_2', [], null, ['class' => 'form-control selectize', 'id' => 'starter_2']) !!}
+                                </div>
+                            </div>
+                        </div>
 
                         <div id="character_2_display" class="mt-3 rounded p-3 border border-secondary hide">
                             <div class="row">
@@ -116,43 +170,128 @@
     @parent
     <script>
         $(document).ready(function() {
-            $('select').selectize({
+            $('.selectize').selectize({
                 multiple: false,
             });
         });
 
         $('.characterSelect').change(function() {
+            console.log('permission changed');
+            getPermission(this);
+            checkSlots();
+        });
+
+        $('.ownSelect').change(function() {
             getCharacter(this);
             checkSlots();
+        });
+
+        $('.tokenSelect').change(function() {
+            getStarters(this);
+            checkSlots();
+        });
+
+        $('.perm_select').change(function() {
+            var val = $(this).val();
+            var parentDiv = $(this).closest('[id^="parent_"]');
+            $(parentDiv).find('[slot_type]').each(function() {
+                if ($(this).attr('slot_type') == val) {
+                    $(this).removeClass('hide');
+                } else {
+                    $(this).addClass('hide');
+                }
+            });
         });
 
         var lineage = [];
         var inbreeding = false;
 
         function getCharacter($selector) {
+
+            console.log('get the single character')
+
+            var charId = $($selector).val();
+            var slotId = $($selector).attr('slot_id');
+            var displayDiv = $('#parent_' + slotId + ' #character_' + slotId + '_display');
+
+            if (charId  == 0) {
+                displayDiv.addClass('hide');
+                return;
+            }
+
+            console.log("/breeding/get-character/?character_id=" + charId);
+
+            $.ajax({
+                type: "GET",
+                url: "/breeding/get-character/?character_id=" + charId,
+                dataType: "json",
+            }).done(function(data) {
+                fillCharacter(data, slotId);
+            }).fail(function(jqXHR, textStatus, errorThrown) {
+                alert("AJAX call failed: " + textStatus + ", " + errorThrown);
+            });
+        }
+
+        function getPermission($selector) {
             var permId = $($selector).val();
             var slotId = $($selector).attr('slot_id');
-            var displayDiv = $('#character_' + slotId + '_display');
+            var displayDiv = $('#parent_' + slotId + ' #character_' + slotId + '_display');
+
+            if (permId  == 0) {
+                displayDiv.addClass('hide');
+                return;
+            }
+
             $.ajax({
                 type: "GET",
                 url: "/breeding/permission/?permission_id=" + permId + "&slot_id=" + slotId,
                 dataType: "json",
             }).done(function(data) {
-                console.log(data);
-                displayDiv.find('img').attr('src', data.character.image);
-                displayDiv.find('h4').text(data.character.name);
-                displayDiv.find('.species').html(data.character.species);
-                displayDiv.find('.subtype').html(data.character.subtype);
-                displayDiv.find('.markings').text(data.character.markings);
-                handleCharacterLineage(data.character.lineage);
-                $.each(data.character.traits, function(i, val) {
-                    displayDiv.find('.traits').append('<li><strong>' + i + ': </strong>' + val + '</li>');
-                });
-                displayDiv.removeClass('hide');
-                //displayDiv.after('<pre style="background-color:#eee">' + JSON.stringify(data, null, 2) + '</pre>')
+                fillCharacter(data, slotId);
             }).fail(function(jqXHR, textStatus, errorThrown) {
                 alert("AJAX call failed: " + textStatus + ", " + errorThrown);
             });
+        }
+
+        function getStarters($selector) {
+            var tokenId = $($selector).val();
+            var slotId = $($selector).attr('slot_id');
+            var displayDiv = $('#parent_' + slotId + ' #character_' + slotId + '_display');
+
+            $.ajax({
+                type: "GET",
+                url: "/breeding/starter/?token=" + tokenId,
+                dataType: "json",
+            }).done(function(data) {
+                var starters = data.starters;
+
+                if (Object.keys(starters).length > 0) {
+                    var starterSelect = $('#starter_' + slotId)[0].selectize;
+                    starterSelect.clearOptions();
+                    $.each(starters, function(i, val) {
+                        starterSelect.addOption({value: i, text: val});
+                    });
+                    starterSelect.refreshOptions(false);
+                }
+                
+            }).fail(function(jqXHR, textStatus, errorThrown) {
+                console.log("AJAX call failed: " + textStatus + ", " + errorThrown);
+            });
+        }
+
+        function fillCharacter(data, slotId) {
+            var displayDiv = $('#parent_' + slotId + ' #character_' + slotId + '_display');
+            displayDiv.find('img').attr('src', data.character.image);
+            displayDiv.find('h4').text(data.character.name);
+            displayDiv.find('.species').html(data.character.species);
+            displayDiv.find('.subtype').html(data.character.subtype);
+            displayDiv.find('.markings').text(data.character.markings);
+            handleCharacterLineage(data.character.lineage);
+            $.each(data.character.traits, function(i, val) {
+                displayDiv.find('.traits').append('<li><strong>' + i + ': </strong>' + val + '</li>');
+            });
+            displayDiv.removeClass('hide');
+            //displayDiv.after('<pre style="background-color:#eee">' + JSON.stringify(data, null, 2) + '</pre>')
         }
 
         function handleCharacterLineage(obj) {

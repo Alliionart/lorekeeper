@@ -1,4 +1,4 @@
-<div class="col-md-3 col-6 text-left">
+<div class="{{ isset($fullwidth) && $fullwidth ? 'col-12 p-0' : 'col-md-3 col-6' }} text-left">
     <div class="card">
         <div class="card-header d-flex justify-content-between align-items-center h6">
             <a href="{{ $character->url }}">
@@ -6,7 +6,9 @@
                     <i class="fas fa-eye-slash"></i>
                 @endif {{ Illuminate\Support\Str::limit($character->fullName, 20, $end = '...') }}
             </a>
-            <span class="ml-auto">{!! $character->displayOwner !!}</span>
+            @if (isset($show_owner) && $show_owner)
+                <span class="small">by <a href="{{ $character->owner->url }}">{{ $character->owner->displayName }}</a></span>
+            @endif
         </div>
         <div class="mt-1 card-body pt-2">
             {!! $character->image->species_id ? $character->image->species->displayName : 'No Species' !!} ・ {!! $character->image->subtype_id ? $character->image->subtype->displayName : 'No Subtype' !!}

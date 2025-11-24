@@ -33,6 +33,11 @@ class DesignController extends Controller {
         } else {
             $requests->sortOldest();
         }
+        if (isset($data['user_ids']) && $data['user_ids'] != 'none') {
+            $requests->whereHas('user', function ($query) use ($data) {
+                $query->whereIn('id', explode(',', $data['user_ids']));
+            });
+        }
         if (isset($data['category'])) {
             switch ($data['category']) {
                 case 'all':
@@ -71,6 +76,10 @@ class DesignController extends Controller {
             'requests' => $requests->paginate(30)->appends($request->query()),
             'isMyo'    => ($type == 'myo-approvals'),
             'category_options'  => ['all' => 'All'] + $category_options,
+            'users'       => ['none' => 'Any User'] + CharacterDesignUpdate::distinct()
+                            ->join('users', 'design_updates.user_id', '=', 'users.id')
+                            ->pluck('users.name', 'users.id')
+                            ->toArray(),
         ]);
     }
 

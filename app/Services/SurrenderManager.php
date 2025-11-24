@@ -142,10 +142,10 @@ class SurrenderManager extends Service
 
             // Edit if you turn on calculate by traits
             if(Settings::get('calculate_by_traits')) {
-            $data['cost'] = $data['grant'] + 100;
+                $data['cost'] = $data['grant'] + 100;
             }
             else {
-            $data['cost'] = $data['grant'];
+                $data['cost'] = $data['grant'];
             }
 
             $data['character_id'] = $surrender->character_id;
