@@ -7,8 +7,7 @@
 @section('admin-content')
     {!! breadcrumbs(['Admin Panel' => 'admin', 'Home' => 'admin']) !!}
 
-    <h1>
-        Admin Dashboard</h1>
+    <h1><span class="lead">World of Reos</span> <br>Admin Dashboard</h1>
     <div class="row">
         @if (Auth::user()->hasPower('manage_submissions'))
             <div class="col-sm-6">
