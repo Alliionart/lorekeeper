@@ -5,7 +5,7 @@ namespace App\Services;
 use App\Models\Map;
 use Illuminate\Support\Facades\DB;
 
-class MapService extends Service {
+class MapManager extends Service {
     /*
     |--------------------------------------------------------------------------
     | Map Service

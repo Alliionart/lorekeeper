@@ -32,13 +32,13 @@ class Map extends Model {
      * @var array
      */
     public static $createRules = [
-        'name' => 'required|between:3,100',
-        'type' => 'required|between:3,100',
+        'name'        => 'required|between:3,100',
+        'type'        => 'required|between:3,100',
         'description' => 'nullable',
-        'latitude' => 'nullable|numeric',
-        'longitude' => 'nullable|numeric',
-        'icon' => 'nullable|between:3,100',
-        'url'  => 'nullable|between:3,100',
+        'latitude'    => 'nullable|numeric',
+        'longitude'   => 'nullable|numeric',
+        'icon'        => 'nullable|between:3,100',
+        'url'         => 'nullable|between:3,100',
     ];
 
     /**
@@ -47,13 +47,13 @@ class Map extends Model {
      * @var array
      */
     public static $updateRules = [
-        'name' => 'required|between:3,100',
-        'type' => 'required|between:3,100',
+        'name'        => 'required|between:3,100',
+        'type'        => 'required|between:3,100',
         'description' => 'nullable',
-        'latitude' => 'nullable|numeric',
-        'longitude' => 'nullable|numeric',
-        'icon' => 'nullable|between:3,100',
-        'url'  => 'nullable|between:3,100',
+        'latitude'    => 'nullable|numeric',
+        'longitude'   => 'nullable|numeric',
+        'icon'        => 'nullable|between:3,100',
+        'url'         => 'nullable|between:3,100',
     ];
 
     /**

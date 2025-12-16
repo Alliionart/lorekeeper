@@ -51,8 +51,6 @@ class MapController extends Controller {
     /**
      * Shows the edit map settings page.
      *
-     * @param int $id
-     *
      * @return \Illuminate\Contracts\Support\Renderable
      */
     public function getMapSettings() {
@@ -65,7 +63,7 @@ class MapController extends Controller {
      * Creates or edits a page.
      *
      * @param App\Services\MapManager $service
-     * @param int|null                 $id
+     * @param int|null                $id
      *
      * @return \Illuminate\Http\RedirectResponse
      */
@@ -108,7 +106,7 @@ class MapController extends Controller {
      * Deletes a page.
      *
      * @param App\Services\MapManager $service
-     * @param int                      $id
+     * @param int                     $id
      *
      * @return \Illuminate\Http\RedirectResponse
      */

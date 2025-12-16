@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\SitePage;
-use Illuminate\Support\Facades\DB;
 
 class MapController extends Controller {
     /*
@@ -17,8 +16,6 @@ class MapController extends Controller {
 
     /**
      * Shows the page with the given key.
-     *
-     * @param string $key
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
