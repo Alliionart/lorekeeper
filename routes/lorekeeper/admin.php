@@ -238,6 +238,18 @@ Route::group(['prefix' => 'data', 'namespace' => 'Data', 'middleware' => 'power:
     Route::post('prompts/create', 'PromptController@postCreateEditPrompt');
     Route::post('prompts/edit/{id?}', 'PromptController@postCreateEditPrompt');
     Route::post('prompts/delete/{id}', 'PromptController@postDeletePrompt');
+
+    Route::group(['prefix' => 'map', 'middleware' => 'power:edit_data'], function () {
+        Route::get('/', 'MapController@getIndex');
+        Route::get('settings', 'MapController@getMapSettings');
+        Route::get('create', 'MapController@getCreateMapItem');
+        Route::get('edit/{id}', 'MapController@getEditMapItem');
+        Route::get('delete/{id}', 'MapController@getDeleteMapItem');
+        Route::get('settings/edit', 'MapController@postMapSettings');
+        Route::post('create', 'MapController@postCreateEditMapItem');
+        Route::post('edit/{id?}', 'MapController@postCreateEditMapItem');
+        Route::post('delete/{id}', 'MapController@postDeleteMapItem');
+    });
 });
 
 // PAGES
@@ -364,7 +376,7 @@ Route::group(['prefix' => 'character', 'namespace' => 'Characters', 'middleware'
 
     Route::post('{slug}/transfer', 'CharacterController@postTransfer');
 });
-// Might rewrite these parts eventually so there's less code duplication...
+
 Route::group(['prefix' => 'myo', 'namespace' => 'Characters', 'middleware' => 'power:manage_characters'], function () {
     // CHARACTER
     Route::get('{id}/stats', 'CharacterController@getEditMyoStats');

@@ -83,6 +83,9 @@
     @endif
 
     @include('feed::links')
+
+    <!-- Create a Stack. Now we can push to it from other views -->
+    @stack('head_scripts_end')
 </head>
 
 <body>
