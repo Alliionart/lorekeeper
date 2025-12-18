@@ -14,6 +14,8 @@ use App\Models\User\UserAlias;
 use App\Models\User\UsernameLog;
 use App\Models\Border\Border;
 use Illuminate\Support\Facades\Storage;
+use App\Models\WorldExpansion\Faction;
+use App\Models\WorldExpansion\Location;
 use App\Services\LinkService;
 use App\Services\UserService;
 use BaconQrCode\Renderer\Color\Rgb;
@@ -27,6 +29,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Fortify\Contracts\TwoFactorAuthenticationProvider;
 use Laravel\Fortify\RecoveryCode;
+use Settings;
 
 class AccountController extends Controller {
     /*
@@ -91,6 +94,14 @@ class AccountController extends Controller {
         $decoratorOptions = ['0' => 'Select Decorator Theme'] + Theme::where('is_active', 1)->where('theme_type', 'decorator')->where('is_user_selectable', 1)->get()->pluck('displayName', 'id')->toArray();
         $default = Border::base()->active(Auth::user() ?? null)->where('is_default', 1)->get();
         $admin = Border::base()->where('admin_only', 1)->get();
+        $interval = [
+            0 => 'whenever',
+            1 => 'yearly',
+            2 => 'quarterly',
+            3 => 'monthly',
+            4 => 'weekly',
+            5 => 'daily',
+        ];
         
         return view('account.settings', [
             'themeOptions'      => $themeOptions + Auth::user()->themes()->where('theme_type', 'base')->get()->pluck('displayName', 'id')->toArray(),
@@ -103,6 +114,13 @@ class AccountController extends Controller {
             'admin' => $admin,
             'border_variants' => ['0' => 'Pick a Border First'],
             'bottom_layers' => ['0' => 'Pick a Border First'],
+            'locations'            => Location::all()->where('is_user_home')->pluck('style', 'id')->toArray(),
+            'factions'             => Faction::all()->where('is_user_faction')->pluck('style', 'id')->toArray(),
+            'user_enabled'         => Settings::get('WE_user_locations'),
+            'user_faction_enabled' => Settings::get('WE_user_factions'),
+            'char_enabled'         => Settings::get('WE_character_locations'),
+            'char_faction_enabled' => Settings::get('WE_character_factions'),
+            'location_interval'    => $interval[Settings::get('WE_change_timelimit')],
         ]);
     }
 
@@ -171,6 +189,23 @@ class AccountController extends Controller {
 
         return redirect()->back();
     }
+    
+    /**     
+     * Edits the user's location from a list of locations that users can make their home.
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function postLocation(Request $request, UserService $service) {
+        if ($service->updateLocation($request->input('location'), Auth::user())) {
+            flash('Location updated successfully.')->success();
+        } else {
+            foreach ($service->errors()->getMessages()['error'] as $error) {
+                flash($error)->error();
+            }
+        }
+
+        return redirect()->back();
+    }
 
     /**
      * Edits the user's banner styling.
@@ -189,6 +224,23 @@ class AccountController extends Controller {
         ]);
         if ($service->updateBannerStyling($data, Auth::user())) {
             flash('Header styling updated successfully.')->success();
+        } else {
+            foreach ($service->errors()->getMessages()['error'] as $error) {
+                flash($error)->error();
+            }
+        }
+
+        return redirect()->back();
+    }
+    
+    /**     
+     * Edits the user's faction from a list of factions that users can make their home.
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function postFaction(Request $request, UserService $service) {
+        if ($service->updateFaction($request->input('faction'), Auth::user())) {
+            flash('Faction updated successfully.')->success();
         } else {
             foreach ($service->errors()->getMessages()['error'] as $error) {
                 flash($error)->error();

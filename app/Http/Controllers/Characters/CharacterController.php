@@ -27,6 +27,8 @@ use App\Models\User\UserAward;
 use App\Models\User\UserCurrency;
 use App\Models\User\UserItem;
 use App\Services\AwardCaseManager;
+use App\Models\WorldExpansion\Faction;
+use App\Models\WorldExpansion\Location;
 use App\Services\CharacterManager;
 use App\Services\CurrencyManager;
 use App\Services\DesignUpdateManager;
@@ -188,12 +190,19 @@ class CharacterController extends Controller {
 
         return view('character.edit_profile', [
             'character'         => $this->character,
-            'locations'         => array_combine($locations, $locations),
+            'bg_locations'         => array_combine($locations, $locations),
             'bg_currency'       => Currency::find($bg_change_currency_id),
             'bg_amount'         => Settings::get('background_location_change_amount'),
             'lItem'             => Item::find($location_change_item_id),
             'user_item_amount'  => UserItem::where('user_id', $this->character->user_id)->where('item_id', $location_change_item_id)->count(),
             'user_cur_amount'   => UserCurrency::where('user_id', $this->character->user_id)->where('currency_id', $bg_change_currency_id)->sum('quantity'),
+            //World Expansion
+            'locations'            => Location::all()->where('is_character_home')->pluck('style', 'id')->toArray(),
+            'factions'             => Faction::all()->where('is_character_faction')->pluck('style', 'id')->toArray(),
+            'user_enabled'         => Settings::get('WE_user_locations'),
+            'user_faction_enabled' => Settings::get('WE_user_factions'),
+            'char_enabled'         => Settings::get('WE_character_locations'),
+            'char_faction_enabled' => Settings::get('WE_character_factions'),
         ]);
     }
 
@@ -236,7 +245,7 @@ class CharacterController extends Controller {
 
         $request->validate(CharacterProfile::$rules);
 
-        if ($service->updateCharacterProfile($request->only(['name', 'nickname', 'link', 'text', 'is_gift_art_allowed', 'is_gift_writing_allowed', 'is_trading', 'alert_user', 'location', 'background']), $this->character, Auth::user(), !$isOwner)) {
+        if ($service->updateCharacterProfile($request->only(['name', 'nickname', 'link', 'text', 'is_gift_art_allowed', 'is_gift_writing_allowed', 'is_trading', 'alert_user', 'location', 'background', 'faction']), $this->character, Auth::user(), !$isOwner)) {
             flash('Profile edited successfully.')->success();
         } else {
             foreach ($service->errors()->getMessages()['error'] as $error) {

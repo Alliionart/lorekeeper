@@ -237,14 +237,12 @@
 
 <div class="row col-12">
     <div class="col-md-8">
-
         @comments(['model' => $user->profile, 'perPage' => 5])
-
     </div>
     <div class="col-md-4">
         <div class="card mb-4">
             <div class="card-header">
-                <h5>Mention This User</h5>
+                <div class="mb-0 h5">Mention This User</div>
             </div>
             <div class="card-body">
                 In the rich text editor:
@@ -272,7 +270,7 @@
             </div>
             @if (Auth::check() && Auth::user()->isStaff)
                 <div class="card-footer">
-                    <h5>[ADMIN]</h5>
+                    <div class="h5">[ADMIN]</div>
                     Permalinking to this user, in the rich text editor:
                     <div class="alert alert-secondary">
                         [user={{ $user->id }}]

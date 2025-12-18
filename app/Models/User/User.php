@@ -38,6 +38,9 @@ use App\Models\Stat\StatTransferLog;
 use App\Models\Shop\UserShopLog;
 use App\Models\Submission\Submission;
 use App\Models\Theme;
+use App\Models\WorldExpansion\Faction;
+use App\Models\WorldExpansion\FactionRankMember;
+use App\Models\WorldExpansion\Location;
 use App\Traits\Commenter;
 use Auth;
 use Cache;
@@ -50,6 +53,7 @@ use App\Models\Border\Border;
 use App\Models\User\UserBorder;
 use App\Models\User\UserBorderLog;
 use Config;
+use Settings;
 
 class User extends Authenticatable implements MustVerifyEmail {
     use Commenter, Notifiable, TwoFactorAuthenticatable;
@@ -64,6 +68,7 @@ class User extends Authenticatable implements MustVerifyEmail {
         'is_deactivated', 'deactivater_id', 'last_seen',
         'border_id', 'border_variant_id', 'bottom_border_id', 'top_border_id',
         'banner', 'banner_styling',
+        'home_id', 'home_changed', 'faction_id', 'faction_changed',
     ];
 
     /**
@@ -81,8 +86,10 @@ class User extends Authenticatable implements MustVerifyEmail {
      * @var array
      */
     protected $casts = [
-        'email_verified_at' => 'datetime',
-        'birthday'          => 'datetime',
+        'email_verified_at'        => 'datetime',
+        'birthday'                 => 'datetime',
+        'home_changed'             => 'datetime',
+        'faction_changed'          => 'datetime',
     ];
 
     /**
@@ -222,6 +229,20 @@ class User extends Authenticatable implements MustVerifyEmail {
      */
     public function rank() {
         return $this->belongsTo(Rank::class);
+    }
+
+    /**
+     * Get the user's rank data.
+     */
+    public function home() {
+        return $this->belongsTo(Location::class, 'home_id');
+    }
+
+    /**
+     * Get the user's rank data.
+     */
+    public function faction() {
+        return $this->belongsTo(Faction::class, 'faction_id');
     }
 
     /**
@@ -697,6 +718,79 @@ class User extends Authenticatable implements MustVerifyEmail {
     }
 
     /**
+     * Checks if the user can change location.
+     *
+     * @return string
+     */
+    public function getCanChangeLocationAttribute() {
+        if (!isset($this->home_changed)) {
+            return true;
+        }
+        $limit = Settings::get('WE_change_timelimit');
+        switch ($limit) {
+            case 0:
+                return true;
+            case 1:
+                // Yearly
+                if (now()->year == $this->home_changed->year) {
+                    return false;
+                } else {
+                    return true;
+                }
+
+            case 2:
+                // Quarterly
+                if (now()->year != $this->home_changed->year) {
+                    return true;
+                }
+                if (now()->quarter != $this->home_changed->quarter) {
+                    return true;
+                } else {
+                    return false;
+                }
+
+            case 3:
+                // Monthly
+                if (now()->year != $this->home_changed->year) {
+                    return true;
+                }
+                if (now()->month != $this->home_changed->month) {
+                    return true;
+                } else {
+                    return false;
+                }
+
+            case 4:
+                // Weekly
+                if (now()->year != $this->home_changed->year) {
+                    return true;
+                }
+                if (now()->week != $this->home_changed->week) {
+                    return true;
+                } else {
+                    return false;
+                }
+
+            case 5:
+                // Daily
+                if (now()->year != $this->home_changed->year) {
+                    return true;
+                }
+                if (now()->month != $this->home_changed->month) {
+                    return true;
+                }
+                if (now()->day != $this->home_changed->day) {
+                    return true;
+                } else {
+                    return false;
+                }
+
+            default:
+                return true;
+        }
+    }
+
+    /**
      * Get's user birthday setting.
      */
     public function getBirthdayDisplayAttribute() {
@@ -752,8 +846,7 @@ class User extends Authenticatable implements MustVerifyEmail {
      *
      * @return int
      */
-    public function getDonationShopCooldownAttribute()
-    {
+    public function getDonationShopCooldownAttribute() {
         // Fetch log for most recent collection
         $log = ItemLog::where('recipient_id', $this->id)->where('log_type', 'Collected from Donation Shop')->orderBy('id', 'DESC')->first();
         // If there is no log, by default, the cooldown is null
@@ -766,6 +859,99 @@ class User extends Authenticatable implements MustVerifyEmail {
         return $expiryTime;
 
         return null;
+    }
+
+    /**
+     * Checks if the user can change faction.
+     *
+     * @return string
+     */
+    public function getCanChangeFactionAttribute() {
+        if (!isset($this->faction_changed)) {
+            return true;
+        }
+        $limit = Settings::get('WE_change_timelimit');
+        switch ($limit) {
+            case 0:
+                return true;
+            case 1:
+                // Yearly
+                if (now()->year == $this->faction_changed->year) {
+                    return false;
+                } else {
+                    return true;
+                }
+
+            case 2:
+                // Quarterly
+                if (now()->year != $this->faction_changed->year) {
+                    return true;
+                }
+                if (now()->quarter != $this->faction_changed->quarter) {
+                    return true;
+                } else {
+                    return false;
+                }
+
+            case 3:
+                // Monthly
+                if (now()->year != $this->faction_changed->year) {
+                    return true;
+                }
+                if (now()->month != $this->faction_changed->month) {
+                    return true;
+                } else {
+                    return false;
+                }
+
+            case 4:
+                // Weekly
+                if (now()->year != $this->faction_changed->year) {
+                    return true;
+                }
+                if (now()->week != $this->faction_changed->week) {
+                    return true;
+                } else {
+                    return false;
+                }
+
+            case 5:
+                // Daily
+                if (now()->year != $this->faction_changed->year) {
+                    return true;
+                }
+                if (now()->month != $this->faction_changed->month) {
+                    return true;
+                }
+                if (now()->day != $this->faction_changed->day) {
+                    return true;
+                } else {
+                    return false;
+                }
+
+            default:
+                return true;
+        }
+    }
+
+    /**
+     * Get user's faction rank.
+     */
+    public function getFactionRankAttribute() {
+        if (!isset($this->faction_id) || !$this->faction->ranks()->count()) {
+            return null;
+        }
+        if (FactionRankMember::where('member_type', 'user')->where('member_id', $this->id)->first()) {
+            return FactionRankMember::where('member_type', 'user')->where('member_id', $this->id)->first()->rank;
+        }
+        if ($this->faction->ranks()->where('is_open', 1)->count()) {
+            $standing = $this->getCurrencies(true)->where('id', Settings::get('WE_faction_currency'))->first();
+            if (!$standing) {
+                return $this->faction->ranks()->where('is_open', 1)->where('breakpoint', 0)->first();
+            }
+
+            return $this->faction->ranks()->where('is_open', 1)->where('breakpoint', '<=', $standing->quantity)->orderBy('breakpoint', 'DESC')->first();
+        }
     }
 
     /**********************************************************************************************
