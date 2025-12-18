@@ -140,6 +140,23 @@
 
 <div class="card mb-3">
     <div class="card-header h2">
+        <a href="#" class="btn btn-outline-info float-right" id="addExternalCharacter">Add External Character</a>
+        External Characters
+    </div>
+    <div class="card-body">
+        <p>If there are any characters in this submission that are not on-site, list them here.</p>
+        <div id="externalCharactersBody">
+            @if (isset($submission->external_characters))
+                @foreach ($submission->external_characters as $ext_character)
+                    @include('widgets._external_character_row_select', ['extCharacter' => $ext_character])
+                @endforeach
+            @endif
+        </div>
+    </div>
+</div>
+
+<div class="card mb-3">
+    <div class="card-header h2">
         Add-Ons
     </div>
     <div class="card-body">
@@ -182,3 +199,7 @@
 @else
     @include('widgets._loot_select_row', ['items' => $items, 'currencies' => $currencies, 'showLootTables' => false, 'showRaffles' => false, 'showRecipes' => false])
 @endif
+
+<div id="external-character" class="hide">
+    @include('widgets._external_character_row_select')
+</div>

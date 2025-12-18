@@ -369,7 +369,7 @@ class GalleryController extends Controller {
      */
     public function postCreateEditGallerySubmission(Request $request, GalleryManager $service, $id = null) {
         $id ? $request->validate(GallerySubmission::$updateRules) : $request->validate(GallerySubmission::$createRules);
-        $data = $request->only(['image', 'text', 'title', 'description', 'slug', 'collaborator_id', 'collaborator_data', 'participant_id', 'participant_type', 'gallery_id', 'alert_user', 'prompt_id', 'content_warning']);
+        $data = $request->only(['image', 'text', 'title', 'description', 'slug', 'collaborator_id', 'collaborator_data', 'participant_id', 'participant_type', 'gallery_id', 'alert_user', 'prompt_id', 'content_warning', 'external_name', 'external_link']);
 
         if (!$id && Settings::get('gallery_submissions_reward_currency')) {
             $currencyFormData = $request->only(collect(config('lorekeeper.group_currency_form'))->keys()->toArray());

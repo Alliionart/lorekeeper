@@ -26,6 +26,7 @@ class GallerySubmission extends Model {
         'prompt_id', 'data', 'is_visible', 'status',
         'vote_data', 'staff_id', 'is_valued',
         'staff_comments', 'parsed_staff_comments',
+        'external_characters',
     ];
 
     /**
@@ -51,6 +52,15 @@ class GallerySubmission extends Model {
      */
     protected $withCount = [
         'favorites',
+    ];
+
+    /**
+     * The attributes that should be cast to native types.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'external_characters' => 'array',
     ];
 
     /**
