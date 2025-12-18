@@ -11,7 +11,6 @@ return new class extends Migration {
     public function up(): void {
         Schema::table('characters', function (Blueprint $table) {
             $table->integer('background_id')->nullable();
-            $table->string('location', 191)->default('Warrenfall');
         });
     }
 
@@ -21,7 +20,6 @@ return new class extends Migration {
     public function down(): void {
         Schema::table('characters', function (Blueprint $table) {
             $table->dropColumn('background_id');
-            $table->dropColumn('location');
         });
     }
 };
