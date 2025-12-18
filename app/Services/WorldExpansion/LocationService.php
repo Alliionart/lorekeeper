@@ -419,6 +419,7 @@ class LocationService extends Service {
             $saveData['name'] = parse($data['name']);
         }
         $saveData['is_active'] = isset($data['is_active']);
+        $saveData['has_backgrounds'] = isset($data['has_backgrounds']);
 
         $saveData['image'] = $data['image'] ?? null;
         $saveData['image_th'] = $data['image_th'] ?? null;

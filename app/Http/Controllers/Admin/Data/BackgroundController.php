@@ -6,6 +6,7 @@ use App\Facades\Settings;
 use App\Http\Controllers\Controller;
 use App\Models\Award\Award;
 use App\Models\Background\Background;
+use App\Models\WorldExpansion\Location;
 use App\Models\Item\Item;
 use App\Models\User\User;
 use App\Services\BackgroundService;
@@ -46,13 +47,10 @@ class BackgroundController extends Controller {
      * @return \Illuminate\Contracts\Support\Renderable
      */
     public function getCreateBackground() {
-        $raw_location = Settings::get('character_locations');
-        $locations = explode(',', $raw_location);
-
         return view('admin.backgrounds.create_edit_background', [
             'background'    => new Background,
             'users'         => User::query()->orderBy('name')->pluck('name', 'id')->toArray(),
-            'locations'     => array_combine($locations, $locations),
+            'locations'     => ['' => 'None'] + Location::all()->where('has_backgrounds', 1)->pluck('name', 'id')->toArray(),
             'items'         => ['' => 'None'] + Item::orderBy('name')->pluck('name', 'id')->toArray(),
             'awards'        => ['' => 'None'] + Award::orderBy('name')->pluck('name', 'id')->toArray(),
         ]);
@@ -71,13 +69,10 @@ class BackgroundController extends Controller {
             abort(404);
         }
 
-        $raw_location = Settings::get('character_locations');
-        $locations = explode(',', $raw_location);
-
         return view('admin.backgrounds.create_edit_background', [
             'background'    => $background,
             'users'         => User::query()->orderBy('name')->pluck('name', 'id')->toArray(),
-            'locations'     => array_combine($locations, $locations),
+            'locations'     => ['' => 'None'] + Location::all()->where('has_backgrounds', 1)->pluck('name', 'id')->toArray(),
             'items'         => ['' => 'None'] + Item::orderBy('name')->pluck('name', 'id')->toArray(),
             'awards'        => ['' => 'None'] + Award::orderBy('name')->pluck('name', 'id')->toArray(),
         ]);

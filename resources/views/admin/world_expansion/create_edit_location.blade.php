@@ -136,9 +136,19 @@
         </div>
     @endif
 
-    <div class="form-group">
-        {!! Form::checkbox('is_active', 1, $location->id ? $location->is_active : 1, ['class' => 'form-check-input', 'data-toggle' => 'toggle']) !!}
-        {!! Form::label('is_active', 'Set Active', ['class' => 'form-check-label ml-3']) !!} {!! add_help('If turned off, the type will not be visible to regular users.') !!}
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-group">
+                {!! Form::checkbox('is_active', 1, $location->id ? $location->is_active : 1, ['class' => 'form-check-input', 'data-toggle' => 'toggle']) !!}
+                {!! Form::label('is_active', 'Set Active', ['class' => 'form-check-label ml-3']) !!} {!! add_help('If turned off, the type will not be visible to regular users.') !!}
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                {!! Form::checkbox('has_backgrounds', 1, $location->id ? $location->has_backgrounds : 1, ['class' => 'form-check-input', 'data-toggle' => 'toggle']) !!}
+                {!! Form::label('has_backgrounds', 'Use for Character Backgrounds', ['class' => 'form-check-label ml-3']) !!} {!! add_help('If this location hosts backgrounds, toggle ON.') !!}
+            </div>
+        </div>
     </div>
 
     <div class="text-right">

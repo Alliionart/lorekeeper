@@ -20,7 +20,7 @@ class Location extends Model {
      */
     protected $fillable = [
         'name', 'description', 'summary', 'parsed_description', 'sort', 'image_extension', 'thumb_extension',
-        'parent_id', 'type_id', 'is_active', 'display_style', 'is_character_home', 'is_user_home',
+        'parent_id', 'type_id', 'is_active', 'display_style', 'is_character_home', 'is_user_home', 'has_backgrounds',
 
     ];
 

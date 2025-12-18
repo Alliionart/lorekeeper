@@ -1664,7 +1664,7 @@ class CharacterManager extends Service {
                 $character->is_trading = isset($data['is_trading']);
 
                 $takeBgCurrency = true;
-                if ($character->location !== $data['location']) {
+                if ($character->home_id !== $data['location']) {
                     //Remove the item required here then update.
                     $takeBgCurrency = false;
                     $item_id = Settings::get('background_location_change_item_id');
@@ -1677,7 +1677,7 @@ class CharacterManager extends Service {
                     if (!(new InventoryManager)->debitStack($user, 'Character Location Update', ['data' => 'Item used in character background change ('.$character->displayName.')'], $stack, 1)) {
                         throw new \Exception('You do not have any of the required item ('.Item::find($item_id)->name.') for a location update.');
                     }
-                    $character->location = $data['location'];
+                    $character->home_id = $data['location'];
                 }
 
                 $owner = User::find($character->user_id);

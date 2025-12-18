@@ -74,7 +74,7 @@
                             </div>
                             <div class="col-12 col-md-2">
                                 <div class="logs-table-cell">
-                                    {{ $background->location() }}
+                                    {{ $background->location()->name }}
                                 </div>
                             </div>
                             <div class="col-12 col-md-4">

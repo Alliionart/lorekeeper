@@ -183,14 +183,12 @@ class CharacterController extends Controller {
             abort(404);
         }
 
-        $raw_location = Settings::get('character_locations');
-        $locations = explode(',', $raw_location);
         $location_change_item_id = Settings::get('background_location_change_item_id');
         $bg_change_currency_id = Settings::get('background_location_change_currency');
 
         return view('character.edit_profile', [
             'character'         => $this->character,
-            'bg_locations'         => array_combine($locations, $locations),
+            'bg_locations'      => Location::all()->where('has_backgrounds', 1)->pluck('name', 'id')->toArray(),
             'bg_currency'       => Currency::find($bg_change_currency_id),
             'bg_amount'         => Settings::get('background_location_change_amount'),
             'lItem'             => Item::find($location_change_item_id),
@@ -266,7 +264,6 @@ class CharacterController extends Controller {
         $id = $request->input('id');
         $character = Character::find($id);
 
-        //return $character->applicableBackgrounds($location);
         return view('character._background_refresh', [
             'character' => $character,
             'location'  => $location,

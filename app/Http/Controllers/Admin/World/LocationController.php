@@ -217,7 +217,7 @@ class LocationController extends Controller {
         $data = $request->only([
             'name', 'description', 'image', 'image_th', 'remove_image', 'remove_image_th', 'is_active', 'summary',
             'parent_id', 'type_id', 'user_home', 'character_home', 'style',
-            'attachment_type', 'attachment_id', 'attachment_data',
+            'attachment_type', 'attachment_id', 'attachment_data', 'has_backgrounds'
         ]);
         if ($id && $service->updateLocation(Location::find($id), $data, Auth::user())) {
             flash('Location updated successfully.')->success();

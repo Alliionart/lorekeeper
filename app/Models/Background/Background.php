@@ -4,6 +4,7 @@ namespace App\Models\Background;
 
 use App\Models\Character\Character;
 use App\Models\Model;
+use App\Models\WorldExpansion\Location;
 
 class Background extends Model {
     /**
@@ -68,7 +69,7 @@ class Background extends Model {
     }
 
     public function location() {
-        return $this->conditions()->pluck('location')->unique()->values()->first();
+        return Location::find($this->conditions()->pluck('location')->unique()->values()->first());
     }
 
     /**********************************************************************************************
