@@ -6,6 +6,7 @@ use App\Facades\Settings;
 use App\Http\Controllers\Controller;
 use App\Models\Character\Character;
 use App\Models\Character\CharacterTransfer;
+use App\Models\Character\CharacterDesignUpdate;
 use App\Models\User\User;
 use App\Services\CharacterManager;
 use App\Services\DesignUpdateManager;
@@ -266,10 +267,22 @@ class MyoController extends Controller {
             abort(404);
         }
 
+        if (Auth::check()) {
+            $current_submissions = CharacterDesignUpdate::where('update_type', 'MYO')
+                ->where('status', 'Pending')
+                ->where('update_category', 'new_design')
+                ->where('user_id', Auth::user()->id)
+                ->count();
+        } else {
+            $current_submissions = [];
+        }
+
         return view('character.update_form', [
             'character' => $this->character,
             'queueOpen' => Settings::get('is_myos_open'),
             'request'   => $this->character->designUpdate()->active()->first(),
+            'userSubmissionCount' => $current_submissions,
+            'maxSubmissions' => Settings::get('max_new_designs_per_player'),
         ]);
     }
 

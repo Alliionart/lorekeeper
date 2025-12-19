@@ -144,6 +144,7 @@ class CharacterController extends Controller {
             'markings'              => $markings,
             'pheno'                 => $this->character->getMarkingLinkedArray($markings),
             'geno'                  => $this->character->getMarkingLinkedArray($markings, 'genotype'),
+            'carriers'              => $this->character->getCarriers(),
             'skills'                => $this->character->skills,
             'core_awards'           => $this->character->awardsByCategory(1),
             'showMention'           => true,

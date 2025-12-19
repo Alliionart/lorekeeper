@@ -344,6 +344,18 @@ class Character extends Model {
             ->get();
     }
 
+    /**
+     * Get the character's active carriers.
+     */
+    public function carriers() {
+        $carrier_ids = CharacterMarking::where('character_id', $this->id)
+            ->whereNotNull('carrier_id')
+            ->pluck('carrier_id')->toArray();
+        $carriers = Carrier::whereIn('id', $carrier_ids)->get();
+        
+        return $carriers;
+    }
+
     /**********************************************************************************************
 
         SCOPES
@@ -713,6 +725,18 @@ class Character extends Model {
 
             return $this->faction->ranks()->where('is_open', 1)->where('breakpoint', '<=', $standing->quantity)->orderBy('breakpoint', 'DESC')->first();
         }
+    }
+
+    /**
+     * Get the character's active carriers.
+     */
+    public function getCarriers() {
+        $carrier_ids = CharacterMarking::where('character_id', $this->id)
+            ->whereNotNull('carrier_id')
+            ->pluck('carrier_id')->toArray();
+        $carriers = Carrier::whereIn('id', $carrier_ids)->pluck('name')->toArray();
+        
+        return $carriers ? implode(', ', $carriers) : false;
     }
 
     /**********************************************************************************************

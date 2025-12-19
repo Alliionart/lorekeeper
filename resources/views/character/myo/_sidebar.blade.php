@@ -15,7 +15,7 @@
             <div class="sidebar-item"><a href="{{ $character->url . '/profile/edit' }}" class="{{ set_active('myo/' . $character->id . '/profile/edit') }}">Edit Profile</a></div>
             <div class="sidebar-item"><a href="{{ $character->url . '/transfer' }}" class="{{ set_active('myo/' . $character->id . '/transfer') }}">Transfer</a></div>
             @if (Auth::user()->id == $character->user_id)
-                <div class="sidebar-item"><a href="{{ $character->url . '/approval' }}" class="{{ set_active('myo/' . $character->id . '/approval') }}">Submit MYO Design</a></div>
+                <div class="sidebar-item"><a href="{{ $character->url . '/approval' }}" class="{{ set_active('myo/' . $character->id . '/approval') }}">Design Approval</a></div>
             @endif
         </li>
     @endif

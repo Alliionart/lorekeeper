@@ -159,6 +159,8 @@ class AddSiteSettings extends Command {
 
         $this->addSiteSetting('site_weather_cycle', 0, '0 = Do not cycle, 1 = Daily, 2 = Weekly, 3 = Monthly');
 
+        $this->addSiteSetting('max_new_designs_per_player', 2, 'Enter a limit for how many pending new design submissions a user can have at once.');
+
         /**
         * AFFILIATES
         * Setting determines whether affiliates are open or closed.

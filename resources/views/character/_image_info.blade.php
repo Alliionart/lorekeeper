@@ -190,6 +190,16 @@
                         @endif
                     </div>
                 </div>
+                @if($carriers)
+                <div class="row no-gutters">
+                    <div class="col-lg-4 col-5">
+                        <h5>Carriers</h5>
+                    </div>
+                    <div class="col-lg-8 col-7 pl-1">
+                        {{ $carriers }}
+                    </div>
+                </div>
+                @endif
                 <div class="row no-gutters">
                     <div class="col-lg-4 col-5">
                         <h5>Class</h5>

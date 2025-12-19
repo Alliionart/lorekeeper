@@ -327,57 +327,67 @@
         </div>
     </div>
 
-    <div class="form-group">
-        {!! Form::checkbox('is_chimera', 0, 0, ['class' => 'form-check-input', 'data-toggle' => 'toggle', 'id' => 'is_chimera']) !!}
-        {!! Form::label('is_chimera', 'Is Chimera', ['class' => 'form-check-label ml-3']) !!} {!! add_help('If this character has the Chimera modifier, then this will give you the ability to customize both genomes.') !!}
-    </div>
-
-    <div class="row">
-        <div class="col-md-6">
+    <div class="card mb-3">
+        <h4 class="card-header d-flex justify-content-between align-items-center">Genotype & Carriers <a href="#" class="btn btn-primary mb-2" id="add-marking">Add Marking</a></h4>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-2">
+                    <div class="form-group">
+                        {!! Form::checkbox('is_chimera', 0, 0, ['class' => 'form-check-input', 'data-toggle' => 'toggle', 'id' => 'is_chimera']) !!}
+                        {!! Form::label('is_chimera', 'Is Chimera', ['class' => 'form-check-label ml-3']) !!} {!! add_help('If this character has the Chimera modifier, then this will give you the ability to customize both genomes.') !!}
+                    </div>
+                </div>
+                <div class="col-md-5">
+                    <div class="form-group">
+                        {!! Form::label('Base Color') !!}
+                        {!! Form::select('base', $bases, old('base_id'), ['class' => 'form-control selectize']) !!}
+                    </div>
+                </div>
+                <div class="col-md-5">
+                    <div class="form-group" connect="is_chimera" style="display:none">
+                        {!! Form::label('Secondary Base Color') !!}
+                        {!! Form::select('secondary_base', $bases, old('base_id'), ['class' => 'form-control selectize']) !!}
+                    </div>
+                </div>
+            </div>
+            <hr/>
             <div class="form-group">
-                {!! Form::label('Base Color') !!}
-                {!! Form::select('base', $bases, old('base_id'), ['class' => 'form-control selectize']) !!}
+                {!! Form::label('Markings') !!}
+                {!! add_help('Select markings applicable to character') !!}
+                <div id="markingList">
+                </div>
+                <div class="marking-row align-items-end hide mb-2">
+                    {!! Form::select('marking_id[]', $markings, null, ['class' => 'form-control mr-2 marking-select', 'placeholder' => 'Select Marking']) !!}
+                    <div class="form-group mb-0" style="width:50%">
+                        <select name="is_dominant[]" id="is_dominant[]" class="form-control markingType" placeholder="Select Type...">
+                            <option value="" data-code="">Select Type...</option>
+                            <option value="0" data-code="0">Recessive</option>
+                            <option value="1" data-code="1">Dominant</option>
+                        </select>
+                    </div>
+                    <div class="form-group mb-0 mx-2" connect="is_chimera" style="width:50%;display:none;">
+                        <select name="side_id[]" id="side_id" class="form-control" placeholder="Select Side...">
+                            <option value="" data-code="">Select Side...</option>
+                            <option value="0" data-code="0">Side 1</option>
+                            <option value="1" data-code="1">Side 2</option>
+                        </select>
+                    </div>
+                    <div class="form-group mb-0 mx-2" connect="Glint" style="min-width: 10vw; display:none;">
+                        {!! Form::label('Marking Color') !!}
+                        {!! Form::select('marking_color_0[]', $bases, null, ['class' => 'form-control glint-select']) !!}
+                    </div>
+                    <div class="form-group mb-0 mx-2 dominant" connect="Glint" style="min-width: 10vw; display:none;">
+                        {!! Form::label('Secondary Marking Color') !!}
+                        {!! Form::select('marking_color_1[]', $bases, null, ['class' => 'form-control glint-select']) !!}
+                    </div>
+                    <a href="#" class="remove-marking btn btn-danger mb-2">×</a>
+                </div>
             </div>
-        </div>
-        <div class="col-md-6">
-            <div class="form-group" connect="is_chimera" style="display:none">
-                {!! Form::label('Secondary Base Color') !!}
-                {!! Form::select('secondary_base', $bases, old('base_id'), ['class' => 'form-control selectize']) !!}
+            <hr/>
+            <div class="form-group">
+                {!! Form::label('Active Carriers') !!}
+                {!! Form::select('active_carriers[]', $carriers, old('carrier_id'), ['class' => 'form-control selectize', 'multiple' => true]) !!}
             </div>
-        </div>
-    </div>
-
-    <div class="form-group">
-        {!! Form::label('Markings') !!}
-        {!! add_help('Select markings applicable to character') !!}
-        <div><a href="#" class="btn btn-primary mb-2" id="add-marking">Add Marking</a></div>
-        <div id="markingList">
-        </div>
-        <div class="marking-row align-items-end hide mb-2">
-            {!! Form::select('marking_id[]', $markings, null, ['class' => 'form-control mr-2 marking-select', 'placeholder' => 'Select Marking']) !!}
-            <div class="form-group mb-0" style="width:50%">
-                <select name="is_dominant[]" id="is_dominant[]" class="form-control markingType" placeholder="Select Type...">
-                    <option value="" data-code="">Select Type...</option>
-                    <option value="0" data-code="0">Recessive</option>
-                    <option value="1" data-code="1">Dominant</option>
-                </select>
-            </div>
-            <div class="form-group mb-0 mx-2" connect="is_chimera" style="width:50%;display:none;">
-                <select name="side_id[]" id="side_id" class="form-control" placeholder="Select Side...">
-                    <option value="" data-code="">Select Side...</option>
-                    <option value="0" data-code="0">Side 1</option>
-                    <option value="1" data-code="1">Side 2</option>
-                </select>
-            </div>
-            <div class="form-group mb-0 mx-2" connect="Glint" style="min-width: 10vw; display:none;">
-                {!! Form::label('Marking Color') !!}
-                {!! Form::select('marking_color_0[]', $bases, null, ['class' => 'form-control glint-select']) !!}
-            </div>
-            <div class="form-group mb-0 mx-2 dominant" connect="Glint" style="min-width: 10vw; display:none;">
-                {!! Form::label('Secondary Marking Color') !!}
-                {!! Form::select('marking_color_1[]', $bases, null, ['class' => 'form-control glint-select']) !!}
-            </div>
-            <a href="#" class="remove-marking btn btn-danger mb-2">×</a>
         </div>
     </div>
 

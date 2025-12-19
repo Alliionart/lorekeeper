@@ -22,6 +22,8 @@ use App\Models\Character\CharacterTransfer;
 use App\Models\Currency\Currency;
 use App\Models\Item\Item;
 use App\Models\Marking\Marking;
+use App\Models\Carrier\Carrier;
+use App\Models\Carrier\MarkingCarrier;
 use App\Models\Sales\SalesCharacter;
 use App\Models\Species\Subtype;
 use App\Models\User\User;
@@ -2512,8 +2514,9 @@ class CharacterManager extends Service {
     public function updateCharacterMarkings($data, $character) {
         DB::beginTransaction();
 
+        $active_carriers = $data['active_carriers'] ?? null;
+
         try {
-            \Log::info('all_data', $data);
             // Clear old markings
             CharacterMarking::where('character_id', $character->id)->delete();
 
@@ -2524,8 +2527,22 @@ class CharacterManager extends Service {
             foreach ($data['marking_id'] as $markingId) {
                 if ($markingId) {
                     $temp = Marking::where('id', $markingId)->first();
-
                     $is_dominant = $data['is_dominant'][$i] ?? 0;
+
+                    // Map current carrier if it matches the current marking being processed
+                    $carrier_id = null;
+                    if($active_carriers) {
+                        $applicable_carriers = MarkingCarrier::where('marking_id', $markingId)->pluck('carrier_id')->toArray();
+                        $carrier_intersect = array_intersect($active_carriers, $applicable_carriers);
+                        if (count($carrier_intersect) > 0) {    
+                            $applicable = array_values($carrier_intersect);
+                            if(count($applicable) > 1) {
+                                $carrier_id = json_encode($applicable);
+                            }
+                            $carrier_id = $applicable[0];
+                        }
+                    }
+
 
                     $glint = null;
                     if ($markingId == $glintID) {
@@ -2544,6 +2561,7 @@ class CharacterManager extends Service {
                         'is_dominant'   => $is_dominant,
                         'data'          => $data['side_id'][$i] ?? 0,
                         'base_id'       => $glint,
+                        'carrier_id'    => $carrier_id ?? null,
                     ]);
 
                     $marking = CharacterMarking::create([
@@ -2554,6 +2572,7 @@ class CharacterManager extends Service {
                         'is_dominant'   => $is_dominant,
                         'data'          => $data['side_id'][$i] ?? 0,
                         'base_id'       => $glint,
+                        'carrier_id'    => $carrier_id ?? null,
                     ]);
                 }
                 $i++;
