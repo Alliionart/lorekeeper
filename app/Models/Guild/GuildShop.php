@@ -63,14 +63,14 @@ class GuildShop extends Model {
      * Get the shop stock.
      */
     public function stock() {
-        return $this->hasMany(GuildShopStock::class, 'shop_id')->orderBy('id', 'DESC');
+        return $this->hasMany(GuildShopStock::class, 'guild_shop_id')->orderBy('id', 'DESC');
     }
 
     /**
      * Get the shop stock (visible only).
      */
     public function visibleStock() {
-        return $this->hasMany(GuildShopStock::class, 'shop_id')->where('is_visible', 1)->where('quantity', '>', 0);
+        return $this->hasMany(GuildShopStock::class, 'guild_shop_id')->where('is_visible', 1)->where('quantity', '>', 0);
     }
 
     /**
@@ -84,8 +84,8 @@ class GuildShop extends Model {
      * Get the shop stock as items for display purposes.
      */
     public function displayStock() {
-        return $this->belongsToMany(Item::class, 'guild_shop_stock')->where('stock_type', 'Item')
-            ->withPivot('item_id', 'currency_id', 'cost', 'quantity', 'id', 'is_visible')
+        return $this->belongsToMany(Item::class, 'guild_shop_stock')
+            ->withPivot('item_id', 'currency_id', 'cost', 'quantity', 'id')
             ->wherePivot('is_visible', 1)
             ->wherePivot('quantity', '>', 0);
     }

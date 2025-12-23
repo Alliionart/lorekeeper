@@ -26,6 +26,7 @@
             <div class="sidebar-section-header">Admin</div>
             <div class="sidebar-item"><a href="{{ $guild->getEditUrlAttribute() }}" class="{{ set_active('*settings') }}">Settings</a></div>
             <div class="sidebar-item"><a href="{{ $guild->getEditRankUrlAttribute() }}" class="{{ set_active('*edit-ranks') }}">Edit Ranks</a></div>
+            <div class="sidebar-item"><a href="{{ $guild->shop->getEditUrlAttribute() }}" class="{{ set_active('*shop/edit') }}">Edit Shop</a></div>
         </li>
     @endif
 </ul>

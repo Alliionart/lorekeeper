@@ -7,6 +7,7 @@ use App\Models\Currency\CurrencyLog;
 use App\Models\Item\Item;
 use App\Models\Model;
 use App\Models\User\User;
+use App\Models\Guild\GuildShop;
 use Carbon\Carbon;
 
 class Guild extends Model {
@@ -80,6 +81,13 @@ class Guild extends Model {
      */
     public function items() {
         return $this->belongsToMany(Item::class, 'guild_items')->withPivot('count', 'data', 'updated_at', 'id')->whereNull('guild_items.deleted_at');
+    }
+
+    /**
+     * Gets the guild shop.
+     */
+    public function shop() {
+        return $this->hasOne(GuildShop::class, 'guild_id');
     }
 
     /**

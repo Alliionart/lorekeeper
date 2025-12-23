@@ -9,10 +9,13 @@ use App\Models\Guild\GuildCharacter;
 use App\Models\Guild\GuildCurrency;
 use App\Models\Guild\GuildItem;
 use App\Models\Guild\GuildMember;
+use App\Models\Guild\GuildShopStock;
+use App\Models\Guild\GuildShop;
 use App\Models\Item\Item;
 use App\Models\Item\ItemCategory;
 use App\Models\User\UserCurrency;
 use App\Services\GuildManager;
+use App\Services\GuildShopManager;
 use Auth;
 use Illuminate\Http\Request;
 
@@ -216,9 +219,29 @@ class GuildController extends Controller {
      */
     public function getGuildShop($id) {
         $guild = Guild::where('id', $id)->first();
+        $shop = $guild->shop;
+
+        if(!$guild || !$shop || !$shop->is_active) {
+            abort(404);
+        }
+
+        $categories = ItemCategory::visible(Auth::check() ? Auth::user() : null)->orderBy('sort', 'DESC')->get();
+        $query = $shop->displayStock()->where(function ($query) use ($categories){
+            $query->whereIn('item_category_id', $categories->pluck('id')->toArray())
+                ->orWHereNull('item_category_id');
+        });
+
+        $items = count($categories) ? $query->orderByRaw('FIELD(item_category_id,'.implode(',', $categories->pluck('id')->toArray()).')')
+            ->orderBy('name')
+            ->get()
+            ->groupBy('item_category_id') : $shop->displayStock()->orderBy('name')->get()->groupBy('item_category_id');
 
         return view('guilds.shop', [
-            'guild' => $guild,
+            'guild'         => $guild,
+            'shop'          => $shop,
+            'categories'    => $categories->keyBy('id'),
+            'items'         => $items,
+            'currencies'    => Currency::whereIn('id', GuildShopStock::where('guild_shop_id', $shop->id)->pluck('currency_id')->toArray())->get()->keyBy('id'),
             //TODO: add shop variables and data
             //TODO: make shop not viewable if the shop is not active
         ]);
@@ -425,4 +448,102 @@ class GuildController extends Controller {
      * Guild events
      *
      */
+
+    /** --------------------------------------------------------------
+     * GUILD SHOPS
+     * -------------------------------------------------------------- */
+
+    /**
+     * Shows the guild shop edit page.
+     */
+    public function getGuildShopEdit($id) {
+        $guild = Guild::where('id', $id)->first();
+        $shop = $guild->shop;
+
+        if(!$guild || !$shop) {
+            abort(404);
+        }
+
+        if (($guild->owner_id !== Auth::user()->id) || !Auth::user()->isStaff) {
+            return redirect('/guilds/view'.$guild->id.'/shop')->with('error', 'You do not have permission to edit this guild shop.');
+        }
+
+        return view('guilds.shop_edit', [
+            'guild' => $guild,
+            'shop'  => $shop,
+            'items'      => Item::orderBy('name')->pluck('name', 'id'),
+            'currencies' => Currency::orderBy('name')->pluck('name', 'id'),
+        ]);
+    }
+
+    /**
+     * Gets the shop stock modal.
+     *
+     * @param App\Services\GuildShopManager $service
+     * @param int                      $id
+     * @param int                      $stockId
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function getShopStock(GuildShopManager $service, $id, $stockId) {
+        $shop = GuildShop::where('id', $id)->where('is_active', 1)->first();
+        $stock = GuildShopStock::with('item')->where('id', $stockId)->where('guild_shop_id', $id)->first();
+
+        $user = Auth::user();
+        $quantityLimit = 0;
+        $userPurchaseCount = 0;
+        $purchaseLimitReached = false;
+        if ($user) {
+            $quantityLimit = $service->getStockPurchaseLimit($stock, Auth::user());
+            $userPurchaseCount = $service->checkUserPurchases($stock, Auth::user());
+            $purchaseLimitReached = $service->checkPurchaseLimitReached($stock, Auth::user());
+            $userOwned = UserItem::where('user_id', $user->id)->where('item_id', $stock->item->id)->where('count', '>', 0)->get();
+        }
+
+        if (!$shop) {
+            abort(404);
+        }
+
+        return view('shops._stock_modal', [
+            'shop'                 => $shop,
+            'stock'                => $stock,
+            'quantityLimit'        => $quantityLimit,
+            'userPurchaseCount'    => $userPurchaseCount,
+            'purchaseLimitReached' => $purchaseLimitReached,
+            'userOwned'            => $user ? $userOwned : null,
+        ]);
+    }
+
+    /**
+     * Buys an item from a shop.
+     *
+     * @param App\Services\ShopManager $service
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function postBuy(Request $request, ShopManager $service) {
+        $request->validate(ShopLog::$createRules);
+        if ($service->buyStock($request->only(['stock_id', 'shop_id', 'slug', 'bank', 'quantity']), Auth::user())) {
+            flash('Successfully purchased item.')->success();
+        } else {
+            foreach ($service->errors()->getMessages()['error'] as $error) {
+                flash($error)->error();
+            }
+        }
+
+        return redirect()->back();
+    }
+
+    /**
+     * Shows the user's purchase history.
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function getPurchaseHistory() {
+        return view('shops.purchase_history', [
+            'logs'  => Auth::user()->getShopLogs(0),
+            'shops' => Shop::where('is_active', 1)->orderBy('sort', 'DESC')->get(),
+        ]);
+    }
+
 }
