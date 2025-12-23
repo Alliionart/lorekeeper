@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Guild\Guild;
+use App\Models\Guild\GuildRank;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 
@@ -178,4 +179,118 @@ class GuildManager extends Service {
 
         return $data;
     }
+
+    /**
+     * ---------------------------------------------------------------------------
+     * GUILD RANKS 
+     * ---------------------------------------------------------------------------
+     */
+
+    /**
+     * Updates guild ranks.
+     */
+    public function updateGuildRanks($guild, $data, $user) {
+        DB::beginTransaction();
+
+        try {
+            // 1. Check if user has permission to edit ranks
+            if(!$guild->getGuildEditPermissions($user)) {
+                throw new \Exception('You do not have permission to edit this guild\'s ranks.');
+            }
+            if(!isset($data['user_ranks']) && !isset($data['character_ranks'])) {
+                throw new \Exception('No rank data provided.');
+            }
+
+            // Process user ranks
+            if (isset($data['user_ranks'])) {
+                $userRanks = [];
+                foreach ($data['user_ranks'] as $index => $rank) {
+                    $currentRank = GuildRank::where('guild_id', $guild->id)
+                        ->where('name', $rank['rank_name'])
+                        ->where('for_user', 1)
+                        ->where('for_character', 0)
+                        ->first();
+
+                    //TODO: Handle rank icons here. All rank icons should have the same naming convention: guild_{guildid}_rank_{rankid}.png
+                    
+                    if(!$currentRank) {
+                        GuildRank::create([
+                            'guild_id'              => $guild->id,
+                            'name'                  => $rank['rank_name'],
+                            'reputation_threshold'  => $rank['reputation_threshold'],
+                            'is_character_rank'     => 0,
+                            'description'           => $rank['description'],
+                        ]);
+                    } else {
+                        $currentRank->update([
+                            'name'                  => $rank['rank_name'],
+                            'reputation_threshold'  => $rank['reputation_threshold'],
+                            'description'           => $rank['description'],
+                        ]);
+                    }
+                }
+                // Delete ranks that do not exist in the new data
+                $newRankNames = array_map(function($rank) {
+                    return $rank['rank_name'];
+                }, $data['user_ranks']);
+
+                $guild->ranks()
+                    ->where('for_user', 1)
+                    ->where('for_character', 0)
+                    ->whereNotIn('name', $newRankNames)
+                    ->delete();
+            }
+
+            // Process character ranks
+            if (isset($data['character_ranks'])) {
+                $characterRanks = [];
+                foreach ($data['character_ranks'] as $index => $rank) {
+                    $currentRank = GuildRank::where('guild_id', $guild->id)
+                        ->where('name', $rank['rank_name'])
+                        ->where('for_user', 0)
+                        ->where('for_character', 1)
+                        ->first();
+                    
+                    if(!$currentRank) {
+                        GuildRank::create([
+                            'guild_id'              => $guild->id,
+                            'name'                  => $rank['rank_name'],
+                            'reputation_threshold'  => $rank['reputation_threshold'],
+                            'is_character_rank'     => 0,
+                            'description'           => $rank['description'],
+                        ]);
+                    } else {
+                        $currentRank->update([
+                            'name'                  => $rank['rank_name'],
+                            'reputation_threshold'  => $rank['reputation_threshold'],
+                            'description'           => $rank['description'],
+                        ]);
+                    }
+                }
+                // Delete ranks that do not exist in the new data
+                $newRankNames = array_map(function($rank) {
+                    return $rank['rank_name'];
+                }, $data['user_ranks']);
+
+                $guild->ranks()
+                    ->where('for_user', 0)
+                    ->where('for_character', 1)
+                    ->whereNotIn('name', $newRankNames)
+                    ->delete();
+            }
+
+            return $this->commitReturn($guild);
+        } catch (\Exception $e) {
+            $this->setError('error', $e->getMessage());
+        }
+
+        return $this->rollbackReturn(false);
+    }
+
+    /**
+     * ---------------------------------------------------------------------------
+     * MISC FUNCTIONS
+     * ---------------------------------------------------------------------------
+     */
+
 }

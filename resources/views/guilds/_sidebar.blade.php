@@ -1,9 +1,10 @@
 <ul>
     <li class="sidebar-header"><a href="{{ $guild->getViewUrlAttribute() }}" class="card-link">{{ $guild->name }}</a></li>
     <li class="sidebar-section">
-        <div class="sidebar-section-header">Inventory</div>
+        <div class="sidebar-section-header">Storage</div>
         <div class="sidebar-item"><a href="{{ $guild->getViewUrlAttribute() . '/inventory' }}" class="{{ set_active('*inventory') }}">Inventory</a></div>
         <div class="sidebar-item"><a href="{{ $guild->getViewUrlAttribute() . '/bank' }}" class="{{ set_active('*bank') }}">Bank</a></div>
+        <div class="sidebar-item"><a href="{{ $guild->getViewUrlAttribute() . '/shop' }}" class="{{ set_active('*shop') }}">Shop</a></div>
         <?php
         $pets_exists = class_exists('App\Models\Pet\Pet');
         $gear_exists = class_exists('App\Models\Claymore\Gear');

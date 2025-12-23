@@ -92,4 +92,43 @@
         {!! Form::close() !!}
     @endif
 
+    @if (Auth::check() && Auth::user()->hasPower('edit_inventories'))
+        <div class="modal fade" id="grantModal" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <span class="modal-title h5 mb-0">[ADMIN] Grant/remove currency</span>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        {!! Form::open(['url' => 'admin/guild/' . $guild->id . '/grant']) !!}
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    {!! Form::label('currency_id', 'Currency') !!}
+                                    {!! Form::select('currency_id', $currencyOptions, null, ['class' => 'form-control']) !!}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    {!! Form::label('quantity', 'Quantity') !!} {!! add_help('If the value given is less than 0, this will be deducted from the character.') !!}
+                                    {!! Form::text('quantity', null, ['class' => 'form-control']) !!}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            {!! Form::label('data', 'Reason (Optional)') !!} {!! add_help('A reason for the grant. This will be noted in the logs.') !!}
+                            {!! Form::text('data', null, ['class' => 'form-control']) !!}
+                        </div>
+                        <div class="text-right">
+                            {!! Form::submit('Submit', ['class' => 'btn btn-primary']) !!}
+                        </div>
+                        {!! Form::close() !!}
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
+
 @endsection

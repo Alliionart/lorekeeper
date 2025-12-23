@@ -16,99 +16,89 @@
 
     {!! Form::open(['url' => '/guilds/edit-ranks/' . $guild->id, 'id' => 'guildSettingForm', 'files' => true]) !!}
 
-    <h3>User Ranks</h3>
-    <div class="user-ranks">
-        <div class="rank-row">
-            <div class="row">
-                <div class="col-md-3">
-                    <div class="form-group">
-                        {!! Form::label('rank_name', 'Name') !!}
-                        {!! Form::text('rank_name', null, ['class' => 'form-control']) !!}
-                    </div>
-                </div>
-                <div class="col-md-2">
-                    <div class="form-group">
-                        {!! Form::label('rank_threshold[]', 'Reputation Threshold') !!}
-                        {!! Form::number('rank_threshold[]', null, ['class' => 'form-control', 'min' => 0]) !!}
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="form-group">
-                        {!! Form::label('description[]', 'Description (Optional)') !!} {!! add_help('Give info about your ' . __('guilds.guild') . '! This can include images, tables, or other bootrap v4 content.') !!}
-                        {!! Form::text('description[]', null, ['class' => 'form-control']) !!}
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="form-group">
-                        {!! Form::label('Rank Icon (Optional)') !!} {!! add_help('Add an optional icon to distinguish the rank.') !!}
-                        <div class="custom-file">
-                            {!! Form::label('icon[]', 'Choose file...', ['class' => 'custom-file-label']) !!}
-                            {!! Form::file('icon[]', ['class' => 'custom-file-input']) !!}
-                        </div>
-                        <div class="text-muted">Recommended size: 50px x 50px</div>
-                        @if ($guild->has_logo)
-                            <div class="form-check">
-                                {!! Form::checkbox('remove_icon[]', 1, false, ['class' => 'form-check-input']) !!}
-                                {!! Form::label('remove_icon[]', 'Remove current icon', ['class' => 'form-check-label']) !!}
+    <div class="ranks">
+        <div class="card mb-4">
+            <h3 class="card-header">User Ranks</h3>
+            <div class="card-body">
+                <div class="user-ranks rank-list">
+                    <div class="rank-row">
+                        <div class="d-flex direction-row">
+                            <div class="form-group w-25 mr-2">
+                                {!! Form::label('rank_name', 'Name') !!}
+                                {!! Form::text('user_ranks[0][rank_name]', null, ['class' => 'form-control']) !!}
                             </div>
-                        @endif
+                            <div class="form-group mr-2">
+                                {!! Form::label('rank_threshold[0]', 'Reputation Threshold') !!}
+                                {!! Form::number('user_ranks[0][rank_threshold]', null, ['class' => 'form-control', 'min' => 0]) !!}
+                            </div>
+                            <div class="form-group w-50 mr-2">
+                                {!! Form::label('description[0]', 'Description (Optional)') !!} {!! add_help('Give info about your ' . __('guilds.guild') . '! This can include images, tables, or other bootrap v4 content.') !!}
+                                {!! Form::text('user_ranks[0][description]', null, ['class' => 'form-control']) !!}
+                            </div>
+                            <div class="form-group mr-2">
+                                {!! Form::label('Rank Icon (Optional)') !!} {!! add_help('Add an optional icon to distinguish the rank.') !!}
+                                <div class="custom-file">
+                                    {!! Form::label('user_ranks[0][icon]', 'Choose file...', ['class' => 'custom-file-label']) !!}
+                                    {!! Form::file('user_ranks[0][icon]', ['class' => 'custom-file-input']) !!}
+                                </div>
+                                <div class="text-muted">Recommended size: 50px x 50px</div>
+                                @if ($guild->has_logo)
+                                    <div class="form-check">
+                                        {!! Form::checkbox('user_ranks[0][remove_icon]', 1, false, ['class' => 'form-check-input']) !!}
+                                        {!! Form::label('user_ranks[0][remove_icon]', 'Remove current icon', ['class' => 'form-check-label']) !!}
+                                    </div>
+                                @endif
+                            </div>
+                            <a href="#" class="btn btn-danger remove-rank align-self-center">-</a>
+                        </div>
                     </div>
-                </div>
-                <div class="col-md-1">
-                    <a href="#" class="btn btn-danger remove-rank">Remove</a>
+                    <div class="text-right add-rank-container">
+                        <a href="#" class="btn btn-primary add-rank">Add Rank</a>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="text-right">
-            <a href="#" class="btn btn-primary add-rank">Add Rank</a>
-        </div>
-    </div>
 
-    <h3>Character Ranks</h3>
-    <div class="character-ranks">
-        <div class="rank-row">
-            <div class="row">
-                <div class="col-md-3">
-                    <div class="form-group">
-                        {!! Form::label('rank_name', 'Name') !!}
-                        {!! Form::text('rank_name', null, ['class' => 'form-control']) !!}
-                    </div>
-                </div>
-                <div class="col-md-2">
-                    <div class="form-group">
-                        {!! Form::label('rank_threshold[]', 'Reputation Threshold') !!}
-                        {!! Form::number('rank_threshold[]', null, ['class' => 'form-control', 'min' => 0]) !!}
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="form-group">
-                        {!! Form::label('description[]', 'Description (Optional)') !!} {!! add_help('Give info about your ' . __('guilds.guild') . '! This can include images, tables, or other bootrap v4 content.') !!}
-                        {!! Form::text('description[]', null, ['class' => 'form-control']) !!}
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="form-group">
-                        {!! Form::label('Rank Icon (Optional)') !!} {!! add_help('Add an optional icon to distinguish the rank.') !!}
-                        <div class="custom-file">
-                            {!! Form::label('icon[]', 'Choose file...', ['class' => 'custom-file-label']) !!}
-                            {!! Form::file('icon[]', ['class' => 'custom-file-input']) !!}
-                        </div>
-                        <div class="text-muted">Recommended size: 50px x 50px</div>
-                        @if ($guild->has_logo)
-                            <div class="form-check">
-                                {!! Form::checkbox('remove_icon[]', 1, false, ['class' => 'form-check-input']) !!}
-                                {!! Form::label('remove_icon[]', 'Remove current icon', ['class' => 'form-check-label']) !!}
+        <div class="card">
+            <h3 class="card-header">Character Ranks</h3>
+            <div class="card-body">
+                <div class="character-ranks rank-list">
+                    <div class="rank-row">
+                        <div class="d-flex direction-row">
+                            <div class="form-group w-25 mr-2">
+                                {!! Form::label('rank_name', 'Name') !!}
+                                {!! Form::text('character_ranks[0][rank_name]', null, ['class' => 'form-control']) !!}
                             </div>
-                        @endif
+                            <div class="form-group mr-2">
+                                {!! Form::label('rank_threshold[0]', 'Reputation Threshold') !!}
+                                {!! Form::number('character_ranks[0][rank_threshold]', null, ['class' => 'form-control', 'min' => 0]) !!}
+                            </div>
+                            <div class="form-group w-50 mr-2">
+                                {!! Form::label('description[0]', 'Description (Optional)') !!} {!! add_help('Give info about your ' . __('guilds.guild') . '! This can include images, tables, or other bootrap v4 content.') !!}
+                                {!! Form::text('character_ranks[0][description]', null, ['class' => 'form-control']) !!}
+                            </div>
+                            <div class="form-group mr-2">
+                                {!! Form::label('Rank Icon (Optional)') !!} {!! add_help('Add an optional icon to distinguish the rank.') !!}
+                                <div class="custom-file">
+                                    {!! Form::label('character_ranks[0][icon]', 'Choose file...', ['class' => 'custom-file-label']) !!}
+                                    {!! Form::file('character_ranks[0][icon]', ['class' => 'custom-file-input']) !!}
+                                </div>
+                                <div class="text-muted">Recommended size: 50px x 50px</div>
+                                @if ($guild->has_logo)
+                                    <div class="form-check">
+                                        {!! Form::checkbox('character_ranks[0][remove_icon]', 1, false, ['class' => 'form-check-input']) !!}
+                                        {!! Form::label('character_ranks[0][remove_icon]', 'Remove current icon', ['class' => 'form-check-label']) !!}
+                                    </div>
+                                @endif
+                            </div>
+                            <a href="#" class="btn btn-danger remove-rank align-self-center">-</a>
+                        </div>
                     </div>
-                </div>
-                <div class="col-md-1">
-                    <a href="#" class="btn btn-danger remove-rank">Remove</a>
+                    <div class="text-right add-rank-container">
+                        <a href="#" class="btn btn-primary add-rank">Add Rank</a>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="text-right">
-            <a href="#" class="btn btn-primary add-rank">Add Rank</a>
         </div>
     </div>
 
@@ -125,6 +115,37 @@
     @parent
     <script>
         $(document).ready(function() {
+
+            //Add a new rank
+            $('.add-rank').click(function(e) {
+                e.preventDefault();
+                var rankRow = $(this).closest('.rank-list').find('.rank-row:first').clone();
+                rankRow.find('input').val('');
+                var index = $(this).closest('.rank-list').find('.rank-row').length;
+                rankRow.find('input, label').each(function() { 
+                    if ($(this).attr('name')) {
+                        var name = $(this).attr('name');
+                        name = name.replace(/\[\d+\]/, '[' + index + ']');
+                        $(this).attr('name', name);
+                    }
+                    if ($(this).attr('for')) {
+                        var forAttr = $(this).attr('for');
+                        forAttr = forAttr.replace(/\[\d+\]/, '[' + index + ']');
+                        $(this).attr('for', forAttr);
+                    }
+                });
+                
+                $(rankRow).insertBefore($(this).closest('.add-rank-container'));
+            });
+
+            //Remove a rank row
+            $('.ranks').on('click', '.remove-rank', function(e) {
+                e.preventDefault();
+                var count = $(this).closest('.rank-list').find('.rank-row').length;
+                if (count > 1) {
+                    $(this).parents('.rank-row').remove();
+                }
+            });
 
         });
     </script>

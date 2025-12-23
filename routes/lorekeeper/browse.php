@@ -207,6 +207,8 @@ Route::group(['prefix' => __('guilds.guilds')], function () {
     Route::get('view/{id}/inventory', 'GuildController@getGuildInventory');
     Route::get('view/{id}/bank', 'GuildController@getGuildBank');
 
+    Route::post('{id}/bank/transfer', 'GuildController@postBuildBankTransfer');
+
     Route::get('view/{id}/'.strtolower(__('guilds.playpen')), 'GuildController@getGuildPets');
     Route::get('view/{id}/armory', 'GuildController@getGuildArmory');
 });

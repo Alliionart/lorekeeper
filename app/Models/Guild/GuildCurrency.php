@@ -3,6 +3,7 @@
 namespace App\Models\Guild;
 
 use App\Models\Currency\Currency;
+use App\Models\Guild\Guild;
 use App\Models\Model;
 
 class GuildCurrency extends Model {

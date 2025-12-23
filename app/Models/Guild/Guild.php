@@ -5,6 +5,9 @@ namespace App\Models\Guild;
 use App\Models\Item\Item;
 use App\Models\Model;
 use App\Models\User\User;
+use App\Models\Guild\GuildCurrency;
+use App\Models\Currency\Currency;
+use App\Models\Currency\CurrencyLog;
 use Carbon\Carbon;
 
 class Guild extends Model {
@@ -92,6 +95,13 @@ class Guild extends Model {
      */
     public function members() {
         return $this->hasMany(GuildMember::class, 'user_id');
+    }
+
+    /**
+     * Get the mods in the guild.
+     */
+    public function mods() {
+        return $this->hasMany(GuildMember::class, 'user_id')->where('rank', 'Mod');
     }
 
     /**********************************************************************************************
@@ -184,23 +194,61 @@ class Guild extends Model {
     /**
      * Gets the inventory of the user for selection.
      *
-     * @param mixed $user
+     * @param mixed $guild
      *
      * @return array
      */
-    public function getInventory($user) {
-        return $this->data && isset($this->data['user']['user_items']) ? $this->data['user']['user_items'] : [];
+    public function getInventory($guild) {
+        return $this->data && isset($this->data['guild']['user_items']) ? $this->data['guild']['guild_items'] : [];
     }
 
     /**
      * Gets the currencies of the given user for selection.
      *
-     * @param \App\Models\User\User $user
+     * @param \App\Models\Guild\Guild $guild
      *
      * @return array
      */
-    public function getCurrencies($user) {
-        return $this->data && isset($this->data['user']) && isset($this->data['user']['currencies']) ? $this->data['user']['currencies'] : [];
+    public function getCurrencies($showAll = false) {
+        $owned = GuildCurrency::where('guild_id', $this->id)->pluck('quantity', 'currency_id')->toArray();
+
+        $currencies = Currency::where('is_guild_owned', 1);
+        if ($showAll) {
+            $currencies->where(function ($query) use ($owned) {
+                $query->where('is_displayed', 1)->orWhereIn('id', array_keys($owned));
+            });
+        } else {
+            $currencies = $currencies->where('is_displayed', 1);
+        }
+
+        $currencies = $currencies->orderBy('id', 'DESC')->get();
+
+        foreach ($currencies as $currency) {
+            $currency->quantity = $owned[$currency->id] ?? 0;
+        }
+
+        return $currencies;
+    }
+
+    /**
+     * Get the guild's currency logs.
+     *
+     * @param int $limit
+     *
+     * @return \Illuminate\Pagination\LengthAwarePaginator|\Illuminate\Support\Collection
+     */
+    public function getCurrencyLogs($limit = 10) {
+        $guild = $this;
+        $query = CurrencyLog::with('currency')->where(function ($query) use ($guild) {
+            $query->with('sender')->where('sender_type', 'Guild')->where('sender_id', $guild->id)->whereNotIn('log_type', ['Staff Grant', 'Prompt Rewards', 'Claim Rewards', 'Gallery Submission Reward']);
+        })->orWhere(function ($query) use ($guild) {
+            $query->with('recipient')->where('recipient_type', 'Guild')->where('recipient_id', $guild->id)->where('log_type', '!=', 'Staff Removal');
+        })->orderBy('id', 'DESC');
+        if ($limit) {
+            return $query->take($limit)->get();
+        } else {
+            return $query->paginate(30);
+        }
     }
 
     /**
@@ -239,13 +287,23 @@ class Guild extends Model {
         return url('admin/guilds/edit/'.$this->id);
     }
 
+    public function getGuildEditPermissions($user) {
+        if($user->id == $this->owner_id) {
+            return true;
+        }
+        if($this->mods()->where('user_id', $user->id)->count() > 0) {
+            return true;
+        }
+        return false;
+    }
+
     /**
      * Gets the file directory containing the model's image.
      *
      * @return string
      */
     public function getImageDirectoryAttribute() {
-        return 'images/data/guilds';
+        return 'images/data/guilds/'.$this->id;
     }
 
     /**

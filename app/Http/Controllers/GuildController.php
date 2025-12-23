@@ -11,6 +11,7 @@ use App\Models\Guild\GuildItem;
 use App\Models\Guild\GuildMember;
 use App\Models\Item\Item;
 use App\Models\Item\ItemCategory;
+use App\Models\User\UserCurrency;
 use App\Services\GuildManager;
 use Auth;
 use Illuminate\Http\Request;
@@ -186,8 +187,10 @@ class GuildController extends Controller {
     public function postGuildEditRanks(Request $request, GuildManager $service, $id = null) {
         $id ? $request->validate(Guild::$updateRules) : $request->validate(Guild::$createRules);
         $data = $request->only([
-            'rank_name', 'reputation_threshold',
+            'user_ranks', 'character_ranks',
         ]);
+
+        \Log::info($data);
 
         if ($id && $service->updateGuildRanks(Guild::find($id), $data, Auth::user())) {
             flash('Guild ranks updated successfully.')->success();
@@ -377,15 +380,43 @@ class GuildController extends Controller {
 
         return view('guilds.bank', [
             'guild'                 => $guild,
-            'currencies'            => $guild->getCurrencies(true),
-            'logs'                  => [] /**$guild->getCurrencyLogs() */,
-        ] + (Auth::check() && Auth::user()->id == $guild->ownner_id ? [
-            'takeCurrencyOptions' => Currency::where('allow_user_to_guild', 1)->where('is_guild_owned', 1)->where('is_user_owned', 1)->whereIn('id', GuildCurrency::where('guild_id', $guild->id)->pluck('currency_id')->toArray())->orderBy('sort_guild', 'DESC')->pluck('name', 'id')->toArray() ?? [],
-            'giveCurrencyOptions' => Currency::where('allow_guild_to_user', 1)->where('is_guild_owned', 1)->where('is_user_owned', 1)->whereIn('id', UserCurrency::where('user_id', Auth::user()->id)->pluck('currency_id')->toArray())->orderBy('sort_user', 'DESC')->pluck('name', 'id')->toArray() ?? [],
+            'currencies'            => $guild->getCurrencies($guild),
+            'logs'                  => $guild->getCurrencyLogs(),
+        ] + (Auth::check() && Auth::user()->id == $guild->owner_id ? [
+            'takeCurrencyOptions' => Currency::where('allow_user_to_guild', 1)->where('is_guild_owned', 1)->where('is_user_owned', 1)->whereIn('id', GuildCurrency::where('guild_id', $guild->id)->pluck('currency_id')->toArray())->orderBy('id', 'DESC')->pluck('name', 'id')->toArray() ?? [],
+            'giveCurrencyOptions' => Currency::where('allow_guild_to_user', 1)->where('is_guild_owned', 1)->where('is_user_owned', 1)->whereIn('id', UserCurrency::where('user_id', Auth::user()->id)->pluck('currency_id')->toArray())->orderBy('id', 'DESC')->pluck('name', 'id')->toArray() ?? [],
 
         ] : []) + (Auth::check() && (Auth::user()->hasPower('edit_inventories') || Auth::user()->id == $guild->owner_id) ? [
-            'currencyOptions' => Currency::where('is_guild_owned', 1)->orderBy('sort_character', 'DESC')->pluck('name', 'id')->toArray(),
+            'currencyOptions' => Currency::where('is_guild_owned', 1)->orderBy('id', 'DESC')->pluck('name', 'id')->toArray(),
         ] : []));
+    }
+
+    /**
+     * Transfers currency between guild and user.
+     *
+     * @param App\Services\GuildManager $service
+     * @param int|null                  $id
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function postBuildBankTransfer(Request $request, GuildManager $service, $id = null) {
+        $data = $request->only([
+            'quantity', 'take_currency_id', 'give_currency_id',
+        ]);
+
+        if ($id && $service->updateGuildRanks(Guild::find($id), $data, Auth::user())) {
+            flash('Guild ranks updated successfully.')->success();
+        } elseif (!$id && $category = $service->updateGuildRanks($data, Auth::user())) {
+            flash('Guild ranks created successfully.')->success();
+
+            return redirect()->to('guilds/view/'.$guild->id.'/bank');
+        } else {
+            foreach ($service->errors()->getMessages()['error'] as $error) {
+                flash($error)->error();
+            }
+        }
+
+        return redirect()->back();
     }
 
     //Future TODO:
