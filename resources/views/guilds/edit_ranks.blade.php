@@ -122,7 +122,7 @@
                 var rankRow = $(this).closest('.rank-list').find('.rank-row:first').clone();
                 rankRow.find('input').val('');
                 var index = $(this).closest('.rank-list').find('.rank-row').length;
-                rankRow.find('input, label').each(function() { 
+                rankRow.find('input, label').each(function() {
                     if ($(this).attr('name')) {
                         var name = $(this).attr('name');
                         name = name.replace(/\[\d+\]/, '[' + index + ']');
@@ -134,7 +134,7 @@
                         $(this).attr('for', forAttr);
                     }
                 });
-                
+
                 $(rankRow).insertBefore($(this).closest('.add-rank-container'));
             });
 
