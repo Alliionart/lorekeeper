@@ -2,11 +2,8 @@
 
 namespace App\Models\Guild;
 
-use Config;
-use App\Models\Model;
-use App\Models\Guild\Guild;
-use App\Models\Guild\GuildShopStock;
 use App\Models\Item\Item;
+use App\Models\Model;
 
 class GuildShop extends Model {
     /**
@@ -102,7 +99,7 @@ class GuildShop extends Model {
 
     /**
      * Gets the guild's log type for logging purposes.
-     * 
+     *
      * @return string
      */
     public function getLogTypeAttribute() {
@@ -115,8 +112,6 @@ class GuildShop extends Model {
 
     **********************************************************************************************/
 
-    
-
     /**********************************************************************************************
 
         ACCESSORS
@@ -125,79 +120,85 @@ class GuildShop extends Model {
 
     /**
      * Displays the shop's name linked to the shop page.
-     * 
+     *
      * @return string
      */
     public function getDisplayNameAttribute() {
-         return (!$this->is_active ? '<i class="fas fa-eye-slash mr-1"></i>' : '') .'<a href="'.$this->url.'" class="display-shop">'.$this->name.'</a>';
+        return (!$this->is_active ? '<i class="fas fa-eye-slash mr-1"></i>' : '').'<a href="'.$this->url.'" class="display-shop">'.$this->name.'</a>';
     }
 
-    /** 
+    /**
      * Gets the file directory containing the model's image.
-     * 
+     *
      * @return string
      */
     public function getImageDirectoryAttribute() {
         return $this->guild->image_directory.'/shop/';
     }
 
-    /** 
+    /**
      * Gets the file name of the model's image.
-     * 
+     *
      * @return string
      */
     public function getShopImageFileNameAttribute() {
         return $this->id.'/-image.png/';
     }
 
-    /** 
+    /**
      * Gets the path to the file directory containing the model's image.
-     * 
+     *
      * @return string
      */
     public function getShopImagePathAttribute() {
         return public_path($this->imageDirectory);
     }
 
-    /** 
+    /**
      * Gets the URL of the model's image.
-     * 
+     *
      * @return string
      */
     public function getShopImageUrlAttribute() {
-        if (!$this->has_image) return null;
-        return asset($this->imageDirectory . '/' . $this->shopImageFileName);
+        if (!$this->has_image) {
+            return null;
+        }
+
+        return asset($this->imageDirectory.'/'.$this->shopImageFileName);
     }
 
-    /** 
+    /**
      * Gets the URL of the model's shop page.
-     * 
+     *
      * @return string
      */
     public function getUrlAttribute() {
-        return url('guilds/view/' . $this->guild->id . '/shop/');
+        return url('guilds/view/'.$this->guild->id.'/shop/');
     }
 
     /**
      * Get the shop's shop sale logs.
      *
-     * @param  int  $limit
-     * @return \Illuminate\Support\Collection|\Illuminate\Pagination\LengthAwarePaginator
+     * @param int $limit
+     *
+     * @return \Illuminate\Pagination\LengthAwarePaginator|\Illuminate\Support\Collection
      */
     public function getShopLogs($limit = 10) {
         $guild = $this->guild;
         $query = GuildShopLog::where('guild_shop_id', $this->id)->with('shop')->with('item')->with('currency')->orderBy('id', 'DESC');
-        if($limit) return $query->take($limit)->get();
-        else return $query->paginate(30);
+        if ($limit) {
+            return $query->take($limit)->get();
+        } else {
+            return $query->paginate(30);
+        }
     }
 
-    /** 
+    /**
      * Gets the URL to edit shop.
-     * 
+     *
      * @return string
      */
     public function getEditUrlAttribute() {
-        return url('guilds/view/' . $this->guild->id . '/shop/edit');
+        return url('guilds/view/'.$this->guild->id.'/shop/edit');
     }
-
 }

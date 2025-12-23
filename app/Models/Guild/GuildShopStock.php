@@ -2,13 +2,9 @@
 
 namespace App\Models\Guild;
 
-use App\Models\Model;
-use App\Models\Item\Item;
 use App\Models\Currency\Currency;
-use App\Models\Guild\Guild;
-use App\Models\Guild\GuildShop;
-use App\Models\Guild\GuildShopLog;
-use App\Models\Guild\GuildCurrency;
+use App\Models\Item\Item;
+use App\Models\Model;
 
 class GuildShopStock extends Model {
     /**
@@ -35,7 +31,9 @@ class GuildShopStock extends Model {
 
     /**
      * Get the data attributes as an array.
-     * 
+     *
+     * @param mixed $value
+     *
      * @return array
      */
     public function getDataAttribute($value) {
@@ -44,11 +42,14 @@ class GuildShopStock extends Model {
 
     /**
      * Checks if the stack is transferrable.
-     * 
+     *
      * @return bool
      */
     public function getIsTransferrableAttribute() {
-        if(!isset($this->data['disallow_transfer']) && $this->item->allow_transfer) return true;
+        if (!isset($this->data['disallow_transfer']) && $this->item->allow_transfer) {
+            return true;
+        }
+
         return false;
     }
 
@@ -80,19 +81,20 @@ class GuildShopStock extends Model {
     **********************************************************************************************/
 
     /**
-     * Scopes active stock
+     * Scopes active stock.
+     *
+     * @param mixed $query
      */
     public function scopeActive($query) {
         return $query->where('is_visible', 1);
     }
 
     /**
-     * Scopes active stock
+     * Scopes active stock.
      */
     public function getDisplayCostAttribute() {
-        return (int)$this->cost;
+        return (int) $this->cost;
     }
-
 
     /**********************************************************************************************
 

@@ -2,11 +2,9 @@
 
 namespace App\Models\Guild;
 
-use App\Models\Model;
-use App\Models\Item\Item;
 use App\Models\Currency\Currency;
-use App\Models\Guild\Guild;
-
+use App\Models\Item\Item;
+use App\Models\Model;
 
 class GuildShopLog extends Model {
     /**
@@ -76,7 +74,6 @@ class GuildShopLog extends Model {
     public function currency() {
         return $this->belongsTo(Currency::class, 'currency_id');
     }
-
 
     /**********************************************************************************************
 

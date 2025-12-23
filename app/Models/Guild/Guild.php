@@ -2,12 +2,11 @@
 
 namespace App\Models\Guild;
 
+use App\Models\Currency\Currency;
+use App\Models\Currency\CurrencyLog;
 use App\Models\Item\Item;
 use App\Models\Model;
 use App\Models\User\User;
-use App\Models\Guild\GuildCurrency;
-use App\Models\Currency\Currency;
-use App\Models\Currency\CurrencyLog;
 use Carbon\Carbon;
 
 class Guild extends Model {
@@ -205,7 +204,7 @@ class Guild extends Model {
     /**
      * Gets the currencies of the given user for selection.
      *
-     * @param \App\Models\Guild\Guild $guild
+     * @param mixed $showAll
      *
      * @return array
      */
@@ -288,12 +287,13 @@ class Guild extends Model {
     }
 
     public function getGuildEditPermissions($user) {
-        if($user->id == $this->owner_id) {
+        if ($user->id == $this->owner_id) {
             return true;
         }
-        if($this->mods()->where('user_id', $user->id)->count() > 0) {
+        if ($this->mods()->where('user_id', $user->id)->count() > 0) {
             return true;
         }
+
         return false;
     }
 
