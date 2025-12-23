@@ -12,10 +12,10 @@
     <x-admin-edit title="Shop" :object="$shop" />
     {!! breadcrumbs([ucwords(__('guilds.guilds')) => __('guilds.guilds'), $guild->name => $guild->name]) !!}
 
-    @if( $shop->name )
+    @if ($shop->name)
         <h4 class="text-muted">{{ $guild->name }}'s Shop</h4>
     @endif
-    <h1>{{ $shop->name ?? $guild->name.'\'s Shop' }}</h1>
+    <h1>{{ $shop->name ?? $guild->name . '\'s Shop' }}</h1>
 
     <div class="text-center">
         @if ($shop->has_image)
@@ -30,10 +30,10 @@
 
     @foreach ($items as $categoryId => $categoryItems)
         <?php
-            $visible = '';
-            if ($categoryId && !$categories[$categoryId]->is_visible) {
-                $visible = '<i class="fas fa-eye-slash mr-1"></i>';
-            }
+        $visible = '';
+        if ($categoryId && !$categories[$categoryId]->is_visible) {
+            $visible = '<i class="fas fa-eye-slash mr-1"></i>';
+        }
         ?>
         <div class="card mb-3 inventory-category">
             <h5 class="card-header inventory-header">
@@ -74,14 +74,13 @@
             </div>
         </div>
     @endforeach
-
 @endsection
 @section('scripts')
     <script>
         $(document).ready(function() {
             $('.inventory-item').on('click', function(e) {
                 e.preventDefault();
-                console.log( "{{ url('guilds/shops/' . $shop->id) }}/" + $(this).data('id') );
+                console.log("{{ url('guilds/shops/' . $shop->id) }}/" + $(this).data('id'));
                 loadModal("{{ url('guilds/shops/' . $shop->id) }}/" + $(this).data('id'), 'Purchase Item');
             });
         });
