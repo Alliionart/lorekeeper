@@ -111,11 +111,13 @@ class SubmissionManager extends Service {
             }
 
             // Create the external characters array
-            foreach ($data['external_name'] as $i => $name) {
+            if(isset($data['external_name']) && $data['external_link']) {
+                foreach ($data['external_name'] as $i => $name) {
                 $external_characters[] = [
                     'name' => $data['external_name'][$i],
                     'link' => $data['external_link'][$i],
                 ];
+            }
             }
             // End external characters
 
