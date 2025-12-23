@@ -9,8 +9,8 @@ use App\Models\Guild\GuildCharacter;
 use App\Models\Guild\GuildCurrency;
 use App\Models\Guild\GuildItem;
 use App\Models\Guild\GuildMember;
-use App\Models\Guild\GuildShopStock;
 use App\Models\Guild\GuildShop;
+use App\Models\Guild\GuildShopStock;
 use App\Models\Item\Item;
 use App\Models\Item\ItemCategory;
 use App\Models\User\UserCurrency;
@@ -221,12 +221,12 @@ class GuildController extends Controller {
         $guild = Guild::where('id', $id)->first();
         $shop = $guild->shop;
 
-        if(!$guild || !$shop || !$shop->is_active) {
+        if (!$guild || !$shop || !$shop->is_active) {
             abort(404);
         }
 
         $categories = ItemCategory::visible(Auth::check() ? Auth::user() : null)->orderBy('sort', 'DESC')->get();
-        $query = $shop->displayStock()->where(function ($query) use ($categories){
+        $query = $shop->displayStock()->where(function ($query) use ($categories) {
             $query->whereIn('item_category_id', $categories->pluck('id')->toArray())
                 ->orWHereNull('item_category_id');
         });
@@ -450,7 +450,9 @@ class GuildController extends Controller {
      */
 
     /** --------------------------------------------------------------
-     * GUILD SHOPS
+     * GUILD SHOPS.
+     *
+     * @param mixed $id
      * -------------------------------------------------------------- */
 
     /**
@@ -460,7 +462,7 @@ class GuildController extends Controller {
         $guild = Guild::where('id', $id)->first();
         $shop = $guild->shop;
 
-        if(!$guild || !$shop) {
+        if (!$guild || !$shop) {
             abort(404);
         }
 
@@ -469,8 +471,8 @@ class GuildController extends Controller {
         }
 
         return view('guilds.shop_edit', [
-            'guild' => $guild,
-            'shop'  => $shop,
+            'guild'      => $guild,
+            'shop'       => $shop,
             'items'      => Item::orderBy('name')->pluck('name', 'id'),
             'currencies' => Currency::orderBy('name')->pluck('name', 'id'),
         ]);
@@ -480,8 +482,8 @@ class GuildController extends Controller {
      * Gets the shop stock modal.
      *
      * @param App\Services\GuildShopManager $service
-     * @param int                      $id
-     * @param int                      $stockId
+     * @param int                           $id
+     * @param int                           $stockId
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
@@ -545,5 +547,4 @@ class GuildController extends Controller {
             'shops' => Shop::where('is_active', 1)->orderBy('sort', 'DESC')->get(),
         ]);
     }
-
 }

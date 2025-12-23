@@ -7,7 +7,6 @@ use App\Models\Currency\CurrencyLog;
 use App\Models\Item\Item;
 use App\Models\Model;
 use App\Models\User\User;
-use App\Models\Guild\GuildShop;
 use Carbon\Carbon;
 
 class Guild extends Model {

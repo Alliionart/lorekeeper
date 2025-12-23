@@ -13,7 +13,7 @@ class GuildShopStock extends Model {
      * @var array
      */
     protected $fillable = [
-        'guild_shop_id', 'item_id', 'currency_id', 'cost', 'guild_cost', 'data', 'quantity', 'stock_type', 'is_visible', 'is_limited_stock', 'purchase_limit', 'guild_only'
+        'guild_shop_id', 'item_id', 'currency_id', 'cost', 'guild_cost', 'data', 'quantity', 'stock_type', 'is_visible', 'is_limited_stock', 'purchase_limit', 'guild_only',
     ];
 
     /**

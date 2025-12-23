@@ -4,7 +4,6 @@ namespace App\Services;
 
 use App\Models\Character\Character;
 use App\Models\Guild\Guild;
-use App\Models\Guild\GuildShop;
 use App\Models\Guild\GuildShopLog;
 use App\Models\Guild\GuildShopStock;
 use Illuminate\Support\Facades\DB;
@@ -108,12 +107,12 @@ class GuildShopManager extends Service {
             // Add a purchase log
             $shopLog = GuildShopLog::create([
                 'guild_shop_id' => $shop->id,
-                'character_id' => $character ? $character->id : null,
-                'user_id'      => $user->id,
-                'currency_id'  => $shopStock->currency->id,
-                'cost'         => $total_cost,
-                'item_id'      => $shopStock->item_id,
-                'quantity'     => $quantity,
+                'character_id'  => $character ? $character->id : null,
+                'user_id'       => $user->id,
+                'currency_id'   => $shopStock->currency->id,
+                'cost'          => $total_cost,
+                'item_id'       => $shopStock->item_id,
+                'quantity'      => $quantity,
             ]);
 
             // Give the user the item, noting down 1. whose currency was used (user or character) 2. who purchased it 3. which shop it was purchased from
@@ -136,7 +135,7 @@ class GuildShopManager extends Service {
      * Checks if the purchase limit for an item from a shop has been reached.
      *
      * @param \App\Models\Shop\GuildShopStock $shopStock
-     * @param \App\Models\User\User      $user
+     * @param \App\Models\User\User           $user
      *
      * @return bool
      */
@@ -152,7 +151,7 @@ class GuildShopManager extends Service {
      * Checks how many times a user has purchased a shop item.
      *
      * @param \App\Models\Shop\GuildShopStock $shopStock
-     * @param \App\Models\User\User      $user
+     * @param \App\Models\User\User           $user
      *
      * @return int
      */
