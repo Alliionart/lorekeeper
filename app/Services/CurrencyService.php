@@ -30,8 +30,8 @@ class CurrencyService extends Service {
 
         try {
             // More specific validation
-            if (!isset($data['is_user_owned']) && !isset($data['is_character_owned'])) {
-                throw new \Exception('Please choose if this currency is attached to users and/or characters.');
+            if (!isset($data['is_user_owned']) && !isset($data['is_character_owned']) && !isset($data['is_guild_owned'])) {
+                throw new \Exception('Please choose if this currency is attached to users, characters or guilds.');
             }
 
             $data = $this->populateData($data);
@@ -89,8 +89,8 @@ class CurrencyService extends Service {
 
         try {
             // More specific validation
-            if (!isset($data['is_user_owned']) && !isset($data['is_character_owned'])) {
-                throw new \Exception('Please choose if this currency is attached to users and/or characters.');
+            if (!isset($data['is_user_owned']) && !isset($data['is_character_owned']) && !isset($data['is_guild_owned'])) {
+                throw new \Exception('Please choose if this currency is attached to users, characters or guilds.');
             }
             if (Currency::where('name', $data['name'])->where('id', '!=', $currency->id)->exists()) {
                 throw new \Exception('The name has already been taken.');
@@ -248,6 +248,13 @@ class CurrencyService extends Service {
             $data['allow_character_to_user'] = 0;
         }
 
+        if (!isset($data['allow_user_to_guild'])) {
+            $data['allow_user_to_guild'] = 0;
+        }
+        if (!isset($data['allow_guild_to_user'])) {
+            $data['allow_guild_to_user'] = 0;
+        }
+
         $data['sort_user'] = $data['sort_character'] = 0;
 
         // Process the checkbox fields
@@ -255,6 +262,9 @@ class CurrencyService extends Service {
             $data['allow_user_to_character'] = $data['allow_character_to_user'] = 0;
         }
         if (!$data['is_user_owned']) {
+            $data['allow_user_to_user'] = $data['is_displayed'] = 0;
+        }
+        if (!$data['is_guild_owned']) {
             $data['allow_user_to_user'] = $data['is_displayed'] = 0;
         }
 

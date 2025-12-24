@@ -2,6 +2,9 @@
 
 namespace App\Models\Guild;
 
+use App\Models\Currency\Currency;
+use App\Models\Currency\CurrencyLog;
+use App\Models\Item\Item;
 use App\Models\Model;
 use App\Models\User\User;
 use Carbon\Carbon;
@@ -17,6 +20,7 @@ class Guild extends Model {
         'parsed_description', 'location', 'reputation',
         'max_users', 'max_characters',
         'open_new_users', 'automatic_app_approval', 'open_inventory', 'open_bank', 'open_inventory', 'open_pets', 'open_armory',
+        'has_logo', 'has_banner',
     ];
 
     /**
@@ -25,12 +29,16 @@ class Guild extends Model {
      * @var string
      */
     protected $table = 'guilds';
+
+    protected $casts = [
+        'joined_at' => 'datetime',
+    ];
     /**
      * Whether the model contains timestamps to be saved and updated.
      *
      * @var string
      */
-    public $timestamps = true;
+    public $timestamps = false;
 
     /**
      * Validation rules for guild creation.
@@ -39,7 +47,8 @@ class Guild extends Model {
      */
     public static $createRules = [
         'description' => 'nullable',
-        'image'       => 'mimes:png',
+        'logo'        => 'nullable|image|mimes:png,gif|max:200',
+        'banner'      => 'nullable|image|mimes:png,gif|max:800',
     ];
 
     /**
@@ -49,7 +58,8 @@ class Guild extends Model {
      */
     public static $updateRules = [
         'description' => 'nullable',
-        'image'       => 'mimes:png',
+        'logo'        => 'nullable|image|mimes:png,gif|max:200',
+        'banner'      => 'nullable|image|mimes:png,gif|max:800',
     ];
 
     /**********************************************************************************************
@@ -59,31 +69,45 @@ class Guild extends Model {
     **********************************************************************************************/
 
     /**
-     * Get the user this submission is for.
+     * Get the owner of the guild.
      */
     public function owner() {
         return $this->belongsTo(User::class, 'owner_id');
     }
 
     /**
-     * Get the user who made the submission.
+     * Get the guild inventory.
      */
-    public function inventory() {
-        return $this->belongsTo(User::class, 'user_id');
+    public function items() {
+        return $this->belongsToMany(Item::class, 'guild_items')->withPivot('count', 'data', 'updated_at', 'id')->whereNull('guild_items.deleted_at');
     }
 
     /**
-     * Get the staff who processed the submission.
+     * Gets the guild shop.
      */
-    public function staff() {
-        return $this->belongsTo(User::class, 'staff_id');
+    public function shop() {
+        return $this->hasOne(GuildShop::class, 'guild_id');
     }
 
     /**
-     * Get the characters attached to the submission.
+     * Get the characters attached to the guild.
      */
     public function characters() {
-        return $this->hasMany(SubmissionCharacter::class, 'submission_id');
+        return $this->hasMany(GuildCharacter::class, 'guild_id');
+    }
+
+    /**
+     * Get the members in the guild.
+     */
+    public function members() {
+        return $this->hasMany(GuildMember::class, 'user_id');
+    }
+
+    /**
+     * Get the mods in the guild.
+     */
+    public function mods() {
+        return $this->hasMany(GuildMember::class, 'user_id')->where('rank', 'Mod');
     }
 
     /**********************************************************************************************
@@ -174,43 +198,90 @@ class Guild extends Model {
     **********************************************************************************************/
 
     /**
-     * Get the data attribute as an associative array.
-     *
-     * @return array
-     */
-    public function getDataAttribute() {
-        return json_decode($this->attributes['data'], true);
-    }
-
-    /**
      * Gets the inventory of the user for selection.
      *
-     * @param mixed $user
+     * @param mixed $guild
      *
      * @return array
      */
-    public function getInventory($user) {
-        return $this->data && isset($this->data['user']['user_items']) ? $this->data['user']['user_items'] : [];
+    public function getInventory($guild) {
+        return $this->data && isset($this->data['guild']['user_items']) ? $this->data['guild']['guild_items'] : [];
     }
 
     /**
      * Gets the currencies of the given user for selection.
      *
-     * @param \App\Models\User\User $user
+     * @param mixed $showAll
      *
      * @return array
      */
-    public function getCurrencies($user) {
-        return $this->data && isset($this->data['user']) && isset($this->data['user']['currencies']) ? $this->data['user']['currencies'] : [];
+    public function getCurrencies($showAll = false) {
+        $owned = GuildCurrency::where('guild_id', $this->id)->pluck('quantity', 'currency_id')->toArray();
+
+        $currencies = Currency::where('is_guild_owned', 1);
+        if ($showAll) {
+            $currencies->where(function ($query) use ($owned) {
+                $query->where('is_displayed', 1)->orWhereIn('id', array_keys($owned));
+            });
+        } else {
+            $currencies = $currencies->where('is_displayed', 1);
+        }
+
+        $currencies = $currencies->orderBy('id', 'DESC')->get();
+
+        foreach ($currencies as $currency) {
+            $currency->quantity = $owned[$currency->id] ?? 0;
+        }
+
+        return $currencies;
     }
 
     /**
-     * Get the viewing URL of the submission/claim.
+     * Get the guild's currency logs.
+     *
+     * @param int $limit
+     *
+     * @return \Illuminate\Pagination\LengthAwarePaginator|\Illuminate\Support\Collection
+     */
+    public function getCurrencyLogs($limit = 10) {
+        $guild = $this;
+        $query = CurrencyLog::with('currency')->where(function ($query) use ($guild) {
+            $query->with('sender')->where('sender_type', 'Guild')->where('sender_id', $guild->id)->whereNotIn('log_type', ['Staff Grant', 'Prompt Rewards', 'Claim Rewards', 'Gallery Submission Reward']);
+        })->orWhere(function ($query) use ($guild) {
+            $query->with('recipient')->where('recipient_type', 'Guild')->where('recipient_id', $guild->id)->where('log_type', '!=', 'Staff Removal');
+        })->orderBy('id', 'DESC');
+        if ($limit) {
+            return $query->take($limit)->get();
+        } else {
+            return $query->paginate(30);
+        }
+    }
+
+    /**
+     * Get the viewing URL of the guild.
      *
      * @return string
      */
     public function getViewUrlAttribute() {
-        return url(($this->prompt_id ? 'submissions' : 'claims').'/view/'.$this->id);
+        return url(__('guilds.guilds').'/view/'.$this->id);
+    }
+
+    /**
+     * Get the editing URL of the guild.
+     *
+     * @return string
+     */
+    public function getEditUrlAttribute() {
+        return url(__('guilds.guilds').'/edit/'.$this->id);
+    }
+
+    /**
+     * Get the rank editing URL of the guild.
+     *
+     * @return string
+     */
+    public function getEditRankUrlAttribute() {
+        return url(__('guilds.guilds').'/edit-ranks/'.$this->id);
     }
 
     /**
@@ -219,32 +290,79 @@ class Guild extends Model {
      * @return string
      */
     public function getAdminUrlAttribute() {
-        return url('admin/'.($this->prompt_id ? 'submissions' : 'claims').'/edit/'.$this->id);
+        return url('admin/guilds/edit/'.$this->id);
+    }
+
+    public function getGuildEditPermissions($user) {
+        if ($user->id == $this->owner_id) {
+            return true;
+        }
+        if ($this->mods()->where('user_id', $user->id)->count() > 0) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
-     * Get the rewards for the submission/claim.
+     * Gets the file directory containing the model's image.
      *
-     * @return array
+     * @return string
      */
-    public function getRewardsAttribute() {
-        if (isset($this->data['rewards'])) {
-            $assets = parseAssetData($this->data['rewards']);
-        } else {
-            $assets = parseAssetData($this->data);
-        }
-        $rewards = [];
-        foreach ($assets as $type => $a) {
-            $class = getAssetModelString($type, false);
-            foreach ($a as $id => $asset) {
-                $rewards[] = (object) [
-                    'rewardable_type' => $class,
-                    'rewardable_id'   => $id,
-                    'quantity'        => $asset['quantity'],
-                ];
-            }
+    public function getImageDirectoryAttribute() {
+        return 'images/data/guilds/'.$this->id;
+    }
+
+    /**
+     * Gets the file name of the model's image.
+     *
+     * @return string
+     */
+    public function getLogoFileNameAttribute() {
+        return $this->id.'-logo.png';
+    }
+
+    /**
+     * Gets the file name of the model's banner.
+     *
+     * @return string
+     */
+    public function getBannerFileNameAttribute() {
+        return $this->id.'-banner.png';
+    }
+
+    /**
+     * Gets the path to the file directory containing the model's image.
+     *
+     * @return string
+     */
+    public function getImagePathAttribute() {
+        return public_path($this->imageDirectory);
+    }
+
+    /**
+     * Gets the URL of the model's image.
+     *
+     * @return string
+     */
+    public function getLogoUrlAttribute() {
+        if (!$this->has_logo) {
+            return null;
         }
 
-        return $rewards;
+        return asset($this->imageDirectory.'/'.$this->LogoFileName);
+    }
+
+    /**
+     * Gets the URL of the model's image.
+     *
+     * @return string
+     */
+    public function getBannerUrlAttribute() {
+        if (!$this->has_banner) {
+            return null;
+        }
+
+        return asset($this->imageDirectory.'/'.$this->BannerFileName);
     }
 }

@@ -89,10 +89,6 @@ class AddSiteSettings extends Command {
 
         $this->addSiteSetting('guilds_max_characters', 250, 'Enter a the maximum amount of characters a guild may have.');
 
-        $this->addSiteSetting('guilds_enable_inventory', 1, '0: Disables Guild inventories. 1: Enables Guilds to have a unique inventory.');
-
-        $this->addSiteSetting('guilds_enable_shop', 1, '0: Disables Guild shops. 1: Enables Guilds to have a unique shop.');
-
         $this->addSiteSetting('guilds_enable_automatic_updates', 1, '0: Do not allow guilds to automatically update their own info. 1: Allows guild owners and mods to update the general guild info.');
 
         $this->line("\nSite settings up to date!");

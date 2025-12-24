@@ -5,6 +5,8 @@ namespace App\Services;
 use App\Facades\Notifications;
 use App\Models\Character\CharacterCurrency;
 use App\Models\Currency\Currency;
+use App\Models\Guild\Guild;
+use App\Models\Guild\GuildCurrency;
 use App\Models\User\User;
 use App\Models\User\UserCurrency;
 use Carbon\Carbon;
@@ -153,6 +155,70 @@ class CurrencyManager extends Service {
     }
 
     /**
+     * Admin function for granting currency to a guild.
+     * Removes currency if the quantity given is less than 0.
+     *
+     * @param array                   $data
+     * @param \App\Models\Guild\Guild $guild
+     * @param \App\Models\User\User   $staff
+     *
+     * @return bool
+     */
+    public function grantGuildCurrencies($data, $guild, $staff) {
+        DB::beginTransaction();
+
+        try {
+            if ($data['quantity'] == 0) {
+                throw new \Exception('Please enter a non-zero quantity.');
+            }
+
+            if (!$guild) {
+                throw new \Exception('Invalid guild selected.');
+            }
+
+            // Process currency
+            $currency = Currency::find($data['currency_id']);
+            if (!$currency) {
+                throw new \Exception('Invalid currency selected.');
+            }
+            if (!$currency->is_guild_owned) {
+                throw new \Exception('This currency cannot be held by guilds.');
+            }
+            if ($data['quantity'] < 0) {
+                $this->debitCurrency($guild, $staff, 'Staff Removal', $data['data'], $currency, -$data['quantity']);
+                if (isset($guild->user)) {
+                    Notifications::create('GUILD_CURRENCY_REMOVAL', $guild->user, [
+                        'currency_name'     => $currency->name,
+                        'currency_quantity' => -$data['quantity'],
+                        'sender_url'        => $staff->url,
+                        'sender_name'       => $staff->name,
+                        'guild_name'        => $guild->name,
+                        'guild_id'          => $guild->id,
+                    ]);
+                }
+            } else {
+                $this->creditCurrency($staff, $guild, 'Staff Grant', $data['data'], $currency, $data['quantity']);
+                if (isset($guild->user)) {
+                    Notifications::create('GUILD_CURRENCY_GRANT', $guild->user, [
+                        'currency_name'     => $currency->name,
+                        'currency_quantity' => $data['quantity'],
+                        'sender_url'        => $staff->url,
+                        'sender_name'       => $staff->name,
+                        'guild_name'        => $guild->name,
+                        'guild_id'          => $guild->id,
+                    ]);
+                }
+            }
+
+            return $this->commitReturn(true);
+        } catch (\Exception $e) {
+            $this->setError('error', $e->getMessage());
+        }
+
+        return $this->rollbackReturn(false);
+    }
+
+    /**
      * Transfers currency between users.
      *
      * @param \App\Models\User\User         $sender
@@ -235,9 +301,31 @@ class CurrencyManager extends Service {
                 throw new \Exception('Invalid quantity entered.');
             }
 
+            // Determine log type
+            $log_types = [
+                'Sender'    => $sender->logType,
+                'Recipient' => $recipient->logType,
+            ];
+
+            foreach ($log_types as $key => $type) {
+                switch ($type) {
+                    case 'User':
+                        $reg = 'User';
+                        break;
+                    case 'Guild':
+                        $reg = 'Guild';
+                        break;
+                    case 'Character':
+                        $reg = 'Character';
+                        break;
+                }
+                $log_types[$key] = $reg;
+            }
+            $log_type = ($log_types['Sender'] ?? 'Unknown').' → '.($log_types['Recipient'] ?? 'Unknown').' Transfer';
+
             if ($this->debitCurrency($sender, $recipient, null, null, $currency, $quantity) &&
             $this->creditCurrency($sender, $recipient, null, null, $currency, $quantity)) {
-                $this->createLog($sender->id, $sender->logType, $recipient->id, $recipient->logType, $sender->logType == 'User' ? 'User → Character Transfer' : 'Character → User Transfer', null, $currency->id, $quantity);
+                $this->createLog($sender->id, $sender->logType, $recipient->id, $recipient->logType, $log_type, null, $currency->id, $quantity);
 
                 return $this->commitReturn(true);
             }
@@ -249,14 +337,14 @@ class CurrencyManager extends Service {
     }
 
     /**
-     * Credits currency to a user or character.
+     * Credits currency to a user, guild or character.
      *
-     * @param \App\Models\Character\Character|\App\Models\User\User $sender
-     * @param \App\Models\Character\Character|\App\Models\User\User $recipient
-     * @param string                                                $type
-     * @param string                                                $data
-     * @param \App\Models\Currency\Currency                         $currency
-     * @param int                                                   $quantity
+     * @param \App\Models\Character\Character|\App\Models\Guild\Guild|\App\Models\User\User $sender
+     * @param \App\Models\Character\Character|\App\Models\Guild\Guild|\App\Models\User\User $recipient
+     * @param string                                                                        $type
+     * @param string                                                                        $data
+     * @param \App\Models\Currency\Currency                                                 $currency
+     * @param int                                                                           $quantity
      *
      * @return bool
      */
@@ -274,6 +362,14 @@ class CurrencyManager extends Service {
                     DB::table('user_currencies')->where('user_id', $recipient->id)->where('currency_id', $currency->id)->update(['quantity' => $record->quantity + $quantity]);
                 } else {
                     $record = UserCurrency::create(['user_id' => $recipient->id, 'currency_id' => $currency->id, 'quantity' => $quantity]);
+                }
+            } elseif ($recipient->logType == 'Guild') {
+                $record = GuildCurrency::where('guild_id', $recipient->id)->where('currency_id', $currency->id)->first();
+                if ($record) {
+                    // Laravel doesn't support composite primary keys, so directly updating the DB row here
+                    DB::table('guild_currencies')->where('guild_id', $recipient->id)->where('currency_id', $currency->id)->update(['quantity' => $record->quantity + $quantity]);
+                } else {
+                    $record = GuildCurrency::create(['guild_id' => $recipient->id, 'currency_id' => $currency->id, 'quantity' => $quantity]);
                 }
             } else {
                 $record = CharacterCurrency::where('character_id', $recipient->id)->where('currency_id', $currency->id)->first();
@@ -306,14 +402,14 @@ class CurrencyManager extends Service {
     }
 
     /**
-     * Debits currency from a user or character.
+     * Debits currency from a user, guild or character.
      *
-     * @param \App\Models\Character\Character|\App\Models\User\User $sender
-     * @param \App\Models\Character\Character|\App\Models\User\User $recipient
-     * @param string                                                $type
-     * @param string                                                $data
-     * @param \App\Models\Currency\Currency                         $currency
-     * @param int                                                   $quantity
+     * @param \App\Models\Character\Character|\App\Models\Guild\Guild|\App\Models\User\User $sender
+     * @param \App\Models\Character\Character|\App\Models\Guild\Guild|\App\Models\User\User $recipient
+     * @param string                                                                        $type
+     * @param string                                                                        $data
+     * @param \App\Models\Currency\Currency                                                 $currency
+     * @param int                                                                           $quantity
      *
      * @return bool
      */
@@ -329,6 +425,14 @@ class CurrencyManager extends Service {
 
                 // Laravel doesn't support composite primary keys, so directly updating the DB row here
                 DB::table('user_currencies')->where('user_id', $sender->id)->where('currency_id', $currency->id)->update(['quantity' => $record->quantity - $quantity]);
+            } elseif ($sender->logType == 'Guild') {
+                $record = GuildCurrency::where('guild_id', $sender->id)->where('currency_id', $currency->id)->first();
+                if (!$record || $record->quantity < $quantity) {
+                    throw new \Exception('Not enough '.$currency->name.' to carry out this action.');
+                }
+
+                // Laravel doesn't support composite primary keys, so directly updating the DB row here
+                DB::table('guild_currencies')->where('guild_id', $sender->id)->where('currency_id', $currency->id)->update(['quantity' => $record->quantity - $quantity]);
             } else {
                 $record = CharacterCurrency::where('character_id', $sender->id)->where('currency_id', $currency->id)->first();
                 if (!$record || $record->quantity < $quantity) {
@@ -391,4 +495,10 @@ class CurrencyManager extends Service {
             ]
         );
     }
+
+    /*
+     * ---------------------------------------------------------------------------
+     * GUILD FUNCTIONS
+     * ---------------------------------------------------------------------------
+     */
 }

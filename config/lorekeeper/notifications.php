@@ -458,4 +458,18 @@ return [
         'message' => 'Your submission (#{submission_id}) was cancelled and sent back to drafts by <a href="{staff_url}">{staff_name}</a>. (<a href="{url}">View Submission</a>)',
         'url'     => 'queue-submissions/view/{submission_id}',
     ],
+
+    // GUILD_CURRENCY_GRANT
+    1800   => [
+        'name'    => 'Guild Currency Grant',
+        'message' => '{guild_name} has received a staff grant of {currency_quantity} {currency_name} from <a href="{sender_url}">{sender_name}</a>. (<a href="{url}">View Bank</a>)',
+        'url'     => 'guild/{guild_id}/bank',
+    ],
+
+    // GUILD_CURRENCY_REMOVAL
+    1801   => [
+        'name'    => 'Guild Currency Removal',
+        'message' => '{currency_quantity} {currency_name} was removed from {guild_name} by <a href="{sender_url}">{sender_name}</a>. (<a href="{url}">View Bank</a>)',
+        'url'     => 'guild/{guild_id}/bank',
+    ],
 ];

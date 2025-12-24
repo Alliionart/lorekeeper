@@ -103,6 +103,10 @@ return [
                 'name' => 'Queue Submissions',
                 'url'  => 'admin/queue-submissions',
             ],
+            [
+                'name' => 'Guild Requests',
+                'url'  => '/admin/guilds',
+            ],
         ],
     ],
     'Grants'     => [

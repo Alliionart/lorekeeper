@@ -115,6 +115,26 @@
             </div>
         </div>
     </div>
+    <div class="form-group">
+        <div class="form-check">
+            <label class="form-check-label">
+                {!! Form::checkbox('is_guild_owned', 1, $currency->is_guild_owned, ['class' => 'form-check-input', 'id' => 'guildOwned']) !!}
+                Attach to Guilds
+            </label>
+        </div>
+    </div>
+    <div class="card mb-3" id="guildOptions">
+        <div class="card-body">
+            <div class="mb-2">
+                {!! Form::checkbox('allow_user_to_guild', 1, $currency->allow_user_to_guild, ['class' => 'form-check-input', 'data-toggle' => 'toggle', 'data-on' => 'Allow', 'data-off' => 'Disallow']) !!}
+                {!! Form::label('allow_user_to_guild', 'User → Guild Transfers', ['class' => 'form-check-label ml-3']) !!} {!! add_help('This will allow a user to transfer this currency to their own guilds unidirectionally.') !!}
+            </div>
+            <div>
+                {!! Form::checkbox('allow_guild_to_user', 1, $currency->allow_guild_to_user, ['class' => 'form-check-input', 'data-toggle' => 'toggle', 'data-on' => 'Allow', 'data-off' => 'Disallow']) !!}
+                {!! Form::label('allow_guild_to_user', 'Guild → User Transfers', ['class' => 'form-check-label ml-3']) !!} {!! add_help('This will allow a user to transfer this currency from their own guilds to their bank unidirectionally.') !!}
+            </div>
+        </div>
+    </div>
 
     <div class="text-right">
         {!! Form::submit($currency->id ? 'Edit' : 'Create', ['class' => 'btn btn-primary']) !!}
@@ -147,11 +167,14 @@
         $(document).ready(function() {
             var $userOwned = $('#userOwned');
             var $characterOwned = $('#characterOwned');
+            var $guildOwned = $('#guildOwned');
             var $userOptions = $('#userOptions');
             var $characterOptions = $('#characterOptions');
+            var $guildOptions = $('#guildOptions');
 
             var userOwned = $userOwned.is(':checked');
             var characterOwned = $characterOwned.is(':checked');
+            var guildOwned = $guildOwned.is(':checked');
 
             updateOptions();
 
@@ -165,6 +188,11 @@
 
                 updateOptions();
             });
+            $guildOwned.on('change', function(e) {
+                guildOwned = $guildOwned.is(':checked');
+
+                updateOptions();
+            });
 
             function updateOptions() {
                 if (userOwned) $userOptions.removeClass('hide');
@@ -172,6 +200,9 @@
 
                 if (userOwned && characterOwned) $characterOptions.removeClass('hide');
                 else $characterOptions.addClass('hide');
+
+                if (guildOwned) $guildOptions.removeClass('hide');
+                else $guildOptions.addClass('hide');
             }
 
 
