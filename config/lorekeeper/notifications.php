@@ -459,6 +459,50 @@ return [
         'url'     => 'queue-submissions/view/{submission_id}',
     ],
 
+
+    // GUILD_JOIN_REQUEST_ACCEPTED
+    1703   => [
+        'name'    => 'Guild Join Request Accepted',
+        'message' => '<a href="{guild_mod_url}">{guild_mod} has accepted your request to join {guild_name}. (<a href="{url}">Visit Guild</a>)',
+        'url'     => 'guild/{guild_id}',
+    ],
+
+    // GUILD_JOIN_REQUEST_REJECTED
+    1704   => [
+        'name'    => 'Guild Join Request Rejected',
+        'message' => '<a href="{guild_mod_url}">{guild_mod} has rejected your request to join {guild_name}. (<a href="{url}">Visit Guild</a>)',
+        'url'     => 'guild/{guild_id}',
+    ],
+
+    // GUILD_CREATION_ACCEPTED
+    1705   => [
+        'name'    => 'Guild Creation Accepted',
+        'message' => 'Your request to create a guild has been accepted by <a href="{staff_url}">{staff_name}</a>. (<a href="{url}">Visit Guild</a>)',
+        'url'     => '{[guild creation request link here]}',
+    ],
+
+    // GUILD_CREATION_REJECTED
+    1706   => [
+        'name'    => 'Guild Creation Rejected',
+        'message' => 'Your request to create a guild has been rejected by <a href="{staff_url}">{staff_name}</a>. (<a href="{url}">Visit Guild</a>)',
+        'url'     => '{[guild creation request link here]}',
+    ],
+
+    // CHARACTER_JOIN_REQUEST_ACCEPTED
+    1707   => [
+        'name'    => 'Character Join Request Accepted',
+        'message' => '<a href="{guild_mod_url}">{guild_mod} has accepted your request for <a href="{character_url}">{character_name}</a> to join {guild_name}. (<a href="{url}">Visit Guild</a>)',
+        'url'     => 'guild/{guild_id}',
+    ],
+
+    // CHARACTER_JOIN_REQUEST_REJECTED
+    1708   => [
+        'name'    => 'Character Join Request Rejected',
+        'message' => '<a href="{guild_mod_url}">{guild_mod} has rejected your request for <a href="{character_url}">{character_name}</a> to join {guild_name}. (<a href="{url}">Visit Guild</a>)',
+        'url'     => 'guild/{guild_id}',
+    ],
+
+
     // GUILD_CURRENCY_GRANT
     1800   => [
         'name'    => 'Guild Currency Grant',
