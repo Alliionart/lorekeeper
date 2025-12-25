@@ -105,7 +105,7 @@ return [
             ],
             [
                 'name' => 'Guild Requests',
-                'url'  => '/admin/guilds',
+                'url'  => '/admin/guilds/queue',
             ],
         ],
     ],
@@ -205,6 +205,10 @@ return [
             [
                 'name' => 'Queues',
                 'url'  => 'admin/data/queues',
+            ],
+            [
+                'name' => 'Guilds',
+                'url'  => '/admin/guilds',
             ],
         ],
     ],
