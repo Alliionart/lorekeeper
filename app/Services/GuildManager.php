@@ -47,6 +47,8 @@ class GuildManager extends Service {
                 $this->handleImage($image, $guild->imagePath, $guild->imageFileName);
             }
 
+            //TODO: Notifications create call
+            
             return $this->commitReturn($guild);
         } catch (\Exception $e) {
             $this->setError('error', $e->getMessage());

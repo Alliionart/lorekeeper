@@ -160,4 +160,12 @@ class Notification extends Model {
     public const QUEUE_SUBMISSION_APPROVED = 1116;
     public const QUEUE_SUBMISSION_REJECTED = 1117;
     public const QUEUE_SUBMISSION_CANCELLED = 1118;
+    public const GUILD_JOIN_REQUEST_ACCEPTED = 1703;
+    public const GUILD_JOIN_REQUEST_REJECTED = 1704;
+    public const GUILD_CREATION_ACCEPTED = 1705;
+    public const GUILD_CREATION_REJECTED = 1706;
+    public const CHARACTER_JOIN_REQUEST_ACCEPTED = 1707;
+    public const CHARACTER_JOIN_REQUEST_REJECTED = 1708;
+    public const GUILD_CURRENCY_GRANT = 1800;
+    public const GUILD_CURRENCY_REMOVAL = 1801;
 }
