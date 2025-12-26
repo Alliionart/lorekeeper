@@ -459,7 +459,6 @@ return [
         'url'     => 'queue-submissions/view/{submission_id}',
     ],
 
-
     // GUILD_JOIN_REQUEST_ACCEPTED
     1703   => [
         'name'    => 'Guild Join Request Accepted',
@@ -501,7 +500,6 @@ return [
         'message' => '<a href="{guild_mod_url}">{guild_mod} has rejected your request for <a href="{character_url}">{character_name}</a> to join {guild_name}. (<a href="{url}">Visit Guild</a>)',
         'url'     => 'guild/{guild_id}',
     ],
-
 
     // GUILD_CURRENCY_GRANT
     1800   => [

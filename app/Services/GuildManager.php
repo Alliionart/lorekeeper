@@ -48,7 +48,7 @@ class GuildManager extends Service {
             }
 
             //TODO: Notifications create call
-            
+
             return $this->commitReturn($guild);
         } catch (\Exception $e) {
             $this->setError('error', $e->getMessage());
