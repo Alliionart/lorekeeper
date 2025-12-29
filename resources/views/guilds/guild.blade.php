@@ -11,7 +11,7 @@
 @section('content')
     {!! breadcrumbs([ucwords(__('guilds.guilds')) => __('guilds.guilds'), $guild->name => $guild->name]) !!}
 
-    <div class="jumbotron guild-banner jumbotron-fluid text-left pb-0 rounded bg-dark mb-5" {{ $guild->has_banner ? 'style="' . $guild->getBannerUrlAttribute() . '"' : '' }}>
+    <div class="jumbotron guild-banner jumbotron-fluid text-left pb-0 rounded bg-dark mb-5" {!! $guild->has_banner ? 'style="background-image: url(\'' . $guild->bannerUrl . '\');"' : '' !!}>
         <div class="jumbo-inner py-3 px-5 d-flex align-items-center" style="transform:translateY(45px)">
             @if ($guild->has_logo)
                 <img class="guild-logo" src="{{ $guild->getLogoUrlAttribute() }}" />

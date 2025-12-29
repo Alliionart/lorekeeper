@@ -44,7 +44,7 @@ class GuildManager extends Service {
             $guild = Guild::create(Arr::only($data, ['name', 'summary', 'description', 'parsed_description']));
 
             if ($image) {
-                $this->handleImage($image, $guild->imagePath, $guild->imageFileName);
+                $this->handleImage($image, $guild->imagePath, $guild->logoFileName);
             }
 
             //TODO: Notifications create call
@@ -89,7 +89,7 @@ class GuildManager extends Service {
             $banner = null;
             if (isset($data['banner']) && $data['banner']) {
                 $data['has_banner'] = 1;
-                $logo = $data['banner'];
+                $banner = $data['banner'];
                 unset($data['banner']);
             }
 
@@ -98,10 +98,10 @@ class GuildManager extends Service {
             $guild->update(Arr::only($data, ['name', 'summary', 'description', 'parsed_description']));
 
             if ($guild && $logo) {
-                $this->handleImage($logo, $guild->imagePath, $guild->imageFileName);
+                $this->handleImage($logo, $guild->imagePath, $guild->logoFileName);
             }
             if ($guild && $banner) {
-                $this->handleImage($banner, $guild->imagePath, $guild->imageFileName);
+                $this->handleImage($banner, $guild->imagePath, $guild->bannerFileName);
             }
 
             return $this->commitReturn($guild);
