@@ -9,6 +9,7 @@ use App\Services\AwardCaseManager;
 use App\Services\CurrencyManager;
 use App\Services\InventoryManager;
 use App\Services\StatusEffectManager;
+use App\Services\TrackerManager;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -44,7 +45,7 @@ class GrantController extends Controller {
      */
     public function postCharacterItems($slug, Request $request, InventoryManager $service) {
         $data = $request->only(['item_ids', 'quantities', 'data', 'disallow_transfer', 'notes']);
-        if ($service->grantCharacterItems($data, Character::where('slug', $slug)->first(), Auth::user())) {
+        if ($service->grantCharacterItems($data, Auth::user())) {
             flash('Items granted successfully.')->success();
         } else {
             foreach ($service->errors()->getMessages()['error'] as $error) {
@@ -88,6 +89,27 @@ class GrantController extends Controller {
         $data = $request->only(['award_ids', 'quantities', 'data', 'disallow_transfer', 'notes']);
         if ($service->grantCharacterAwards($data, Character::where('slug', $slug)->first(), Auth::user())) {
             flash(ucfirst(__('awards.awards')).' granted successfully.')->success();
+        } else {
+            foreach ($service->errors()->getMessages()['error'] as $error) {
+                flash($error)->error();
+            }
+        }
+
+        return redirect()->back();
+    }
+
+    /**     
+     * Grants XP to characters.
+     *
+     * @param string                      $slug
+     * @param App\Services\TrackerManager $service
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function postCharacterXP($slug, Request $request, TrackerManager $service) {
+        $data = $request->only(['characters', 'data', 'levels', 'static_xp']);
+        if ($service->grantCharacterXP($data, Character::where('slug', $slug)->first(), Auth::user())) {
+            flash('XP granted successfully.')->success();
         } else {
             foreach ($service->errors()->getMessages()['error'] as $error) {
                 flash($error)->error();

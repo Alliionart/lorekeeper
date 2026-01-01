@@ -16,6 +16,7 @@ use App\Models\Prompt\Prompt;
 use App\Models\Raffle\Raffle;
 use App\Models\Status\StatusEffect;
 use App\Models\Submission\Submission;
+use App\Models\Tracker\Tracker;
 use App\Models\User\User;
 use App\Models\User\UserAward;
 use App\Models\User\UserItem;
@@ -93,6 +94,11 @@ class SubmissionController extends Controller {
         $closed = !Settings::get('is_prompts_open');
         $awardcase = UserAward::with('award')->whereNull('deleted_at')->where('count', '>', '0')->where('user_id', Auth::user()->id)->get();
         $inventory = UserItem::with('item')->whereNull('deleted_at')->where('count', '>', '0')->where('user_id', Auth::user()->id)->get();
+        $trackers = Tracker::where('user_id', Auth::user()->id)->where('status', 'Pending')->get();
+        $trackers_formatted = [];
+        foreach ($trackers as $tracker) {
+            $trackers_formatted[$tracker->id] = 'Tracker Card #'.$tracker->id.' - '.$tracker->character->fullName;
+        }
 
         if (config('lorekeeper.settings.allow_gallery_submissions_on_prompts')) {
             $collaboratorIds = GalleryCollaborator::where('user_id', Auth::user()->id)->where('has_approved', 1)->pluck('gallery_submission_id')->toArray();
@@ -120,6 +126,7 @@ class SubmissionController extends Controller {
             'currencies'          => Currency::where('is_user_owned', 1)->orderBy('name')->pluck('name', 'id'),
             'statuses'            => StatusEffect::orderBy('name')->pluck('name', 'id'),
             'inventory'                 => $inventory,
+            'trackers'            => (['' => 'Select tracker card...']) + $trackers_formatted,
             'page'                      => 'submission',
             'elements'                  => Element::orderBy('name')->pluck('name', 'id'),
             'expanded_rewards'          => config('lorekeeper.extensions.character_reward_expansion.expanded'),
@@ -142,6 +149,11 @@ class SubmissionController extends Controller {
         $submission = Submission::where('id', $id)->where('status', 'Draft')->where('user_id', Auth::user()->id)->first();
         if (!$submission) {
             abort(404);
+        }
+        $trackers = Tracker::where('user_id', Auth::user()->id)->where('status', 'Pending')->get();
+        $trackers_formatted = [];
+        foreach ($trackers as $tracker) {
+            $trackers_formatted[$tracker->id] = 'Tracker Card #'.$tracker->id.' - '.$tracker->character->fullName;
         }
 
         if (config('lorekeeper.settings.allow_gallery_submissions_on_prompts')) {
@@ -167,6 +179,7 @@ class SubmissionController extends Controller {
             'currencies'          => Currency::where('is_user_owned', 1)->orderBy('name')->pluck('name', 'id'),
             'statuses'            => StatusEffect::orderBy('name')->pluck('name', 'id'),
             'inventory'           => $inventory,
+            'trackers'            => (['' => 'Select tracker card...']) + $trackers_formatted,
             'page'                => 'submission',
             'elements'            => Element::orderBy('name')->pluck('name', 'id'),
             'expanded_rewards'    => config('lorekeeper.extensions.character_reward_expansion.expanded'),
@@ -258,7 +271,7 @@ class SubmissionController extends Controller {
             'url', 'prompt_id', 'comments', 'slug', 'character_rewardable_type', 'character_rewardable_id', 'character_rewardable_quantity', 
             'rewardable_type', 'rewardable_id', 'quantity', 'stack_id', 'stack_quantity', 'currency_id', 'currency_quantity',
             'character_is_focus', 'gallery_submission_id',
-            'external_name', 'external_link'
+            'external_name', 'external_link', 'tracker_id'
         ]), Auth::user(), false, $draft)) {
             if ($submission->status == 'Draft') {
                 flash('Draft created successfully.')->success();

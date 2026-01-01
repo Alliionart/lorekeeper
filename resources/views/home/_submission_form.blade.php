@@ -55,8 +55,13 @@
 </div>
 
 <div class="form-group">
-    {!! Form::label('comments', 'Comments (Optional)') !!} {!! add_help('Enter a comment for your ' . ($isClaim ? 'claim' : 'submission') . '. This will be viewed by the mods when reviewing your ' . ($isClaim ? 'claim' : 'submission') . '.') !!}
-    {!! Form::textarea('comments', isset($submission->comments) ? $submission->comments : old('comments') ?? Request::get('comments'), ['class' => 'form-control wysiwyg', 'id' => 'prompt-form']) !!}
+    {!! Form::label('tracker_id', 'Tracker Card (Optional)') !!} {!! add_help('Add an applicable tracker card to this submission. Intended if the admin is to approve both at once.') !!}
+    {!! Form::select('tracker_id', $trackers, isset($submission->tracker_id) ? $submission->tracker_id : old('tracker_id') ?? Request::get('tracker_id'), ['class' => 'form-control selectize', 'id' => 'tracker', 'placeholder' => '']) !!}
+</div>
+
+<div class="form-group">
+    {!! Form::label('comments', 'Comments (Optional)') !!} {!! add_help('Enter a comment for your ' . ($isClaim ? 'claim' : 'submission') . ' (no HTML). This will be viewed by the mods when reviewing your ' . ($isClaim ? 'claim' : 'submission') . '.') !!}
+    {!! Form::textarea('comments', isset($submission->comments) ? $submission->comments : old('comments') ?? Request::get('comments'), ['class' => 'form-control']) !!}
 </div>
 
 @if ($submission->prompt_id)

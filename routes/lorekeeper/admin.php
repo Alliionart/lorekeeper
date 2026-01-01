@@ -628,6 +628,9 @@ Route::group(['prefix' => 'grants', 'namespace' => 'Users', 'middleware' => 'pow
     
     Route::get('borders', 'GrantController@getBorders');
     Route::post('borders', 'GrantController@postBorders');
+
+    Route::get('xp', 'GrantController@getXP');
+    Route::post('xp', 'GrantController@postXP');
 });
 
 // PETS
@@ -1174,4 +1177,17 @@ Route::group(['prefix' => 'world',  'namespace' => 'World', 'middleware' => 'pow
     Route::post('glossary/edit/{id}', 'GlossaryController@postCreateEditTerm');
     Route::get('glossary/delete/{id}', 'GlossaryController@getDeleteTerm');
     Route::post('glossary/delete/{id}', 'GlossaryController@postDeleteTerm');
+});
+
+// ART TRACKER
+Route::group(['prefix' => 'trackers', 'middleware' => 'power:manage_submissions'], function () {
+    Route::get('/', 'TrackerController@getTrackerIndex');
+    Route::get('/{status}', 'TrackerController@getTrackerIndex')->where('status', 'pending|approved|rejected');
+    Route::get('edit/{id}', 'TrackerController@getTrackerCard');
+    Route::post('edit/{id}/{action}', 'TrackerController@postTrackerCard')->where('action', 'approve|reject|cancel');
+});
+Route::group(['prefix' => 'tracker-settings', 'middleware' => 'power:edit_data'], function () {
+    Route::get('/', 'TrackerController@getTrackerSettingsPage');
+    Route::post('/', 'TrackerController@saveTrackerSettings');
+    Route::post('/edit', 'TrackerController@saveTrackerSettings')->where('action', 'edit');
 });

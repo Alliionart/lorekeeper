@@ -194,4 +194,9 @@ class Notification extends Model {
     public const RECIPE_GRANT = 600; // Draginraptor - Crafting
     public const USER_SHOP_ITEM_SOLD = 1104; // supercool
     public const BORDER_GRANT        = 1106;
+    public const TRACKER_SUBMISSION_APPROVED = 781;
+    public const TRACKER_SUBMISSION_REJECTED = 782;
+    public const TRACKER_SUBMISSION_CANCELLED = 783;
+    public const XP_GRANT = 784;
+    public const CHARACTER_LEVEL_UP = 785;
 }

@@ -27,6 +27,7 @@ use App\Models\Status\StatusEffect;
 use App\Models\Status\StatusEffectLog;
 use App\Models\Submission\Submission;
 use App\Models\Submission\SubmissionCharacter;
+use App\Models\Tracker\TrackerLog;
 use App\Models\Trade;
 use App\Models\User\User;
 use App\Models\User\UserCharacterLog;
@@ -1120,6 +1121,27 @@ class Character extends Model {
      */
     public function getMarkings($type = 'phenotype') {
         return $this->getMarkingLinkedArray($this->getMarkingFinalArray(), $type);
+    }
+    
+    /**     
+     * Get the character's XP logs.
+     *
+     * @param int $limit
+     *
+     * @return \Illuminate\Pagination\LengthAwarePaginator|\Illuminate\Support\Collection
+     */
+    public function getXPLogs($limit = 10) {
+        $character = $this;
+
+        $query = TrackerLog::where(function ($query) use ($character) {
+            $query->where('character_id', $character->id)->where('log_type', '!=', 'Staff Grant');
+        })->orderBy('id', 'DESC');
+
+        if ($limit) {
+            return $query->take($limit)->get();
+        } else {
+            return $query->paginate(30);
+        }
     }
 
     /**

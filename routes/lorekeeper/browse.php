@@ -133,9 +133,14 @@ Route::group(['prefix' => 'character', 'namespace' => 'Characters'], function ()
     Route::get('{slug}/children', 'CharacterLineageController@getCharacterChildren');
     Route::get('{slug}/grandchildren', 'CharacterLineageController@getCharacterGrandChildren');
     Route::get('{slug}/great-grandchildren', 'CharacterLineageController@getCharacterGreatGrandChildren');
+    //other
     Route::get('{slug}/image/{id}', 'CharacterController@getCharacterImage');
     Route::get('{slug}/image-single/{id}', 'CharacterController@getCharacterSingleImage');
     Route::get('{slug}/get-bg-options', 'CharacterController@getRefreshCharacterBgOptions');
+    Route::get('{slug}/xp-logs', 'CharacterController@getCharacterXPLogs');
+
+    Route::get('{slug}/gallery', 'CharacterController@getCharacterGallery');
+    Route::get('{slug}/tracker', 'CharacterController@getCharacterTracker');
 });
 
 Route::group(['prefix' => 'myo', 'namespace' => 'Characters'], function () {
@@ -143,6 +148,16 @@ Route::group(['prefix' => 'myo', 'namespace' => 'Characters'], function () {
     Route::get('{id}/profile', 'MyoController@getCharacterProfile');
     Route::get('{id}/ownership', 'MyoController@getCharacterOwnershipLogs');
     Route::get('{id}/change-log', 'MyoController@getCharacterLogs');
+});
+
+/**************************************************************************************************
+    Art Tracker Cards
+**************************************************************************************************/
+
+Route::group(['prefix' => 'tracker'], function () {
+    Route::get('/{id}', 'TrackerController@getTrackerCard');
+    Route::get('/{id}/edit', 'TrackerController@getEditableTrackerCard');
+    Route::post('/{id}/request-edit', 'TrackerController@postTrackerCardEditRequest');
 });
 
 /**************************************************************************************************
@@ -408,3 +423,9 @@ Route::group(['prefix' => 'world', 'namespace' => 'WorldExpansion'], function ()
     Route::get('concept-categories', 'ConceptController@getConceptCategories');
     Route::get('concept-categories/{id}', 'ConceptController@getConceptCategory');
 });
+
+/**************************************************************************************************
+    XP Calculator
+**************************************************************************************************/
+Route::get('/submit-xp', 'XPCalcController@getXPCalc');
+Route::post('/submit-xp', 'XPCalcController@postXPForm');

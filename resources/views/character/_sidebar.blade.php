@@ -34,6 +34,8 @@
         <div class="sidebar-item"><a href="{{ $character->url . '/submissions' }}" class="{{ set_active('character/' . $character->slug . '/submissions') }}">Submissions</a></div>
         <div class="sidebar-item"><a href="{{ $character->url . '/status-effect-logs' }}" class="{{ set_active('character/' . $character->slug . '/status-effect-logs') }}">Status Effect Logs</a></div>
         <div class="sidebar-item"><a href="{{ $character->url . '/' . __('awards.award') . '-logs' }}" class="{{ set_active('character/' . $character->slug . '/' . __('awards.award') . '-logs') }}">{{ ucfirst(__('awards.award')) }} Logs</a></div>
+        <div class="sidebar-item"><a href="{{ $character->url . '/tracker' }}" class="{{ set_active('character/' . $character->slug . '/tracker') }}">{{ __('art_tracker.xp') }} Tracker</a></div>
+        <div class="sidebar-item"><a href="{{ $character->url . '/xp-logs' }}" class="{{ set_active('character/' . $character->slug . '/xp-logs') }}">{{ __('art_tracker.xp') }} Logs</a></div>
     </li>
     @if (Auth::check() && (Auth::user()->id == $character->user_id || Auth::user()->hasPower('manage_characters')))
         <li class="sidebar-section">

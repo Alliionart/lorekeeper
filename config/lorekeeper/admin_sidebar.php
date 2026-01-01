@@ -124,6 +124,10 @@ return [
                 'name' => 'Surrenders',
                 'url' => 'admin/surrenders/pending'
             ],
+            [
+                'name' => 'Tracker Submissions',
+                'url'  => 'admin/trackers',
+            ],
         ],
     ],
     'Grants'     => [
@@ -172,6 +176,10 @@ return [
             [
                 'name' => 'Border Grants',
                 'url' => 'admin/grants/borders'
+            ],
+            [
+                'name' => 'Character XP Grants',
+                'url'  => 'admin/grants/xp',
             ],
         ],
     ],
@@ -457,6 +465,10 @@ return [
     'Settings'   => [
         'power' => 'edit_site_settings',
         'links' => [
+            [
+                'name' => 'Art Tracker Settings',
+                'url'  => 'admin/tracker-settings',
+            ],
             [
                 'name' => 'Breeding Settings',
                 'url'  => 'admin/breedings/settings',
