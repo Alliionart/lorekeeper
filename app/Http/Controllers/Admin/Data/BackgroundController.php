@@ -12,6 +12,7 @@ use App\Models\User\User;
 use App\Services\BackgroundService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use DB;
 
 class BackgroundController extends Controller {
     /*
@@ -47,12 +48,20 @@ class BackgroundController extends Controller {
      * @return \Illuminate\Contracts\Support\Renderable
      */
     public function getCreateBackground() {
+        $levels = DB::table('site_settings')->where('key', 'xp_levels')->pluck('value');
+        $levels = isset($levels[0]) ? (array) json_decode($levels[0]) : null;
+        foreach($levels as $level => $exp) {
+            $levels[$level] = $level;
+        }
+
+
         return view('admin.backgrounds.create_edit_background', [
             'background'    => new Background,
             'users'         => User::query()->orderBy('name')->pluck('name', 'id')->toArray(),
             'locations'     => ['' => 'None'] + Location::all()->where('has_backgrounds', 1)->pluck('name', 'id')->toArray(),
             'items'         => ['' => 'None'] + Item::orderBy('name')->pluck('name', 'id')->toArray(),
             'awards'        => ['' => 'None'] + Award::orderBy('name')->pluck('name', 'id')->toArray(),
+            'statuses'      => ['' => 'None'] + $levels,
         ]);
     }
 
@@ -68,6 +77,11 @@ class BackgroundController extends Controller {
         if (!$background) {
             abort(404);
         }
+        $levels = DB::table('site_settings')->where('key', 'xp_levels')->pluck('value');
+        $levels = isset($levels[0]) ? (array) json_decode($levels[0]) : null;
+        foreach($levels as $level => $exp) {
+            $levels[$level] = $level;
+        }
 
         return view('admin.backgrounds.create_edit_background', [
             'background'    => $background,
@@ -75,6 +89,7 @@ class BackgroundController extends Controller {
             'locations'     => ['' => 'None'] + Location::all()->where('has_backgrounds', 1)->pluck('name', 'id')->toArray(),
             'items'         => ['' => 'None'] + Item::orderBy('name')->pluck('name', 'id')->toArray(),
             'awards'        => ['' => 'None'] + Award::orderBy('name')->pluck('name', 'id')->toArray(),
+            'statuses'      => ['' => 'None'] + $levels,
         ]);
     }
 

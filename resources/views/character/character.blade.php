@@ -44,7 +44,11 @@
                     <h3 class="mb-0">Status</h3>
                 </div>
                 <div class="card-body">
-                    Test
+                    @if ($character->citizenship)
+                        {{ $character->citizenship }}
+                    @else
+                        Citizen
+                    @endif
                 </div>
             </div>
             <!-- Edits -->

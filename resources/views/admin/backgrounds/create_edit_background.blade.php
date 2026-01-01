@@ -31,7 +31,7 @@
         <div class="col-md-6">
             <div class="form-group">
                 {!! Form::label('Applicable Location') !!}{!! add_help('What location the character needs to be in to use this background.') !!}
-                {!! Form::select('location', $locations, $background->location() ?? null, ['class' => 'form-control selectize', 'required']) !!}
+                {!! Form::select('location', $locations, $background->location()->id ?? null, ['class' => 'form-control selectize', 'required']) !!}
             </div>
         </div>
     </div>
@@ -90,7 +90,7 @@
 
     <div class="form-group">
         {!! Form::label('Applicable Status') !!}{!! add_help('What status the character needs to be in to use this background.') !!}
-        {!! Form::select('status', [], null, ['class' => 'form-control selectize']) !!}
+        {!! Form::select('status', $statuses, array_key_exists('Status', $conditions) ? $conditions['Status'] : null, ['class' => 'form-control selectize']) !!}
     </div>
 
     <div class="form-group">

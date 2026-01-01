@@ -454,7 +454,7 @@ class Character extends Model {
         $User_bgs = BackgroundCondition::where('type', 'User')->where('value', $this->user_id)->where('location', $location)->pluck('background_id')->toArray();
 
         //Character Status BGs
-        $Status_bgs = BackgroundCondition::where('type', 'Status')->where('value', $this->status)->where('location', $location)->pluck('background_id')->toArray();
+        $Status_bgs = BackgroundCondition::where('type', 'Status')->where('value', $this->citizenship)->where('location', $location)->pluck('background_id')->toArray();
 
         //Character has Item BGs
         $unique_bg_items = BackgroundCondition::where('type', 'Item')->where('location', $location)->distinct()->pluck('value', 'background_id')->toArray();

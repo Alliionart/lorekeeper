@@ -12,7 +12,7 @@ return [
     |
     */
 
-    'xp'             => 'XP',
-    'experience'     => 'Experience Points;',
+    'xp'             => 'CP',
+    'experience'     => 'Credit Points;',
 
 ];
