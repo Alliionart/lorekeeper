@@ -12,11 +12,6 @@
                 <li class="nav-item">
                     <a class="nav-link" id="creditsTab-{{ $image->id }}" data-toggle="tab" href="#credits-{{ $image->id }}" role="tab">Credits</a>
                 </li>
-                @if ($character->getLineageBlacklistLevel() < 2)
-                    <li class="nav-item">
-                        <a class="nav-link" id="lineageTab" data-toggle="tab" href="#lineage" role="tab">Lineage</a>
-                    </li>
-                @endif
                 @if (isset($showMention) && $showMention)
                     <li class="nav-item">
                         <a class="nav-link" id="mentionTab-{{ $image->id }}" data-toggle="tab" href="#mention-{{ $image->id }}" role="tab">Mention</a>
@@ -273,12 +268,6 @@
                     </div>
                 @endif
             </div>
-
-            @if ($character->getLineageBlacklistLevel() < 2)
-                <div class="tab-pane fade" id="lineage">
-                    @include('character._tab_lineage', ['character' => $character])
-                </div>
-            @endif
 
             @if (isset($showMention) && $showMention)
                 {{-- Mention This tab --}}

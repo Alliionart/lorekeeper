@@ -1,40 +1,40 @@
-<div class="container text-center">
+<div class="container text-center character-lineage-tree">
     <div class="row">
         <div class="col">
-            <div class="border-bottom mb-1">
-                <span class="font-weight-bold">Sire</span><br>{!! $line['sire'] !!}
+            <div class="border-bottom mb-1 generation-1">
+                <span class="font-weight-bold">Reosean 1</span><br>{!! $line['sire'] !!}
             </div>
             <div class="row">
                 <div class="col">
-                    <div class="border-bottom mb-1">
-                        <abbr class="font-weight-bold" title="Sire's Sire">SS</abbr><br>{!! $line['sire_sire'] !!}
+                    <div class="border-bottom mb-1 generation-2">
+                        <abbr class="font-weight-bold" title="Grandparent 1">GR1</abbr><br>{!! $line['sire_sire'] !!}
                     </div>
                     <div class="row">
                         <div class="col">
-                            <div class="mb-1">
-                                <abbr title="Sire's Sire's Sire">SSS</abbr><br>{!! $line['sire_sire_sire'] !!}
+                            <div class="mb-1 generation-3">
+                                <abbr title="Great Grandparent 1">GGR1</abbr><br>{!! $line['sire_sire_sire'] !!}
                             </div>
                         </div>
                         <div class="col">
-                            <div class="mb-1">
-                                <abbr title="Sire's Sire's Dam">SSD</abbr><br>{!! $line['sire_sire_dam'] !!}
+                            <div class="mb-1 generation-3">
+                                <abbr title="Great Grandparent 2">GGR2</abbr><br>{!! $line['sire_sire_dam'] !!}
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="col">
-                    <div class="border-bottom mb-1">
-                        <abbr class="font-weight-bold" title="Sire's Dam">SD</abbr><br>{!! $line['sire_dam'] !!}
+                    <div class="border-bottom mb-1 generation-2">
+                        <abbr class="font-weight-bold" title="Grandparent 2">GR2</abbr><br>{!! $line['sire_dam'] !!}
                     </div>
                     <div class="row">
                         <div class="col">
-                            <div class="mb-1">
-                                <abbr title="Sire's Dam's Sire">SDS</abbr><br>{!! $line['sire_dam_sire'] !!}
+                            <div class="mb-1 generation-3">
+                                <abbr title="Great Grandparent 3">GGR3</abbr><br>{!! $line['sire_dam_sire'] !!}
                             </div>
                         </div>
                         <div class="col">
-                            <div class="mb-1">
-                                <abbr title="Sire's Dam's Dam">SDD</abbr><br>{!! $line['sire_dam_dam'] !!}
+                            <div class="mb-1 generation-3">
+                                <abbr title="Great Grandparent 4">GGR4</abbr><br>{!! $line['sire_dam_dam'] !!}
                             </div>
                         </div>
                     </div>
@@ -42,40 +42,40 @@
             </div>
         </div>
         <div class="col">
-            <div class="border-bottom mb-1">
-                <span class="font-weight-bold">Dam</span><br>{!! $line['dam'] !!}
+            <div class="border-bottom mb-1 generation-1">
+                <span class="font-weight-bold">Reosean 2</span><br>{!! $line['dam'] !!}
             </div>
             <div class="row">
                 <div class="col">
-                    <div class="border-bottom mb-1">
-                        <abbr class="font-weight-bold" title="Dam's Sire">DS</abbr><br>{!! $line['dam_sire'] !!}
+                    <div class="border-bottom mb-1 generation-2">
+                        <abbr class="font-weight-bold" title="Grandparent 3">GR3</abbr><br>{!! $line['dam_sire'] !!}
                     </div>
                     <div class="row">
                         <div class="col">
-                            <div class="mb-1">
-                                <abbr title="Dam's Sire's Sire">DSS</abbr><br>{!! $line['dam_sire_sire'] !!}
+                            <div class="mb-1 generation-3">
+                                <abbr title="Great Grandparent 5">GGR5</abbr><br>{!! $line['dam_sire_sire'] !!}
                             </div>
                         </div>
                         <div class="col">
-                            <div class="mb-1">
-                                <abbr title="Dam's Sire's Dam">DSD</abbr><br>{!! $line['dam_sire_dam'] !!}
+                            <div class="mb-1 generation-3">
+                                <abbr title="Great Grandparent 6">GGR6</abbr><br>{!! $line['dam_sire_dam'] !!}
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="col">
-                    <div class="border-bottom mb-1">
-                        <abbr class="font-weight-bold" title="Dam's Dam">DD</abbr><br>{!! $line['dam_dam'] !!}
+                    <div class="border-bottom mb-1 generation-2">
+                        <abbr class="font-weight-bold" title="Grandparent 4">GR4</abbr><br>{!! $line['dam_dam'] !!}
                     </div>
                     <div class="row">
                         <div class="col">
-                            <div class="mb-1">
-                                <abbr title="Dam's Dam's Sire">DDS</abbr><br>{!! $line['dam_dam_sire'] !!}
+                            <div class="mb-1 generation-3">
+                                <abbr title="Great Grandparent 7">GGR7</abbr><br>{!! $line['dam_dam_sire'] !!}
                             </div>
                         </div>
                         <div class="col">
-                            <div class="mb-1">
-                                <abbr title="Dam's Dam's Dam">DDD</abbr><br>{!! $line['dam_dam_dam'] !!}
+                            <div class="mb-1 generation-3">
+                                <abbr title="Great Grandparent 8">GGR8</abbr><br>{!! $line['dam_dam_dam'] !!}
                             </div>
                         </div>
                     </div>
@@ -83,44 +83,37 @@
             </div>
         </div>
     </div>
-
-
-    <div id="lineage"><span class="label">{{ $character->fullName }}</span>
-        <div class="branch lv1">
-            <div class="entry"><span class="label"><strong>Reosean 1</strong> <br>{!! $line['sire'] !!}</span>
-                <div class="branch lv2">
-                    <div class="entry"><span class="label"><strong>GR1</strong> <br>{!! $line['sire_sire'] !!}</span>
-                        <div class="branch lv2">
-                            <div class="entry"><span class="label out"><strong>GGR1</strong> <br>{!! $line['sire_sire_sire'] !!}</span></div>
-                            <div class="entry"><span class="label out"><strong>GGR2</strong> <br>{!! $line['sire_sire_dam'] !!}</span></div>
-                        </div>
-                    </div>
-                    <div class="entry"><span class="label"><strong>GR2</strong> <br>{!! $line['sire_dam'] !!}</span>
-                        <div class="branch lv2">
-                            <div class="entry"><span class="label out"><strong>GGR3</strong> <br>{!! $line['sire_dam_sire'] !!}</span></div>
-                            <div class="entry"><span class="label out"><strong>GGR4</strong> <br>{!! $line['sire_dam_dam'] !!}</span></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="entry"><span class="label"><strong>Reosean 2</strong> <br>{!! $line['dam'] !!}</span>
-                <div class="branch lv2">
-                    <div class="entry"><span class="label"><strong>GR3</strong> <br>{!! $line['dam_sire'] !!}</span>
-                        <div class="branch lv2">
-                            <div class="entry"><span class="label out"><strong>GGR5</strong> <br>{!! $line['dam_sire_sire'] !!}</span></div>
-                            <div class="entry"><span class="label out"><strong>GGR6</strong> <br>{!! $line['dam_sire_dam'] !!}</span></div>
-                        </div>
-                    </div>
-                    <div class="entry"><span class="label"><strong>GR4</strong> <br>{!! $line['dam_dam'] !!}</span>
-                        <div class="branch lv2">
-                            <div class="entry"><span class="label out"><strong>GGR7</strong> <br>{!! $line['dam_dam_sire'] !!}</span></div>
-                            <div class="entry"><span class="label out"><strong>GGR8</strong> <br>{!! $line['dam_dam_dam'] !!}</span></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-
 </div>
+<style>
+    .character-lineage-tree {
+	--width:53%;
+    }
+    .character-lineage-tree div[class*=generation] {
+        position: relative;
+        padding: 10px 0;
+    }
+    .character-lineage-tree div[class*=generation]::after {
+        content: "";
+        position: relative;
+        margin-top: 10px;
+        display: block;
+        width: var(--width);
+        height: 2px;
+        background-color: var(--gray-700);
+        left: calc(50% - calc(var(--width) /2));
+    }
+    .character-lineage-tree div[class*=generation]::before {
+        content: "";
+        position: absolute;
+        display: block;
+        width: 2px;
+        height: 20px;
+        background-color: var(--gray-700);
+        top: -15px;
+        left: calc(100% / 2);
+    }
+    .character-lineage-tree .generation-1::before,
+    .character-lineage-tree .generation-3::after {
+        content: unset !important;
+    }
+</style>

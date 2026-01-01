@@ -1088,8 +1088,9 @@ class Character extends Model {
     public function getClassTree() {
         $current_class = CharacterClass::where('id', $this->class_id)->first();
 
-        $test = $current_class->name;
-
+        if (!$current_class) {
+            return null;
+        }
         $tree = [];
         if ($current_class->parent_class_id) {
             //Has parent, NOT a ICQ
