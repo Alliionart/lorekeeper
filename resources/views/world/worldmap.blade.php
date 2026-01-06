@@ -5,10 +5,14 @@
 @endsection
 
 @section('content')
-    {!! breadcrumbs(['World' => 'world', 'World Map' => 'world/world-map']) !!}
-    <h1>World Map</h1>
-
-    <div id="map"></div>
+    <div class="row">
+        <div class="col-lg-3 p-4">
+            <h1>World Map</h1>
+        </div>
+        <div class="col-lg-9">
+            <div id="map"></div>
+        </div>
+    </div>
 @endsection
 @section('scripts')
     <script>
@@ -22,7 +26,15 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
     <style>
         #map {
-            height: 50vh;
+            min-height: 75vh;
+        }
+        .col-lg-8 {
+            flex: unset !important;
+            max-width: unset !important;
+        }
+        .site-header-image,
+        #sidebar {
+            display:none !important;
         }
     </style>
     <script>
@@ -32,10 +44,32 @@
             //https://commenthol.github.io/leaflet-rastercoords/
             //https://gdal.org/en/stable/programs/gdal2tiles.html
 
-            L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            var base = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 maxZoom: 19,
                 attribution: '&copy; <a href="/credits">{{ config('lorekeeper.settings.site_name', 'Lorekeeper') }}</a>'
             }).addTo(map);
+
+            var baseLayers = {
+                "Base": base
+            };
+
+            var overlays = {
+                "init": null
+            };
+
+            var layerControl = L.control.layers(baseLayers, overlays).addTo(map);
+
+            //Add markers
+            function addMarker(lat, lng, content) {
+                var marker = L.marker([lat, lng]).addTo(map);
+                if(content) {
+                    marker.bindPopup(content);
+                }
+            }
+
+            //Add layer groups
+            
+
         })
     </script>
 @endpush
