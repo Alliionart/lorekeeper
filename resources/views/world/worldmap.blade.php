@@ -28,13 +28,15 @@
         #map {
             min-height: 75vh;
         }
+
         .col-lg-8 {
             flex: unset !important;
             max-width: unset !important;
         }
+
         .site-header-image,
         #sidebar {
-            display:none !important;
+            display: none !important;
         }
     </style>
     <script>
@@ -62,13 +64,13 @@
             //Add markers
             function addMarker(lat, lng, content) {
                 var marker = L.marker([lat, lng]).addTo(map);
-                if(content) {
+                if (content) {
                     marker.bindPopup(content);
                 }
             }
 
             //Add layer groups
-            
+
 
         })
     </script>
