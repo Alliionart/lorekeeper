@@ -195,16 +195,16 @@ class MapManager extends Service {
             }
 
         } else {
-            //Else use the gdal2tiles functions to create and drop in the tiles to the directory.
-            $return = handleGdalTiles($tileDirectory, $file);
+            //Else create and drop in the tiles to the directory.
+            $return = handleTileCreation($tileDirectory, $file);
         }
 
     }
 
     /**
-     * Use the gdal2tiles functions to create the tiles.
+     * Use the https://github.com/jahed/maptiles functions to create the tiles.
      */
-    public function handleGdalTiles($tileDirectory, $file) {
+    public function handleTileCreation($tileDirectory, $file) {
         //Use the process facade
         $temp_path = $file->getPathname() . '/' . $file->getFilename();
 
