@@ -195,7 +195,7 @@ return [
                 'url'  => 'admin/data/items',
             ],
             [
-                'name' => 'Map Settings',
+                'name' => 'Maps',
                 'url'  => 'admin/data/map',
             ],
         ],

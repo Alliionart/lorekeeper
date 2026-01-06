@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin\Data;
 
 use App\Http\Controllers\Controller;
 use App\Models\Map;
+use App\Services\MapManager;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -15,7 +16,7 @@ class MapController extends Controller {
      */
     public function getIndex() {
         return view('admin.map.index', [
-            'map_items' => Map::orderBy('name')->paginate(20),
+            'map_items' => Map::orderBy('name')->where('map_id', null)->where('type', 'map')->paginate(20),
         ]);
     }
 
@@ -57,6 +58,33 @@ class MapController extends Controller {
         return view('admin.map.create_edit_map', [
             'map_settings'  => null,
         ]);
+    }
+
+    /**
+     * Creates or edits a map.
+     *
+     * @param App\Services\MapManager $service
+     * @param int|null                $id
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function postCreateEditMap(Request $request, MapManager $service, $id = null) {
+        $id ? $request->validate(Map::$updateRules) : $request->validate(Map::$createRules);
+        $data = $request->only([
+            'name', 'description', 'image',
+        ]);
+        
+        if ($id && $service->updateMap(Map::find($id), $data, Auth::user())) {
+            flash('Map item updated successfully.')->success();
+        } elseif (!$id && $map = $service->createMap($data, Auth::user())) {
+            flash('Map item created successfully.')->success();
+        } else {
+            foreach ($service->errors()->getMessages()['error'] as $error) {
+                flash($error)->error();
+            }
+        }
+
+        return redirect()->back();
     }
 
     /**

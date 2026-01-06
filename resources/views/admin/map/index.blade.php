@@ -1,22 +1,21 @@
 @extends('admin.layout')
 
 @section('admin-title')
-    World Map
+    World Maps
 @endsection
 
 @section('admin-content')
-    {!! breadcrumbs(['Admin Panel' => 'admin', 'World Map' => 'admin/map']) !!}
+    {!! breadcrumbs(['Admin Panel' => 'admin', 'World Maps' => 'admin/map']) !!}
 
-    <h1>World Map Settings</h1>
+    <h1>World Maps</h1>
 
-    <p>Here you can edit the overall map settings with custom layers and tiles. As well as add new map items to show on the map. Only one map can be created.</p>
+    <p>Here you can edit the overall map settings with custom layers and tiles. As well as add new map items to show on your maps.</p>
 
     <div class="text-right mb-3">
-        <a class="btn btn-primary" href="{{ url('admin/data/map/create') }}"><i class="fas fa-plus"></i> Create New Map Item</a>
-        <a class="btn btn-primary" href="{{ url('admin/data/map/settings') }}"><i class="fas fa-globe"></i> Edit Map Settings</a>
+        <a class="btn btn-primary" href="{{ url('admin/data/map/settings') }}"><i class="fas fa-globe"></i> Create New Map</a>
     </div>
     @if (!count($map_items))
-        <p>No map items found.</p>
+        <p>No maps found.</p>
     @else
         {!! $map_items->render() !!}
         <div class="mb-4 logs-table">

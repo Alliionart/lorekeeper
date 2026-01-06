@@ -241,13 +241,16 @@ Route::group(['prefix' => 'data', 'namespace' => 'Data', 'middleware' => 'power:
 
     Route::group(['prefix' => 'map', 'middleware' => 'power:edit_data'], function () {
         Route::get('/', 'MapController@getIndex');
+
         Route::get('settings', 'MapController@getMapSettings');
+        Route::post('settings/edit', 'MapController@postCreateEditMap');
+
         Route::get('create', 'MapController@getCreateMapItem');
         Route::get('edit/{id}', 'MapController@getEditMapItem');
         Route::get('delete/{id}', 'MapController@getDeleteMapItem');
-        Route::get('settings/edit', 'MapController@postMapSettings');
+        
         Route::post('create', 'MapController@postCreateEditMapItem');
-        Route::post('edit/{id?}', 'MapController@postCreateEditMapItem');
+        Route::post('edit/{id}', 'MapController@postCreateEditMapItem');
         Route::post('delete/{id}', 'MapController@postDeleteMapItem');
     });
 });
