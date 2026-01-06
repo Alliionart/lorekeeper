@@ -73,7 +73,7 @@ class MapController extends Controller {
         $data = $request->only([
             'name', 'description', 'image',
         ]);
-        
+
         if ($id && $service->updateMap(Map::find($id), $data, Auth::user())) {
             flash('Map item updated successfully.')->success();
         } elseif (!$id && $map = $service->createMap($data, Auth::user())) {

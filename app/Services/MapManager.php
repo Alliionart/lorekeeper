@@ -5,8 +5,8 @@ namespace App\Services;
 use App\Models\Map;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Process;
+use Illuminate\Support\Facades\Storage;
 
 class MapManager extends Service {
     /*
@@ -24,10 +24,10 @@ class MapManager extends Service {
 
     /**
      * Creates a map.
-     * 
+     *
      * @param array                 $data
      * @param \App\Models\User\User $user
-     * 
+     *
      * @return \App\Models\Map|bool
      */
     public function createMap($data, $user) {
@@ -150,7 +150,10 @@ class MapManager extends Service {
 
     /**
      * Creates the tiles from the uploaded image OR extracts the zip and adds to the correct directory.
-     * 
+     *
+     * @param mixed $map_id
+     * @param mixed $file
+     *
      * @return string
      */
     public function handleMapImageTiles($map_id, $file) {
@@ -158,73 +161,73 @@ class MapManager extends Service {
 
         $tileDirectory = public_path($map->tileImageDirectory);
 
-        if($extension === 'zip') {
-            //If its a zip file, get the directory for the tiles and then 
+        if ($extension === 'zip') {
+            //If its a zip file, get the directory for the tiles and then
             $tempZip = getRealPath();
             $tempExt = public_path('/temp');
 
             //Check to see if the folder exists and if not - create it
-            if(!Storage::disk('local')->exists('/temp')) {
+            if (!Storage::disk('local')->exists('/temp')) {
                 Storage::disk('local')->makeDirectory('/temp');
             }
-            if(!File::exists($tileDirectory)) {
+            if (!File::exists($tileDirectory)) {
                 File::makeDirectory($tileDirectory, 0755, true);
             }
 
             //Unzip
             $zip = new ZipArchive;
-            if($zip->open($tempZip) === true) {
+            if ($zip->open($tempZip) === true) {
                 $zip->extractTo($tempExt);
                 $zip->close();
-                //Unzip successful
+            //Unzip successful
             } else {
                 //Failure
             }
 
             //Move the file contents
             $files = File::allFiles($tempExt);
-            foreach($files as $f) {
+            foreach ($files as $f) {
                 $fileName = $f->getFilename();
-                File::move($file->getPathname(), $tileDirectory . '/' . $fileName);
+                File::move($file->getPathname(), $tileDirectory.'/'.$fileName);
             }
 
             //Clean up the temps
             File::deleteDirectory($tempExt);
-            if(File::exists($tempZip)) {
+            if (File::exists($tempZip)) {
                 File::delete($tempZip);
             }
-
         } else {
             //Else use the gdal2tiles functions to create and drop in the tiles to the directory.
             $return = handleGdalTiles($tileDirectory, $file);
         }
-
     }
 
     /**
      * Use the gdal2tiles functions to create the tiles.
+     *
+     * @param mixed $tileDirectory
+     * @param mixed $file
      */
     public function handleGdalTiles($tileDirectory, $file) {
         //Use the process facade
-        $temp_path = $file->getPathname() . '/' . $file->getFilename();
+        $temp_path = $file->getPathname().'/'.$file->getFilename();
 
-        if(!File::exists($tileDirectory)) {
+        if (!File::exists($tileDirectory)) {
             File::makeDirectory($tileDirectory, 0755, true);
         }
 
         $command = [
             'gdal2tiles.py',
             $temp_path,
-            $tileDirectory
+            $tileDirectory,
         ];
 
         $result = Process::run($command);
 
-        if($result->successful()) {
+        if ($result->successful()) {
             return 'Tiles created successfully.';
         } else {
-            return 'Error with tile creation: '. $result->errorOutput();
+            return 'Error with tile creation: '.$result->errorOutput();
         }
-
     }
 }
