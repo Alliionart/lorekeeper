@@ -204,6 +204,9 @@ class MapManager extends Service {
 
     /**
      * Use the https://github.com/jahed/maptiles functions to create the tiles.
+     *
+     * @param mixed $tileDirectory
+     * @param mixed $file
      */
     public function handleTileCreation($tileDirectory, $file) {
         //Use the process facade
