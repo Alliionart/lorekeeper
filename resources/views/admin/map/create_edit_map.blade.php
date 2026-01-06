@@ -27,7 +27,8 @@
                         <ul>
                             <li>Your map should be in a single image file (PNG, JPG, etc.). OR it should be a set of tiles (typically in a zip folder).</li>
                             <li>Your map should be at least 2048 pixels in width and height. While it may be smaller, your map should be large enough to allow for zooming in and out without losing quality.</li>
-                            <li>Your map should be bare with little to no text or UI elements. This extension will add them for you! Though you are free to label different biomes, continents, etc. on your map ensure they are subtle for the best quality.</li>
+                            <li>Your map should be bare with little to no text or UI elements. This extension will add them for you! Though you are free to label different biomes, continents, etc. on your map ensure they are subtle for the best quality.
+                            </li>
                         </ul>
                     </li>
                     <li>If you need to generate the map tiles:
@@ -86,7 +87,7 @@
     @parent
     <script>
         $(document).ready(function() {
-            
+
         });
     </script>
 @endsection

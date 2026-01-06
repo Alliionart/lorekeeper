@@ -88,7 +88,6 @@ class Map extends Model {
      * @return string
      */
     public function getImageDirectoryAttribute() {
-
         if ($this->map_id) {
             //If this is a sub-item of a map, use the parent map's ID
             return 'images/data/maps/'.$this->map_id.'/'.$this->type;
@@ -145,11 +144,10 @@ class Map extends Model {
 
     /**
      * Gets the latitude/longitude of the map as a string.
-     * 
+     *
      * @return string
      */
     public function getLatLngAttribute() {
         return $this->latitude.','.$this->longitude;
     }
-
 }
