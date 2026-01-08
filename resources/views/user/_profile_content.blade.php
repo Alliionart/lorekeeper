@@ -2,87 +2,87 @@
     <div style="filter:grayscale(1); opacity:0.75">
 @endif
 
-@include('widgets._user_banner', ['user' => $user])
+<div class="user-banner p-5 mb-4 rounded" style="background-image: url('{{ $user->bannerUrl }}'); {{ $user->bannerStyling }}">
+    <div class="row mb-3 px-5 user-info">
+        <div class="col-md-2 text-center">
+            <!-- User Icon -->
+            {!! $user->userBorder(150) !!}
+        </div>
 
-<div class="row mb-3 px-5 user-info">
-    <div class="col-md-2 text-center">
-        <!-- User Icon -->
-        {!! $user->userBorder(150) !!}
-    </div>
-
-    <div class="col d-flex align-items-center">
-        <!-- Username & optional FTO Badge -->
-        <div class="w-100">
-            <div class="row no-gutters">
-                <div class="ml-3 mb-0 px-3 py-2 bg-dark rounded-top h2 text-center text-md-left">
-                    {!! $user->displayName !!} {!! $user->isOnline() !!}
-                    @if ($user->previousUsername && mb_strtolower($user->name) != mb_strtolower($user->previousUsername))
-                        <small>{!! add_help('Previously known as ' . $user->previousUsername) !!}</small>
-                    @endif
-                    <a href="{{ url('reports/new?url=') . $user->url }}"><i class="fas fa-exclamation-triangle fa-xs text-danger" data-toggle="tooltip" title="Click here to report this user." style="opacity: 50%;"></i></a>
-                </div>
-
-                @if ($user->settings->is_fto)
-                    <div class="col-md-1 text-center">
-                        <span class="btn badge-success float-md-right" data-toggle="tooltip" title="This user has not owned any characters from this world before.">FTO</span>
-                    </div>
-                @endif
-            </div>
-
-            <!-- User Information -->
-            <div class="row no-gutters px-3 py-3 bg-dark rounded">
-                <div class="row no-gutters col-sm-5">
-                    <div class="col-lg-3 col-md-3 col-4">
-                        <h5>Alias</h5>
-                    </div>
-                    <div class="col-lg-9 col-md-9 col-8">
-                        {!! $user->displayAlias !!}
-                        @if (count($aliases) > 1 && config('lorekeeper.extensions.aliases_on_userpage'))
-                            <a class="small collapse-toggle collapsed" href="#otherUserAliases" data-toggle="collapse">&nbsp;</a>
-                            <p class="collapse mb-0" id="otherUserAliases">
-                                @foreach ($aliases as $alias)
-                                    @if ($alias != $user->primaryAlias)
-                                        <a href="{{ $alias->url }}"><i class="{{ $alias->config['icon'] }} fa-fw mr-1" data-toggle="tooltip" title="{{ $alias->alias . '@' . $alias->siteDisplayName }}"></i></a>
-                                    @endif
-                                @endforeach
-                            </p>
+        <div class="col d-flex align-items-center">
+            <!-- Username & optional FTO Badge -->
+            <div class="w-50">
+                <div class="row no-gutters">
+                    <div class="ml-3 mb-0 px-3 py-2 rounded-top h2 text-center text-md-left">
+                        {!! $user->displayName !!} {!! $user->isOnline() !!}
+                        @if ($user->previousUsername && mb_strtolower($user->name) != mb_strtolower($user->previousUsername))
+                            <small>{!! add_help('Previously known as ' . $user->previousUsername) !!}</small>
                         @endif
+                        <a href="{{ url('reports/new?url=') . $user->url }}"><i class="fas fa-exclamation-triangle fa-xs text-danger" data-toggle="tooltip" title="Click here to report this user." style="opacity: 50%;"></i></a>
                     </div>
+
+                    @if ($user->settings->is_fto)
+                        <div class="col-md-1 text-center">
+                            <span class="btn badge-success float-md-right" data-toggle="tooltip" title="This user has not owned any characters from this world before.">FTO</span>
+                        </div>
+                    @endif
                 </div>
-                <div class="row no-gutters col-sm-7">
-                    <div class="col-md-4 col-4">
-                        <h5>Joined</h5>
+
+                <!-- User Information -->
+                <div class="row no-gutters px-3 py-3">
+                    <div class="row no-gutters col-sm-5">
+                        <div class="col-lg-3 col-md-3 col-4">
+                            <h5>Alias</h5>
+                        </div>
+                        <div class="col-lg-9 col-md-9 col-8">
+                            {!! $user->displayAlias !!}
+                            @if (count($aliases) > 1 && config('lorekeeper.extensions.aliases_on_userpage'))
+                                <a class="small collapse-toggle collapsed" href="#otherUserAliases" data-toggle="collapse">&nbsp;</a>
+                                <p class="collapse mb-0" id="otherUserAliases">
+                                    @foreach ($aliases as $alias)
+                                        @if ($alias != $user->primaryAlias)
+                                            <a href="{{ $alias->url }}"><i class="{{ $alias->config['icon'] }} fa-fw mr-1" data-toggle="tooltip" title="{{ $alias->alias . '@' . $alias->siteDisplayName }}"></i></a>
+                                        @endif
+                                    @endforeach
+                                </p>
+                            @endif
+                        </div>
                     </div>
-                    <div class="col-md-8 col-8">{!! format_date($user->created_at, false) !!} ({{ $user->created_at->diffForHumans() }})</div>
-                </div>
-                <div class="row no-gutters col-sm-5">
-                    <div class="col-lg-3 col-md-3 col-4">
-                        <h5>Rank</h5>
-                    </div>
-                    <div class="col-lg-9 col-md-9 col-8">{!! $user->rank->displayName !!} {!! add_help($user->rank->parsed_description) !!}</div>
-                </div>
-                @if ($user->birthdayDisplay && isset($user->birthday))
                     <div class="row no-gutters col-sm-7">
                         <div class="col-md-4 col-4">
-                            <h5>Birthday</h5>
+                            <h5>Joined</h5>
                         </div>
-                        <div class="col-md-8 col-8">{!! $user->birthdayDisplay !!}</div>
+                        <div class="col-md-8 col-8">{!! format_date($user->created_at, false) !!} ({{ $user->created_at->diffForHumans() }})</div>
                     </div>
-                @endif
-                @if (isset($user->border) || isset($user->borderVariant))
-                    <div class="row col-sm-5">
-                        <div class="col-md-3 col-4">
-                            <h5>Border</h5>
+                    <div class="row no-gutters col-sm-5">
+                        <div class="col-lg-3 col-md-3 col-4">
+                            <h5>Rank</h5>
                         </div>
-                        <div class="col-md-9 col-8">
-                            <a href="{{ $user->borderVariant ? $user->borderVariant->parent->idUrl : $user->border->idUrl }}">
-                                {!! $user->borderVariant ? $user->borderVariant->parent->name : $user->border->name !!} @if ($user->borderVariant)
-                                    ({{ $user->borderVariant->name }})
-                                @endif
-                            </a>
-                        </div>
+                        <div class="col-lg-9 col-md-9 col-8">{!! $user->rank->displayName !!} {!! add_help($user->rank->parsed_description) !!}</div>
                     </div>
-                @endif
+                    @if ($user->birthdayDisplay && isset($user->birthday))
+                        <div class="row no-gutters col-sm-7">
+                            <div class="col-md-4 col-4">
+                                <h5>Birthday</h5>
+                            </div>
+                            <div class="col-md-8 col-8">{!! $user->birthdayDisplay !!}</div>
+                        </div>
+                    @endif
+                    @if (isset($user->border) || isset($user->borderVariant))
+                        <div class="row no-gutters col-sm-7">
+                            <div class="col-md-3 col-4">
+                                <h5>Border</h5>
+                            </div>
+                            <div class="col-md-9 col-8">
+                                <a href="{{ $user->borderVariant ? $user->borderVariant->parent->idUrl : $user->border->idUrl }}">
+                                    {!! $user->borderVariant ? $user->borderVariant->parent->name : $user->border->name !!} @if ($user->borderVariant)
+                                        ({{ $user->borderVariant->name }})
+                                    @endif
+                                </a>
+                            </div>
+                        </div>
+                    @endif
+                </div>
             </div>
         </div>
     </div>

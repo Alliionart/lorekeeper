@@ -732,10 +732,19 @@ tr.outflow {
 
 .user-banner {
     min-height: 250px;
+    position: relative;
+	overflow: hidden;
 }
 
-.user-info {
-	margin-top: -100px;
+.user-banner::before {
+	content: "";
+	width: 100%;
+	height: 100%;
+	top: 0;
+	left: 0;
+	display: block;
+	background: linear-gradient(45deg, var(--dark) 20%, transparent 90%);
+	position: absolute;
 }
 
 /* INVENTORY *************************************************************************************/
