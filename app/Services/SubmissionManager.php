@@ -241,11 +241,13 @@ class SubmissionManager extends Service {
             }
 
             // Create the external characters array
-            foreach ($data['external_name'] as $i => $name) {
-                $external_characters[] = [
-                    'name' => $data['external_name'][$i],
-                    'link' => $data['external_link'][$i],
-                ];
+            if (isset($data['external_name']) && $data['external_link']) {
+                foreach ($data['external_name'] as $i => $name) {
+                    $external_characters[] = [
+                        'name' => $data['external_name'][$i],
+                        'link' => $data['external_link'][$i],
+                    ];
+                }
             }
             // End external characters
 
@@ -637,11 +639,13 @@ class SubmissionManager extends Service {
             }
 
             // Create the external characters array
-            foreach ($data['external_name'] as $i => $name) {
-                $external_characters[] = [
-                    'name' => $data['external_name'][$i],
-                    'link' => $data['external_link'][$i],
-                ];
+            if (isset($data['external_name']) && $data['external_link']) {
+                foreach ($data['external_name'] as $i => $name) {
+                    $external_characters[] = [
+                        'name' => $data['external_name'][$i],
+                        'link' => $data['external_link'][$i],
+                    ];
+                }
             }
             // End external characters
 
@@ -671,7 +675,9 @@ class SubmissionManager extends Service {
                 'submission_id' => $submission->id,
             ]);
 
-            if (!$this->logAdminAction($user, 'Submission Approved', 'Approved submission <a href="'.$submission->viewurl.'">#'.$submission->id.'</a>')) {
+            $staff_reward_points = $submission->prompt->staff_reward_points ?? 0;
+
+            if (!$this->logAdminAction($user, 'Submission Approved', 'Approved submission <a href="'.$submission->viewurl.'">#'.$submission->id.'</a>', $staff_reward_points)) {
                 throw new \Exception('Failed to log admin action.');
             }
 

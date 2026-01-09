@@ -158,7 +158,7 @@ abstract class Service {
      * @param string $action
      * @param mixed  $action_details
      */
-    public function logAdminAction($user, $action, $action_details) {
+    public function logAdminAction($user, $action, $action_details, $override_staff_points = null) {
         // Double-check that the user is staff
         if ($user->isStaff) {
             // If staff rewards are enabled, check if the action
@@ -183,15 +183,19 @@ abstract class Service {
                         }
                     }
 
-                    // Collect the configured reward(s) for performing
-                    // this action
-                    $reward = 0;
-                    foreach ($keyedActions as $a) {
-                        if (DB::table('staff_actions')->where('key', $a)->exists()) {
-                            $reward += DB::table('staff_actions')->where('key', $a)->first()->value;
-                        } else {
-                            // If not configured, just supply 1
-                            $reward += 1;
+                    if ($override_staff_points) {
+                        $reward = $override_staff_points;
+                    } else {
+                        // Collect the configured reward(s) for performing
+                        // this action
+                        $reward = 0;
+                        foreach ($keyedActions as $a) {
+                            if (DB::table('staff_actions')->where('key', $a)->exists()) {
+                                $reward += DB::table('staff_actions')->where('key', $a)->first()->value;
+                            } else {
+                                // If not configured, just supply 1
+                                $reward += 1;
+                            }
                         }
                     }
 
