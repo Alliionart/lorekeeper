@@ -246,8 +246,8 @@
                     convert_urls: false,
                     plugins: [
                         'advlist autolink lists link image charmap print preview anchor',
-                        'searchreplace visualblocks fullscreen spoiler',
-                        'insertdatetime media table paste codeeditor help wordcount'
+                        'searchreplace visualblocks code fullscreen spoiler',
+                        'insertdatetime media table paste code codeeditor help wordcount link image'
                     ],
                     toolbar: 'undo redo | formatselect | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | spoiler-add spoiler-remove | removeformat | codeeditor',
                     content_css: [
@@ -257,7 +257,33 @@
                         '{{ asset($theme?->cssUrl) }}'
                     ],
                     spoiler_caption: 'Toggle Spoiler',
-                    target_list: false
+                    target_list: false,
+                    <?php
+                     if( Auth::check() && Auth::user()->isStaff && Auth::user()->hasPower('manage_files') ) {
+                        ?>
+                    file_picker_callback(callback, value, meta) {
+                        let x = window.innerWidth || document.documentElement.clientWidth || document.getElementsByTagName('body')[0].clientWidth
+                        let y = window.innerHeight || document.documentElement.clientHeight || document.getElementsByTagName('body')[0].clientHeight
+
+                        tinymce.activeEditor.windowManager.openUrl({
+                            url: '/filemanager/',
+                            title: 'Laravel File Manager',
+                            width: x * 0.8,
+                            height: y * 0.95,
+                            onMessage: (api, message) => {
+                                console.log('MESSAGE: ' + message.content);
+                                callback(message.content, {
+                                    text: message.text
+                                })
+                            },
+                        });
+                    },
+                    <?php
+                     }
+                    ?>
+                    relative_urls: false,
+                    remove_script_host: false,
+                    convert_urls: true
                 });
                 bsCustomFileInput.init();
                 var $mobileMenuButton = $('#mobileMenuButton');

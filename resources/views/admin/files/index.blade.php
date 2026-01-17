@@ -7,7 +7,16 @@
 @section('admin-content')
     {!! breadcrumbs(['Admin Panel' => 'admin', 'Files' => 'admin/files'] + ($folder ? [$folder => 'admin/files/' . $folder] : [])) !!}
 
-    <h1>File Manager / {!! $folder ? $folder . ' <a href="' . url('admin/files/') . '" class="btn btn-success float-right">Back to Root</a>' : 'Root' !!}</h1>
+    <div class="row">
+        <div class="col-md-10">
+            <h1>File Manager / {!! $folder ? $folder . ' <a href="' . url('admin/files/') . '" class="btn btn-success float-right">Back to Root</a>' : 'Root' !!}</h1>
+        </div>
+        <div class="col-md-2 text-right">
+            @if (Auth::check() && Auth::user()->isStaff && Auth::user()->hasPower('manage_files'))
+                <a class="btn btn-outline-success" href="/filemanager"><i class="fas fa-folder mr-1"></i> File Manager</a>
+            @endif
+        </div>
+    </div>
 
     <p>This manager allows you to upload files onto your server and create folders up to one level deep. Note that a folder containing files cannot be renamed or deleted.</p>
 

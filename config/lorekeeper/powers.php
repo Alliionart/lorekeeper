@@ -83,5 +83,8 @@ return [
         'name'        => 'Manage World',
         'description' => 'Allow rank to edit world information related to the World Expansion extension.',
     ],
-
+    'manage_files' => [
+        'name'        => 'Manage Files',
+        'description' => 'Allow rank to access the file manager and upload files through the rich text editor.',
+    ],
 ];
