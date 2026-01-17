@@ -73,6 +73,7 @@ Route::group(['prefix' => 'user', 'namespace' => 'Users'], function () {
     Route::get('{name}/armoury', 'UserController@getUserArmoury');
 
     Route::get('{name}/borders', 'UserController@getUserBorders');
+    Route::get('{name}/border-logs', 'UserController@getUserBorderLogs');
     
     Route::get('{name}/currency-logs', 'UserController@getUserCurrencyLogs');
     Route::get('{name}/item-logs', 'UserController@getUserItemLogs');

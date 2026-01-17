@@ -3,26 +3,26 @@
 @section('home-title') Foraging @endsection
 
 @section('home-content')
-    {!! breadcrumbs(['Foraging' => 'foraging']) !!}
+    {!! breadcrumbs([__('foraging.foraging') => 'foraging']) !!}
 
     <h1>
-        Foraging
+        {{ __('foraging.foraging') }}
     </h1>
 
     <div class="row">
         <div class="col-md-6">
-            <p>Welcome to foraging! Here you can choose an area to check for goodies.</p>
+            <p>Welcome to {{ __('foraging.foraging') }}! Here you can choose an area to check for goodies.</p>
             <p>
-                Goods will be claimable after you return from scavenging! Usually, about
+                Goods will be claimable after you return from {{ __('foraging.foraging') }}! Usually, about
                 {{-- convert integer to minutes using carbon (multiple integer by 60) --}}
                 {{ config('lorekeeper.foraging.forage_time') . ' minute' . (config('lorekeeper.foraging.forage_time') > 1 ? 's' : '')}}
                 is the amount of time it takes to check out an area.
             </p>
             @if($user->foraging->foraged_at)
                 <p>
-                    Last Foraged: {!! pretty_date($user->foraging->foraged_at) !!}
+                    Last {{ ucwords(__('foraging.foraging')) }}: {!! pretty_date($user->foraging->foraged_at) !!}
                 <br>
-                    Foraging Stamina Left: {{ $user->foraging->stamina }}
+                    {{ ucwords(__('foraging.foraging')) }} Stamina Left: {{ $user->foraging->stamina }}
                 </p>
             @endif
         </div>
@@ -170,7 +170,7 @@
         @endif
     @else
         <div class="alert alert-info">
-            You've exhausted yourself today and have no stamina left. Come back tomorrow to continue foraging!
+            You've exhausted yourself today and have no stamina left. Come back tomorrow to continue {{ __('foraging.foraging') }}!
         </div>
     @endif
 @endsection

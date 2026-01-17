@@ -53,10 +53,10 @@ class CraftingController extends Controller {
                 Auth::user()->recipes()->orderBy('name')->get()->groupBy('collection_category_id');
 
         return view('home.crafting.category_index', [
-            'default' => Recipe::where('needs_unlocking', '0')->where('recipe_category_id', $category_id)->get(),
-            'userRecipes' => $userRecipes,
-            'categories' => $category->keyBy('id'),
-            'category'  => RecipeCategory::where('id', '=', $category_id)->first(),
+            'default'       => Recipe::where('needs_unlocking', '0')->where('recipe_category_id', $category_id)->get(),
+            'userRecipes'   => $userRecipes,
+            'categories'    => $category->keyBy('id'),
+            'category'      => RecipeCategory::where('id', '=', $category_id)->first(),
         ]);
     }
 

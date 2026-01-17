@@ -13,7 +13,7 @@
 @endsection
 
 @section('content')
-    {!! breadcrumbs(['World' => 'world', 'Pets' => 'world/pets', $pet->name => 'world/pets/' . $pet->id]) !!}
+    {!! breadcrumbs(['World' => 'world', ucwords(__('pets.pets')) => 'world/pets', $pet->name => 'world/pets/' . $pet->id]) !!}
     <h1>
         @if (!$pet->is_visible)
             <i class="fas fa-eye-slash mr-1"></i>

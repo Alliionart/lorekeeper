@@ -11,11 +11,11 @@
         {!! breadcrumbs([
             'Users' => 'users',
             $user->name => $user->url,
-            'Pets' => $user->url . '/pets',
+            ucwords(__('pets.pets')) => $user->url . '/pets',
             $user->name . '\'s ' . $pet->pet->name . ' ' . (isset($pet->drops->dropData->name) ? $pet->drops->dropData->name . 's' : 'drops') => 'pets/pet/' . $pet->id,
         ]) !!}
     @else
-        {!! breadcrumbs(['Pets' => 'pets', $pet->pet->name . ' ' . (isset($pet->drops->dropData->name) ? $pet->drops->dropData->name . 's' : 'drops') => 'pets/pet/' . $pet->id]) !!}
+        {!! breadcrumbs([ucwords(__('pets.pets')) => 'pets', $pet->pet->name . ' ' . (isset($pet->drops->dropData->name) ? $pet->drops->dropData->name . 's' : 'drops') => 'pets/pet/' . $pet->id]) !!}
     @endif
 
     @if (!$pet->drops->dropData->isActive)

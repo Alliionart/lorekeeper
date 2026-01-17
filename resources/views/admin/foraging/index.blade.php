@@ -1,15 +1,14 @@
 @extends('admin.layout')
 
-@section('admin-title') Forages @endsection
+@section('admin-title') {{ ucwords(__('foraging.foragings')) }} @endsection
 
 @section('admin-content')
-{!! breadcrumbs(['Admin Panel' => 'admin', 'Forages' => 'admin/data/forages']) !!}
+{!! breadcrumbs(['Admin Panel' => 'admin',  __('foraging.foragings') => 'admin/data/forages']) !!}
 
-<h1>Forages</h1>
+<h1>{{ __('foraging.foragings') }}</h1>
 
-<p>Forages will roll a random reward from the contents of the table.</p>
-
-<div class="text-right mb-3"><a class="btn btn-primary" href="{{ url('admin/data/forages/create') }}"><i class="fas fa-plus"></i> Create New Forage</a></div>
+<p>{{ ucwords(__('foraging.foragings')) }} will roll a random reward from the contents of the table.</p>
+<div class="text-right mb-3"><a class="btn btn-primary" href="{{ url('admin/data/forages/create') }}"><i class="fas fa-plus"></i> Create New {{ ucwords(__('foraging.foraging')) }}</a></div>
 @if(!count($tables))
     <p>No Forages found.</p>
 @else

@@ -1,8 +1,8 @@
 <div class="row world-entry">
     @if (isset($imageUrl) && $imageUrl)
         <div class="col-md-3 world-entry-image">
-            <a href="{{ $imageUrl }}" data-lightbox="entry" data-title="{{ $name }}">
-                <img src="{{ $imageUrl }}" class="world-entry-image" alt="{{ $name }}" />
+            <a href="{{ $imageUrl }}" data-lightbox="entry" data-title="{{ strip_tags($name) }}">
+                <img src="{{ $imageUrl }}" class="world-entry-image" alt="{{ strip_tags($name) }}" />
             </a>
         </div>
     @endif

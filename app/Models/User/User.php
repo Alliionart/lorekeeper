@@ -1491,7 +1491,7 @@ class User extends Authenticatable implements MustVerifyEmail {
 
         //get some fun variables for later
         $avatar = '<!-- avatar -->
-                <img class="avatar" src="' . $this->avatarUrl . '" alt="Avatar of ' . $this->name . '">';
+                <img class="avatar img-fluid" src="' . $this->avatarUrl . '" alt="Avatar of ' . $this->name . '">';
 
         // Check if variant border or regular border is under or over
         if (isset($this->borderVariant) && $this->borderVariant->border_style == 0) {

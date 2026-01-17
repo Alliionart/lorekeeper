@@ -1,4 +1,4 @@
-<h3>Your Pets <a class="small pet-collapse-toggle collapse-toggle" href="#userPet" data-toggle="collapse">Show</a></h3>
+<h3>Your {{ ucwords(__('pets.pets')) }} <a class="small pet-collapse-toggle collapse-toggle" href="#userPet" data-toggle="collapse">Show</a></h3>
 <div class="card mb-3 collapse show" id="userPet">
     <div class="card-body">
         <div class="text-right mb-3">

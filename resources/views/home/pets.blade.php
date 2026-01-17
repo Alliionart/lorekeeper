@@ -7,13 +7,13 @@
 @section('home-content')
     {!! breadcrumbs(['Familiars' => 'pets']) !!}
 
-    <h1>Familiars</h1>
+    <h1>{{ ucwords(__('pets.pets')) }}</h1>
 
     <p>These are your familiars. Click on a pet to view more details and actions you can perform on it.</p>
 
     <div class="text-right">
         {!! Form::open(['url' => 'pets/collect-all']) !!}
-        {!! Form::submit('Collect All Pet Drops', ['class' => 'btn btn-success my-3']) !!}
+        {!! Form::submit('Collect All ' . ucwords(__('pets.pet')) . ' Drops', ['class' => 'btn btn-success my-3']) !!}
         {!! Form::close() !!}
     </div>
 

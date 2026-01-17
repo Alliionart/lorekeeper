@@ -1,17 +1,16 @@
 @extends('home.layout')
 
 @section('home-title')
-    Pets
+    {{ ucwords(__('pets.pets')) }}
 @endsection
 
 @section('home-content')
-    {!! breadcrumbs(['Pets' => 'pets']) !!}
-
+    {!! breadcrumbs([ucwords(__('pets.pets')) => 'pets']) !!}
     <h1>
-        Pets
+        {{ ucwords(__('pets.pets')) }}
     </h1>
 
-    <p>These are your pets. Click on a pet to view more details and actions you can perform on it.</p>
+    <p>These are your {{ __('pets.pets') }}. Click on a {{ __('pets.pet') }} to view more details and actions you can perform on it.</p>
 
     @foreach ($pets as $categoryId => $categoryPets)
         <div class="card mb-3 inventory-category">

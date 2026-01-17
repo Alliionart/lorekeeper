@@ -135,7 +135,7 @@
 <div class="card-deck mb-4 profile-assets">
     <div class="card profile-currencies profile-assets-card">
         <div class="card-body text-center">
-            <h5 class="card-title">Pets</h5>
+            <h5 class="card-title">{{ ucwords(__('pets.pets')) }}</h5>
             <div class="card-body">
                 @if (count($pets))
                     <div class="row">
@@ -149,7 +149,7 @@
                         @endforeach
                     </div>
                 @else
-                    <div>No pets owned.</div>
+                    <div>No {{ __('pets.pets') }} owned.</div>
                 @endif
             </div>
             <div class="text-right"><a href="{{ $user->url . '/pets' }}">View all...</a></div>

@@ -1,13 +1,13 @@
 @extends('admin.layout')
 
-@section('admin-title') Forages @endsection
+@section('admin-title') {{ ucwords(__('foraging.foragings')) }} @endsection
 
 @section('admin-content')
-{!! breadcrumbs(['Admin Panel' => 'admin', 'Forages' => 'admin/data/forages', ($table->id ? 'Edit' : 'Create').' Forage' => $table->id ? 'admin/data/forages/edit/'.$table->id : 'admin/data/forages/create']) !!}
+{!! breadcrumbs(['Admin Panel' => 'admin', __('foraging.foragings') => 'admin/data/forages', ($table->id ? 'Edit' : 'Create').' ' . ucwords(__('foraging.foraging')) => $table->id ? 'admin/data/forages/edit/'.$table->id : 'admin/data/forages/create']) !!}
 
-<h1>{{ $table->id ? 'Edit' : 'Create' }} Forage
+<h1>{{ $table->id ? 'Edit' : 'Create' }} {{ ucwords(__('foraging.foraging')) }}
     @if($table->id)
-        <a href="#" class="btn btn-danger float-right delete-table-button">Delete Forage</a>
+        <a href="#" class="btn btn-danger float-right delete-table-button">Delete {{ ucwords(__('foraging.foragings')) }}</a>
     @endif
 </h1>
 
@@ -83,7 +83,7 @@
 
 <h3>Loot</h3>
 
-<p>These are the potential rewards from rolling on this forage, similar to loot tables. You can add items, currencies or a loot table. @if(!$table->id) You can test loot rolling after the loot table is created. @endif</p>
+<p>These are the potential rewards from rolling on this {{ __('foraging.foraging') }}, similar to loot tables. You can add items, currencies or a loot table. @if(!$table->id) You can test loot rolling after the loot table is created. @endif</p>
 <p>You can add any kind of currencies (both user- and character-attached), but be sure to keep track of which are being distributed! Character-only currencies cannot be given to users.</p>
 
 <div class="text-right mb-3">
