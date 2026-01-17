@@ -1,0 +1,25 @@
+name: Push Wor-Keeper Live
+run-name: ${{ github.actor }} has pushed Wor-Keeper Live
+'on':
+  push:
+    branches:
+      - wor-keeper
+  pull_request:
+    branches: []
+jobs:
+  go_live:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Build step
+        run: |-
+          echo "$SSH_PRIVATE_KEY" > id_rsa
+          chmod 600 id_rsa
+          ssh -o PasswordAuthentication=no -i id_rsa root@46.224.150.124 'sh ./deploy.sh'
+          echo "Deploy step finished"
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-artifacts
+          path: id_rsa
+
