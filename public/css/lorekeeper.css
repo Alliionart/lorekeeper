@@ -120,11 +120,28 @@ main > .row {
 
 .site-header-image {
     /*background-color: #eee;*/
-    background-repeat: repeat;
+    background-repeat: no-repeat;
     min-height: 200px;
     text-align: center;
+    background-size: cover;
+	display: flex !important;
+	align-items: center;
+	justify-content: center;
+	background-position: center;
 }
-
+.site-header-image::before {
+	content: "";
+	width:100%;
+	height: 100%;
+	display: block;
+	position: absolute;
+	background-image: radial-gradient(circle,rgba(63, 63, 92, 0.06) 50%, rgba(9, 19, 41, 0.6) 100%);
+	mix-blend-mode: multiply;
+}
+img#logo {
+	max-width: 250px;
+	filter: drop-shadow(0 0 20px rgba(0,0,0,0.8));
+}
 .navbar .navbar-brand, .navbar .nav-item {
     text-transform: uppercase;
     font-family: Roboto Condensed, serif;

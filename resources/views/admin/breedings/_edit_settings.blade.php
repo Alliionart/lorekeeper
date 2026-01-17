@@ -24,14 +24,13 @@
         </div>
         <div class="card-body">
             <div class="form-group">
-
                 <h5>Litter Sizes</h5>
                 @foreach ($species as $id => $name)
                     @if ($id == 0)
                         @continue
                     @endif
                     <?php
-                    $currentConfig = $currentSettings['litter_config']->$id;
+                    $currentConfig = array_key_exists('litter_sizes', $currentSettings) && property_exists($currentSettings['litter_sizes'], $id) ? $currentSettings['litter_sizes']->$id : null;
                     ?>
                     <div class="row mb-2">
                         <div class="col-md-4">
@@ -253,17 +252,15 @@
                     </div>
                     <div id="collapseMarkings" class="collapse" aria-labelledby="headingMarkings" data-parent="#breedingRatesAccordion">
                         <div class="card-body">
-
                             @foreach ($markingRarities as $rarity_id => $rarity_name)
                                 <h5>{{ $rarity_name }}</h5>
                                 @foreach ($markingConfig as $row)
                                     <?php
-                                    $id = strtolower($rarity_name) . '__' . substr(array_key_first($row), 0, 3) . 'X' . (array_values($row)[0] ? substr(array_values($row)[0], 0, 3) : 'non');
-                                    $type = explode('__', $id)[1];
-                                    $currentConfig = property_exists($currentSettings['marking_rates'], $rarity_name) ? $currentSettings['marking_rates']->$rarity_name : null;
-                                    $current = $currentConfig->$type ?? null;
+                                        $id = strtolower($rarity_name) . '__' . substr(array_key_first($row), 0, 3) . 'X' . (array_values($row)[0] ? substr(array_values($row)[0], 0, 3) : 'non');
+                                        $type = explode('__', $id)[1];
+                                        $currentConfig = array_key_exists('marking_rates', $currentSettings) && $currentSettings['marking_rates'] && property_exists($currentSettings['marking_rates'], $rarity_name) ? $currentSettings['marking_rates']->$rarity_name : null;
+                                        $current = $currentConfig->$type ?? null;
                                     ?>
-
                                     <div class="row mb-2">
                                         <div class="col-md-4">
                                             {{ ucwords(array_key_first($row)) }} <i style="font-size:10px;" class="fas fa-times"></i> {{ ucwords(array_values($row)[0] ?? 'Non-Marked') }}
