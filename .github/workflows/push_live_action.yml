@@ -18,7 +18,7 @@ jobs:
           ssh -o PasswordAuthentication=no -i id_rsa root@46.224.150.124 'sh ./deploy.sh'
           echo "Deploy step finished"
       - name: Upload artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: build-artifacts
           path: id_rsa
