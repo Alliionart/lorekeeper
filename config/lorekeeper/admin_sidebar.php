@@ -491,7 +491,7 @@ return [
             ],
             [
                 'name' => 'Log Viewer',
-                'url' => 'admin/logs'
+                'url' => 'admin/error-logs'
             ],
         ],
     ],

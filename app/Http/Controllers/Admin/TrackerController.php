@@ -115,7 +115,7 @@ class TrackerController extends Controller {
 
         return view('admin.trackers.trackersettings', [
             'levels'              => isset($levels[0]) ? json_decode($levels[0]) : null,
-            'xp_calc_data'        => $calc_data,
+            'xp_calc_data'        => (array) $calc_data,
             'lit_settings'        => $lit_settings,
         ]);
     }
