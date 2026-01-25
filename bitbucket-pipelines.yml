@@ -1,0 +1,12 @@
+image: atlassian/default-image:4
+pipelines:
+  default:
+    - step:
+        deployment: staging
+        script:
+          - echo "$SSH_PRIVATE_KEY" > id_rsa
+          - chmod 600 id_rsa
+          - ssh -o PasswordAuthentication=no -i id_rsa root@46.224.150.124 'sh ./deploy.sh'
+          - echo "Deploy step finished"
+        artifacts:
+          - id_rsa
