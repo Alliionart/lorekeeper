@@ -8,8 +8,8 @@
 @section($namespace ? 'content' : 'profile-content')
 
     {!! $namespace
-        ? breadcrumbs(['Pets' => 'pets', $pet->pet_name ? $pet->pet_name . ' (' . $pet->pet->name . ')' : $user->name . "'s " . $pet->pet->name => $pet->url])
-        : breadcrumbs(['Users' => 'users', $user->name => $user->url, 'Pets' => $user->url . '/pets', $pet->pet_name ? $pet->pet_name . ' (' . $pet->pet->name . ')' : $user->name . "'s " . $pet->pet->name => $pet->url]) !!}
+        ? breadcrumbs([ucwords(__('pets.pets')) => 'pets', $pet->pet_name ? $pet->pet_name . ' (' . $pet->pet->name . ')' : $user->name . "'s " . $pet->pet->name => $pet->url])
+        : breadcrumbs(['Users' => 'users', $user->name => $user->url, ucwords(__('pets.pets')) => $user->url . '/pets', $pet->pet_name ? $pet->pet_name . ' (' . $pet->pet->name . ')' : $user->name . "'s " . $pet->pet->name => $pet->url]) !!}
 
     <h1>
         {!! $pet->pet_name
@@ -20,7 +20,7 @@
     @if (!$namespace)
         <div class="container justify-content-right text-right my-3">
             <a href="{{ $user->url . '/pets' }}">
-                <div class="btn btn-primary">Return to Pets</div>
+                <div class="btn btn-primary">Return to {{ ucwords(__('pets.pets')) }}</div>
             </a>
         </div>
     @endif

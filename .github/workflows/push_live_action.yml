@@ -1,0 +1,28 @@
+name: Push Wor-Keeper Live
+run-name: ${{ github.actor }} has pushed Wor-Keeper Live
+
+on:
+  push:
+    branches:
+      - wor-keeper
+
+jobs:
+  go_live:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup SSH
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Check for server
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -H 46.224.150.124 >> ~/.ssh/known_hosts
+
+      - name: Deploy
+        run: |
+          ssh root@46.224.150.124 'sh ./deploy.sh'

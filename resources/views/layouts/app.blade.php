@@ -16,25 +16,25 @@
         {!! RecaptchaV3::initJs() !!}
     @endif
 
-    <title>{{ config('lorekeeper.settings.site_name', 'Lorekeeper') }} -@yield('title')</title>
+    <title>{{ config('lorekeeper.settings.site_name', 'Lorekeeper') }}{!! View::hasSection('title') ? ' - ' . trim(View::getSection('title')) : '' !!}</title>
 
     <!-- Primary Meta Tags -->
-    <meta name="title" content="{{ config('lorekeeper.settings.site_name', 'Lorekeeper') }} -@yield('title')">
-    <meta name="description" content="@if (View::hasSection('meta-desc')) @yield('meta-desc') @else {{ config('lorekeeper.settings.site_desc', 'A Lorekeeper ARPG') }} @endif">
+    <meta name="title" content="{{ config('lorekeeper.settings.site_name', 'Lorekeeper') }}{!! View::hasSection('title') ? ' - ' . trim(View::getSection('title')) : '' !!}">
+    <meta name="description" content="{!! View::hasSection('meta-desc') ? trim(strip_tags(View::getSection('meta-desc'))) : config('lorekeeper.settings.site_desc', 'A Lorekeeper ARPG') !!}">
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="{{ config('app.url', 'http://localhost') }}">
-    <meta property="og:image" content="@if (View::hasSection('meta-img')) @yield('meta-img') @else {{ asset('images/meta-image.png') }} @endif">
-    <meta property="og:title" content="{{ config('lorekeeper.settings.site_name', 'Lorekeeper') }} -@yield('title')">
-    <meta property="og:description" content="@if (View::hasSection('meta-desc')) @yield('meta-desc') @else {{ config('lorekeeper.settings.site_desc', 'A Lorekeeper ARPG') }} @endif">
+    <meta property="og:image" content="{{ View::hasSection('meta-img') ? View::getSection('meta-img') : asset('images/meta-image.png') }}">
+    <meta property="og:title" content="{{ config('lorekeeper.settings.site_name', 'Lorekeeper') }}{!! View::hasSection('title') ? ' - ' . trim(View::getSection('title')) : '' !!}">
+    <meta property="og:description" content="{!! View::hasSection('meta-desc') ? trim(strip_tags(View::getSection('meta-desc'))) : config('lorekeeper.settings.site_desc', 'A Lorekeeper ARPG') !!}">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="{{ config('app.url', 'http://localhost') }}">
-    <meta property="twitter:image" content="@if (View::hasSection('meta-img')) @yield('meta-img') @else {{ asset('images/meta-image.png') }} @endif">
-    <meta property="twitter:title" content="{{ config('lorekeeper.settings.site_name', 'Lorekeeper') }} -@yield('title')">
-    <meta property="twitter:description" content="@if (View::hasSection('meta-desc')) @yield('meta-desc') @else {{ config('lorekeeper.settings.site_desc', 'A Lorekeeper ARPG') }} @endif">
+    <meta property="twitter:image" content="{{ View::hasSection('meta-img') ? View::getSection('meta-img') : asset('images/meta-image.png') }}">
+    <meta property="twitter:title" content="{{ config('lorekeeper.settings.site_name', 'Lorekeeper') }}{!! View::hasSection('title') ? ' - ' . trim(View::getSection('title')) : '' !!}">
+    <meta property="twitter:description" content="{!! View::hasSection('meta-desc') ? trim(strip_tags(View::getSection('meta-desc'))) : config('lorekeeper.settings.site_desc', 'A Lorekeeper ARPG') !!}">
 
     <!-- No AI scraping directives -->
     <meta name="robots" content="noai">
@@ -246,8 +246,8 @@
                     convert_urls: false,
                     plugins: [
                         'advlist autolink lists link image charmap print preview anchor',
-                        'searchreplace visualblocks fullscreen spoiler',
-                        'insertdatetime media table paste codeeditor help wordcount'
+                        'searchreplace visualblocks code fullscreen spoiler',
+                        'insertdatetime media table paste code codeeditor help wordcount link image'
                     ],
                     toolbar: 'undo redo | formatselect | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | spoiler-add spoiler-remove | removeformat | codeeditor',
                     content_css: [
@@ -257,7 +257,33 @@
                         '{{ asset($theme?->cssUrl) }}'
                     ],
                     spoiler_caption: 'Toggle Spoiler',
-                    target_list: false
+                    target_list: false,
+                    <?php
+                     if( Auth::check() && Auth::user()->isStaff && Auth::user()->hasPower('manage_files') ) {
+                        ?>
+                    file_picker_callback(callback, value, meta) {
+                        let x = window.innerWidth || document.documentElement.clientWidth || document.getElementsByTagName('body')[0].clientWidth
+                        let y = window.innerHeight || document.documentElement.clientHeight || document.getElementsByTagName('body')[0].clientHeight
+
+                        tinymce.activeEditor.windowManager.openUrl({
+                            url: '/filemanager/',
+                            title: 'Laravel File Manager',
+                            width: x * 0.8,
+                            height: y * 0.95,
+                            onMessage: (api, message) => {
+                                console.log('MESSAGE: ' + message.content);
+                                callback(message.content, {
+                                    text: message.text
+                                })
+                            },
+                        });
+                    },
+                    <?php
+                     }
+                    ?>
+                    relative_urls: false,
+                    remove_script_host: false,
+                    convert_urls: true
                 });
                 bsCustomFileInput.init();
                 var $mobileMenuButton = $('#mobileMenuButton');

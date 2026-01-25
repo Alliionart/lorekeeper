@@ -320,13 +320,13 @@ class Border extends Model
 
         //get some fun variables for later
         $avatar = '<!-- avatar -->
-                <img class="avatar" src="' . $user . '" alt="' . $name . '">';
+                <img class="avatar img-fluid" src="' . $user . '" alt="' . $name . '">';
 
         $styling = '<div class="user-avatar">';
         $layer = ($this->border_style == 0 ? 'under' : ' ');
 
         $frame = '<!-- frame -->
-                <img src="' . $this->imageUrl . '" class="avatar-border ' . $layer . '" alt="' . $this->name . ' Avatar Frame">';
+                <img src="' . $this->imageUrl . '" class="avatar-border img-fluid ' . $layer . '" alt="' . $this->name . ' Avatar Frame">';
 
         return $styling . $avatar . $frame . '</div>';
     }
@@ -360,31 +360,31 @@ class Border extends Model
 
         //get some fun variables for later
         $avatar = '<!-- avatar -->
-                <img class="avatar" src="' . $user . '" alt="' . $name . '">';
+                <img class="avatar img-fluid" src="' . $user . '" alt="' . $name . '">';
 
         $styling = '<div class="user-avatar">';
 
         if ($top->border_style == 0 && $bottom->border_style == 0) {
             // If both layers are UNDER the avatar
             //top's layer image
-            $mainframe = '<img src="' . $top->imageUrl . '" class="avatar-border under" alt="' . $this->name . ' Avatar Frame">';
+            $mainframe = '<img src="' . $top->imageUrl . '" class="avatar-border img-fluid under" alt="' . $this->name . ' Avatar Frame">';
             //bottom layer's image
-            $secondframe = '<img src="' . $bottom->imageUrl . '" class="avatar-border bottom" alt="' . $this->name . ' Avatar Frame">';
+            $secondframe = '<img src="' . $bottom->imageUrl . '" class="avatar-border img-fluid bottom" alt="' . $this->name . ' Avatar Frame">';
         } elseif ($top->border_style == 1 && $bottom->border_style == 1) {
             // If both layers are OVER the avatar
             //top's layer image
-            $mainframe = '<img src="' . $top->imageUrl . '" class="avatar-border top" alt="' . $this->name . ' Avatar Frame">';
+            $mainframe = '<img src="' . $top->imageUrl . '" class="avatar-border img-fluid top" alt="' . $this->name . ' Avatar Frame">';
             //bottom layer's image
-            $secondframe = '<img src="' . $bottom->imageUrl . '" class="avatar-border" alt="' . $this->name . ' Avatar Frame">';
+            $secondframe = '<img src="' . $bottom->imageUrl . '" class="avatar-border img-fluid" alt="' . $this->name . ' Avatar Frame">';
         } else {
             // If one layer is UNDER and one is OVER the avatar
             $mainlayer = ($top->border_style == 0 ? 'under' : ' ');
             $secondlayer = ($bottom->border_style == 0 ? 'under' : ' ');
 
             //top's layer image
-            $mainframe = '<img src="' . $top->imageUrl . '" class="avatar-border ' . $mainlayer . '" alt="' . $this->name . ' Avatar Frame">';
+            $mainframe = '<img src="' . $top->imageUrl . '" class="avatar-border img-fluid ' . $mainlayer . '" alt="' . $this->name . ' Avatar Frame">';
             //bottom layer's image
-            $secondframe = '<img src="' . $bottom->imageUrl . '" class="avatar-border ' . $secondlayer . '" alt="' . $this->name . ' Avatar Frame">';
+            $secondframe = '<img src="' . $bottom->imageUrl . '" class="avatar-border img-fluid ' . $secondlayer . '" alt="' . $this->name . ' Avatar Frame">';
         }
 
         return $styling . $avatar . $mainframe . $secondframe . '</div>';

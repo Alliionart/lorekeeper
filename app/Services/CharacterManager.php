@@ -22,11 +22,14 @@ use App\Models\Character\CharacterTransfer;
 use App\Models\Currency\Currency;
 use App\Models\Item\Item;
 use App\Models\Marking\Marking;
+use App\Models\Carrier\Carrier;
+use App\Models\Carrier\MarkingCarrier;
 use App\Models\Sales\SalesCharacter;
 use App\Models\Species\Subtype;
 use App\Models\User\User;
 use App\Models\User\UserItem;
 use App\Models\User\UserPet;
+use App\Models\WorldExpansion\FactionRankMember;
 use Carbon\Carbon;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Config;
@@ -661,6 +664,15 @@ class CharacterManager extends Service {
                 if (!$subtype || $subtype->species_id != $data['species_id']) {
                     throw new \Exception('Selected subtype invalid or does not match species.');
                 }
+            }
+
+            //Check that species & rarity are selected
+            if (!(isset($data['species_id']) && $data['species_id'])) {
+                throw new \Exception('Characters require a species.');
+            }
+
+            if (!(isset($data['rarity_id']) && $data['rarity_id'])) {
+                throw new \Exception('Characters require a rarity.');
             }
 
             if (!$this->logAdminAction($user, 'Updated Image', 'Updated character image features on <a href="'.$image->character->url.'">#'.$image->id.'</a>')) {
@@ -1654,7 +1666,7 @@ class CharacterManager extends Service {
                 $character->is_trading = isset($data['is_trading']);
 
                 $takeBgCurrency = true;
-                if ($character->location !== $data['location']) {
+                if ($character->home_id !== $data['location']) {
                     //Remove the item required here then update.
                     $takeBgCurrency = false;
                     $item_id = Settings::get('background_location_change_item_id');
@@ -1667,7 +1679,7 @@ class CharacterManager extends Service {
                     if (!(new InventoryManager)->debitStack($user, 'Character Location Update', ['data' => 'Item used in character background change ('.$character->displayName.')'], $stack, 1)) {
                         throw new \Exception('You do not have any of the required item ('.Item::find($item_id)->name.') for a location update.');
                     }
-                    $character->location = $data['location'];
+                    $character->home_id = $data['location'];
                 }
 
                 $owner = User::find($character->user_id);
@@ -1707,9 +1719,40 @@ class CharacterManager extends Service {
             }
             $character->save();
 
-            if (!$character->is_myo_slot && config('lorekeeper.extensions.character_TH_profile_link')) {
+            // Update the character's location
+            if (isset($data['location']) && $data['location']) {
+                $character->home_id = (int) $data['location'];
+            }
+            $character->save();
+
+            // Update the character's faction
+            if (isset($data['faction']) && $data['faction']) {
+                if ($character->faction_id) {
+                    $old = $character->faction_id;
+                }
+
+                $character->faction_id = (int) $data['faction'];
+                $character->save();
+
+                // Reset standing/remove from closed rank
+                if (isset($old) && $character->faction_id != $old) {
+                    $standing = $character->getCurrencies(true)->where('id', Settings::get('WE_faction_currency'))->first();
+                    if ($standing && $standing->quantity > 0) {
+                        if (!$debit = (new CurrencyManager)->debitCurrency($character, null, 'Changed Factions', null, $standing, $standing->quantity)) {
+                            throw new \Exception('Failed to reset standing.');
+                        }
+                    }
+
+                    if (FactionRankMember::where('member_type', 'character')->where('member_id', $character->id)->first()) {
+                        FactionRankMember::where('member_type', 'character')->where('member_id', $character->id)->first()->delete();
+                    }
+                }
+            }
+
+            if (!$character->is_myo_slot && Config::get('lorekeeper.extensions.character_TH_profile_link')) {
                 $character->profile->link = $data['link'];
             }
+
             $character->profile->save();
 
             $character->profile->text = $data['text'];
@@ -2471,8 +2514,9 @@ class CharacterManager extends Service {
     public function updateCharacterMarkings($data, $character) {
         DB::beginTransaction();
 
+        $active_carriers = $data['active_carriers'] ?? null;
+
         try {
-            \Log::info('all_data', $data);
             // Clear old markings
             CharacterMarking::where('character_id', $character->id)->delete();
 
@@ -2483,8 +2527,22 @@ class CharacterManager extends Service {
             foreach ($data['marking_id'] as $markingId) {
                 if ($markingId) {
                     $temp = Marking::where('id', $markingId)->first();
-
                     $is_dominant = $data['is_dominant'][$i] ?? 0;
+
+                    // Map current carrier if it matches the current marking being processed
+                    $carrier_id = null;
+                    if($active_carriers) {
+                        $applicable_carriers = MarkingCarrier::where('marking_id', $markingId)->pluck('carrier_id')->toArray();
+                        $carrier_intersect = array_intersect($active_carriers, $applicable_carriers);
+                        if (count($carrier_intersect) > 0) {    
+                            $applicable = array_values($carrier_intersect);
+                            if(count($applicable) > 1) {
+                                $carrier_id = json_encode($applicable);
+                            }
+                            $carrier_id = $applicable[0];
+                        }
+                    }
+
 
                     $glint = null;
                     if ($markingId == $glintID) {
@@ -2503,6 +2561,7 @@ class CharacterManager extends Service {
                         'is_dominant'   => $is_dominant,
                         'data'          => $data['side_id'][$i] ?? 0,
                         'base_id'       => $glint,
+                        'carrier_id'    => $carrier_id ?? null,
                     ]);
 
                     $marking = CharacterMarking::create([
@@ -2513,6 +2572,7 @@ class CharacterManager extends Service {
                         'is_dominant'   => $is_dominant,
                         'data'          => $data['side_id'][$i] ?? 0,
                         'base_id'       => $glint,
+                        'carrier_id'    => $carrier_id ?? null,
                     ]);
                 }
                 $i++;

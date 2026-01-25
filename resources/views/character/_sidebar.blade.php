@@ -5,7 +5,7 @@
         <div class="sidebar-item"><a href="{{ $character->url }}" class="{{ set_active('character/' . $character->slug) }}">Information</a></div>
         <div class="sidebar-item"><a href="{{ $character->url . '/profile' }}" class="{{ set_active('character/' . $character->slug . '/profile') }}">Profile</a></div>
         <div class="sidebar-item"><a href="{{ $character->url . '/gallery' }}" class="{{ set_active('character/' . $character->slug . '/gallery') }}">Gallery</a></div>
-        <div class="sidebar-item"><a href="{{ $character->url . '/pets' }}" class="{{ set_active('character/' . $character->slug . '/pets') }}">Familiars</a></div>
+        <div class="sidebar-item"><a href="{{ $character->url . '/pets' }}" class="{{ set_active('character/' . $character->slug . '/pets') }}">{{ ucwords(__('pets.pets')) }}</a></div>
         <div class="sidebar-item"><a href="{{ $character->url . '/inventory' }}" class="{{ set_active('character/' . $character->slug . '/inventory') }}">Inventory</a></div>
         <div class="sidebar-item"><a href="{{ $character->url . '/bank' }}" class="{{ set_active('character/' . $character->slug . '/bank') }}">Bank</a></div>
         @if ($character->getLineageBlacklistLevel() < 1)
@@ -34,6 +34,8 @@
         <div class="sidebar-item"><a href="{{ $character->url . '/submissions' }}" class="{{ set_active('character/' . $character->slug . '/submissions') }}">Submissions</a></div>
         <div class="sidebar-item"><a href="{{ $character->url . '/status-effect-logs' }}" class="{{ set_active('character/' . $character->slug . '/status-effect-logs') }}">Status Effect Logs</a></div>
         <div class="sidebar-item"><a href="{{ $character->url . '/' . __('awards.award') . '-logs' }}" class="{{ set_active('character/' . $character->slug . '/' . __('awards.award') . '-logs') }}">{{ ucfirst(__('awards.award')) }} Logs</a></div>
+        <div class="sidebar-item"><a href="{{ $character->url . '/tracker' }}" class="{{ set_active('character/' . $character->slug . '/tracker') }}">{{ __('art_tracker.xp') }} Tracker</a></div>
+        <div class="sidebar-item"><a href="{{ $character->url . '/xp-logs' }}" class="{{ set_active('character/' . $character->slug . '/xp-logs') }}">{{ __('art_tracker.xp') }} Logs</a></div>
     </li>
     @if (Auth::check() && (Auth::user()->id == $character->user_id || Auth::user()->hasPower('manage_characters')))
         <li class="sidebar-section">

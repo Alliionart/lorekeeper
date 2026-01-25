@@ -73,6 +73,7 @@ Route::group(['prefix' => 'user', 'namespace' => 'Users'], function () {
     Route::get('{name}/armoury', 'UserController@getUserArmoury');
 
     Route::get('{name}/borders', 'UserController@getUserBorders');
+    Route::get('{name}/border-logs', 'UserController@getUserBorderLogs');
     
     Route::get('{name}/currency-logs', 'UserController@getUserCurrencyLogs');
     Route::get('{name}/item-logs', 'UserController@getUserItemLogs');
@@ -133,9 +134,14 @@ Route::group(['prefix' => 'character', 'namespace' => 'Characters'], function ()
     Route::get('{slug}/children', 'CharacterLineageController@getCharacterChildren');
     Route::get('{slug}/grandchildren', 'CharacterLineageController@getCharacterGrandChildren');
     Route::get('{slug}/great-grandchildren', 'CharacterLineageController@getCharacterGreatGrandChildren');
+    //other
     Route::get('{slug}/image/{id}', 'CharacterController@getCharacterImage');
     Route::get('{slug}/image-single/{id}', 'CharacterController@getCharacterSingleImage');
     Route::get('{slug}/get-bg-options', 'CharacterController@getRefreshCharacterBgOptions');
+    Route::get('{slug}/xp-logs', 'CharacterController@getCharacterXPLogs');
+
+    Route::get('{slug}/gallery', 'CharacterController@getCharacterGallery');
+    Route::get('{slug}/tracker', 'CharacterController@getCharacterTracker');
 });
 
 Route::group(['prefix' => 'myo', 'namespace' => 'Characters'], function () {
@@ -143,6 +149,16 @@ Route::group(['prefix' => 'myo', 'namespace' => 'Characters'], function () {
     Route::get('{id}/profile', 'MyoController@getCharacterProfile');
     Route::get('{id}/ownership', 'MyoController@getCharacterOwnershipLogs');
     Route::get('{id}/change-log', 'MyoController@getCharacterLogs');
+});
+
+/**************************************************************************************************
+    Art Tracker Cards
+**************************************************************************************************/
+
+Route::group(['prefix' => 'tracker'], function () {
+    Route::get('/{id}', 'TrackerController@getTrackerCard');
+    Route::get('/{id}/edit', 'TrackerController@getEditableTrackerCard');
+    Route::post('/{id}/request-edit', 'TrackerController@postTrackerCardEditRequest');
 });
 
 /**************************************************************************************************
@@ -362,3 +378,55 @@ Route::group(['prefix' => 'forum'], function () {
     Route::get('{board_id}/~{id}', 'ForumController@getThread');
     Route::get('{id}', 'ForumController@getForum');
 });
+
+/**************************************************************************************************
+    World Expansion
+**************************************************************************************************/
+
+Route::group(['prefix' => 'world', 'namespace' => 'WorldExpansion'], function () {
+    Route::get('info', 'WorldExpansionController@getIndex');
+    Route::get('glossary', 'WorldExpansionController@getGlossary');
+
+    Route::get('locations', 'LocationController@getLocations');
+    Route::get('locations/{id}', 'LocationController@getLocation');
+    Route::get('locations/{id}/submissions', 'LocationController@getLocationSubmissions');
+    Route::get('location-types', 'LocationController@getLocationTypes');
+    Route::get('location-types/{id}', 'LocationController@getLocationType');
+
+    Route::get('faunas', 'NatureController@getFaunas');
+    Route::get('faunas/{id}', 'NatureController@getFauna');
+    Route::get('fauna-categories', 'NatureController@getFaunaCategories');
+    Route::get('fauna-categories/{id}', 'NatureController@getFaunaCategory');
+
+    Route::get('floras', 'NatureController@getFloras');
+    Route::get('floras/{id}', 'NatureController@getFlora');
+    Route::get('flora-categories', 'NatureController@getFloraCategories');
+    Route::get('flora-categories/{id}', 'NatureController@getFloraCategory');
+
+    Route::get('events', 'EventController@getEvents');
+    Route::get('events/{id}', 'EventController@getEvent');
+    Route::get('event-categories', 'EventController@getEventCategories');
+    Route::get('event-categories/{id}', 'EventController@getEventCategory');
+
+    Route::get('figures', 'FigureController@getFigures');
+    Route::get('figures/{id}', 'FigureController@getFigure');
+    Route::get('figure-categories', 'FigureController@getFigureCategories');
+    Route::get('figure-categories/{id}', 'FigureController@getFigureCategory');
+
+    Route::get('factions', 'FactionController@getFactions');
+    Route::get('factions/{id}', 'FactionController@getFaction');
+    Route::get('faction-types', 'FactionController@getFactionTypes');
+    Route::get('faction-types/{id}', 'FactionController@getFactionType');
+    Route::get('factions/{id}/members', 'FactionController@getFactionMembers');
+
+    Route::get('concepts', 'ConceptController@getConcepts');
+    Route::get('concepts/{id}', 'ConceptController@getConcept');
+    Route::get('concept-categories', 'ConceptController@getConceptCategories');
+    Route::get('concept-categories/{id}', 'ConceptController@getConceptCategory');
+});
+
+/**************************************************************************************************
+    XP Calculator
+**************************************************************************************************/
+Route::get('/submit-xp', 'XPCalcController@getXPCalc');
+Route::post('/submit-xp', 'XPCalcController@postXPForm');

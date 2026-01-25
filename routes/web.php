@@ -51,6 +51,9 @@ Route::group(['middleware' => ['auth', 'verified', 'post.throttle']], function (
     Route::get('reactivate', 'Users\AccountController@getReactivateConfirmation');
     Route::post('reactivate', 'Users\AccountController@postReactivate');
 
+    //FILE MANAGER
+    Route::get('filemanager', 'HomeController@getFileManager');
+
     /**********************************************************************************************
         Routes that require having a linked account (also includes blocked routes when banned)
     **********************************************************************************************/

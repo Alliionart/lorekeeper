@@ -107,8 +107,6 @@ class AddSiteSettings extends Command {
 
         $this->addSiteSetting('breeding_inbreeding_trait_category_id', 0, 'Enter the ID for Inbreeding Trait Category.');
 
-        $this->addSiteSetting('character_locations', '', 'Enter names for any locations applicable to characters. Seperate via commas.');
-
         $this->addSiteSetting('background_location_change_item_id', 0, 'Enter the ID for the item required to change locations.');
 
         $this->addSiteSetting('background_location_change_currency', 0, 'Enter the ID of the currency required to change backgrounds in the same location.');
@@ -160,6 +158,8 @@ class AddSiteSettings extends Command {
         $this->addSiteSetting('site_weather', 0, 'ID of the weather the site is currently experiencing.');
 
         $this->addSiteSetting('site_weather_cycle', 0, '0 = Do not cycle, 1 = Daily, 2 = Weekly, 3 = Monthly');
+
+        $this->addSiteSetting('max_new_designs_per_player', 2, 'Enter a limit for how many pending new design submissions a user can have at once.');
 
         /**
         * AFFILIATES

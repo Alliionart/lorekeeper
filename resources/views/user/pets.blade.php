@@ -1,14 +1,14 @@
 @extends('user.layout')
 
 @section('profile-title')
-    {{ $user->name }}'s Pets
+    {{ $user->name }}'s {{ ucwords(__('pets.pets')) }}
 @endsection
 
 @section('profile-content')
-    {!! breadcrumbs(['Users' => 'users', $user->name => $user->url, 'Pets' => $user->url . '/pets']) !!}
+    {!! breadcrumbs(['Users' => 'users', $user->name => $user->url, ucwords(__('pets.pets')) => $user->url . '/pets']) !!}
 
     <h1>
-        Familiars
+        {{ $user->name }}'s {{ ucwords(__('pets.pets')) }}
     </h1>
 
     @foreach ($pets as $categoryId => $categoryPets)

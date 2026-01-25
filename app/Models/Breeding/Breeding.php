@@ -102,7 +102,7 @@ class Breeding extends Model {
     }
 
     /**
-     * Gets the power required to edit this model.
+     * Gets the power required to edit this model
      *
      * @return string
      */

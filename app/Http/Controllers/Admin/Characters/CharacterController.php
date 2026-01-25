@@ -14,6 +14,7 @@ use App\Models\Character\CharacterTransfer;
 use App\Models\Character\CharacterTransformation as Transformation;
 use App\Models\Feature\Feature;
 use App\Models\Marking\Marking;
+use App\Models\Carrier\Carrier;
 use App\Models\Rarity;
 use App\Models\Species\Species;
 use App\Models\Species\Subtype;
@@ -60,6 +61,7 @@ class CharacterController extends Controller {
             'rarities'         => ['0' => 'Select Rarity'] + Rarity::orderBy('sort', 'DESC')->pluck('name', 'id')->toArray(),
             'specieses'        => ['0' => 'Select Species'] + Species::orderBy('sort', 'DESC')->pluck('name', 'id')->toArray(),
             'markings'         => ['' => 'Select Markings(s)'] + Marking::orderBy('name', 'DESC')->pluck('name', 'id')->toArray(),
+            'carriers'         => ['0' => 'Select Carrier(s)'] + Carrier::orderBy('name', 'DESC')->pluck('name', 'id')->toArray(),
             'bases'            => ['' => 'Select Base(s)'] + Base::orderBy('name', 'DESC')->pluck('name', 'id')->toArray(),
             'subtypes'         => ['0' => 'Pick a Species First'],
             'features'         => Feature::getDropdownItems(1),
@@ -81,6 +83,7 @@ class CharacterController extends Controller {
             'rarities'         => ['0' => 'Select Rarity'] + Rarity::orderBy('sort', 'DESC')->pluck('name', 'id')->toArray(),
             'specieses'        => ['0' => 'Select Species'] + Species::orderBy('sort', 'DESC')->pluck('name', 'id')->toArray(),
             'markings'         => ['' => 'Select Markings(s)'] + Marking::orderBy('name', 'DESC')->pluck('name', 'id')->toArray(),
+            'carriers'         => ['0' => 'Select Carrier(s)'] + Carrier::orderBy('name', 'DESC')->pluck('name', 'id')->toArray(),
             'bases'            => ['' => 'Select Base(s)'] + Base::orderBy('name', 'DESC')->pluck('name', 'id')->toArray(),
             'subtypes'         => ['0' => 'Pick a Species First'],
             'features'         => Feature::getDropdownItems(1),
@@ -157,7 +160,7 @@ class CharacterController extends Controller {
             'designer_id', 'designer_url',
             'artist_id', 'artist_url',
             'species_id', 'subtype_id', 'rarity_id', 'feature_id', 'feature_data', 'marking_id', 'is_dominant', 'base', 'secondary_base', 'side_id',
-            'marking_color_0', 'marking_color_1', 'is_chimera', 'sex',
+            'marking_color_0', 'marking_color_1', 'is_chimera', 'sex', 'active_carriers',
             'image', 'thumbnail', 'image_description', 'stats',
             'sire_id',           'sire_name',
             'sire_sire_id',      'sire_sire_name',
@@ -278,6 +281,7 @@ class CharacterController extends Controller {
             'number'            => format_masterlist_number($this->character->number, config('lorekeeper.settings.character_number_digits')),
             'isMyo'             => false,
             'markings'          => ['' => 'Select Markings(s)'] + Marking::orderBy('name', 'DESC')->pluck('name', 'id')->toArray(),
+            'carriers'         => ['0' => 'Select Carrier(s)'] + Carrier::orderBy('name', 'DESC')->pluck('name', 'id')->toArray(),
             'bases'             => ['' => 'Select Base(s)'] + Base::orderBy('name', 'DESC')->pluck('name', 'id')->toArray(),
             'is_chimera'        => (str_contains($this->character->base, '|') ? 1 : 0),
             'characterMarkings' => CharacterMarking::where('character_id', $this->character->id)->get(),
@@ -319,6 +323,7 @@ class CharacterController extends Controller {
             'userOptions'       => User::query()->orderBy('name')->pluck('name', 'id')->toArray(),
             'isMyo'             => true,
             'markings'          => ['' => 'Select Markings(s)'] + Marking::orderBy('name', 'DESC')->pluck('name', 'id')->toArray(),
+            'carriers'         => ['0' => 'Select Carrier(s)'] + Carrier::orderBy('name', 'DESC')->pluck('name', 'id')->toArray(),
             'bases'             => ['' => 'Select Base(s)'] + Base::orderBy('name', 'DESC')->pluck('name', 'id')->toArray(),
             'is_chimera'        => (str_contains($this->character->base, '|') ? 1 : 0),
             'characterMarkings' => CharacterMarking::where('character_id', $this->character->id)->get(),
@@ -341,7 +346,7 @@ class CharacterController extends Controller {
             'character_category_id', 'number', 'slug',
             'is_giftable', 'is_tradeable', 'is_sellable', 'sale_value',
             'transferrable_at', 'marking_id', 'is_dominant', 'base', 'secondary_base', 'side_id',
-            'marking_color_0', 'marking_color_1', 'sex',
+            'marking_color_0', 'marking_color_1', 'sex', 'active_carriers',
         ]);
         \Log::info($data);
         $this->character = Character::where('slug', $slug)->first();

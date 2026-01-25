@@ -27,6 +27,7 @@ use App\Models\Status\StatusEffect;
 use App\Models\Status\StatusEffectLog;
 use App\Models\Submission\Submission;
 use App\Models\Submission\SubmissionCharacter;
+use App\Models\Tracker\TrackerLog;
 use App\Models\Trade;
 use App\Models\User\User;
 use App\Models\User\UserCharacterLog;
@@ -34,6 +35,7 @@ use App\Models\User\UserGear;
 use App\Models\User\UserPet;
 use App\Models\User\UserWeapon;
 use App\Models\Character\CharacterClass;
+use App\Models\WorldExpansion\FactionRankMember;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Settings;
@@ -54,6 +56,7 @@ class Character extends Model {
         'is_gift_art_allowed', 'is_gift_writing_allowed', 'is_trading', 'sort',
         'is_myo_slot', 'name', 'trade_id', 'owner_url', 'base', 'class_id',
         'sex', 'citizenship', 'nickname', 'bonding', 'size',
+        'home_id', 'home_changed', 'faction_id', 'faction_changed',
     ];
 
     /**
@@ -70,6 +73,8 @@ class Character extends Model {
      */
     protected $casts = [
         'transferrable_at' => 'datetime',
+        'home_changed'     => 'datetime',
+        'faction_changed'  => 'datetime',
     ];
 
     /**
@@ -98,7 +103,7 @@ class Character extends Model {
         'number'                => 'required',
         'slug'                  => 'required|alpha_dash',
         'description'           => 'nullable',
-        'sale_value'            => 'nullable',
+        'sale_value'            => 'nullable|decimal:0,2',
         'image'                 => 'required|mimes:jpeg,jpg,gif,png|max:2048',
         'thumbnail'             => 'nullable|mimes:jpeg,jpg,gif,png|max:2048',
         'owner_url'             => 'url|nullable',
@@ -119,7 +124,7 @@ class Character extends Model {
         'number'                => 'required',
         'slug'                  => 'required',
         'description'           => 'nullable',
-        'sale_value'            => 'nullable',
+        'sale_value'            => 'nullable|decimal:0,2',
         'image'                 => 'nullable|mimes:jpeg,jpg,gif,png|max:2048',
         'thumbnail'             => 'nullable|mimes:jpeg,jpg,gif,png|max:2048',
         'base'                  => 'nullable',
@@ -224,6 +229,20 @@ class Character extends Model {
     }
 
     /**
+     * Get the trade this character is attached to.
+     */
+    public function home() {
+        return $this->belongsTo('App\Models\WorldExpansion\Location', 'home_id');
+    }
+
+    /**
+     * Get the faction this character is attached to.
+     */
+    public function faction() {
+        return $this->belongsTo('App\Models\WorldExpansion\Faction', 'faction_id');
+    }
+
+    /**
      * Get the rarity of this character.
      */
     public function rarity() {
@@ -270,7 +289,7 @@ class Character extends Model {
      * Get the character's items.
      */
     public function items() {
-        return $this->belongsToMany(Item::class, 'character_items')->withPivot('count', 'data', 'updated_at', 'id')->whereNull('character_items.deleted_at');
+        return $this->belongsToMany(Item::class, 'character_items')->withPivot('count', 'data', 'updated_at', 'id', 'stack_name')->whereNull('character_items.deleted_at');
     }
 
     /**
@@ -324,6 +343,18 @@ class Character extends Model {
             ->whereNull('character_awards.deleted_at')
             ->where('award_category_id', $id)
             ->get();
+    }
+
+    /**
+     * Get the character's active carriers.
+     */
+    public function carriers() {
+        $carrier_ids = CharacterMarking::where('character_id', $this->id)
+            ->whereNotNull('carrier_id')
+            ->pluck('carrier_id')->toArray();
+        $carriers = Carrier::whereIn('id', $carrier_ids)->get();
+        
+        return $carriers;
     }
 
     /**********************************************************************************************
@@ -423,7 +454,7 @@ class Character extends Model {
         $User_bgs = BackgroundCondition::where('type', 'User')->where('value', $this->user_id)->where('location', $location)->pluck('background_id')->toArray();
 
         //Character Status BGs
-        $Status_bgs = BackgroundCondition::where('type', 'Status')->where('value', $this->status)->where('location', $location)->pluck('background_id')->toArray();
+        $Status_bgs = BackgroundCondition::where('type', 'Status')->where('value', $this->citizenship)->where('location', $location)->pluck('background_id')->toArray();
 
         //Character has Item BGs
         $unique_bg_items = BackgroundCondition::where('type', 'Item')->where('location', $location)->distinct()->pluck('value', 'background_id')->toArray();
@@ -591,6 +622,122 @@ class Character extends Model {
     public function getAvailableBreedingPermissionsAttribute() {
 
         return $this->maxBreedingPermissions - $this->breedingPermissions->sum('full_quantity');
+    }
+
+    /**
+     * Get character's home location setting.
+     */
+    public function getHomeSettingAttribute() {
+        return intval(Settings::get('WE_character_locations'));
+    }
+
+    /**
+     * Get character's location attribute.
+     */
+    public function getLocationAttribute() {
+        $setting = $this->homeSetting;
+
+        switch ($setting) {
+            case 1:
+                if (!$this->user) {
+                    return null;
+                } elseif (!$this->user->home) {
+                    return null;
+                } else {
+                    return $this->user->home->fullDisplayName;
+                }
+
+            case 2:
+                if (!$this->home) {
+                    return null;
+                } else {
+                    return $this->home->fullDisplayName;
+                }
+
+            case 3:
+                if (!$this->home) {
+                    return null;
+                } else {
+                    return $this->home->fullDisplayName;
+                }
+
+            default:
+                return null;
+        }
+    }
+
+    /**
+     * Get character's faction setting.
+     */
+    public function getFactionSettingAttribute() {
+        return intval(Settings::get('WE_character_factions'));
+    }
+
+    /**
+     * Get character's current faction attribute.
+     */
+    public function getCurrentFactionAttribute() {
+        $setting = $this->factionSetting;
+
+        switch ($setting) {
+            case 1:
+                if (!$this->user) {
+                    return null;
+                } elseif (!$this->user->faction) {
+                    return null;
+                } else {
+                    return $this->user->faction->fullDisplayName;
+                }
+
+            case 2:
+                if (!$this->faction) {
+                    return null;
+                } else {
+                    return $this->faction->fullDisplayName;
+                }
+
+            case 3:
+                if (!$this->faction) {
+                    return null;
+                } else {
+                    return $this->faction->fullDisplayName;
+                }
+
+            default:
+                return null;
+        }
+    }
+
+    /**
+     * Get character's faction rank.
+     */
+    public function getFactionRankAttribute() {
+        if (!isset($this->faction_id) || !$this->faction->ranks()->count()) {
+            return null;
+        }
+        if (FactionRankMember::where('member_type', 'character')->where('member_id', $this->id)->first()) {
+            return FactionRankMember::where('member_type', 'character')->where('member_id', $this->id)->first()->rank;
+        }
+        if ($this->faction->ranks()->where('is_open', 1)->count()) {
+            $standing = $this->getCurrencies(true)->where('id', Settings::get('WE_faction_currency'))->first();
+            if (!$standing) {
+                return $this->faction->ranks()->where('is_open', 1)->where('breakpoint', 0)->first();
+            }
+
+            return $this->faction->ranks()->where('is_open', 1)->where('breakpoint', '<=', $standing->quantity)->orderBy('breakpoint', 'DESC')->first();
+        }
+    }
+
+    /**
+     * Get the character's active carriers.
+     */
+    public function getCarriers() {
+        $carrier_ids = CharacterMarking::where('character_id', $this->id)
+            ->whereNotNull('carrier_id')
+            ->pluck('carrier_id')->toArray();
+        $carriers = Carrier::whereIn('id', $carrier_ids)->pluck('name')->toArray();
+        
+        return $carriers ? implode(', ', $carriers) : false;
     }
 
     /**********************************************************************************************
@@ -942,8 +1089,9 @@ class Character extends Model {
     public function getClassTree() {
         $current_class = CharacterClass::where('id', $this->class_id)->first();
 
-        $test = $current_class->name;
-
+        if (!$current_class) {
+            return null;
+        }
         $tree = [];
         if ($current_class->parent_class_id) {
             //Has parent, NOT a ICQ
@@ -973,6 +1121,27 @@ class Character extends Model {
      */
     public function getMarkings($type = 'phenotype') {
         return $this->getMarkingLinkedArray($this->getMarkingFinalArray(), $type);
+    }
+    
+    /**     
+     * Get the character's XP logs.
+     *
+     * @param int $limit
+     *
+     * @return \Illuminate\Pagination\LengthAwarePaginator|\Illuminate\Support\Collection
+     */
+    public function getXPLogs($limit = 10) {
+        $character = $this;
+
+        $query = TrackerLog::where(function ($query) use ($character) {
+            $query->where('character_id', $character->id)->where('log_type', '!=', 'Staff Grant');
+        })->orderBy('id', 'DESC');
+
+        if ($limit) {
+            return $query->take($limit)->get();
+        } else {
+            return $query->paginate(30);
+        }
     }
 
     /**

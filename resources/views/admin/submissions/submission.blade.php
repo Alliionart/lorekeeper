@@ -64,12 +64,21 @@
                 </div>
                 <div class="col-md-10 col-8"><a href="{{ $submission->url }}">{{ $submission->url }}</a></div>
             </div>
-            @if (config('lorekeeper.settings.allow_gallery_submissions_on_prompts') && $submission->data['gallery_submission_id'])
+            @if (config('lorekeeper.settings.allow_gallery_submissions_on_prompts') && isset($submission->data['gallery_submission_id']))
                 <div class="row mb-2 no-gutters">
                     <div class="col-md-2">
                         <h5 class="mb-0">Gallery Submission</h5>
                     </div>
                     <div class="col-md-10"><a href="{{ $submission->gallerySubmission->url }}">{{ $submission->gallerySubmission->title }}</a></div>
+                </div>
+            @endif
+            @if ($submission->tracker_id)
+                <div class="row">
+                    <div class="col-md-2 col-4">
+                        <h5>Tracker Card</h5>
+                    </div>
+                    <div class="col-md-10 col-8"><a href="{{ $submission->tracker->adminUrl }}">Tracker #{{ $submission->tracker->id }}</a> <span
+                            class="badge ml-2 {{ $submission->tracker->status === 'Pending' ? 'badge-warning' : 'badge-info' }}">{{ $submission->tracker->status === 'Pending' ? 'Needs Review' : 'Approved' }}</span></div>
                 </div>
             @endif
             <div class="row">
@@ -155,6 +164,23 @@
             <a href="#" class="btn btn-outline-info" id="addCharacter">Add Character</a>
         </div>
 
+        <div class="card mb-3">
+            <div class="card-header h2">
+                <a href="#" class="btn btn-outline-info float-right" id="addExternalCharacter">Add External Character</a>
+                External Characters
+            </div>
+            <div class="card-body">
+                <p>If there are any characters in this submission that are not on-site, list them here.</p>
+                <div id="externalCharactersBody">
+                    @if (isset($submission->external_characters))
+                        @foreach ($submission->external_characters as $ext_character)
+                            @include('widgets._external_character_row_select', ['extCharacter' => $ext_character])
+                        @endforeach
+                    @endif
+                </div>
+            </div>
+        </div>
+
         @if (isset($inventory['user_items']))
             <h2>Add-Ons</h2>
             <p>These items have been removed from the {{ $submission->prompt_id ? 'submitter' : 'claimant' }}'s inventory and will be refunded if the request is rejected or consumed if it is approved.</p>
@@ -220,6 +246,10 @@
             {!! Form::select('skill_id[]', $skills, null, ['class' => 'form-control mr-2 skill-select', 'placeholder' => 'Select Skill']) !!}
             {!! Form::text('skill_quantity[]', null, ['class' => 'form-control mr-2', 'placeholder' => 'Amount of level']) !!}
             <a href="#" class="remove-skill btn btn-danger mb-2">×</a>
+        </div>
+
+        <div id="external-character" class="hide">
+            @include('widgets._external_character_row_select')
         </div>
 
         <div id="characterComponents" class="hide">
@@ -353,6 +383,7 @@
     @if ($submission->status == 'Pending')
         @include('js._loot_js', ['showLootTables' => true, 'showRaffles' => true, 'showRecipes' => true])
         @include('js._character_select_js')
+        @include('js._external_character_js')
 
         <script>
             $(document).ready(function() {

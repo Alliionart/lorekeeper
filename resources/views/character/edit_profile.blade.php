@@ -9,6 +9,7 @@
 @endsection
 
 @section('profile-content')
+
     @if ($character->is_myo_slot)
         {!! breadcrumbs(['MYO Slot Masterlist' => 'myos', $character->fullName => $character->url, 'Editing Profile' => $character->url . '/profile/edit']) !!}
     @else
@@ -37,16 +38,17 @@
             {!! Form::label('nickname', 'Nickname(s)') !!}
             {!! Form::text('nickname', $character->nickname, ['class' => 'form-control']) !!}
         </div>
+        <!-- Location and Background Change Notices -->
         <div class="form-group location-form">
             {!! Form::label('location', 'Location') !!}
-            {!! Form::select('location', $locations, $character->location ?? null, ['class' => 'form-control selectize', 'required']) !!}
+            {!! Form::select('location', $bg_locations, $character->home_id ?? null, ['class' => 'form-control selectize', 'required']) !!}
             <div class="alert mt-2 p-2 border-warning alert-warning" style="display:none;">Changing your character's location requires x1 {!! $lItem->displayName !!}. You currently have {{ $user_item_amount }} available. Upon editing your character it will be
                 automatically removed from your inventory.</div>
         </div>
         <div class="form-group background-refresh">
             {{ $character->bg_id }}
             {!! Form::label('background', 'Background') !!}
-            {!! Form::select('background', $character->applicableBackgrounds(), $character->background_id ?? null, ['class' => 'form-control selectize', 'required']) !!}
+            {!! Form::select('background', $character->applicableBackgrounds($character->home_id), $character->background_id ?? null, ['class' => 'form-control selectize', 'required']) !!}
             <div class="alert mt-2 p-2 border-warning alert-warning" style="display:none;">Changing your character's background requires {{ $bg_amount }} {!! $bg_currency->displayName !!}. You currently have {{ $user_cur_amount }} available.</div>
         </div>
 
@@ -57,6 +59,20 @@
             </div>
         @endif
     @endif
+
+    @if (!$character->is_myo_slot && ($char_faction_enabled == 2 || (Auth::user()->isStaff && $char_faction_enabled == 3)))
+        @if (Auth::user()->isStaff && $char_faction_enabled == 3)
+            <div class="alert alert-warning">You can edit this because you are a staff member. Normal users cannot edit their character factions freely.</div>
+        @endif
+        <p>Please note that changing this character's faction will remove them from any special ranks and reset their faction standing!</p>
+        <div class="form-group row">
+            <label class="col-md-1 col-form-label">Faction</label>
+            <div class="col-md">
+                {!! Form::select('faction', [0 => 'Choose a Faction'] + $factions, isset($character->faction_id) ? $character->faction_id : 0, ['class' => 'form-control selectize']) !!}
+            </div>
+        </div>
+    @endif
+
     <div class="form-group">
         {!! Form::label('text', 'Profile Content') !!}
         {!! Form::textarea('text', $character->profile->text, ['class' => 'wysiwyg form-control']) !!}

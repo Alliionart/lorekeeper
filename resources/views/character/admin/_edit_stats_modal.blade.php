@@ -155,6 +155,11 @@
         <a href="#" class="remove-marking btn btn-danger mb-2">×</a>
     </div>
 </div>
+<hr/>
+<div class="form-group">
+    {!! Form::label('Active Carriers') !!}
+    {!! Form::select('active_carriers[]', $carriers, old('carrier_id'), ['class' => 'form-control selectize', 'multiple' => true]) !!}
+</div>
 
 <div class="text-right">
     {!! Form::submit('Edit', ['class' => 'btn btn-primary']) !!}

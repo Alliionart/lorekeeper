@@ -44,7 +44,11 @@
                     <h3 class="mb-0">Status</h3>
                 </div>
                 <div class="card-body">
-                    Test
+                    @if ($character->citizenship)
+                        {{ $character->citizenship }}
+                    @else
+                        Citizen
+                    @endif
                 </div>
             </div>
             <!-- Edits -->
@@ -76,7 +80,7 @@
             <h3>Cores</h3>
         </div>
         <div class="card-body">
-            @if ($core_awards)
+            @if ($core_awards && count($core_awards) > 0)
                 <div class="row px-4">
                     @foreach($core_awards as $award)
                         <div class="col-md-2 text-center border rounded border-dark p-2">
@@ -87,6 +91,8 @@
                         </div>
                     @endforeach
                 </div>
+            @else
+                <p>This character has not completed any cores yet.</p>
             @endif
         </div>
     </div>
@@ -186,7 +192,7 @@
         </div>
     </div>
 
-    <div class="card">
+    <div class="card mb-3">
         <div class="card-header">
             <h3>Personality</h3>
         </div>
@@ -194,6 +200,17 @@
             @include('character._tab_notes', ['character' => $character])
         </div>
     </div>
+
+    @if ($character->getLineageBlacklistLevel() < 2)
+        <div class="card">
+            <div class="card-header">
+                <h3>Lineage</h3>
+            </div>
+            <div class="card-body">
+                @include('character._tab_lineage', ['character' => $character])
+            </div>
+        </div>
+    @endif
 
     @if (Auth::check() && Auth::user()->hasPower('manage_characters'))
         <div class="tab-pane fade" id="settings-{{ $character->slug }}">

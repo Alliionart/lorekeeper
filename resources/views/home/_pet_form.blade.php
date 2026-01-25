@@ -60,7 +60,7 @@
             </a>
             {!! Form::open(['url' => 'pets/attach/' . $pet->id, 'id' => 'attachForm', 'class' => 'collapse']) !!}
             <p>Attach this pet to a character you own! They'll appear on the character's page and any stat bonuses will automatically be applied.</p>
-            <p>Pets can be detached.</p>
+            <p>{{ ucwords(__('pets.pets')) }} can be detached.</p>
             <div class="form-group">
                 {!! Form::label('id', 'Slug') !!} {!! add_help('Insert your character\'s slug.') !!}
                 {!! Form::select(

@@ -72,6 +72,19 @@ class HomeController extends Controller {
     }
 
     /**
+     * Shows the file manager page.
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function getFileManager() {
+        if (!Auth::check() || !Auth::user()->isStaff || !Auth::user()->hasPower('manage_files')) {
+            abort(404);
+        }
+
+        return view('filemanager');
+    }
+
+    /**
      * Redirects to the appropriate provider.
      *
      * @param string $provider

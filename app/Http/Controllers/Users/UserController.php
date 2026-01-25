@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Users;
 
+use App\Facades\Settings;
 use App\Http\Controllers\Controller;
 use App\Models\Award\Award;
 use App\Models\Award\AwardCategory;
@@ -103,6 +104,8 @@ class UserController extends Controller {
             'armours'    => $armours,
             'pets'       => $this->user->pets()->orderBy('user_pets.updated_at', 'DESC')->take(5)->get(),
             'awards'     => $this->user->awards()->orderBy('user_awards.updated_at', 'DESC')->whereNull('deleted_at')->where('count', '>', 0)->take(4)->get(),
+            'user_enabled'          => Settings::get('WE_user_locations'),
+            'user_factions_enabled' => Settings::get('WE_user_factions'),
         ]);
     }
 

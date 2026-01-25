@@ -96,6 +96,17 @@
                     {!! $submission->prompt_id ? '<p><strong>Prompt:</strong> ' . $submission->prompt->displayName . '</p>' : '' !!}
                 @endif
 
+                @if ($gallery->location_selection == 1 && (!$submission->id || Auth::user()->hasPower('manage_submissions')))
+                    <div class="form-group">
+                        {!! Form::label('location_id', ($submission->id && Auth::user()->hasPower('manage_submissions') ? '[Admin] ' : '') . 'Location (Optional)') !!} {!! add_help(
+                            'This <strong>does not</strong> automatically submit to the selected location, and you will need to submit to it separately. The location selected here will be displayed on the submission page for future reference. You will not be able to edit this after creating the submission.',
+                        ) !!}
+                        {!! Form::select('location_id', $locations, $submission->location_id, ['class' => 'form-control selectize', 'id' => 'location', 'placeholder' => 'Select a Location']) !!}
+                    </div>
+                @else
+                    {!! $submission->location_id ? '<p><strong>Location:</strong> ' . $submission->location->displayName . '</p>' : '' !!}
+                @endif
+
                 @if ($submission->id && Auth::user()->hasPower('manage_submissions'))
                     <div class="form-group">
                         {!! Form::label('gallery_id', '[Admin] Gallery / Move Submission') !!} {!! add_help(
@@ -130,6 +141,19 @@
                 </div>
                 <div class="text-right mb-3">
                     <a href="#" class="btn btn-outline-info" id="addCharacter">Add Character</a>
+                </div>
+
+                <h3>External Characters</h3>
+                <p>If there are any characters in this submission that are not on-site, list them here.</p>
+                <div id="externalCharactersBody">
+                    @if (isset($submission->external_characters))
+                        @foreach ($submission->external_characters as $ext_character)
+                            @include('widgets._external_character_row_select', ['extCharacter' => $ext_character])
+                        @endforeach
+                    @endif
+                </div>
+                <div class="text-right mb-3">
+                    <a href="#" class="btn btn-outline-info" id="addExternalCharacter">Add External Character</a>
                 </div>
             </div>
             @if (!$submission->id || $submission->status == 'Pending')
@@ -284,6 +308,10 @@
         </div>
         {!! Form::close() !!}
 
+        <div id="external-character" class="hide">
+            @include('widgets._external_character_row_select')
+        </div>
+
         @include('galleries._character_select')
         <div class="collaborator-row hide mb-2">
             {!! Form::select('collaborator_id[]', $users, null, ['class' => 'form-control mr-2 collaborator-select', 'placeholder' => 'Select User']) !!}
@@ -335,6 +363,7 @@
     @parent
     @if (!$closed || ($submission->id && $submission->status != 'Rejected'))
         @include('galleries._character_select_js')
+        @include('js._external_character_js')
 
         <script>
             $(document).ready(function() {

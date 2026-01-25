@@ -7,7 +7,12 @@
             <div class="sidebar-item"><a href="{{ url($section->url) }}" class="{{ set_active('world/info/'.$section->key) }}">{{ $section->name }}</a></div>
         @endforeach
     </li>
+    @else
+    sections not set
     @endif
+    <li class="sidebar-section">
+        <div class="sidebar-item"><a href="{{ url('world/info') }}">World Expanded</a></div>
+    </li>
     <li class="sidebar-section">
         <div class="sidebar-section-header">Characters</div>
         <div class="sidebar-item"><a href="{{ url('world/species') }}" class="{{ set_active('world/species*') }}">{{ __('lorekeeper.specieses') }}</a></div>

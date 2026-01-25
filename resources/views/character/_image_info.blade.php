@@ -12,11 +12,6 @@
                 <li class="nav-item">
                     <a class="nav-link" id="creditsTab-{{ $image->id }}" data-toggle="tab" href="#credits-{{ $image->id }}" role="tab">Credits</a>
                 </li>
-                @if ($character->getLineageBlacklistLevel() < 2)
-                    <li class="nav-item">
-                        <a class="nav-link" id="lineageTab" data-toggle="tab" href="#lineage" role="tab">Lineage</a>
-                    </li>
-                @endif
                 @if (isset($showMention) && $showMention)
                     <li class="nav-item">
                         <a class="nav-link" id="mentionTab-{{ $image->id }}" data-toggle="tab" href="#mention-{{ $image->id }}" role="tab">Mention</a>
@@ -99,6 +94,22 @@
                         <div class="col-lg-8 col-7 pl-1">{!! $image->subtype_id ? $image->subtype->displayName : 'None' !!}</div>
                     </div>
                 @endif
+                @if ($image->character->homeSetting)
+                    <div class="row">
+                        <div class="col-lg-4 col-md-6 col-4">
+                            <h5>Home</h5>
+                        </div>
+                        <div class="col-lg-8 col-md-6 col-8">{!! $image->character->location ? $image->character->location : 'None' !!}</div>
+                    </div>
+                @endif
+                @if ($image->character->factionSetting)
+                    <div class="row">
+                        <div class="col-lg-4 col-md-6 col-4">
+                            <h5>Faction</h5>
+                        </div>
+                        <div class="col-lg-8 col-md-6 col-8">{!! $image->character->faction ? $image->character->currentFaction : 'None' !!}{!! $character->factionRank ? ' (' . $character->factionRank->name . ')' : null !!}</div>
+                    </div>
+                @endif
                 <div class="row">
                     <div class="col-lg-4 col-5">
                         <h5>Rarity</h5>
@@ -174,6 +185,16 @@
                         @endif
                     </div>
                 </div>
+                @if($carriers)
+                <div class="row no-gutters">
+                    <div class="col-lg-4 col-5">
+                        <h5>Carriers</h5>
+                    </div>
+                    <div class="col-lg-8 col-7 pl-1">
+                        {{ $carriers }}
+                    </div>
+                </div>
+                @endif
                 <div class="row no-gutters">
                     <div class="col-lg-4 col-5">
                         <h5>Class</h5>
@@ -247,12 +268,6 @@
                     </div>
                 @endif
             </div>
-
-            @if ($character->getLineageBlacklistLevel() < 2)
-                <div class="tab-pane fade" id="lineage">
-                    @include('character._tab_lineage', ['character' => $character])
-                </div>
-            @endif
 
             @if (isset($showMention) && $showMention)
                 {{-- Mention This tab --}}

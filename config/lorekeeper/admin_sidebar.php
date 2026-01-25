@@ -124,6 +124,10 @@ return [
                 'name' => 'Surrenders',
                 'url' => 'admin/surrenders/pending'
             ],
+            [
+                'name' => 'Tracker Submissions',
+                'url'  => 'admin/trackers',
+            ],
         ],
     ],
     'Grants'     => [
@@ -172,6 +176,10 @@ return [
             [
                 'name' => 'Border Grants',
                 'url' => 'admin/grants/borders'
+            ],
+            [
+                'name' => 'Character XP Grants',
+                'url'  => 'admin/grants/xp',
             ],
         ],
     ],
@@ -395,6 +403,43 @@ return [
             ],
         ],
     ],
+    'WorldExpansion' => [
+        'power' => 'manage_world',
+        'links' => [
+            [
+                'name' => 'Concepts',
+                'url'  => 'admin/world/concepts',
+            ],
+            [
+                'name' => 'Fauna',
+                'url'  => 'admin/world/faunas',
+            ],
+            [
+                'name' => 'Flora',
+                'url'  => 'admin/world/floras',
+            ],
+            [
+                'name' => ' Events',
+                'url'  => 'admin/world/events',
+            ],
+            [
+                'name' => ' Figures',
+                'url'  => 'admin/world/figures',
+            ],
+            [
+                'name' => 'Factions',
+                'url'  => 'admin/world/factions',
+            ],
+            [
+                'name' => 'Glossary',
+                'url'  => 'admin/world/glossary',
+            ],
+            [
+                'name' => 'Locations',
+                'url'  => 'admin/world/locations',
+            ],
+        ],
+    ],
     'Raffles'    => [
         'power' => 'manage_raffles',
         'links' => [
@@ -420,6 +465,10 @@ return [
     'Settings'   => [
         'power' => 'edit_site_settings',
         'links' => [
+            [
+                'name' => 'Art Tracker Settings',
+                'url'  => 'admin/tracker-settings',
+            ],
             [
                 'name' => 'Breeding Settings',
                 'url'  => 'admin/breedings/settings',

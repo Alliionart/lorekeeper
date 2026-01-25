@@ -2,7 +2,11 @@
     $(document).on('ready', function() {
         $('#markings').selectize();
         $('.selectize').selectize();
+            $('select[multiple]').selectize(
+            multiple: true
+        ); 
     });
+    
 
     $('#add-marking').on('click', function(e) {
         e.preventDefault();

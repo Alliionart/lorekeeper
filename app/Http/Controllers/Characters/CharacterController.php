@@ -22,15 +22,19 @@ use App\Models\Item\ItemCategory;
 use App\Models\Skill\Skill;
 use App\Models\Stat\Stat;
 use App\Models\Status\StatusEffect;
+use App\Models\Tracker\Tracker;
 use App\Models\User\User;
 use App\Models\User\UserAward;
 use App\Models\User\UserCurrency;
 use App\Models\User\UserItem;
 use App\Services\AwardCaseManager;
+use App\Models\WorldExpansion\Faction;
+use App\Models\WorldExpansion\Location;
 use App\Services\CharacterManager;
 use App\Services\CurrencyManager;
 use App\Services\DesignUpdateManager;
 use App\Services\InventoryManager;
+use DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -142,6 +146,7 @@ class CharacterController extends Controller {
             'markings'              => $markings,
             'pheno'                 => $this->character->getMarkingLinkedArray($markings),
             'geno'                  => $this->character->getMarkingLinkedArray($markings, 'genotype'),
+            'carriers'              => $this->character->getCarriers(),
             'skills'                => $this->character->skills,
             'core_awards'           => $this->character->awardsByCategory(1),
             'showMention'           => true,
@@ -181,19 +186,24 @@ class CharacterController extends Controller {
             abort(404);
         }
 
-        $raw_location = Settings::get('character_locations');
-        $locations = explode(',', $raw_location);
         $location_change_item_id = Settings::get('background_location_change_item_id');
         $bg_change_currency_id = Settings::get('background_location_change_currency');
 
         return view('character.edit_profile', [
             'character'         => $this->character,
-            'locations'         => array_combine($locations, $locations),
+            'bg_locations'      => Location::all()->where('has_backgrounds', 1)->pluck('name', 'id')->toArray(),
             'bg_currency'       => Currency::find($bg_change_currency_id),
             'bg_amount'         => Settings::get('background_location_change_amount'),
             'lItem'             => Item::find($location_change_item_id),
             'user_item_amount'  => UserItem::where('user_id', $this->character->user_id)->where('item_id', $location_change_item_id)->count(),
             'user_cur_amount'   => UserCurrency::where('user_id', $this->character->user_id)->where('currency_id', $bg_change_currency_id)->sum('quantity'),
+            //World Expansion
+            'locations'            => Location::all()->where('is_character_home')->pluck('style', 'id')->toArray(),
+            'factions'             => Faction::all()->where('is_character_faction')->pluck('style', 'id')->toArray(),
+            'user_enabled'         => Settings::get('WE_user_locations'),
+            'user_faction_enabled' => Settings::get('WE_user_factions'),
+            'char_enabled'         => Settings::get('WE_character_locations'),
+            'char_faction_enabled' => Settings::get('WE_character_factions'),
         ]);
     }
 
@@ -236,7 +246,7 @@ class CharacterController extends Controller {
 
         $request->validate(CharacterProfile::$rules);
 
-        if ($service->updateCharacterProfile($request->only(['name', 'nickname', 'link', 'text', 'is_gift_art_allowed', 'is_gift_writing_allowed', 'is_trading', 'alert_user', 'location', 'background']), $this->character, Auth::user(), !$isOwner)) {
+        if ($service->updateCharacterProfile($request->only(['name', 'nickname', 'link', 'text', 'is_gift_art_allowed', 'is_gift_writing_allowed', 'is_trading', 'alert_user', 'location', 'background', 'faction']), $this->character, Auth::user(), !$isOwner)) {
             flash('Profile edited successfully.')->success();
         } else {
             foreach ($service->errors()->getMessages()['error'] as $error) {
@@ -257,7 +267,6 @@ class CharacterController extends Controller {
         $id = $request->input('id');
         $character = Character::find($id);
 
-        //return $character->applicableBackgrounds($location);
         return view('character._background_refresh', [
             'character' => $character,
             'location'  => $location,
@@ -308,6 +317,7 @@ class CharacterController extends Controller {
 
         $items = count($categories) ?
             $this->character->items()
+                ->with('category')
                 ->where('count', '>', 0)
                 ->orderByRaw('FIELD(item_category_id,'.implode(',', $categories->pluck('id')->toArray()).')')
                 ->orderBy('name')
@@ -315,6 +325,7 @@ class CharacterController extends Controller {
                 ->get()
                 ->groupBy(['item_category_id', 'id']) :
             $this->character->items()
+                ->with('category')
                 ->where('count', '>', 0)
                 ->orderBy('name')
                 ->orderBy('updated_at')
@@ -328,11 +339,8 @@ class CharacterController extends Controller {
             'items'                 => $items,
             'logs'                  => $this->character->getItemLogs(),
         ] + (Auth::check() && (Auth::user()->hasPower('edit_inventories') || Auth::user()->id == $this->character->user_id) ? [
-            'itemOptions'   => $itemOptions->pluck('name', 'id'),
-            'userInventory' => UserItem::with('item')->whereIn('item_id', $itemOptions->pluck('id'))->whereNull('deleted_at')->where('count', '>', '0')->where('user_id', Auth::user()->id)->get()->filter(function ($userItem) {
-                return $userItem->isTransferrable == true;
-            })->sortBy('item.name'),
-            'page'          => 'character',
+            'itemOptions' => $itemOptions->pluck('name', 'id'),
+            'page'        => 'character',
         ] : []));
     }
 
@@ -822,6 +830,21 @@ class CharacterController extends Controller {
     }
 
     /**
+     * Shows a character's XP logs.
+     *
+     * @param mixed $slug
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function getCharacterXPLogs($slug) {
+        return view('character.xp_logs', [
+            'character'             => $this->character,
+            'extPrevAndNextBtnsUrl' => '/xp-logs',
+            'logs'                  => $this->character->getXPLogs(0),
+        ]);
+    }
+
+    /**
      * Shows a character's submissions.
      *
      * @param mixed $slug
@@ -984,6 +1007,28 @@ class CharacterController extends Controller {
     public function getCharacterPets($slug) {
         return view('character.pets', [
             'character'             => $this->character,
+        ]);
+    }
+        
+    /**
+     * Shows a character's tracker.
+     *
+     * @param string $slug
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function getCharacterTracker(Request $request, $slug) {
+        $trackers = Tracker::renderAllCards($this->character->id);
+        $levels = json_decode(DB::table('site_settings')->where('key', 'xp_levels')->pluck('value')->first());
+
+        return view('character.tracker', [
+            'character'             => $this->character,
+            'levels'                => $levels,
+            'progress'              => Tracker::getXpProgressBar($trackers['accepted_points']),
+            'current_level'         => Tracker::getCurrentLevel($trackers['accepted_points']),
+            'tracker_cards'         => $trackers['cards'],
+            'total_xp'              => $trackers['total_points'],
+            'total_accepted'        => $trackers['accepted_points'],
         ]);
     }
 

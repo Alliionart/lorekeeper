@@ -118,7 +118,7 @@
                 Some characters have been deleted since this submission was created.
             </div>
         @endif
-        @foreach ($submission->characters()->whereRelation('character', 'deleted_at', null)->get() as $character)
+        @foreach ($submission->characters()->with('character', 'character.image')->whereRelation('character', 'deleted_at', null)->get() as $character)
             <div class="submission-character-row mb-2">
                 <div class="submission-character-thumbnail">
                     <a href="{{ $character->character->url }}"><img src="{{ $character->character->image->thumbnailUrl }}" class="img-thumbnail" alt="Thumbnail for {{ $character->character->fullName }}" /></a>
@@ -249,6 +249,32 @@
     </tbody>
 </table>
 
+<div class="card mb-3">
+    <div class="card-header h2">
+        External Characters
+    </div>
+    <div class="card-body">
+        <div class="logs-table">
+            <div class="logs-table-header">
+                <div class="row">
+                    <div class="col-5 col-md-5">
+                        <div class="logs-table-cell">Name</div>
+                    </div>
+                    <div class="col-6 col-md-6">
+                        <div class="logs-table-cell">Link</div>
+                    </div>
+                </div>
+            </div>
+            @if (isset($submission->external_characters))
+                @foreach ($submission->external_characters as $ext_character)
+                    @include('widgets._external_character_row', ['extCharacter' => $ext_character])
+                @endforeach
+            @else
+                No external characters added.
+            @endif
+        </div>
+    </div>
+</div>
 
 @if (isset($inventory['user_items']) && array_filter($inventory['user_items']))
     <div class="card mb-3">

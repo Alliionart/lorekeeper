@@ -108,12 +108,14 @@
                         </div>
                         <div class="card-body">
                             {!! $submission->parsed_description ? $submission->parsed_description : '<i>No description provided.</i>' !!}
-
                             <hr />
                             <p>
                                 <strong>Submitted By</strong> {!! $submission->user->displayName !!}
                                 @if ($submission->prompt_id)
                                     <strong>for</strong> {!! $submission->prompt->displayName !!}
+                                @endif
+                                @if ($submission->location_id && ($submission->location->is_active || (Auth::check() && Auth::user()->isStaff)))
+                                    ・ <strong>Location:</strong> {!! $submission->location->fullDisplayNameUC !!}
                                 @endif
                                 @if ($submission->favorites->count())
                                     ・ <a class="view-favorites" href="#">View Favorites</a>
@@ -198,6 +200,32 @@
                                 @endforeach
                             </div>
                         @endforeach
+                    </div>
+                </div>
+            @endif
+            @if (isset($submission->external_characters))
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5>External Characters</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="logs-table">
+                            <div class="logs-table-header">
+                                <div class="row">
+                                    <div class="col-5 col-md-5">
+                                        <div class="logs-table-cell">Name</div>
+                                    </div>
+                                    <div class="col-6 col-md-6">
+                                        <div class="logs-table-cell">Link</div>
+                                    </div>
+                                </div>
+                            </div>
+                            @if (isset($submission->external_characters))
+                                @foreach ($submission->external_characters as $ext_character)
+                                    @include('widgets._external_character_row', ['extCharacter' => $ext_character])
+                                @endforeach
+                            @endif
+                        </div>
                     </div>
                 </div>
             @endif

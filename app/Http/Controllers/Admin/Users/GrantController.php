@@ -22,6 +22,7 @@ use App\Models\Submission\Submission;
 use App\Models\Trade;
 use App\Models\User\User;
 use App\Models\User\UserItem;
+Use App\Models\Recipe\Recipe;
 use App\Services\AwardCaseManager;
 use App\Services\Claymore\GearManager;
 use App\Services\Claymore\WeaponManager;
@@ -31,6 +32,9 @@ use App\Services\PetManager;
 use App\Services\SkillManager;
 use App\Services\Stat\ExperienceManager;
 use App\Services\Stat\StatManager;
+use App\Services\TrackerManager;
+use App\Services\RecipeService;
+use DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Border\Border;
@@ -447,6 +451,23 @@ class GrantController extends Controller {
         ]);
     }
 
+    /**     
+     * Show the XP grant page.
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function getXP() {
+        $levels = DB::table('site_settings')->where('key', 'xp_levels')->pluck('value');
+
+        return view('admin.grants.xp', [
+            'users'      => User::orderBy('id')->pluck('name', 'id'),
+            'characters' => Character::orderBy('name')->get()->pluck('fullName', 'id')->mapWithKeys(function ($item, $key) {
+                return [$key => $item];
+            })->toArray(),
+            'levels' => isset($levels[0]) ? json_decode($levels[0]) : null,
+        ]);
+    }
+
     /**
      * Grants or removes items from multiple users.
      *
@@ -466,4 +487,24 @@ class GrantController extends Controller {
         return redirect()->back();
     }
 
+    /**
+     * Grants XP to characters.
+     *
+     * @param App\Services\TrackerManager $service
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function postXP(Request $request, TrackerManager $service) {
+        $data = $request->only(['characters', 'data', 'levels', 'static_xp']);
+
+        if ($service->grantCharacterXP($data, Auth::user())) {
+            flash('XP granted successfully.')->success();
+        } else {
+            foreach ($service->errors()->getMessages()['error'] as $error) {
+                flash($error)->error();
+            }
+        }
+
+        return redirect()->back();
+    }
 }

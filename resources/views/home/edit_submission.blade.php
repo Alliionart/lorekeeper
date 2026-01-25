@@ -99,6 +99,7 @@
         @include('widgets._inventory_select_js', ['readOnly' => true])
         @include('widgets._bank_select_row', ['owners' => [Auth::user()]])
         @include('widgets._bank_select_js', [])
+        @include('js._external_character_js')
 
         <script>
             $(document).ready(function() {

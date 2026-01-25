@@ -55,8 +55,13 @@
 </div>
 
 <div class="form-group">
-    {!! Form::label('comments', 'Comments (Optional)') !!} {!! add_help('Enter a comment for your ' . ($isClaim ? 'claim' : 'submission') . '. This will be viewed by the mods when reviewing your ' . ($isClaim ? 'claim' : 'submission') . '.') !!}
-    {!! Form::textarea('comments', isset($submission->comments) ? $submission->comments : old('comments') ?? Request::get('comments'), ['class' => 'form-control wysiwyg', 'id' => 'prompt-form']) !!}
+    {!! Form::label('tracker_id', 'Tracker Card (Optional)') !!} {!! add_help('Add an applicable tracker card to this submission. Intended if the admin is to approve both at once.') !!}
+    {!! Form::select('tracker_id', $trackers, isset($submission->tracker_id) ? $submission->tracker_id : old('tracker_id') ?? Request::get('tracker_id'), ['class' => 'form-control selectize', 'id' => 'tracker', 'placeholder' => '']) !!}
+</div>
+
+<div class="form-group">
+    {!! Form::label('comments', 'Comments (Optional)') !!} {!! add_help('Enter a comment for your ' . ($isClaim ? 'claim' : 'submission') . ' (no HTML). This will be viewed by the mods when reviewing your ' . ($isClaim ? 'claim' : 'submission') . '.') !!}
+    {!! Form::textarea('comments', isset($submission->comments) ? $submission->comments : old('comments') ?? Request::get('comments'), ['class' => 'form-control']) !!}
 </div>
 
 @if ($submission->prompt_id)
@@ -140,6 +145,23 @@
 
 <div class="card mb-3">
     <div class="card-header h2">
+        <a href="#" class="btn btn-outline-info float-right" id="addExternalCharacter">Add External Character</a>
+        External Characters
+    </div>
+    <div class="card-body">
+        <p>If there are any characters in this submission that are not on-site, list them here.</p>
+        <div id="externalCharactersBody">
+            @if (isset($submission->external_characters))
+                @foreach ($submission->external_characters as $ext_character)
+                    @include('widgets._external_character_row_select', ['extCharacter' => $ext_character])
+                @endforeach
+            @endif
+        </div>
+    </div>
+</div>
+
+<div class="card mb-3">
+    <div class="card-header h2">
         Add-Ons
     </div>
     <div class="card-body">
@@ -182,3 +204,7 @@
 @else
     @include('widgets._loot_select_row', ['items' => $items, 'currencies' => $currencies, 'showLootTables' => false, 'showRaffles' => false, 'showRecipes' => false])
 @endif
+
+<div id="external-character" class="hide">
+    @include('widgets._external_character_row_select')
+</div>

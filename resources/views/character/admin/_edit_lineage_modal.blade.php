@@ -5,7 +5,7 @@
 // Reduce errors and repetition
 $k = ['sire', 'sire_sire', 'sire_sire_sire', 'sire_sire_dam', 'sire_dam', 'sire_dam_sire', 'sire_dam_dam', 'dam', 'dam_sire', 'dam_sire_sire', 'dam_sire_dam', 'dam_dam', 'dam_dam_sire', 'dam_dam_dam'];
 // Human-readable names for the things
-$j = ['Sire', "Sire's Sire", "Sire's Sire's Sire", "Sire's Sire's Dam", "Sire's Dam", "Sire's Dam's Sire", "Sire's Dam's Dam", 'Dam', "Dam's Sire", "Dam's Sire's Sire", "Dam's Sire's Dam", "Dam's Dam", "Dam's Dam's Sire", "Dam's Dam's Dam"];
+$j = ['Reosean 1', "GR1", "GGR1", "GGR2", "GR2", "GGR3", "GGR4", 'Reosean 2', "GR3", "GGR5", "GGR6", "GR4", "GGR7", "GGR8"];
 ?>
 <div class="row">
     <div class="col-lg-6">

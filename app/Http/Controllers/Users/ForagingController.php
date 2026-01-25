@@ -31,7 +31,7 @@ class ForagingController extends Controller
             ]);
         }
 
-        $characters = Auth::user()->characters()->pluck('slug', 'id');
+        $characters = Auth::user()->characters()->where('citizenship', 'Paramount')->pluck('slug', 'id');
         if (!count($characters) && config('lorekeeper.foraging.use_characters')) {
             if (config('lorekeeper.foraging.npcs.enabled')) {
                 // check if we're using ids or category/rarity
