@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\News;
+use App\Models\NewsCategory;
 use App\Models\User\User;
 use Illuminate\Support\Facades\DB;
 
@@ -36,6 +37,10 @@ class NewsService extends Service {
 
             $news = News::create($data);
 
+            if ($news->category()) {
+                $webhook_url = $news->category->discord_webhook ?? null;
+            }
+
             if ($news->is_visible) {
                 $this->alertUsers();
 
@@ -43,7 +48,10 @@ class NewsService extends Service {
                     'A new news post has been made!',
                     $news->title,
                     $user,
-                    $news->url
+                    $news->url,
+                    null,
+                    null,
+                    $webhook_url
                 );
 
                 if (is_array($response)) {
@@ -164,4 +172,102 @@ class NewsService extends Service {
 
         return true;
     }
+
+    /** ----------------------------------------------------------------------
+     * NEWS CATEGORIES
+    * ---------------------------------------------------------------------- */
+
+    /**
+     * Creates a news category.
+     *
+     * @param array $data
+     * @param User  $user
+     *
+     * @return bool|NewsCategory
+     */
+    public function createNewsCategory($data, $user) {
+        DB::beginTransaction();
+
+        try {
+            $data['parsed_description'] = parse($data['description']);
+
+            $news = NewsCategory::create($data);
+
+            return $this->commitReturn($news);
+        } catch (\Exception $e) {
+            $this->setError('error', $e->getMessage());
+        }
+
+        return $this->rollbackReturn(false);
+    }
+
+    /**
+     * Updates a news category.
+     *
+     * @param NewsCategory $category
+     * @param array        $data
+     * @param User         $user
+     *
+     * @return bool|NewsCategory
+     */
+    public function updateNewsCategory($category, $data, $user) {
+        DB::beginTransaction();
+
+        try {
+
+            $category->update($data);
+
+            return $this->commitReturn($category);
+        } catch (\Exception $e) {
+            $this->setError('error', $e->getMessage());
+        }
+
+        return $this->rollbackReturn(false);
+    }
+
+    /**
+     * Deletes a news category.
+     *
+     * @param NewsCategory $category
+     *
+     * @return bool
+     */
+    public function deleteNewsCategory($category) {
+        DB::beginTransaction();
+
+        try {
+            $category->delete();
+            return $this->commitReturn(true);
+        } catch (\Exception $e) {
+            $this->setError('error', $e->getMessage());
+        }
+
+        return $this->rollbackReturn(false);
+    }
+
+    /**
+     * Sorts news categories.
+     *
+     * @param array $sorted_ids
+     *
+     * @return bool
+     */
+    public function sortNewsCategories($data) {
+        DB::beginTransaction();
+
+        try {
+            $sort = explode(',', $data);
+
+            foreach ($sort as $key => $s) {
+                NewsCategory::where('id', $s)->update(['sort' => $key]);
+            }
+
+            return $this->commitReturn(true);
+        } catch (\Exception $e) {
+            $this->setError('error', $e->getMessage());
+        }
+
+        return $this->rollbackReturn(false);
+    }
+
 }

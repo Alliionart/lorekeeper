@@ -21,6 +21,10 @@
 
     <h3>Basic Information</h3>
 
+    <?php
+    $conditions = $background->groupedConditions();
+    ?>
+
     <div class="row">
         <div class="col-md-6">
             <div class="form-group">
@@ -41,37 +45,49 @@
         {!! Form::label('is_visible', 'Is Visible', ['class' => 'form-check-label ml-3']) !!} {!! add_help('If turned off, the background will not be visible in the background list or available for selection in search and design updates. Permissioned staff will still be able to add them to characters, however.') !!}
     </div>
 
-    <h3>Image Upload</h3>
-    <div class="form-group">
-        {!! Form::label('Image') !!}
-        <div class="custom-file">
-            {!! Form::label('image', file_exists($background->imageDirectory . '/' . $background->imageFileName) ? $background->imageFileName : 'Choose file...', ['class' => 'custom-file-label']) !!}
-            {!! Form::file('image', ['class' => 'custom-file-input', 'id' => 'mainImage']) !!}
-        </div>
-        <h5 class="mt-3">Select a Preview Image using the cropper</h5>
-        <div class="form-group mt-2 hide">
-            {!! Form::checkbox('use_cropper', 1, 1, ['class' => 'form-check-input', 'data-toggle' => 'toggle', 'id' => 'useCropper']) !!}
-            {!! Form::label('use_cropper', 'Use Image Cropper', ['class' => 'form-check-label ml-3']) !!} {!! add_help('A thumbnail is required for the upload (used for the masterlist). You can use the image cropper (crop dimensions can be adjusted in the site code), or upload a custom thumbnail.') !!}
-        </div>
-        <div class="card mb-3" id="thumbnailCrop">
-            <div class="card-body">
-                <div id="cropSelect">Select an image to use the thumbnail cropper.</div>
-                <img src="#" id="cropper" class="hide" alt="" />
-                {!! Form::hidden('x0', null, ['id' => 'cropX0']) !!}
-                {!! Form::hidden('x1', null, ['id' => 'cropX1']) !!}
-                {!! Form::hidden('y0', null, ['id' => 'cropY0']) !!}
-                {!! Form::hidden('y1', null, ['id' => 'cropY1']) !!}
+    <hr/>
+    <h3>Background Image(s)</h3>
+    <p>Add dynamic backgrounds based on the species. Only add applicable species.</p>
+    <div class="form-group repeater">
+        <div class="repeater-item d-inline-flex align-items-end mb-2 w-100" data-id="-1">
+            <div class="form-group flex-grow-1 mb-0 mr-2">
+                {!! Form::label('Species') !!}
+                {!! Form::select('image[#SPECIES_ID][species_id]', $specieses, null, ['class' => 'form-control']) !!}
             </div>
+            <div class="form-group flex-grow-1 mb-0 mr-2">
+                {!! Form::label('Image') !!}
+                <div class="custom-file">
+                    {!! Form::label('image[#SPECIES_ID][file]', 'Choose file...', ['class' => 'custom-file-label']) !!}
+                    {!! Form::file('image[#SPECIES_ID][file]', ['class' => 'custom-file-input', 'id' => 'mainImage']) !!}
+                </div>
+            </div>
+            <a class="btn btn-danger remove-repeater-item">Remove</a>
+        </div>
+        <div class="repeater-item d-inline-flex align-items-end mb-2 w-100" data-id="0">
+            <div class="form-group flex-grow-1 mb-0 mr-2">
+                {!! Form::label('Species') !!}
+                {!! Form::select('image[#SPECIES_ID][species_id]', $specieses, null, ['class' => 'form-control']) !!}
+            </div>
+            <div class="form-group flex-grow-1 mb-0 mr-2">
+                {!! Form::label('Image') !!}
+                <div class="custom-file">
+                    {!! Form::label('image[#SPECIES_ID][file]', file_exists($background->imageDirectory . '/' . $background->imageFileName) ? $background->imageFileName : 'Choose file...', ['class' => 'custom-file-label']) !!}
+                    {!! Form::file('image[#SPECIES_ID][file]', ['class' => 'custom-file-input', 'id' => 'mainImage']) !!}
+                </div>
+            </div>
+            <a class="btn btn-danger remove-repeater-item">Remove</a>
         </div>
     </div>
+    <div class="text-right">
+        <a class="btn btn-primary add-repeater-item">Add Row</a>
+    </div>
+    <hr/>
+
+
 
     <h3>Conditional Options</h3>
     <p>How this background is accessible to a character. Leave these conditions blank if this background is free to use within the location. Note that all of these conditions are "OR" conditions. If the background starts as a personal background and then
         also moves to a award-based background you'll want to enter the player so they can always use it, AND the applicable award so that any character with that award can also use the background.</p>
-
-    <?php
-    $conditions = $background->groupedConditions();
-    ?>
 
     <div class="form-group">
         {!! Form::label('Users that may use this Background') !!}{!! add_help('Characters MUST be owned by these users to use the background.') !!}
@@ -114,6 +130,45 @@
                 e.preventDefault();
                 loadModal("{{ url('admin/data/background/delete') }}/{{ $background->id }}", 'Delete Background');
             });
+
+            $image_item = $('.repeater-item').first().clone();
+            $('.repeater-item').first().remove();
+
+            //Add a new repeater item
+            $('.add-repeater-item').on('click', function(e) {
+                e.preventDefault();
+                var newId = $('.repeater-item').length;
+                var newItem = $image_item.clone();
+                newItem.attr('data-id', newId);
+                newItem.find('select, input').each(function() {
+                    var name = $(this).attr('name');
+                    if (name) {
+                        name = name.replace('#SPECIES_ID', newId);
+                        $(this).attr('name', name);
+                    }
+                    if ($(this).is('select')) {
+                        $(this).val('');
+                    } else {
+                        $(this).val(null);
+                    }
+                });
+                newItem.find('label').each(function() {
+                    var labelFor = $(this).attr('for');
+                    if (labelFor) {
+                        labelFor = labelFor.replace('#SPECIES_ID', newId);
+                        $(this).attr('for', labelFor);
+                    }
+                });
+                //newItem.find('.custom-file-label').text('Choose file...');
+                $('.repeater').append(newItem);
+            });
+
+            //Remove a repeater item
+            $(document).on('click', '.remove-repeater-item', function(e) {
+                e.preventDefault();
+                $(this).closest('.repeater-item').remove();
+            });
+
         });
     </script>
 @endsection

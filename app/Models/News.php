@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\User\User;
+use App\Models\NewsCategory;
 use App\Traits\Commentable;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
@@ -17,7 +18,7 @@ class News extends Model implements Feedable {
      * @var array
      */
     protected $fillable = [
-        'user_id', 'text', 'parsed_text', 'title', 'is_visible', 'post_at',
+        'user_id', 'text', 'parsed_text', 'title', 'is_visible', 'post_at', 'category_id'
     ];
 
     /**
@@ -74,6 +75,13 @@ class News extends Model implements Feedable {
      */
     public function user() {
         return $this->belongsTo(User::class);
+    }
+
+    /**
+     * Get the category of the news post.
+     */
+    public function category() {
+        return $this->belongsTo(NewsCategory::class);
     }
 
     /**********************************************************************************************

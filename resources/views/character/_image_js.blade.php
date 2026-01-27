@@ -90,5 +90,9 @@
             if (!is_myo) return;
             loadModal("{{ url('admin/character/') }}/" + $(this).data('id') + "/typing", 'Edit Character Typing');
         });
+        $('.edit-decease').on('click', function(e) {
+            e.preventDefault();
+            loadModal("{{ url('admin/character/') }}/" + $(this).data('id') + "/decease", 'Decease Character');
+        });
     });
 </script>

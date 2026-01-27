@@ -44,8 +44,8 @@ class DiscordManager extends Service {
      * @param mixed|null $fields
      * @param mixed      $is_staff
      */
-    public function handleWebhook($content, $title, $author = null, $url = null, $fields = null, $is_staff = false) {
-        $webhook = $is_staff ? config('lorekeeper.discord_bot.env.webhooks.staff') : config('lorekeeper.discord_bot.env.webhooks.announcement');
+    public function handleWebhook($content, $title, $author = null, $url = null, $fields = null, $is_staff = false, $webhook_url = null) {
+        $webhook = $webhook_url ?? ($is_staff ? config('lorekeeper.discord_bot.env.webhooks.staff') : config('lorekeeper.discord_bot.env.webhooks.announcement'));
         if ($webhook) {
             // format data
             if ($author) {

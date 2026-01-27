@@ -62,6 +62,14 @@ class Background extends Model {
             ->toArray();
     }
 
+    public function speciesConditions() {
+        return $this->conditions()->get()->groupBy('species_id')
+            ->map(function ($group) {
+                return $group->pluck('species_id')->all();
+            })
+            ->toArray();
+    }
+
     public function getConditionTypeListAttribute() {
         $list = $this->conditions()->whereNotNull('value')->pluck('type')->unique()->values()->toArray();
 
@@ -173,7 +181,6 @@ class Background extends Model {
                 $sub->where('user_id', $character->user_id)
                     ->orWhere('location', $character->location)
                     ->orWhere('status', $character->status);
-                // ->orWhere('award_id', $character->award_id);
             });
         });
     }
@@ -276,5 +283,18 @@ class Background extends Model {
      */
     public function getAdminPowerAttribute() {
         return 'edit_data';
+    }
+
+    /** -------------------------------------------------
+     * OTHER FUNCTIONS
+     * ------------------------------------------------- */
+     
+    public function getSpeciesBackground($species_id) {
+        return $this->imageDirectory.'/'.$species_id.'-'.$this->id.'-background.png';
+    }
+
+    public function allowedSpecies() {
+        $image_data = $this->image_data ? json_decode($this->image_data, true) : [];
+        return array_keys($image_data);
     }
 }

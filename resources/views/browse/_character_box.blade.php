@@ -2,7 +2,14 @@
     @if ( $character->image )
         <div class="img-container">
             <a href="{{ $character->url }}">
-                <img src="{{ $character->image->thumbnailUrl }}" style="{{ $character->background ? 'background-image:url( ' . $character->background->imageUrl . ' );' : 'background-image:none;' }}background-size:cover;"
+                <?php
+                    if($character->background) {
+                        $background_url = $character->background->getSpeciesBackground($character->image->species_id);
+                    } else {
+                        $background_url = null;
+                    }
+                ?>
+                <img src="{{ $character->image->thumbnailUrl }}" style="{{ $background_url ? 'background-image:url( ' . $background_url . ' );' : 'background-image:none;' }}background-size:cover;"
                     class="img-thumbnail character-bg" alt="Thumbnail for {{ $character->fullName }}" />
             </a>
         </div>

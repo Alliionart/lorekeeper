@@ -1,5 +1,11 @@
 <ul>
     <li class="sidebar-header"><a href="{{ url('news') }}" class="card-link">News</a></li>
+    <li class="sidebar-section">
+        <div class="sidebar-section-header">Categories</div>
+        @foreach ($categories as $category_id => $category_name)
+            <div class="sidebar-item"><a href="{{ url('news/?category_id='.$category_id) }}" class="{{ set_active('news/?category_id='.$category_id) }}">{{ $category_name }}</a></div>
+        @endforeach
+    </li>
     @if (isset($newses))
         <li class="sidebar-section">
             <div class="sidebar-section-header">On This Page</div>

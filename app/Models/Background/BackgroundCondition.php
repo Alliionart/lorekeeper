@@ -3,6 +3,7 @@
 namespace App\Models\Background;
 
 use App\Models\Model;
+use App\Models\Species\Species;
 
 class BackgroundCondition extends Model {
     /**
@@ -43,6 +44,19 @@ class BackgroundCondition extends Model {
         'type'                => 'nullable',
         'value'               => 'nullable',
     ];
+
+    /**********************************************************************************************
+
+        RELATIONS
+
+    **********************************************************************************************/
+
+    /**
+     * Gets the species associated with this condition.
+     */
+    public function species() {
+        return $this->belongsTo(Species::class, 'species_id', 'id');
+    }
 
     /**********************************************************************************************
 

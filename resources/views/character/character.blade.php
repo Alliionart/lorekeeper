@@ -20,11 +20,24 @@
 
     @include('character._header', ['character' => $character])
 
+    @if ($character->is_deceased)
+        <div class="alert text-center border text-danger border-danger">
+            <?php
+                $deceasedDate = \Carbon\Carbon::parse($character->deceased_at);
+                $formattedDate = $deceasedDate->format('F j, Y')
+            ?>
+            <strong>💀 Deceased on {{ $formattedDate  }}</strong>
+        </div>
+    @endif
+
     {{-- Main Image --}}
     <div class="row mb-3" id="main-tab">
         <div class="col-md-9">
             <div class="text-center">
-                <div class="character-bg" style="{{ $character->background ? 'background-image:url( ' . $character->background->imageUrl . ' )' : 'background-image:none' }}">
+                <?php
+                    $background_url = $character->background->getSpeciesBackground($character->image->species_id);
+                ?>
+                <div class="character-bg" style="{{ $background_url ? 'background-image:url( ' . $background_url . ' )' : 'background-image:none' }}">
                     <div id="active-image">
                         <a href="{{ $character->image->canViewFull(Auth::check() ? Auth::user() : null) && file_exists(public_path($character->image->imageDirectory . '/' . $character->image->fullsizeFileName)) ? $character->image->fullsizeUrl : $character->image->imageUrl }}"
                             data-lightbox="entry" data-title="{{ $character->fullName }}">
@@ -228,6 +241,11 @@
                 <a href="#" class="btn btn-outline-danger btn-sm delete-character" data-slug="{{ $character->slug }}">Delete</a>
             </div>
         </div>
+        @if (!$character->is_deceased)
+            <div class="text-right mt-3">
+                <a href="#" class="btn btn-warning btn-sm edit-decease" data-id="{{ $character->id }}">Decease Character</a>
+            </div>
+        @endif
     @endif
 
 @endsection

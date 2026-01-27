@@ -11,7 +11,7 @@
 
         <div class="col d-flex align-items-center">
             <!-- Username & optional FTO Badge -->
-            <div class="w-50">
+            <div class="w-75">
                 <div class="row no-gutters">
                     <div class="ml-3 mb-0 px-3 py-2 rounded-top h2 text-center text-md-left">
                         {!! $user->displayName !!} {!! $user->isOnline() !!}

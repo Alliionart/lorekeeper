@@ -2782,6 +2782,31 @@ class CharacterManager extends Service {
         return false;
     }
 
+    /** Decease a character
+     * 
+     * @param Character $character
+     * @param User $user
+     */
+    public function deceaseCharacter($character, $user) {
+        DB::beginTransaction();
+
+        try {
+            $character->is_deceased = 1;
+            $character->deceased_at = Carbon::now();
+            $character->save();
+
+            if (!$this->createLog($user->id, null, $character->user_id, ($character->user_id ? null : $character->owner_url), $character->id, 'Character Deceased', 'Character marked as deceased', 'character')) {
+                throw new \Exception('Failed to create log.');
+            }
+
+            return $this->commitReturn(true);
+        } catch (\Exception $e) {
+            $this->setError('error', $e->getMessage());
+
+            return $this->rollbackReturn(false);
+        }
+    }
+
     /**
      * Handles character lineage data.
      *

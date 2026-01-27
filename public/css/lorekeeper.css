@@ -780,6 +780,9 @@ tr.accountbound {
     background-color: rgba(0,0,0,0.05);
     border-radius: .25rem;
 }
+.profile-inventory-item img {
+	max-width: 100px;
+}
 
 /* CHARACTERS ************************************************************************************/
 

@@ -950,4 +950,50 @@ class CharacterController extends Controller {
             'slots' => Character::myo(1)->orderBy('id', 'DESC')->paginate(30),
         ]);
     }
+
+    /**
+     * Shows the use breeding permission modal.
+     *
+     * @param string $slug
+     * @param int    $id
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function getCharacterDecease($id) {
+        $this->character = Character::where('id', $id)->first();
+        if (!$this->character) {
+            abort(404);
+        }
+
+        return view('character.admin._edit_decease_modal', [
+            'character'          => $this->character,
+        ]);
+    }
+
+    /**
+     * Marks a breeding permission as used.
+     *
+     * @param App\Services\CharacterManager $service
+     * @param int                           $id
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function postCharacterDecease(Request $request, CharacterManager $service, $id) {
+        $this->character = Character::where('id', $id)->first();
+        if (!$this->character) {
+            abort(404);
+        }
+
+        if ($service->deceaseCharacter($this->character, Auth::user())) {
+            flash('Character marked as deceased successfully.')->success();
+
+            return redirect()->back();
+        } else {
+            foreach ($service->errors()->getMessages()['error'] as $error) {
+                flash($error)->error();
+            }
+        }
+
+        return redirect()->back();
+    }
 }

@@ -28,16 +28,24 @@ class BackgroundService extends Service {
      */
     public function createBackground($data, $user) {
         DB::beginTransaction();
-
         \Log::info($data);
 
         try {
             $data = $this->populateData($data);
 
-            $image = null;
+            $image = [];
+            $imageData = [];
             if (isset($data['image']) && $data['image']) {
-                $image = $data['image'];
-                unset($data['image']);
+                foreach ($data['image'] as $img) {
+                    if(!isset($img['file'])) {
+                        continue;
+                    }
+
+                    \Log::info($img);
+
+                    $image[$img['species_id']] = $img['file'];
+                    $imageData[$img['species_id']] = $img['species_id'].'-'.$background->imageFileName;
+                }
             }
 
             $background = Background::create($data);
@@ -49,7 +57,10 @@ class BackgroundService extends Service {
             }
 
             if ($image) {
-                $this->handleImage($image, $background->imagePath, $background->imageFileName);
+                foreach($image as $species_id => $img) {
+                    $this->handleImage($img, $background->imagePath, $species_id.'-'.$background->imageFileName);
+                }
+                $this->updateBackgroundImageData($background, $imageData);
             }
 
             return $this->commitReturn($background);
@@ -78,12 +89,23 @@ class BackgroundService extends Service {
                 throw new \Exception('The name has already been taken.');
             }
 
+            \Log::info($data);
+
             $data = $this->populateData($data);
 
-            $image = null;
+            $image = [];
+            $imageData = [];
             if (isset($data['image']) && $data['image']) {
-                $image = $data['image'];
-                unset($data['image']);
+                foreach ($data['image'] as $img) {
+                    if(!isset($img['file'])) {
+                        continue;
+                    }
+
+                    \Log::info($img);
+
+                    $image[$img['species_id']] = $img['file'];
+                    $imageData[$img['species_id']] = $img['species_id'].'-'.$background->imageFileName;
+                }
             }
 
             $background->update($data);
@@ -95,11 +117,10 @@ class BackgroundService extends Service {
             }
 
             if ($image) {
-                $this->handleImage($image, $background->imagePath, $background->imageFileName);
-            }
-
-            if (isset($data['use_cropper'])) {
-                //$this->cropThumbnail(Arr::only($data, ['x0', 'x1', 'y0', 'y1']), $image, $background);
+                foreach($image as $species_id => $img) {
+                    $this->handleImage($img, $background->imagePath, $species_id.'-'.$background->imageFileName);
+                }
+                $this->updateBackgroundImageData($background, $imageData);
             }
 
             return $this->commitReturn($background);
@@ -200,6 +221,14 @@ class BackgroundService extends Service {
     }
 
     /**
+     * Updates the background image data.
+     */
+    private function updateBackgroundImageData($background, $imageData) {
+        $background->image_data = json_encode($imageData);
+        $background->save();
+    }
+
+    /**
      * Updates the background conditions.
      *
      * @param array      $data
@@ -272,9 +301,6 @@ class BackgroundService extends Service {
                 }
             }
         }
-
-        \Log::info($results);
-
         return $results;
     }
 

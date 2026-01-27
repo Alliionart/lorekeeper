@@ -19,13 +19,16 @@
         <div class="mb-4 logs-table">
             <div class="logs-table-header">
                 <div class="row">
-                    <div class="col-12 col-md-5">
+                    <div class="col-12 col-md-4">
                         <div class="logs-table-cell">Title</div>
                     </div>
-                    <div class="col-6 col-md-3">
+                    <div class="col-12 col-md-3">
+                        <div class="logs-table-cell">Category</div>
+                    </div>
+                    <div class="col-6 col-md-2">
                         <div class="logs-table-cell">Posted At</div>
                     </div>
-                    <div class="col-6 col-md-3">
+                    <div class="col-6 col-md-2">
                         <div class="logs-table-cell">Last Edited</div>
                     </div>
                 </div>
@@ -34,7 +37,7 @@
                 @foreach ($newses as $news)
                     <div class="logs-table-row">
                         <div class="row flex-wrap">
-                            <div class="col-12 col-md-5">
+                            <div class="col-12 col-md-4">
                                 <div class="logs-table-cell">
                                     @if (!$news->is_visible)
                                         @if ($news->post_at)
@@ -46,10 +49,13 @@
                                     <a href="{{ $news->url }}">{{ $news->title }}</a>
                                 </div>
                             </div>
-                            <div class="col-6 col-md-3">
+                            <div class="col-4 col-md-3">
+                                <div class="logs-table-cell">{!! $news->category ? $news->category->name : '<span class="text-muted">Uncategorized</span>' !!}</div>
+                            </div>
+                            <div class="col-6 col-md-2">
                                 <div class="logs-table-cell">{!! pretty_date($news->post_at ?: $news->created_at) !!}</div>
                             </div>
-                            <div class="col-6 col-md-3">
+                            <div class="col-6 col-md-2">
                                 <div class="logs-table-cell">{!! pretty_date($news->updated_at) !!}</div>
                             </div>
                             <div class="col-12 col-md-1 text-right">

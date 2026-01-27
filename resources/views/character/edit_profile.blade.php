@@ -48,7 +48,7 @@
         <div class="form-group background-refresh">
             {{ $character->bg_id }}
             {!! Form::label('background', 'Background') !!}
-            {!! Form::select('background', $character->applicableBackgrounds($character->home_id), $character->background_id ?? null, ['class' => 'form-control selectize', 'required']) !!}
+            {!! Form::select('background', $character->applicableBackgrounds( $character->home_id ), $character->background_id ?? null, ['class' => 'form-control selectize', 'required']) !!}
             <div class="alert mt-2 p-2 border-warning alert-warning" style="display:none;">Changing your character's background requires {{ $bg_amount }} {!! $bg_currency->displayName !!}. You currently have {{ $user_cur_amount }} available.</div>
         </div>
 

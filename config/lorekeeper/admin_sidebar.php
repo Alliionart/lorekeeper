@@ -60,6 +60,10 @@ return [
                 'name' => 'News',
                 'url'  => 'admin/news',
             ],
+            [
+                'name' => 'Categories',
+                'url'  => 'admin/news/categories',
+            ],
         ],
     ],
     'Sales' => [

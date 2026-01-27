@@ -9,6 +9,7 @@ use App\Models\Background\Background;
 use App\Models\WorldExpansion\Location;
 use App\Models\Item\Item;
 use App\Models\User\User;
+use App\Models\Species\Species;
 use App\Services\BackgroundService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -54,13 +55,13 @@ class BackgroundController extends Controller {
             $levels[$level] = $level;
         }
 
-
         return view('admin.backgrounds.create_edit_background', [
             'background'    => new Background,
             'users'         => User::query()->orderBy('name')->pluck('name', 'id')->toArray(),
             'locations'     => ['' => 'None'] + Location::all()->where('has_backgrounds', 1)->pluck('name', 'id')->toArray(),
             'items'         => ['' => 'None'] + Item::orderBy('name')->pluck('name', 'id')->toArray(),
             'awards'        => ['' => 'None'] + Award::orderBy('name')->pluck('name', 'id')->toArray(),
+            'specieses'     => ['' => 'None'] + Species::orderBy('name')->pluck('name', 'id')->toArray(),
             'statuses'      => ['' => 'None'] + $levels,
         ]);
     }
@@ -89,6 +90,7 @@ class BackgroundController extends Controller {
             'locations'     => ['' => 'None'] + Location::all()->where('has_backgrounds', 1)->pluck('name', 'id')->toArray(),
             'items'         => ['' => 'None'] + Item::orderBy('name')->pluck('name', 'id')->toArray(),
             'awards'        => ['' => 'None'] + Award::orderBy('name')->pluck('name', 'id')->toArray(),
+            'specieses'     => ['' => 'None'] + Species::orderBy('name')->pluck('name', 'id')->toArray(),
             'statuses'      => ['' => 'None'] + $levels,
         ]);
     }
@@ -106,7 +108,6 @@ class BackgroundController extends Controller {
         $data = $request->only([
             'name', 'image', 'is_visible', 'use_cropper',
             'user_id', 'guild_id', 'award_id', 'location', 'status', 'item_id',
-            'x0', 'x1', 'y0', 'y1',
         ]);
 
         if ($id && $service->updateBackground(Background::find($id), $data, Auth::user())) {

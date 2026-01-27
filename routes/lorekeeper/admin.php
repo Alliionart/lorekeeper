@@ -561,6 +561,15 @@ Route::group(['prefix' => 'news', 'middleware' => 'power:manage_news'], function
     Route::post('create', 'NewsController@postCreateEditNews');
     Route::post('edit/{id?}', 'NewsController@postCreateEditNews');
     Route::post('delete/{id}', 'NewsController@postDeleteNews');
+
+    Route::get('categories', 'NewsController@getCategoryIndex');
+    Route::get('categories/create', 'NewsController@getCreateNewsCategory');
+    Route::get('categories/edit/{id}', 'NewsController@getEditNewsCategory');
+    Route::get('categories/delete/{id}', 'NewsController@getDeleteNewsCategory');
+    Route::post('categories/create', 'NewsController@postCreateEditNewsCategory');
+    Route::post('categories/edit/{id?}', 'NewsController@postCreateEditNewsCategory');
+    Route::post('categories/delete/{id}', 'NewsController@postDeleteNewsCategory');
+    Route::post('categories/sort', 'NewsController@postSortNewsCategory');
 });
 
 // SALES
@@ -743,6 +752,10 @@ Route::group(['prefix' => 'character', 'namespace' => 'Characters', 'middleware'
     // LINEAGE
     Route::get('{slug}/lineage', 'CharacterLineageController@getEditCharacterLineage');
     Route::post('{slug}/lineage', 'CharacterLineageController@postEditCharacterLineage');
+
+    // DECEASE
+    Route::get('{id}/decease', 'CharacterController@getCharacterDecease');
+    Route::post('{id}/decease', 'CharacterController@postCharacterDecease');
 });
 // Might rewrite these parts eventually so there's less code duplication...
 Route::group(['prefix' => 'myo', 'namespace' => 'Characters', 'middleware' => 'power:manage_characters'], function () {

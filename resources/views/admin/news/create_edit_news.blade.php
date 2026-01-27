@@ -18,14 +18,19 @@
     <h3>Basic Information</h3>
 
     <div class="row">
-        <div class="col-md-6 form-group">
+        <div class="col-md-4 form-group">
             {!! Form::label('Title') !!}
             {!! Form::text('title', $news->title, ['class' => 'form-control']) !!}
         </div>
 
-        <div class="col-md-6 form-group">
+        <div class="col-md-4 form-group">
             {!! Form::label('Post Time (Optional)') !!} {!! add_help('This is the time that the news post should be posted. Make sure the Is Viewable switch is off.') !!}
             {!! Form::text('post_at', $news->post_at, ['class' => 'form-control datepicker']) !!}
+        </div>
+
+        <div class="col-md-4 form-group">
+            {!! Form::label('News Category') !!}
+            {!! Form::select('category_id', $categories ?? null, $news->category_id, ['class' => 'form-control']) !!}
         </div>
     </div>
 

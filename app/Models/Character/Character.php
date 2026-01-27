@@ -56,7 +56,7 @@ class Character extends Model {
         'is_gift_art_allowed', 'is_gift_writing_allowed', 'is_trading', 'sort',
         'is_myo_slot', 'name', 'trade_id', 'owner_url', 'base', 'class_id',
         'sex', 'citizenship', 'nickname', 'bonding', 'size',
-        'home_id', 'home_changed', 'faction_id', 'faction_changed',
+        'home_id', 'home_changed', 'faction_id', 'faction_changed', 'is_deceased', 'deceased_at',
     ];
 
     /**
@@ -443,8 +443,8 @@ class Character extends Model {
     public function scopeApplicableBackgrounds($query, $location = null) {
         $applicable_bgs_raw = [];
         $applicable_bgs = [];
-        if (!$location) {
-            $location = $this->location;
+        if( !$location ) {
+            $location = $this->home_id;
         }
 
         //Free to Use BGs
@@ -484,12 +484,19 @@ class Character extends Model {
         if ($Free_bgs) {
             $applicable_bgs_raw['Free to Use'] = $Free_bgs;
         }
+
         foreach ($applicable_bgs_raw as $cat => $bgs) {
             foreach ($bgs as $i => $bg_id) {
-                $applicable_bgs[$cat][$bg_id] = Background::find($bg_id)?->name;
+                $background = Background::find($bg_id);
+                if( $background ) {
+                    $allowed_species_ids = $background->allowedSpecies();
+                    if( $allowed_species_ids && in_array( $this->image->species_id, $allowed_species_ids ) ) {
+                        $applicable_bgs[$cat][$bg_id] = $background->name;
+                    }
+                }
+                
             }
         }
-
         return $applicable_bgs;
     }
 
@@ -552,6 +559,9 @@ class Character extends Model {
      * @return string
      */
     public function getDisplayNameAttribute() {
+        if ($this->is_deceased) {
+            return '<a href="'.$this->url.'" class="display-character">'.$this->fullName.' [DECEASED]</a>';
+        }
         return '<a href="'.$this->url.'" class="display-character">'.$this->fullName.'</a>';
     }
 

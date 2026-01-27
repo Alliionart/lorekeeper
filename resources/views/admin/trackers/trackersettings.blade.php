@@ -77,6 +77,7 @@
                                     <div class="row-children">
                                         @if ($field->field_options)
                                             @foreach ($field->field_options as $option)
+                                                <?php $option = (array) $option; ?>
                                                 <div class="child-row row mb-2 px-3">
                                                     <div class="col-md-2 px-1">
                                                         {!! Form::number('field[' . $i . '][field_options][' . $i . '][point_value]', $option['point_value'] ?? 0, ['class' => 'form-control w-100', 'placeholder' => 'Point Value']) !!}
