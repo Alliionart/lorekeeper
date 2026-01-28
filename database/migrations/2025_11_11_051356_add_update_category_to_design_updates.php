@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('design_updates', function (Blueprint $table) {
-            $table->text('update_category')->after('update_type')->default('new_design');
+            $table->text('update_category')->after('update_type');
         });
     }
 
