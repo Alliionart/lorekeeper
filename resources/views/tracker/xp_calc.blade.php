@@ -151,10 +151,8 @@
             {!! Form::submit('Submit Tracker Card for Review', ['class' => 'btn btn-primary']) !!}
         </div>
     </div>
-    </div>
     {!! Form::close() !!}
 
-    </div>
 @endsection
 
 @section('scripts')
@@ -193,9 +191,15 @@
             });
 
             //Update groups on checkbox/radio changes
-            function updateCheckRadioGroup($group, $type) {
+            function updateCheckRadioGroup($checked, $group, $type) {
                 var group = $($group).attr('data-name');
                 var index = $($group).closest('.tracker-item').attr('data-index');
+
+                if($type == 'radio') {
+                    $($group).find(':input').not($checked).each(function (index, radio) {
+                        $(radio).prop('checked', false);
+                    });
+                }
 
                 var selected = $($group).find('input[type="' + $type + '"]:checked');
                 if (selected.length === 0) {
@@ -217,11 +221,11 @@
 
             //On checkbox input changes
             $('#pointValues').on('change', 'input[type="checkbox"][name]', function() {
-                updateCheckRadioGroup($(this).closest('.card')[0], 'checkbox');
+                updateCheckRadioGroup(this, $(this).closest('.card')[0], 'checkbox');
             });
             //On radio input changes
             $('#pointValues').on('change', 'input[type="radio"][name]', function() {
-                updateCheckRadioGroup($(this).closest('.card')[0], 'radio');
+                updateCheckRadioGroup(this, $(this).closest('.card')[0], 'radio');
             });
 
             //On type change
