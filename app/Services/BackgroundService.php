@@ -28,27 +28,25 @@ class BackgroundService extends Service {
      */
     public function createBackground($data, $user) {
         DB::beginTransaction();
-        \Log::info($data);
-
         try {
             $data = $this->populateData($data);
+            $imgData = $data['image'] ?? null;
+            unset($data['image']);
+
+            $background = Background::create($data);
 
             $image = [];
             $imageData = [];
-            if (isset($data['image']) && $data['image']) {
-                foreach ($data['image'] as $img) {
+            if (isset($imgData) && $imgData) {
+                foreach ($imgData as $img) {
                     if(!isset($img['file'])) {
                         continue;
                     }
-
-                    \Log::info($img);
 
                     $image[$img['species_id']] = $img['file'];
                     $imageData[$img['species_id']] = $img['species_id'].'-'.$background->imageFileName;
                 }
             }
-
-            $background = Background::create($data);
 
             $this->createConditions($data, $background);
 
@@ -88,9 +86,6 @@ class BackgroundService extends Service {
             if (Background::where('name', $data['name'])->where('id', '!=', $background->id)->exists()) {
                 throw new \Exception('The name has already been taken.');
             }
-
-            \Log::info($data);
-
             $data = $this->populateData($data);
 
             $image = [];
@@ -100,8 +95,6 @@ class BackgroundService extends Service {
                     if(!isset($img['file'])) {
                         continue;
                     }
-
-                    \Log::info($img);
 
                     $image[$img['species_id']] = $img['file'];
                     $imageData[$img['species_id']] = $img['species_id'].'-'.$background->imageFileName;

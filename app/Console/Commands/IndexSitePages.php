@@ -70,7 +70,7 @@ class IndexSitePages extends Command {
                     'title'       => $page->title,
                     'type'        => get_class($page),
                     'identifier'  => $page->key,
-                    'description' => substr_replace(strip_tags($page->parsed_text), '...', 100),
+                    'description' => $this->cleanDescription($page->parsed_text),
                 ]);
             }
 
@@ -96,7 +96,7 @@ class IndexSitePages extends Command {
                     'title'       => $item->name,
                     'type'        => get_class($item),
                     'identifier'  => $item->name,
-                    'description' => substr_replace(strip_tags($item->parsed_description), '...', 100),
+                    'description' => $this->cleanDescription($item->parsed_description),
                 ]);
             }
 
@@ -109,7 +109,7 @@ class IndexSitePages extends Command {
                     'title'       => $prompt->name,
                     'type'        => get_class($prompt),
                     'identifier'  => $prompt->id,
-                    'description' => substr_replace(strip_tags($prompt->parsed_description), '...', 100),
+                    'description' => $this->cleanDescription($prompt->parsed_description),
                 ]);
             }
 
@@ -122,7 +122,7 @@ class IndexSitePages extends Command {
                     'title'       => $shop->name,
                     'type'        => get_class($shop),
                     'identifier'  => $shop->id,
-                    'description' => substr_replace(strip_tags($shop->parsed_description), '...', 100),
+                    'description' => $this->cleanDescription($shop->parsed_description),
                 ]);
             }
 
@@ -135,7 +135,7 @@ class IndexSitePages extends Command {
                     'title'       => $feature->name,
                     'type'        => get_class($feature),
                     'identifier'  => $feature->name,
-                    'description' => substr_replace(strip_tags($feature->parsed_description), '...', 100),
+                    'description' => $this->cleanDescription($feature->parsed_description),
                 ]);
             }
 
@@ -148,7 +148,7 @@ class IndexSitePages extends Command {
                     'title'       => $marking->name,
                     'type'        => get_class($marking),
                     'identifier'  => $marking->slug,
-                    'description' => substr_replace(strip_tags($marking->short_description), '...', 100),
+                    'description' => $this->cleanDescription($marking->short_description),
                 ]);
             }
 
@@ -176,5 +176,13 @@ class IndexSitePages extends Command {
             // ------------------ D. Dump the Temp Table
             DB::table('site_temp_index')->truncate();
         }
+    }
+
+    private function cleanDescription($string) {
+        // Remove HTML tags
+        $cleaned = strip_tags($string);
+        $cleaned = mb_convert_encoding($cleaned, 'UTF-8', 'UTF-8');
+        $cleaned = substr_replace($cleaned, '...', 100);
+        return $cleaned;
     }
 }
