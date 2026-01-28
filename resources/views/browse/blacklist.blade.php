@@ -48,7 +48,7 @@
                 <tr>
                     <td>{!! $user->displayName !!}</td>
                     <td>{!! $user->displayAlias !!}</td>
-                    <td>{!! format_date($user->settings->banned_at) !!}</td>
+                    <td>{!! ($user->settings->banned_at ? format_date($user->settings->banned_at) : 'N/A') !!}</td>
                     <td>{!! nl2br(htmlentities($user->settings->ban_reason)) !!}</td>
                 </tr>
             @endforeach

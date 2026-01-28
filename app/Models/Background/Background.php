@@ -246,7 +246,7 @@ class Background extends Model {
      * @return string
      */
     public function getThumbnailFileNameAttribute() {
-        return $this->id.'-thumbnaiil-bg.png';
+        return $this->id.'-thumbnail-bg.png';
     }
 
     /**

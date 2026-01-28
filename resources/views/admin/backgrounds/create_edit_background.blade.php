@@ -49,34 +49,42 @@
     <h3>Background Image(s)</h3>
     <p>Add dynamic backgrounds based on the species. Only add applicable species.</p>
     <div class="form-group repeater">
-        <div class="repeater-item d-inline-flex align-items-end mb-2 w-100" data-id="-1">
-            <div class="form-group flex-grow-1 mb-0 mr-2">
-                {!! Form::label('Species') !!}
-                {!! Form::select('image[#SPECIES_ID][species_id]', $specieses, null, ['class' => 'form-control']) !!}
-            </div>
-            <div class="form-group flex-grow-1 mb-0 mr-2">
-                {!! Form::label('Image') !!}
-                <div class="custom-file">
-                    {!! Form::label('image[#SPECIES_ID][file]', 'Choose file...', ['class' => 'custom-file-label']) !!}
-                    {!! Form::file('image[#SPECIES_ID][file]', ['class' => 'custom-file-input', 'id' => 'mainImage']) !!}
+        @if($image_data)
+            @foreach($image_data as $species_id => $image_name)
+                <div class="repeater-item d-inline-flex align-items-end mb-2 w-100" data-id="0">
+                    <div class="form-group flex-shrink-1 mb-0 mr-2">
+                        <img src="{{ url('/') . '/' . $background->imageDirectory . '/' . $image_name }}" alt="Background Image" class="rounded" style="max-width:65px;"/>
+                    </div>
+                    <div class="form-group flex-grow-1 mb-0 mr-2">
+                        {!! Form::label('Species') !!}
+                        {!! Form::select('image['.$species_id.'][species_id]', $specieses, $species_id, ['class' => 'form-control']) !!}
+                    </div>
+                    <div class="form-group flex-grow-1 mb-0 mr-2">
+                        {!! Form::label('Image') !!}
+                        <div class="custom-file">
+                            {!! Form::label('image['.$species_id.'][file]', $image_name, ['class' => 'custom-file-label']) !!}
+                            {!! Form::file('image['.$species_id.'][file]', ['class' => 'custom-file-input', 'id' => 'mainImage']) !!}
+                        </div>
+                    </div>
+                    <a class="btn btn-danger remove-repeater-item">Remove</a>
                 </div>
-            </div>
-            <a class="btn btn-danger remove-repeater-item">Remove</a>
-        </div>
-        <div class="repeater-item d-inline-flex align-items-end mb-2 w-100" data-id="0">
-            <div class="form-group flex-grow-1 mb-0 mr-2">
-                {!! Form::label('Species') !!}
-                {!! Form::select('image[#SPECIES_ID][species_id]', $specieses, null, ['class' => 'form-control']) !!}
-            </div>
-            <div class="form-group flex-grow-1 mb-0 mr-2">
-                {!! Form::label('Image') !!}
-                <div class="custom-file">
-                    {!! Form::label('image[#SPECIES_ID][file]', file_exists($background->imageDirectory . '/' . $background->imageFileName) ? $background->imageFileName : 'Choose file...', ['class' => 'custom-file-label']) !!}
-                    {!! Form::file('image[#SPECIES_ID][file]', ['class' => 'custom-file-input', 'id' => 'mainImage']) !!}
+            @endforeach
+        @else
+            <div class="repeater-item d-inline-flex align-items-end mb-2 w-100 template" data-id="0">
+                <div class="form-group flex-grow-1 mb-0 mr-2">
+                    {!! Form::label('Species') !!}
+                    {!! Form::select('image[#SPECIES_ID][species_id]', $specieses, null, ['class' => 'form-control']) !!}
                 </div>
+                <div class="form-group flex-grow-1 mb-0 mr-2">
+                    {!! Form::label('Image') !!}
+                    <div class="custom-file">
+                        {!! Form::label('image[#SPECIES_ID][file]', 'Choose file...', ['class' => 'custom-file-label']) !!}
+                        {!! Form::file('image[#SPECIES_ID][file]', ['class' => 'custom-file-input', 'id' => 'mainImage']) !!}
+                    </div>
+                </div>
+                <a class="btn btn-danger remove-repeater-item">Remove</a>
             </div>
-            <a class="btn btn-danger remove-repeater-item">Remove</a>
-        </div>
+        @endif
     </div>
     <div class="text-right">
         <a class="btn btn-primary add-repeater-item">Add Row</a>
@@ -131,8 +139,8 @@
                 loadModal("{{ url('admin/data/background/delete') }}/{{ $background->id }}", 'Delete Background');
             });
 
-            $image_item = $('.repeater-item').first().clone();
-            $('.repeater-item').first().remove();
+            $image_item = $('.repeater-item.template').first().clone();
+            $('.repeater-item.template').first().remove();
 
             //Add a new repeater item
             $('.add-repeater-item').on('click', function(e) {

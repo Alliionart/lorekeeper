@@ -15,6 +15,11 @@ class SearchController extends Controller {
             ->get();
 
         foreach ($result as $r) {
+
+            if (!$r->indexedModel) {
+                continue;
+            }
+
             $row = '<div class="resultrow"><a href="'.$r->indexedModel->url.'"><div class="title"><span class="badge badge-secondary">'.$r->typeLabel.'</span>'.$r->title.'</div></a></div>';
             echo $row;
         }

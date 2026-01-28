@@ -3,7 +3,7 @@
 @section('admin-title') Log Viewer @endsection
 
 @section('admin-content')
-{!! breadcrumbs(['Admin Panel' => 'admin', 'Logs' => 'admin/logs']) !!}
+{!! breadcrumbs(['Admin Panel' => 'admin', 'Logs' => 'admin/error-logs']) !!}
 
 <h1>Log Viewer</h1>
 
@@ -21,10 +21,10 @@
         @foreach($logs as $log)
             <tr>
                 <td>
-                    <a href="/admin/logs/{{ $log }}">{{ $log }}</a>
+                    <a href="/admin/error-logs/{{ $log }}">{{ $log }}</a>
                 </td>
                 <td class="text-right">
-                    <a href="/admin/logs/{{ $log }}" class="btn btn-outline-primary btn-sm move-log" data-name="{{ $log }} ">View</a>
+                    <a href="/admin/error-logs/{{ $log }}" class="btn btn-outline-primary btn-sm move-log" data-name="{{ $log }} ">View</a>
                     <a href="#" class="btn btn-outline-danger btn-sm delete-log" data-name="{{ $log }}">Delete</a>
                 </td>
             </tr>
@@ -41,7 +41,7 @@
             </div>
             <div class="modal-body">
                 {{-- Delete a file --}}
-                {!! Form::open(['url' => 'admin/logs/delete', 'id' => 'deleteForm', 'class' => 'file-form']) !!}
+                {!! Form::open(['url' => 'admin/error-logs/delete', 'id' => 'deleteForm', 'class' => 'file-form']) !!}
                     <p>This will permanently delete <strong id="deleteFilename"></strong>. Are you sure?</p>
                     <div class="text-right">
                         {!! Form::submit('Delete', ['class' => 'btn btn-danger']) !!}
