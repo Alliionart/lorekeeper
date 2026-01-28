@@ -57,6 +57,7 @@ class BackgroundController extends Controller {
 
         return view('admin.backgrounds.create_edit_background', [
             'background'    => new Background,
+            'image_data'    => null,
             'users'         => User::query()->orderBy('name')->pluck('name', 'id')->toArray(),
             'locations'     => ['' => 'None'] + Location::all()->where('has_backgrounds', 1)->pluck('name', 'id')->toArray(),
             'items'         => ['' => 'None'] + Item::orderBy('name')->pluck('name', 'id')->toArray(),
