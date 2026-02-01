@@ -6,10 +6,11 @@ use App\Facades\Settings;
 use App\Http\Controllers\Controller;
 use App\Models\Award\Award;
 use App\Models\Background\Background;
+use App\Models\Background\BackgroundCondition;
 use App\Models\WorldExpansion\Location;
+use App\Models\Species\Species;
 use App\Models\Item\Item;
 use App\Models\User\User;
-use App\Models\Species\Species;
 use App\Services\BackgroundService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -38,8 +39,30 @@ class BackgroundController extends Controller {
             $query->where('name', 'LIKE', '%'.$data['name'].'%');
         }
 
+        if (isset($data['location'])) {
+            $query->whereHas('conditions', function ($q) use ($data) {
+                $q->where('location', $data['location']);
+            });
+        }
+
+        if (isset($data['species'])) {
+            $query->whereRaw("JSON_EXTRACT(image_data, '$.\"{$data['species']}\"') IS NOT NULL");
+        }
+
+        if (isset($data['conditions'])) {
+            if($data['conditions'] == 'null') {
+                $data['conditions']  = null;
+            }
+            $query->whereHas('conditions', function ($q) use ($data) {
+                $q->where('type', $data['conditions']);
+            });
+        }
+
         return view('admin.backgrounds.backgrounds', [
             'backgrounds'   => $query->paginate(20)->appends($request->query()),
+            'locations'     => ['' => 'All Locations'] + Location::all()->where('has_backgrounds', 1)->pluck('name', 'id')->toArray(),
+            'conditions'    => ['' => 'All Conditions'] + BackgroundCondition::all()->pluck('type', 'type')->toArray() + [ 'null' => 'Free to Use'],
+            'species'       => ['' => 'All Species'] + Species::orderBy('name')->pluck('name', 'id')->toArray(),
         ]);
     }
 

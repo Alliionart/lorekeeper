@@ -17,7 +17,16 @@
     <div>
         {!! Form::open(['method' => 'GET', 'class' => 'form-inline justify-content-end']) !!}
         <div class="form-group mr-3 mb-3">
-            {!! Form::text('name', Request::get('name'), ['class' => 'form-control', 'placeholder' => 'Name']) !!}
+            {!! Form::select('species', $species, Request::get('species'), ['class' => 'form-control', 'placeholder' => 'Select species...']) !!}
+        </div>
+        <div class="form-group mr-3 mb-3">
+            {!! Form::select('location', $locations, Request::get('location'), ['class' => 'form-control', 'placeholder' => 'Select location...']) !!}
+        </div>
+        <div class="form-group mr-3 mb-3">
+            {!! Form::select('conditions', $conditions, Request::get('conditions'), ['class' => 'form-control', 'placeholder' => 'Select condition...']) !!}
+        </div>
+        <div class="form-group mr-3 mb-3">
+            {!! Form::text('name', Request::get('name'), ['class' => 'form-control', 'placeholder' => 'Search by name...']) !!}
         </div>
         <div class="form-group mb-3">
             {!! Form::submit('Search', ['class' => 'btn btn-primary']) !!}
@@ -41,8 +50,11 @@
                     <div class="col-12 col-md-2">
                         <div class="logs-table-cell">Location</div>
                     </div>
-                    <div class="col-12 col-md-4">
+                    <div class="col-12 col-md-2">
                         <div class="logs-table-cell">Conditions</div>
+                    </div>
+                    <div class="col-12 col-md-2">
+                        <div class="logs-table-cell">Species</div>
                     </div>
                     <div class="col-12 col-md-1">
                         <div class="logs-table-cell">ID</div>
@@ -58,9 +70,17 @@
                         <div class="row flex-wrap">
                             <div class="col-12 col-md-1">
                                 <div class="logs-table-cell">
-                                    @if ($background->imageUrl)
-                                        <!-- $background->image->thumbnailUrl -->
+                                    @if ($background->imageUrl && !$background->image_data )
                                         <img src="{{ $background->imageUrl }}" style="max-width:50px;" alt="{{ $background->name }}" class="img-fluid" />
+                                    @else
+                                        <?php
+                                            $images = $background->image_data ? json_decode($background->image_data, true) : null;
+                                        ?>
+                                        @if ($images)
+                                            @foreach($images as $image)
+                                                <img src="/images/data/backgrounds/{{ $image }}" style="max-width:50px;" alt="{{ $background->name }}" class="img-fluid stacked mb-1" />
+                                            @endforeach
+                                        @endif
                                     @endif
                                 </div>
                             </div>
@@ -77,9 +97,32 @@
                                     {{ $background->location()->name }}
                                 </div>
                             </div>
-                            <div class="col-12 col-md-4">
+                            <div class="col-12 col-md-2">
                                 <div class="logs-table-cell">
                                     {{ print_r($background->getConditionTypeListAttribute(), true) }}
+                                    <?php
+                                        if ($background->conditions->contains(function ($condition) {
+                                            return $condition->is_craftable;
+                                        })) {
+                                            echo "(Craftable)";
+                                        }
+                                    ?>
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-2">
+                                <div class="logs-table-cell">
+                                    @if ($background->image_data)
+                                        <?php $list = []; ?>
+                                        @foreach($background->allowedSpecies() as $species_id)
+                                            <?php $species = \App\Models\Species\Species::find($species_id); ?>
+                                            @if ($species)
+                                                <?php $list[] = $species->name; ?>
+                                            @endif
+                                        @endforeach
+                                        {{ implode(', ', $list) }}
+                                    @else
+                                        Any
+                                    @endif
                                 </div>
                             </div>
                             <div class="col-12 col-md-1">
@@ -103,4 +146,15 @@
 
 @section('scripts')
     @parent
+    <style>
+        .logs-table-cell:has(img.stacked) {
+            display: flex;
+        }
+        .logs-table-cell:has(img.stacked) img {
+            border: 1px solid var(--gray-800);
+        }
+        .logs-table-cell:has(img.stacked) img:not(:first-child) {
+            margin-left: -10px;
+        }
+    </style>
 @endsection

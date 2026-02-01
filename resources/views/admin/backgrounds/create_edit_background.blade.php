@@ -50,6 +50,20 @@
     <p>Add dynamic backgrounds based on the species. Only add applicable species.</p>
     <div class="form-group repeater">
         @if($image_data)
+            <div class="repeater-item d-inline-flex align-items-end mb-2 w-100 template" data-id="0">
+                <div class="form-group flex-grow-1 mb-0 mr-2">
+                    {!! Form::label('Species') !!}
+                    {!! Form::select('image[#SPECIES_ID][species_id]', $specieses, null, ['class' => 'form-control']) !!}
+                </div>
+                <div class="form-group flex-grow-1 mb-0 mr-2">
+                    {!! Form::label('Image') !!}
+                    <div class="custom-file">
+                        {!! Form::label('image[#SPECIES_ID][file]', 'Choose file...', ['class' => 'custom-file-label']) !!}
+                        {!! Form::file('image[#SPECIES_ID][file]', ['class' => 'custom-file-input', 'id' => 'mainImage']) !!}
+                    </div>
+                </div>
+                <a class="btn btn-danger remove-repeater-item">Remove</a>
+            </div>
             @foreach($image_data as $species_id => $image_name)
                 <div class="repeater-item d-inline-flex align-items-end mb-2 w-100" data-id="0">
                     <div class="form-group flex-shrink-1 mb-0 mr-2">
@@ -147,6 +161,9 @@
                 e.preventDefault();
                 var newId = $('.repeater-item').length;
                 var newItem = $image_item.clone();
+
+                console.log($image_item);
+
                 newItem.attr('data-id', newId);
                 newItem.find('select, input').each(function() {
                     var name = $(this).attr('name');

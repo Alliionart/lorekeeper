@@ -66,7 +66,9 @@ class PetManager extends Service {
             $keyed_evolution = [];
             array_walk($data['pet_ids'], function ($id, $key) use (&$keyed_evolution, $data) {
                 if ($id != null && !in_array($id, array_keys($keyed_evolution), true)) {
-                    $keyed_evolution[$id] = $data['evolution'][$key];
+                    if (isset($data['evolution'][$key])) {
+                        $keyed_evolution[$id] = $data['evolution'][$key];
+                    }
                 }
             });
 

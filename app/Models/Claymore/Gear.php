@@ -16,7 +16,7 @@ class Gear extends Model {
      */
     protected $fillable = [
         'gear_category_id', 'name', 'has_image', 'description', 'parsed_description', 'allow_transfer',
-        'parent_id', 'currency_id', 'cost', 'is_visible', 'ability_id'
+        'parent_id', 'currency_id', 'cost', 'is_visible', 'ability_id', 'remove_item_to_remove'
     ];
 
     protected $appends = ['image_url'];

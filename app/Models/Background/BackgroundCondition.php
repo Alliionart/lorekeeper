@@ -4,6 +4,7 @@ namespace App\Models\Background;
 
 use App\Models\Model;
 use App\Models\Species\Species;
+use App\Models\Recipe\Recipe;
 
 class BackgroundCondition extends Model {
     /**
@@ -71,5 +72,19 @@ class BackgroundCondition extends Model {
      */
     public function getAdminPowerAttribute() {
         return 'edit_data';
+    }
+
+    /** 
+     * Find out if the condition with 'Item' is craftable via recipe.
+     */
+    public function getIsCraftableAttribute() {
+        if($this->type != 'Item') return false;
+
+        $item_id = $this->value;
+
+        //Find recipes where the output JSON contains the id as a key.
+        $query = Recipe::whereRaw("JSON_EXTRACT(output, '$.items.\"{$item_id}\"') IS NOT NULL");
+
+        return $query->count() > 0;
     }
 }

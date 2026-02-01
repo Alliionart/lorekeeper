@@ -59,6 +59,7 @@
         {!! Form::select('pet_ids[]', $pets, null, ['class' => 'form-control mr-2 pet-select', 'placeholder' => 'Select Pet']) !!}
         {!! Form::text('quantities[]', 1, ['class' => 'form-control mr-2', 'placeholder' => 'Quantity']) !!}
         {!! Form::select('variant[]', ['none' => 'No Variant', 'randomize' => 'Randomize Variant'], null, ['class' => 'form-control mr-2 variant-select']) !!}
+        {!! Form::select('evolution[]', ['none' => 'No Evolution', 'randomize' => 'Randomize Evolution'], null, ['class' => 'form-control mr-2 evolution-select']) !!}
         <a href="#" class="remove-pet btn btn-danger mb-2">×</a>
     </div>
 
@@ -90,9 +91,9 @@
                 $clone.find('.remove-pet').on('click', function(e) {
                     e.preventDefault();
                     removePetRow($(this));
-                })
-                $clone.addPetListener($clone.find('.pet-select'));
+                });
                 $clone.find('.pet-select').selectize();
+                addPetListener($clone.find('.pet-select'));
             }
 
             function addPetListener(node) {
