@@ -30,7 +30,7 @@
                         @continue
                     @endif
                     <?php
-                    $currentConfig = array_key_exists('litter_config', $currentSettings) && property_exists($currentSettings['litter_config'], $id) ? $currentSettings['litter_config']->$id : null;
+                    $currentConfig = isset($currentSettings['litter_config']) && property_exists($currentSettings['litter_config'], $id) ? $currentSettings['litter_config']->$id : null;
                     ?>
                     <div class="row mb-2">
                         <div class="col-md-4">
@@ -194,7 +194,7 @@
                                     <?php
                                         $id = strtolower($rarity_name) . '__' . substr(array_key_first($row), 0, 3) . 'X' . (array_values($row)[0] ? substr(array_values($row)[0], 0, 3) : 'non');
                                         $type = explode('__', $id)[1];
-                                        $currentConfig = array_key_exists('marking_rates', $currentSettings) && $currentSettings['marking_rates'] && property_exists($currentSettings['marking_rates'], $rarity_name) ? $currentSettings['marking_rates']->$rarity_name : null;
+                                        $currentConfig = isset($currentSettings['marking_rates']) && $currentSettings['marking_rates'] && property_exists($currentSettings['marking_rates'], $rarity_name) ? $currentSettings['marking_rates']->$rarity_name : null;
                                         $current = $currentConfig->$type ?? null;
                                     ?>
                                     <div class="row mb-2">
