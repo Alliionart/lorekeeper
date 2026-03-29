@@ -14,7 +14,7 @@
     {!! Form::open(['url' => 'admin/breedings/settings/save']) !!}
 
     <pre style="background-color:#eee;" class="hide">
-        {{ print_r($currentSettings['mutation_rates'], true) }}
+        {{ print_r($currentSettings, true) }}
     </pre>
 
     <div class="card mb-3">
@@ -30,7 +30,7 @@
                         @continue
                     @endif
                     <?php
-                    $currentConfig = array_key_exists('litter_sizes', $currentSettings) && property_exists($currentSettings['litter_sizes'], $id) ? $currentSettings['litter_sizes']->$id : null;
+                    $currentConfig = array_key_exists('litter_config', $currentSettings) && property_exists($currentSettings['litter_config'], $id) ? $currentSettings['litter_config']->$id : null;
                     ?>
                     <div class="row mb-2">
                         <div class="col-md-4">
@@ -139,39 +139,10 @@
 
                             <div id="subtypeRepeater" type="subtype">
                                 <div class="repeaterBody">
-                                    <div class="row subtype-row mb-2 p-3 border border-secondary rounded mx-0" type="subtype" data="row-start">
-                                        <div class="col-md-12 d-inline-flex align-items-center form-group mb-0">
-                                            {!! Form::select('subtype_0[]', $subtypes, null, ['class' => 'form-control', 'id' => 'subtype']) !!}
-                                            <span class="mx-4">x</span>
-                                            {!! Form::select('subtype_1[]', $subtypes, null, ['class' => 'form-control', 'id' => 'subtype']) !!}
-                                            <a class="btn btn-danger remove-row ml-3">Remove Group</a>
-                                        </div>
-                                        <hr class="w-100 my-3" />
-                                        <h5>Results In...</h5>
-                                        <div class="col-md-12">
-                                            <div class="subtypeRepeater subRepeater" type="subtypeSub">
-                                                <div class="repeaterBody subgroup">
-                                                    <div class="row mb-2" type="subtypeSub" data="row-start">
-                                                        <div class="col-md-4 form-group mb-0">
-                                                            {!! Form::select('subtype_result_0[]', $subtypes, null, ['class' => 'form-control', 'id' => 'subtype_result']) !!}
-                                                        </div>
-                                                        <div class="col-md-4 form-group mb-0">
-                                                            {!! Form::number('subtype_result_rate_0[]', null, ['class' => 'form-control', 'id' => 'subtype_result_rate', 'placeholder' => 'Rate (%)', 'min' => 0, 'max' => 100]) !!}
-                                                        </div>
-                                                        <div class="col-md-4 d-flex align-items-center justify-content-end">
-                                                            <a class="btn btn-danger remove-row">-</a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="text-right">
-                                                    <a class="btn btn-primary add-sub-row">Add Sub Row</a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-2 d-flex align-items-center justify-content-end">
 
-                                        </div>
-                                    </div>
+                                    @include('admin.breedings.__subtype_settings_rows', ['data' => $currentSettings['subtype_rates'] ])
+
+                                    
                                 </div>
                                 <div class="text-right">
                                     <a class="btn btn-primary add-row">Add Row</a>
@@ -195,42 +166,7 @@
 
                             <div id="traitRepeater" type="trait">
                                 <div class="repeaterBody">
-                                    <div class="row trait-row mb-2 p-3 border border-secondary rounded mx-0" type="trait" data="row-start">
-                                        <div class="col-md-12">
-                                            <strong>Applies to </strong> {!! Form::select('feature_category_id[]', $featureCategories, null, ['class' => 'form-control selectize', 'id' => 'feature_category_id', 'multiple', 'placeholder' => 'Select Trait Categories to Apply Rates to']) !!}
-                                        </div>
-                                        <div class="col-md-12 d-inline-flex align-items-center form-group mb-0">
-                                            {!! Form::select('trait_rarity_0[]', $rarities, null, ['class' => 'form-control', 'id' => 'rarity']) !!}
-                                            <span class="mx-4">x</span>
-                                            {!! Form::select('trait_rarity_1[]', $rarities, null, ['class' => 'form-control', 'id' => 'rarity']) !!}
-                                            <a class="btn btn-danger remove-row ml-3">Remove Group</a>
-                                        </div>
-                                        <hr class="w-100 my-3" />
-                                        <h5>Results In...</h5>
-                                        <div class="col-md-12">
-                                            <div class="traitrarityRepeater subRepeater" type="traitraritySub">
-                                                <div class="repeaterBody subgroup">
-                                                    <div class="row mb-2" type="traitraritySub" data="row-start">
-                                                        <div class="col-md-4 form-group mb-0">
-                                                            {!! Form::select('trait_rarity_result[]', $rarities, null, ['class' => 'form-control', 'id' => 'trait_rarity_result']) !!}
-                                                        </div>
-                                                        <div class="col-md-4 form-group mb-0">
-                                                            {!! Form::number('trait_rarity_result_rate[]', null, ['class' => 'form-control', 'id' => 'trait_rarity_result_rate', 'placeholder' => 'Rate (%)', 'min' => 0, 'max' => 100]) !!}
-                                                        </div>
-                                                        <div class="col-md-4 d-flex align-items-center justify-content-end">
-                                                            <a class="btn btn-danger remove-row">-</a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="text-right">
-                                                    <a class="btn btn-primary add-sub-row">Add Sub Row</a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-2 d-flex align-items-center justify-content-end">
-
-                                        </div>
-                                    </div>
+                                    @include('admin.breedings.__trait_settings_rows', ['data' => $currentSettings['trait_rates'], 'rarities' => $rarities])
                                 </div>
                                 <div class="text-right">
                                     <a class="btn btn-primary add-row">Add Row</a>
@@ -421,9 +357,6 @@
                         {!! Form::number('inbreeding_trait__' . $id, null, ['class' => 'form-control', 'id' => 'skill', 'min' => 0, 'step' => 'any', 'max' => 100]) !!}
                     </div>
                 @endforeach
-                <pre style="background-color:#ccc">
-                    {{ print_r($inbreeding_traits, true) }}
-                </pre>
             </div>
         </div>
     </div>
@@ -443,15 +376,38 @@
             $row_templates = {};
             $counts = {};
 
-            $('.selectize').selectize({
-                multiple: true,
-            });
-
             $('[data="row-start"]').each(function() {
+                var $original = $(this);
                 var key = $(this).attr('type');
                 var $row = $(this).clone();
                 $row.find('input, select').val('');
+                $row.removeAttr('data');
                 $row_templates[key] = $row;
+
+                $original.removeAttr('data');
+
+                //After cloning, update the original field name attributes to have 0 instead of __INDEX__
+                $original.find('input, select').each(function() {
+                    var name = $(this).attr('name');
+                    if (name) {
+                        if (name.includes('__INDEX__')) {
+                            var new_name = name.replace('__INDEX__', '0');
+                            $(this).attr('name', new_name);
+                            $(this).attr('id', new_name);
+                        } else if (name.includes('__SUB_INDEX__')) {
+                            console.log('got here');
+                            var new_name = name.replace('__SUB_INDEX__', '0');
+                            $(this).attr('name', new_name);
+                            $(this).attr('id', new_name);
+                        }
+                    }
+                });
+            });
+
+            $('.delete').remove();
+
+            $('.selectize').selectize({
+                multiple: true,
             });
 
             $('[id$="Repeater"]:has(.subRepeater)').each(function() {
@@ -459,39 +415,92 @@
                 $counts[key] = $(this).find('.subRepeater .row').length;
             });
 
-            console.log($row_templates);
-
             $('.add-row').click(function(e) {
                 e.preventDefault();
                 var parent = $(this).parents('[id$="Repeater"]');
                 var newRow = $row_templates[parent.attr('type')].clone();
+                var count = parent.find('> .repeaterBody > .row').length;
+                newRow.attr('data-row', count);
+
+                newRow.find('input, select').each(function() {
+                    var name = $(this).attr('name');
+                    if (name) {
+                        var new_name = name.replace('__INDEX__', count).replace().replace('__SUB_INDEX__', 0);
+                        $(this).attr('name', new_name);
+                        $(this).attr('id', new_name);
+                    }
+                });
+
                 parent.find('.repeaterBody:not(.subgroup)').first().append(newRow);
-                newRow.find('.selectize').selectize({
+                newRow.find('.selectize:not(.selectized)').selectize({
                     multiple: true,
                 });
                 $counts[parent.attr('type')] = parent.find('.subRepeater .row').length;
-                newRow.find('.subRepeater input, .subRepeater select').each(function() {
-                    var s = $(this).attr('id');
-                    $(this).attr('name', s + '_' + $counts[parent.attr('type')] + '[]');
-                });
             });
 
             $('body').on('click', '.add-sub-row', function(e) {
                 e.preventDefault();
                 var parent = $(this).parents('.subRepeater').first();
                 var newRow = $row_templates[parent.attr('type')].clone();
+                var count = parent.find('> .repeaterBody > .row').length;
+                var parentIndex = parent.closest('[data-row]').attr('data-row');
 
-                $count = parent.find('.row').length;
+                // Update the name attributes in the new sub-row
+                newRow.find('input, select').each(function() {
+                    var name = $(this).attr('name');
+                    if (name) {
+                        // Replace the first 0 with the parent index for both subtypes and traits
+                        var new_name = name.replace(/(subtypes|traits)\[0\]/, '$1[' + parentIndex + ']').replace('__SUB_INDEX__', count);
+                        $(this).attr('name', new_name);
+                        $(this).attr('id', new_name);
+                    }
+                });
 
-                var field_id = newRow.find('select').first().attr('id');
-                var new_field_id = field_id.replace('0', $count);
+                // Append the new sub-row to the parent
                 parent.find('.repeaterBody').first().append(newRow);
+
+                // Optional: Rebalance percentages or perform additional logic
+                rebalanceSubRowPercents(parent);
             });
 
             $('body').on('click', '.remove-row', function(e) {
                 e.preventDefault();
                 $(this).parents('.row').first().remove();
             });
+
+            function rebalanceSubRowPercents($parent) {
+
+                $fields = $parent.find('.row input[name*="result_rate"]');
+                $percentages = {};
+                $count = 0;
+
+                $fields.each(function(i, element) {
+                    var val = parseFloat($(this).val());
+                    if (!isNaN(val)) {
+                        $percentages[i] = val;
+                    } else {
+                        $percentages[i] = 0;
+                    }
+                    $count++;
+                });
+                
+
+                console.log($percentages);
+
+                if ($percentages[0] == 100) {
+                    console.log('Already 100%, skipping rebalance');
+                }
+
+                for (const [key, value] of Object.entries($percentages)) {
+                    if ($count > 0) {
+                        var new_val = (value / Object.values($percentages).reduce((a, b) => a + b, 0)) * 100;
+                        $fields.eq(key).val(new_val.toFixed(2));
+                    } else {
+                        $fields.eq(key).val(0);
+                    }
+                }
+
+            }
 
         });
     </script>

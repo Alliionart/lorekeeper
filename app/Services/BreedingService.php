@@ -119,8 +119,6 @@ class BreedingService extends Service {
         DB::beginTransaction();
 
         try {
-            \Log::info($data);
-
             $litter_config = [];
             $species_rates = [];
             $subtype_rates = [];
@@ -128,6 +126,7 @@ class BreedingService extends Service {
             $marking_rates = [];
             $mutation_rates = [];
             $modifiers = [];
+            $skills_rates = [];
             $inbreeding_rates = [];
 
             $db_keys = [
@@ -147,14 +146,6 @@ class BreedingService extends Service {
                         foreach ($value as $i => $val) {
                             $species_rates[$i][$key] = $val;
                         }
-                        break;
-                    case str_contains($key, 'subtype'):
-                        foreach ($value as $i => $val) {
-                            $subtype_rates[$i][$key] = $val;
-                        }
-                        break;
-                    case str_contains($key, 'trait_rarity'):
-                        //Stuff
                         break;
                     case str_contains($key, 'marking_rate'):
                         if ($value !== null) {
@@ -179,7 +170,18 @@ class BreedingService extends Service {
                         }
                         break;
                     case str_contains($key, 'mod_'):
-                        //Stuff
+                        $field = str_replace('mod_', '', $key);
+                        foreach ($value as $i => $val) {
+                            if ($val) {
+                                $modifiers[$i][$field] = $val;
+                            }
+                        }
+                        break;
+                    case str_contains($key, 'skill_rate__'):
+                        $skill_id = str_replace('skill_rate__', '', $key);
+                        if ($value) {
+                            $skills_rates[$skill_id] = $value;
+                        }
                         break;
                 }
             }
@@ -194,22 +196,42 @@ class BreedingService extends Service {
                     $species_rates[$species_name_0.'|'.$species_name_1] = $row;
                 }
                 //Save the info in the DB
-                $this->saveBreedingSetting('species_rates', $species_rates);
+                $this->saveBreedingSetting('breeding_species_rates', $species_rates);
             }
 
-            // if($subtype_rates) {
-            //     //Refactor the array BEFORE saving
-            //     foreach($subtype_rates as $i => $row) {
-            //         $subtype_name_0 = Subtype::where('id', $row['subtype_0'])->pluck('name')[0];
-            //         $subtype_name_1 = Subtype::where('id', $row['subtype_1'])->pluck('name')[0];
-            //         $temp = $row;
-            //         unset($subtype_rates[$i]);
-            //         $subtype_rates[$subtype_name_0 . '|' . $subtype_name_1] = $row;
-            //     }
-            //     //Save the info in the DB
-            //     //$this->saveBreedingSetting('species_rates', $species_rates);
-            // }
-            //\Log::info($subtype_rates);
+            if($data['subtypes']) {
+                //Check the array for null values and throw an error if any are found
+                $subtypes = [];
+                $ni = 0;
+                foreach($data['subtypes'] as $i => $row) {
+                    foreach($row as $j => $val) {
+                        if (!$val) {
+                            throw new \Exception('There was an error with subtype rates at row '.$ni.'. Please ensure all subtypes have a species and rarity selected.');
+                        }
+                    }
+                    $subtypes[$ni] = $row;
+                    $ni++;
+                }
+                //Save the info in the DB
+                $this->saveBreedingSetting('breeding_subtype_rates', $subtypes);
+            }
+
+            if($data['traits']) {
+                //Check the array for null values and throw an error if any are found
+                $traits = [];
+                $ni = 0;
+                foreach($data['traits'] as $i => $row) {
+                    foreach($row as $j => $val) {
+                        if (!$val) {
+                            throw new \Exception('There was an error with traits rates at row '.$ni.'. Please ensure all trait fields are filled out.');
+                        }
+                    }
+                    $traits[$ni] = $row;
+                    $ni++;
+                }
+                //Save the info in the DB
+                $this->saveBreedingSetting('breeding_trait_rates', $traits);
+            }
 
             if ($mutation_rates) {
                 //Refactor the array BEFORE saving
@@ -220,11 +242,13 @@ class BreedingService extends Service {
                     unset($mutation_rates[$i]);
                     $mutation_rates[$trait_category_name.'|'.$rarity_name] = $row;
                 }
-                $this->saveBreedingSetting('mutation_rates', $mutation_rates);
+                $this->saveBreedingSetting('breeding_mutation_rates', $mutation_rates);
             }
 
-            $this->saveBreedingSetting('litter_config', $litter_config);
-            $this->saveBreedingSetting('marking_rates', $marking_rates);
+            $this->saveBreedingSetting('breeding_skills_rates', $skills_rates);
+            $this->saveBreedingSetting('breeding_modifiers', $modifiers);
+            $this->saveBreedingSetting('breeding_litter_config', $litter_config);
+            $this->saveBreedingSetting('breeding_marking_rates', $marking_rates);
 
             if (!$this->logAdminAction($user, 'Updated Breeding Settings', 'Updated breeding settings')) {
                 throw new \Exception('Failed to log admin action.');

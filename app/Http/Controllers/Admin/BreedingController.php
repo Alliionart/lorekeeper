@@ -36,18 +36,21 @@ class BreedingController extends Controller {
                 ['dominant'  => 'dominant'],
             ],
             'modifier_types'    => [
-                'litter_size'      => 'Litter Size', //Changes the number of offspring produced, can be a flat number or a range, e.g. 3-5
-                'sex_ratio'        => 'Sex Ratio', //Changes the ratio of female to male offspring, format should be female:male, e.g. 50:50
-                'subtype_override' => 'Override Subtype', //Overrides the subtype of the offspring to a specific subtype
-                'sex_override'     => 'Same Gender may Mate', //Allows parents to be same gender
-                'base_override'    => 'Guarantee Base', //Overrides the base of the offspring to a specific base
-                'convert_split'    => 'Convert Split Slot', //Overrides the base of the offspring to a specific base
+                ''                 => 'Select modifier...',
+                'litter_size'      => 'Min Litter Size',        //Changes the number of offspring produced, can be a flat number for minimum or a range, e.g. 3-5
+                'sex_ratio'        => 'Sex Ratio',              //Changes the ratio of female to male offspring, format should be female:male, e.g. 50:50
+                'subtype_override' => 'Override Subtype',       //Overrides the subtype of the offspring to a specific subtype
+                'sex_override'     => 'Same Gender may Mate',   //Allows parents to be same gender
+                'base_override'    => 'Guarantee Base',         //Overrides the base of the offspring to a specific base
+                'convert_split'    => 'Convert Split Slot',     //Overrides the base of the offspring to a specific base
             ],
             'currentSettings'   => [
-                'species_rates'  => $this->getBreedingSetting('species_rates'),
-                'marking_rates'  => $this->getBreedingSetting('marking_rates'),
-                'litter_config'  => $this->getBreedingSetting('litter_config'),
-                'mutation_rates' => $this->getBreedingSetting('mutation_rates'),
+                'species_rates'     => $this->getBreedingSetting('breeding_species_rates'),
+                'marking_rates'     => $this->getBreedingSetting('breeding_marking_rates'),
+                'litter_config'     => $this->getBreedingSetting('breeding_litter_config'),
+                'mutation_rates'    => $this->getBreedingSetting('breeding_mutation_rates'),
+                'subtype_rates'     => $this->getBreedingSetting('breeding_subtype_rates'),
+                'trait_rates'       => $this->getBreedingSetting('breeding_trait_rates'),
             ],
         ]);
     }
