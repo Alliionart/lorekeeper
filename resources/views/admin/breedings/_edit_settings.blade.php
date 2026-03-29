@@ -13,7 +13,7 @@
 
     {!! Form::open(['url' => 'admin/breedings/settings/save']) !!}
 
-    <pre style="background-color:#eee;" class="hide">
+    <pre style="background-color:#eee;" class="">
         {{ print_r($currentSettings, true) }}
     </pre>
 
