@@ -118,6 +118,8 @@ class BreedingService extends Service {
     public function updateBreedingSettings($data, $user) {
         DB::beginTransaction();
 
+        //dd($data);
+
         try {
             $litter_config = [];
             $species_rates = [];
@@ -129,74 +131,66 @@ class BreedingService extends Service {
             $skills_rates = [];
             $inbreeding_rates = [];
 
-            $db_keys = [
-                'marking_rates' => DB::table('site_settings')->where('key', 'marking_rates'),
-            ];
+            if($data['species_rates']) {
+                //Refactor the array BEFORE saving
+                foreach ($data['species_rates'] as $pairing => $row) {
+                    $species_1 = isset($row['species_id'][0]) ? $row['species_id'][0] : null;
+                    $species_2 = isset($row['species_id'][1]) ? $row['species_id'][1] : null;
 
-            //Loop through all of the data and use a switch/case to move it into the correct setting
-            foreach ($data as $key => $value) {
-                switch (true) {
-                    case str_contains($key, 'litter_size'):
-                        $full_id = str_replace('litter_size_', '', $key);
-                        $range = explode('_', $full_id)[0]; // min or max
-                        $species_id = explode('_', $full_id)[1];
-                        $litter_config[$species_id][$range] = ($range === 'max' ? ($value ?? 5) : ($value ?? 1));
-                        break;
-                    case str_contains($key, 'species_id'):
-                        foreach ($value as $i => $val) {
-                            $species_rates[$i][$key] = $val;
+                    if (isset($species_1) && isset($species_2)) {
+                        $species_name_0 = Species::where('id', $species_1)->pluck('name');
+                        $species_name_1 = Species::where('id', $species_2)->pluck('name');
+
+                        $species_name_0 = isset($species_name_0[0]) ? $species_name_0[0] : null;
+                        $species_name_1 = isset($species_name_1[0]) ? $species_name_1[0] : null;
+
+                        if ($species_name_0 && $species_name_1) {
+                            $count = count($row['results']);
+
+                            $species_rates[$species_name_0.'|'.$species_name_1] = [
+                                $row['species_id'][0] => $row['results'][0] ?? 100 / $count,
+                                $row['species_id'][1] => $row['results'][1] ?? 100 / $count,
+                            ];
                         }
-                        break;
-                    case str_contains($key, 'marking_rate'):
-                        if ($value !== null) {
-                            if (str_contains($key, 'marking_rate_dom')) {
-                                //Dom Rate
-                                $full_id = str_replace('marking_rate_dom_', '', $key);
-                                $name = 'roll_dom';
-                            } else {
-                                //Regular Rate
-                                $full_id = str_replace('marking_rate_', '', $key);
-                                $name = 'rate';
-                            }
-                            $rarity_name = ucwords(explode('__', $full_id)[0]); //Common
-                            $pairing = explode('__', $full_id)[1];
-                            $marking_rates[$rarity_name][$pairing][$name] = $value;
-                        }
-                        break;
-                    case str_contains($key, 'mutation_'):
-                        $field = str_replace('mutation_', '', $key);
-                        foreach ($value as $i => $val) {
-                            $mutation_rates[$i][$field] = $val;
-                        }
-                        break;
-                    case str_contains($key, 'mod_'):
-                        $field = str_replace('mod_', '', $key);
-                        foreach ($value as $i => $val) {
-                            if ($val) {
-                                $modifiers[$i][$field] = $val;
-                            }
-                        }
-                        break;
-                    case str_contains($key, 'skill_rate__'):
-                        $skill_id = str_replace('skill_rate__', '', $key);
-                        if ($value) {
-                            $skills_rates[$skill_id] = $value;
-                        }
-                        break;
+                    }
+                }
+                if ($species_rates && count($species_rates) > 0) {
+                    //Save the info in the DB
+                    $this->saveBreedingSetting('breeding_species_rates', $species_rates);
                 }
             }
 
-            if ($species_rates) {
-                //Refactor the array BEFORE saving
-                foreach ($species_rates as $i => $row) {
-                    $species_name_0 = Species::where('id', $row['species_id_0'])->pluck('name')[0];
-                    $species_name_1 = Species::where('id', $row['species_id_1'])->pluck('name')[0];
-                    $temp = $row;
-                    unset($species_rates[$i]);
-                    $species_rates[$species_name_0.'|'.$species_name_1] = $row;
+            if($data['litter_size']) {
+                //Check the array for null values and throw an error if any are found
+                $litter_config = [];
+                foreach($data['litter_size'] as $species_id => $row) {
+                    $min = $row['min'] ?? 1;
+                    $max = $row['max'] ?? 5;
+                    if ($species_id && $min && $max) {
+                        $litter_config[$species_id] = $row;
+                    }
                 }
-                //Save the info in the DB
-                $this->saveBreedingSetting('breeding_species_rates', $species_rates);
+                if ($litter_config && count($litter_config) > 0) {
+                    //Save the info in the DB
+                    $this->saveBreedingSetting('breeding_litter_config', $litter_config);
+                }
+            }
+
+            if($data['marking_rate']) {
+                //Check the array for null values and throw an error if any are found
+                $marking_rates = [];
+                foreach($data['marking_rate'] as $rarity => $row) {
+                    foreach($row as $type => $fields) {
+                        $fields['roll_dom'] = $fields['roll_dom'] ?? 0;
+                        if (!$fields['rate']) {
+                            unset($marking_rates[$rarity][$type]);
+                        }
+                    }
+                }
+                if ($marking_rates && count($marking_rates) > 0) {
+                    //Save the info in the DB
+                    $this->saveBreedingSetting('breeding_marking_rates', $marking_rates);
+                }
             }
 
             if($data['subtypes']) {
@@ -212,8 +206,10 @@ class BreedingService extends Service {
                     $subtypes[$ni] = $row;
                     $ni++;
                 }
-                //Save the info in the DB
-                $this->saveBreedingSetting('breeding_subtype_rates', $subtypes);
+                if ($subtypes && count($subtypes) > 0) {
+                    //Save the info in the DB
+                    $this->saveBreedingSetting('breeding_subtype_rates', $subtypes);
+                }
             }
 
             if($data['traits']) {
@@ -229,26 +225,64 @@ class BreedingService extends Service {
                     $traits[$ni] = $row;
                     $ni++;
                 }
-                //Save the info in the DB
-                $this->saveBreedingSetting('breeding_trait_rates', $traits);
+                if ($traits && count($traits) > 0) {
+                    //Save the info in the DB
+                    $this->saveBreedingSetting('breeding_trait_rates', $traits);
+                }
             }
 
-            if ($mutation_rates) {
+            if ($data['mutations']) {
                 //Refactor the array BEFORE saving
-                foreach ($mutation_rates as $i => $row) {
+                foreach ($data['mutations'] as $i => $row) {
                     $trait_category_name = FeatureCategory::where('id', $row['category'])->pluck('name')[0];
                     $rarity_name = Rarity::where('id', $row['rarity'])->pluck('name')[0];
                     $temp = $row;
-                    unset($mutation_rates[$i]);
                     $mutation_rates[$trait_category_name.'|'.$rarity_name] = $row;
                 }
-                $this->saveBreedingSetting('breeding_mutation_rates', $mutation_rates);
+                if ($mutation_rates && count($mutation_rates) > 0) {
+                    //Save the info in the DB
+                    $this->saveBreedingSetting('breeding_mutation_rates', $mutation_rates);
+                }
             }
 
-            $this->saveBreedingSetting('breeding_skills_rates', $skills_rates);
-            $this->saveBreedingSetting('breeding_modifiers', $modifiers);
-            $this->saveBreedingSetting('breeding_litter_config', $litter_config);
-            $this->saveBreedingSetting('breeding_marking_rates', $marking_rates);
+            if($data['skill_rates']) {
+                foreach($data['skill_rates'] as $rarity_id => $rate) {
+                    if ($rate) {
+                        $skills_rates[$rarity_id] = $rate;
+                    }
+                }
+                if ($skills_rates && count($skills_rates) > 0) {
+                    //Save the info in the DB
+                    $this->saveBreedingSetting('breeding_skills_rates', $skills_rates);
+                }
+            }
+
+            if($data['mod']) {
+                foreach($data['mod'] as $id => $rows) {
+                    if (isset($row['type']) && isset($row['item']) && $row['type'] && $row['rate']) {
+                        $modifiers['items'][$row['item']] = [
+                            'type' => $row['type'],
+                            'rate' => $row['rate'],
+                        ];
+                    }
+                }
+                if ($modifiers && count($modifiers) > 0) {
+                    //Save the info in the DB
+                    $this->saveBreedingSetting('breeding_modifiers', $modifiers);
+                }
+            }
+
+            if($data['inbreeding_trait']) {
+                foreach($data['inbreeding_trait'] as $trait_id => $rate) {
+                    if ($rate) {
+                        $inbreeding_rates[$trait_id] = $rate;
+                    }
+                }
+                if ($inbreeding_rates && count($inbreeding_rates) > 0) {
+                    //Save the info in the DB
+                    $this->saveBreedingSetting('breeding_inbreeding_trait_rates', $inbreeding_rates);
+                }
+            }
 
             if (!$this->logAdminAction($user, 'Updated Breeding Settings', 'Updated breeding settings')) {
                 throw new \Exception('Failed to log admin action.');

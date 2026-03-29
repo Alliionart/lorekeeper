@@ -37,12 +37,12 @@ class BreedingController extends Controller {
             ],
             'modifier_types'    => [
                 ''                 => 'Select modifier...',
-                'litter_size'      => 'Min Litter Size',        //Changes the number of offspring produced, can be a flat number for minimum or a range, e.g. 3-5
-                'sex_ratio'        => 'Sex Ratio',              //Changes the ratio of female to male offspring, format should be female:male, e.g. 50:50
-                'subtype_override' => 'Override Subtype',       //Overrides the subtype of the offspring to a specific subtype
-                'sex_override'     => 'Same Gender may Mate',   //Allows parents to be same gender
-                'base_override'    => 'Guarantee Base',         //Overrides the base of the offspring to a specific base
-                'convert_split'    => 'Convert Split Slot',     //Overrides the base of the offspring to a specific base
+                'litter_size'      => 'Min Litter Size (Number or Range(1-5))',         //Changes the number of offspring produced, can be a flat number for minimum or a range, e.g. 3-5
+                'sex_ratio'        => 'Sex Ratio (F%|M%)',                              //Changes the ratio of female to male offspring, format should be female:male, e.g. 50:50
+                'subtype_override' => 'Override Subtype (Species ID)',                  //Overrides the subtype of the offspring to a specific subtype
+                'sex_override'     => 'Same Gender may Mate (Male|Female)',             //Allows parents to be same gender
+                'base_override'    => 'Guarantee Base (Base ID)',                       //Overrides the base of the offspring to a specific base
+                'convert_split'    => 'Convert Split Slot',                             //Overrides the base of the offspring to a specific base
             ],
             'currentSettings'   => [
                 'species_rates'     => $this->getBreedingSetting('breeding_species_rates'),
