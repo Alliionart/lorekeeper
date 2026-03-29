@@ -61,7 +61,7 @@
                 @if ($image->size)
                     <?php
                     $size = json_decode($image->size);
-                    $size_rules = $image->subtype->size_data ? json_decode($image->subtype->size_data) : null;
+                    $size_rules = isset($image->subtype) && $image->subtype->size_data ? json_decode($image->subtype->size_data) : null;
                     ?>
                     @if (isset($size->Wingspan))
                         <div class="row no-gutters">
@@ -185,7 +185,7 @@
                         @endif
                     </div>
                 </div>
-                @if($carriers)
+                @if(isset($carriers) && $carriers)
                 <div class="row no-gutters">
                     <div class="col-lg-4 col-5">
                         <h5>Carriers</h5>
@@ -207,15 +207,6 @@
                 </div>
 
                 @include('character._tab_stats', ['character' => $character])
-
-                <div class="row mt-2">
-                    <div class="col-md-6">
-                        <strong>Uploaded:</strong> {!! pretty_date($image->created_at) !!}
-                    </div>
-                    <div class="col-md-6">
-                        <strong>Last Edited:</strong> {!! pretty_date($image->updated_at) !!}
-                    </div>
-                </div>
 
                 @if (Auth::check() && Auth::user()->hasPower('manage_characters'))
                     <div class="mt-3">

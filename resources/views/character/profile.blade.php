@@ -41,7 +41,7 @@
             <a href="{{ $character->url . '/profile/edit' }}" class="btn btn-outline-info btn-sm"><i class="fas fa-cog"></i> Edit Profile</a>
         </div>
     @endif
-    @if ($character->profile->parsed_text)
+    @if ($character->profile && $character->profile->parsed_text)
         <div class="card mb-3">
             <div class="card-body parsed-text">
                 {!! $character->profile->parsed_text !!}

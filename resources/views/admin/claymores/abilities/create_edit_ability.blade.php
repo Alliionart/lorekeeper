@@ -77,7 +77,7 @@
                 {!! Form::text('chance', $new['chance'] ?? null, ['class' => 'form-control']) !!}
             </div>
 
-            <div class="p-3 mb-3 border border-success">
+            <div class="effect-box p-3 mb-3 border border-success">
                 <h5>Success Effects</h5>
                 <p>When this ability is successful.</p>
 
@@ -92,7 +92,7 @@
                     <a href="#" class="add-effect btn btn-primary mt-3">Add Effect</a>
                 </div>
             </div>
-            <div class="p-3 border border-danger">
+            <div class="effect-box p-3 border border-danger">
                 <h5>Failure Effects</h5>
                 <p>When this ability fails. If there is no failure affect, leave this section blank.</p>
 
@@ -156,15 +156,18 @@
             $('.add-effect').click(function(e) {
                 e.preventDefault();
 
-                var $group_type = $(this).parents('.ability-form').attr('data-type');
+                var $effect_parent = $(this).parents('.effect-box').find('.ability-form');
+                var $group_type = $effect_parent.attr('data-type');
                 var $newRow = $effect_row.clone();
+
+                console.log( $group_type );
 
                 $newRow.html($newRow.html().replace(/\[type\]/g, $group_type));
                 $newRow.html($newRow.html().replace(/\[__INDEX__\]/g, $index[$group_type]));
 
                 $newRow.find('.selectize').selectize();
 
-                $(this).parent().prev('.ability-form').append($newRow);
+                $effect_parent.append($newRow);
                 $index[$group_type]++;
             });
 

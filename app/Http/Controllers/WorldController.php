@@ -545,6 +545,8 @@ class WorldController extends Controller {
             }
         }
 
+        $categories = ItemCategory::orderBy('sort', 'DESC')->get();
+
         return view('world.item_page', [
             'item'        => $item,
             'imageUrl'    => $item->imageUrl,

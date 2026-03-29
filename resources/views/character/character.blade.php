@@ -35,17 +35,33 @@
         <div class="col-md-9">
             <div class="text-center">
                 <?php
-                    $background_url = $character->background->getSpeciesBackground($character->image->species_id);
+                    $background = $character->background;
+                    if ($background) {
+                        $background_url = $character->background->getSpeciesBackground($character->image->species_id);
+                    }
+                    
                 ?>
-                <div class="character-bg" style="{{ $background_url ? 'background-image:url( ' . $background_url . ' )' : 'background-image:none' }}">
-                    <div id="active-image">
-                        <a href="{{ $character->image->canViewFull(Auth::check() ? Auth::user() : null) && file_exists(public_path($character->image->imageDirectory . '/' . $character->image->fullsizeFileName)) ? $character->image->fullsizeUrl : $character->image->imageUrl }}"
-                            data-lightbox="entry" data-title="{{ $character->fullName }}">
-                            <img src="{{ $character->image->canViewFull(Auth::check() ? Auth::user() : null) && file_exists(public_path($character->image->imageDirectory . '/' . $character->image->fullsizeFileName)) ? $character->image->fullsizeUrl : $character->image->imageUrl }}"
-                                class="image" alt="{{ $character->fullName }}" />
-                        </a>
+                @if (isset($background_url) && $background_url)
+                    <div class="character-bg" style="{{ $background_url ? 'background-image:url( ' . $background_url . ' )' : 'background-image:none' }}">
+                        <div id="active-image">
+                            <a href="{{ $character->image->canViewFull(Auth::check() ? Auth::user() : null) && file_exists(public_path($character->image->imageDirectory . '/' . $character->image->fullsizeFileName)) ? $character->image->fullsizeUrl : $character->image->imageUrl }}"
+                                data-lightbox="entry" data-title="{{ $character->fullName }}">
+                                <img src="{{ $character->image->canViewFull(Auth::check() ? Auth::user() : null) && file_exists(public_path($character->image->imageDirectory . '/' . $character->image->fullsizeFileName)) ? $character->image->fullsizeUrl : $character->image->imageUrl }}"
+                                    class="image" alt="{{ $character->fullName }}" />
+                            </a>
+                        </div>
                     </div>
-                </div>
+                @else
+                    <div class="character-bg">
+                        <div id="active-image">
+                            <a href="{{ $character->image->canViewFull(Auth::check() ? Auth::user() : null) && file_exists(public_path($character->image->imageDirectory . '/' . $character->image->fullsizeFileName)) ? $character->image->fullsizeUrl : $character->image->imageUrl }}"
+                                data-lightbox="entry" data-title="{{ $character->fullName }}">
+                                <img src="{{ $character->image->canViewFull(Auth::check() ? Auth::user() : null) && file_exists(public_path($character->image->imageDirectory . '/' . $character->image->fullsizeFileName)) ? $character->image->fullsizeUrl : $character->image->imageUrl }}"
+                                    class="image" alt="{{ $character->fullName }}" />
+                            </a>
+                        </div>
+                    </div>
+                @endif
             </div>
             @if ($character->image->canViewFull(Auth::user() ?? null) && file_exists(public_path($character->image->imageDirectory . '/' . $character->image->fullsizeFileName)))
                 <div class="text-right">You are viewing the full-size image. <a href="{{ $character->image->imageUrl }}">View watermarked image</a>?</div>
@@ -117,7 +133,7 @@
         <div class="card-body">
             <div class="row">
                 <div class="col-md-6">
-                    @include('character._image_info', ['image' => $character->image])
+                    @include('character._image_info', ['image' => $character->image, 'carriers' => $carriers])
                 </div>
                 <div class="col-md-6">
                     <div class="card mb-2">
@@ -125,11 +141,11 @@
                             <h4>Familiars</h4>
                         </div>
                         <div class="card-body">
-                            @if (count($image->character->pets))
+                            @if (count($character->pets))
                                 <div class="row justify-content-center text-center">
                                     {{-- get one random pet --}}
                                     @php
-                                        $pets = $image->character
+                                        $pets = $character
                                             ->pets()
                                             ->orderBy('sort', 'DESC')
                                             ->limit(config('lorekeeper.pets.display_pet_count'))
@@ -153,7 +169,7 @@
                             @endif
                         </div>
                     </div>
-                    @if (count($image->character->equipment()))
+                    @if (count($character->equipment()))
                         <div class="card mb-2">
                             <div class="card-header">
                                 <h4>Gear</h4>
@@ -164,7 +180,7 @@
                                         <h5>Equipment</h5>
                                     </div>
                                     <div class="text-center row">
-                                        @foreach ($image->character->equipment()->take(5) as $equipment)
+                                        @foreach ($character->equipment()->take(5) as $equipment)
                                             <div class="col-md-2">
                                                 @if ($equipment->has_image)
                                                     <img class="rounded" src="{{ $equipment->imageUrl }}" data-toggle="tooltip" title="{{ $equipment->equipment->name }}" style="max-width: 75px;" />

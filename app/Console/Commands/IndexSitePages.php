@@ -179,10 +179,14 @@ class IndexSitePages extends Command {
     }
 
     private function cleanDescription($string) {
-        // Remove HTML tags
         $cleaned = strip_tags($string);
-        $cleaned = mb_convert_encoding($cleaned, 'UTF-8', 'UTF-8');
-        $cleaned = substr_replace($cleaned, '...', 100);
+        $cleaned = str_replace(["\xc2\xa0", "\xa0"], ' ', $cleaned);
+        $cleaned = iconv('UTF-8', 'UTF-8//IGNORE', $cleaned);
+
+        if (mb_strlen($cleaned) > 100) {
+            $cleaned = mb_substr($cleaned, 0, 100) . '...';
+        }
+
         return $cleaned;
     }
 }

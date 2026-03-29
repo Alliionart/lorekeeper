@@ -86,7 +86,7 @@
                                                         {!! Form::text('field[' . $i . '][field_options][' . $i . '][label]', $option['label'] ?? null, ['class' => 'form-control w-100', 'placeholder' => 'Option Name']) !!}
                                                     </div>
                                                     <div class="col-md-6 px-1 d-flex">
-                                                        {!! Form::text('field[' . $i . '][field_options][' . $i . '][description]', gettype($option->description) === 'string' ? $option->description : null, ['class' => 'form-control w-100', 'placeholder' => 'Option Description']) !!}
+                                                        {!! Form::text('field[' . $i . '][field_options][' . $i . '][description]', isset($option->description) && gettype($option->description) === 'string' ? $option->description : null, ['class' => 'form-control w-100', 'placeholder' => 'Option Description']) !!}
                                                         <a href="#" class="remove-option ml-2 btn btn-primary" data-toggle="tooltip" title="Remove Option">-</a>
                                                     </div>
                                                 </div>

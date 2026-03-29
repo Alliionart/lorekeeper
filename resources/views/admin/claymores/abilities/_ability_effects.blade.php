@@ -9,7 +9,7 @@ $header = $type . '_' . $i;
 $effect_type = isset($fields['effect_type']) ? $fields['effect_type'] : null;
 ?>
 
-<div class="ability_info p-3 border border-secondary my-2 rounded {{ isset($class) && $class ? $class : '' }}">
+<div class="ability_info p-3 border border-secondary my-2 rounded {{ isset($class) && $class ? $class : '' }}" style="background: rgba(255,255,255,.1);">
     <div class="row">
         <div class="col-md-6 d-flex">
             <div class="form-group w-100">

@@ -80,8 +80,6 @@ class AbilityController extends Controller {
         $id ? $request->validate(Ability::$updateRules) : $request->validate(Ability::$createRules);
         $data = $request->except(['_token']);
 
-        \Log::info($data);
-
         if ($id && $service->updateAbility(Ability::find($id), $data)) {
             flash('Ability updated successfully.')->success();
         } elseif (!$id && $ability = $service->createAbility($data)) {

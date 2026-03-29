@@ -481,9 +481,9 @@
                 var parent = $(this).parents('.subRepeater').first();
                 var newRow = $row_templates[parent.attr('type')].clone();
 
-                console.log(newRow.find('select').first())
+                $count = parent.find('.row').length;
 
-                var field_id = newRow.find('select').first().attr(id);
+                var field_id = newRow.find('select').first().attr('id');
                 var new_field_id = field_id.replace('0', $count);
                 parent.find('.repeaterBody').first().append(newRow);
             });

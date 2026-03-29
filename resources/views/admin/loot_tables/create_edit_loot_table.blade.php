@@ -36,107 +36,158 @@
     </p>
     <p>You can add any kind of currencies (both user- and character-attached), but be sure to keep track of which are being distributed! Character-only currencies cannot be given to users.</p>
 
-    <!-- <div class="text-right mb-3">
-                                                                <a href="#" class="btn btn-info addLoot" id="addLoot">Add Loot</a>
-                                                            </div>
-                                                            <table class="table table-sm lootTable" id="lootTable">
-                                                                <thead>
-                                                                    <tr>
-                                                                        <th width="25%">Loot Type</th>
-                                                                        <th width="35%">Reward</th>
-                                                                        <th width="10%">Quantity</th>
-                                                                        <th width="10%">Weight {!! add_help('A higher weight means a reward is more likely to be rolled. Weights have to be integers above 0 (round positive number, no decimals) and do not have to add up to be a particular number.') !!}</th>
-                                                                        <th width="10%">Chance</th>
-                                                                        <th width="10%"></th>
-                                                                    </tr>
-                                                                </thead>
-                                                                <tbody class="lootTableBody" id="lootTableBody">
-                                                                    @if ($table->id)
-    @foreach ($table->loot()->whereNull('subtable_id')->get() as $loot)
-    @include('admin.loot_tables._loot_entry')
-    @endforeach
-    @endif
-                                                                </tbody>
-                                                            </table> -->
+
+    <!-- Original Loot Code -->
+
+    <div class="text-right mb-3">
+        <a href="#" class="btn btn-info" id="addLoot">Add Loot</a>
+    </div>
+    <table class="table table-sm" id="lootTable">
+        <thead>
+            <tr>
+                <th width="25%">Loot Type</th>
+                <th width="35%">Reward</th>
+                <th width="10%">Quantity</th>
+                <th width="10%">Weight {!! add_help('A higher weight means a reward is more likely to be rolled. Weights have to be integers above 0 (round positive number, no decimals) and do not have to add up to be a particular number.') !!}</th>
+                <th width="10%">Chance</th>
+                <th width="10%"></th>
+            </tr>
+        </thead>
+        <tbody id="lootTableBody">
+            @if ($table->id)
+                @foreach ($table->loot as $loot)
+                    <tr class="loot-row">
+                        <td>{!! Form::select(
+                            'rewardable_type[]',
+                            config('lorekeeper.extensions.item_entry_expansion.loot_tables.enable')
+                                ? ['Item' => 'Item', 'ItemRarity' => 'Item Rarity', 'Currency' => 'Currency', 'LootTable' => 'Loot Table', 'ItemCategory' => 'Item Category', 'ItemCategoryRarity' => 'Item Category (Conditional)', 'None' => 'None']
+                                : ['Item' => 'Item', 'Currency' => 'Currency', 'LootTable' => 'Loot Table', 'ItemCategory' => 'Item Category', 'None' => 'None'],
+                            $loot->rewardable_type,
+                            ['class' => 'form-control reward-type', 'placeholder' => 'Select Reward Type'],
+                        ) !!}</td>
+                        <td class="loot-row-select">
+                            @if ($loot->rewardable_type == 'Item')
+                                {!! Form::select('rewardable_id[]', $items, $loot->rewardable_id, ['class' => 'form-control item-select selectize', 'placeholder' => 'Select Item']) !!}
+                            @elseif($loot->rewardable_type == 'ItemRarity')
+                                <div class="item-rarity-select d-flex">
+                                    {!! Form::select('criteria[]', ['=' => '=', '<' => '<', '>' => '>', '<=' => '<=', '>=' => '>='], isset($loot->data['criteria']) ? $loot->data['criteria'] : null, ['class' => 'form-control', 'placeholder' => 'Criteria']) !!}
+                                    {!! Form::select('rarity[]', $rarities, isset($loot->data['rarity']) ? $loot->data['rarity'] : null, ['class' => 'form-control', 'placeholder' => 'Rarity']) !!}
+                                </div>
+                            @elseif($loot->rewardable_type == 'Currency')
+                                {!! Form::select('rewardable_id[]', $currencies, $loot->rewardable_id, ['class' => 'form-control currency-select selectize', 'placeholder' => 'Select Currency']) !!}
+                            @elseif($loot->rewardable_type == 'LootTable')
+                                {!! Form::select('rewardable_id[]', $tables, $loot->rewardable_id, ['class' => 'form-control table-select selectize', 'placeholder' => 'Select Loot Table']) !!}
+                            @elseif($loot->rewardable_type == 'ItemCategoryRarity')
+                                <div class="category-rarity-select d-flex">
+                                    {!! Form::select('rewardable_id[]', $categories, $loot->rewardable_id, ['class' => 'form-control selectize', 'placeholder' => 'Category']) !!}
+                                    {!! Form::select('criteria[' . $loop->index . ']', ['=' => '=', '<' => '<', '>' => '>', '<=' => '<=', '>=' => '>='], isset($loot->data['criteria']) ? $loot->data['criteria'] : null, ['class' => 'form-control', 'placeholder' => 'Criteria']) !!}
+                                    {!! Form::select('rarity[' . $loop->index . ']', $rarities, isset($loot->data['rarity']) ? $loot->data['rarity'] : null, ['class' => 'form-control', 'placeholder' => 'Rarity']) !!}
+                                </div>
+                            @elseif($loot->rewardable_type == 'ItemCategory')
+                                {!! Form::select('rewardable_id[]', $categories, $loot->rewardable_id, ['class' => 'form-control item-select selectize', 'placeholder' => 'Select Item']) !!}
+                            @elseif($loot->rewardable_type == 'None')
+                                {!! Form::select('rewardable_id[]', [1 => 'No reward given.'], $loot->rewardable_id, ['class' => 'form-control']) !!}
+                            @endif
+                        </td>
+                        <td>{!! Form::text('quantity[]', $loot->quantity, ['class' => 'form-control']) !!}</td>
+                        <td class="loot-row-weight">{!! Form::text('weight[]', $loot->weight, ['class' => 'form-control loot-weight']) !!}</td>
+                        <td class="loot-row-chance"></td>
+                        <td class="text-right"><a href="#" class="btn btn-danger remove-loot-button">Remove</a></td>
+                    </tr>
+                @endforeach
+            @endif
+        </tbody>
+    </table>
+
+    <!-- Original Loot Code END -->
+
+    <h3 class="my-4">Extra Loot Options</h3>
+
+    <div class="card mb-4">
+        <h4 class="card-header">Status Effect Adjustments</h4>
+        <div class="card-body">
+            <p>Here you can specify any conditional options for this loot table that are impacted by status effects. Mind that this only applies when the loot table is being rolled for a specific character!</p>
+
+            <h5>Standard Rows</h5>
+            <p>These potential options will always be added to the loot table if no other conditions are met, including if there are no additional conditions specified below.</p>
+
+            <div>
+                <div class="text-right mb-3">
+                    <a href="#" class="btn btn-info addLoot" id="addLoot" value="0">Add Loot</a>
+                </div>
+                <table class="table table-sm lootTable">
+                    <thead>
+                        <tr>
+                            <th width="25%">Loot Type</th>
+                            <th width="35%">Reward</th>
+                            <th width="10%">Quantity</th>
+                            <th width="10%">Weight {!! add_help('A higher weight means a reward is more likely to be rolled. Weights have to be integers above 0 (round positive number, no decimals) and do not have to add up to be a particular number.') !!}</th>
+                            <th width="10%">Chance</th>
+                            <th width="10%"></th>
+                        </tr>
+                    </thead>
+                    <tbody class="lootTableBody" id="lootTableBody">
+                        @if ($table->id)
+                            @foreach ($table->loot()->where('subtable_id', 0)->get() as $loot)
+                                @include('admin.loot_tables._loot_entry')
+                            @endforeach
+                        @endif
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 
-    <h4>Status Effect Adjustments</h4>
-    <p>Here you can specify any conditional options for this loot table that are impacted by status effects. Mind that this only applies when the loot table is being rolled for a specific character!</p>
+    <div class="card mb-4">
+        <h5 class="card-header">Conditional Rows</h5>
+        <div class="card-body">
+            <p>These rows will be added to the base loot table if the character the loot table is being rolled for meets the condition. In the case of multiple possible matches, all will matching results will be added to the table. Note that rows may only be
+            added after saving a sublist once.</p>
+            <p>Note that checking for none of a status does not work if a character has no extant status effects.</p>
 
-    <h5>Standard Rows</h5>
-    <p>These potential options will always be added to the loot table if no other conditions are met, including if there are no additional conditions specified below.</p>
-
-    <div>
-        <div class="text-right mb-3">
-            <a href="#" class="btn btn-info addLoot" id="addLoot" value="0">Add Loot</a>
-        </div>
-        <table class="table table-sm lootTable">
-            <thead>
-                <tr>
-                    <th width="25%">Loot Type</th>
-                    <th width="35%">Reward</th>
-                    <th width="10%">Quantity</th>
-                    <th width="10%">Weight {!! add_help('A higher weight means a reward is more likely to be rolled. Weights have to be integers above 0 (round positive number, no decimals) and do not have to add up to be a particular number.') !!}</th>
-                    <th width="10%">Chance</th>
-                    <th width="10%"></th>
-                </tr>
-            </thead>
-            <tbody class="lootTableBody" id="lootTableBody">
-                @if ($table->id)
-                    @foreach ($table->loot()->where('subtable_id', 0)->get() as $loot)
-                        @include('admin.loot_tables._loot_entry')
+            <div id="sublistList" class="my-4">
+                @if (isset($table->data))
+                    @foreach ($table->data as $key => $sublist)
+                        <div>
+                            <div class="input-group mb-3">
+                                {!! Form::select('sublist_status_id[]', $statuses, $sublist['status_id'], ['class' => 'form-control', 'placeholder' => 'Select Status Effect', 'aria-label' => 'Status Effect']) !!}
+                                {!! Form::select('sublist_criteria[]', ['=' => '=', '<' => '<', '>' => '>', '<=' => '<=', '>=' => '>='], $sublist['criteria'], ['class' => 'form-control', 'placeholder' => 'Select Condition', 'aria-label' => 'Criteria']) !!}
+                                {!! Form::number('sublist_quantity[]', $sublist['quantity'], ['class' => 'form-control', 'placeholder' => 'Enter Status Effect Quantity', 'aria-label' => 'Status Effect Quantity']) !!}
+                                <div class="input-group-append">
+                                    <button class="btn btn-outline-danger remove-sublist" type="button" id="button-addon2">x</button>
+                                </div>
+                            </div>
+                            <div class="text-right mb-3">
+                                <a href="#" class="btn btn-info addLoot" value="{{ $key }}">Add Loot</a>
+                            </div>
+                            <table class="table table-sm lootTable">
+                                <thead>
+                                    <tr>
+                                        <th width="25%">Loot Type</th>
+                                        <th width="35%">Reward</th>
+                                        <th width="10%">Quantity</th>
+                                        <th width="10%">Weight {!! add_help('A higher weight means a reward is more likely to be rolled. Weights have to be integers above 0 (round positive number, no decimals) and do not have to add up to be a particular number.') !!}</th>
+                                        <th width="10%">Chance</th>
+                                        <th width="10%"></th>
+                                    </tr>
+                                </thead>
+                                <tbody class="lootTableBody">
+                                    @if ($table->id)
+                                        @foreach ($table->loot()->where('subtable_id', $key)->get() as $loot)
+                                            @include('admin.loot_tables._loot_entry')
+                                        @endforeach
+                                    @endif
+                                </tbody>
+                            </table>
+                            <hr />
+                        </div>
                     @endforeach
                 @endif
-            </tbody>
-        </table>
-    </div>
-
-    <h5>Conditional Rows</h5>
-    <p>These rows will be added to the base loot table if the character the loot table is being rolled for meets the condition. In the case of multiple possible matches, all will matching results will be added to the table. Note that rows may only be
-        added after saving a sublist once.</p>
-    <p>Note that checking for none of a status does not work if a character has no extant status effects.</p>
-
-    <div id="sublistList" class="my-4">
-        @if (isset($table->data))
-            @foreach ($table->data as $key => $sublist)
-                <div>
-                    <div class="input-group mb-3">
-                        {!! Form::select('sublist_status_id[]', $statuses, $sublist['status_id'], ['class' => 'form-control', 'placeholder' => 'Select Status Effect', 'aria-label' => 'Status Effect']) !!}
-                        {!! Form::select('sublist_criteria[]', ['=' => '=', '<' => '<', '>' => '>', '<=' => '<=', '>=' => '>='], $sublist['criteria'], ['class' => 'form-control', 'placeholder' => 'Select Condition', 'aria-label' => 'Criteria']) !!}
-                        {!! Form::number('sublist_quantity[]', $sublist['quantity'], ['class' => 'form-control', 'placeholder' => 'Enter Status Effect Quantity', 'aria-label' => 'Status Effect Quantity']) !!}
-                        <div class="input-group-append">
-                            <button class="btn btn-outline-danger remove-sublist" type="button" id="button-addon2">x</button>
-                        </div>
-                    </div>
-                    <div class="text-right mb-3">
-                        <a href="#" class="btn btn-info addLoot" value="{{ $key }}">Add Loot</a>
-                    </div>
-                    <table class="table table-sm lootTable">
-                        <thead>
-                            <tr>
-                                <th width="25%">Loot Type</th>
-                                <th width="35%">Reward</th>
-                                <th width="10%">Quantity</th>
-                                <th width="10%">Weight {!! add_help('A higher weight means a reward is more likely to be rolled. Weights have to be integers above 0 (round positive number, no decimals) and do not have to add up to be a particular number.') !!}</th>
-                                <th width="10%">Chance</th>
-                                <th width="10%"></th>
-                            </tr>
-                        </thead>
-                        <tbody class="lootTableBody">
-                            @if ($table->id)
-                                @foreach ($table->loot()->where('subtable_id', $key)->get() as $loot)
-                                    @include('admin.loot_tables._loot_entry')
-                                @endforeach
-                            @endif
-                        </tbody>
-                    </table>
-                    <hr />
-                </div>
-            @endforeach
-        @endif
-    </div>
-    <div class="text-right mb-3">
-        <a href="#" class="btn btn-outline-info" id="add-sublist">Add Subtable</a>
+            </div>
+            <div class="text-right mb-3">
+                <a href="#" class="btn btn-outline-info" id="add-sublist">Add Subtable</a>
+            </div>
+        </div>
     </div>
 
     <div class="text-right">
@@ -195,6 +246,24 @@
         </div>
         <hr />
     </div>
+
+    @if ($table->id)
+        <div class="card mt-4 border border-warning">
+            <h3 class="card-header">Test Roll</h3>
+            <div class="card-body">
+                <p>If you have made any modifications to the loot table contents above, be sure to save it (click the Edit button) before testing.</p>
+                <p>Please note that due to the nature of probability, as long as there is a chance, there will always be the possibility of rolling improbably good or bad results. <i>This is not indicative of the code being buggy or poor game balance.</i> Be
+                    cautious when adjusting values based on a small sample size, including but not limited to test rolls and a small amount of user reports.</p>
+                <div class="form-group">
+                    {!! Form::label('quantity', 'Number of Rolls') !!}
+                    {!! Form::text('quantity', 1, ['class' => 'form-control', 'id' => 'rollQuantity']) !!}
+                </div>
+                <div class="text-right">
+                    <a href="#" class="btn btn-secondary" id="testRoll">Test Roll</a>
+                </div>
+            </div>
+        </div>
+    @endif
 
 @endsection
 
