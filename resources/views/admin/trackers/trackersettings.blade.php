@@ -224,15 +224,12 @@
     <script>
         $(document).ready(function() {
 
-            $field_count = {{ $xp_calc_data && count($xp_calc_data) > 0 ? 1 : 0 }};
+            $field_count = {{ $xp_calc_data && count($xp_calc_data) > 0 ? count($xp_calc_data) : 0 }};
 
             $('.enable-rounding').on('change', function() {
-                console.log('rounding changed');
                 if ($(this).is(':checked')) {
-                    console.log('show!');
                     $('.roundTo').show();
                 } else {
-                    console.log('hide!');
                     $('.roundTo').hide();
                 }
             });
@@ -307,14 +304,14 @@
             });
 
             function addField($selector = '#calcList', $c = null) {
+                $field_count++;
                 var $clone = $('.option-row.hide').clone();
+                var count = $($selector).find('.option-row').length;
+
                 $($selector).append($clone);
                 $clone.removeClass('hide');
                 $clone.removeClass('template');
                 $clone.attr('field-id', $field_count);
-
-                console.log('Adding field with count ' + $field_count);
-
 
                 // Replace "INDEX" with "0" in the cloned HTML
                 $clone.html($clone.html().replace(/INDEX/g, $field_count));
@@ -329,7 +326,6 @@
                         $(input).attr('name', $new_name);
                     });
                 }
-                $field_count++;
             }
 
             $(document).on('click', '.remove-field', function(e) {
