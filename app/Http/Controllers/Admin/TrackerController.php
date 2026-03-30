@@ -127,7 +127,7 @@ class TrackerController extends Controller {
      */
     public function saveTrackerSettings(Request $request, TrackerManager $service) {
         $data = $request->all();
-
+        
         if ($data && $service->updateTrackerSettings($data)) {
             flash('Art Tracker settings updated successfully.');
         } else {

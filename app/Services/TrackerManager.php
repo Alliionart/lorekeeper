@@ -509,7 +509,7 @@ class TrackerManager extends Service {
      */
     public function updateTrackerSettings($data) {
         DB::beginTransaction();
-
+        
         try {
             if (!$data) {
                 throw new \Exception('Invalid data, something went wrong.');

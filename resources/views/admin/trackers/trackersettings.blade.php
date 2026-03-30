@@ -340,7 +340,6 @@
             //On Field Change
             $('#calcList').on('change', 'select.ftype', function() {
                 var val = $(this).val();
-                console.log('Field type changed to ' + val);
                 if (val == 'radio' || val == 'checkboxes') {
                     console.log('show options');
                     $(this).parents('.option-row').find('.optionsList').removeClass('hide');
