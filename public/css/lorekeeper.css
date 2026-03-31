@@ -1440,3 +1440,10 @@ tr.accountbound {
 .sub-tracker .card:has(.collapse.show) .card-header button::after {
 	content: "-";
 }
+.tracker-item .list-item {
+    display: flex;
+    align-items: flex-start;
+}
+.tracker-item input[type=checkbox], input[type=radio] {
+    margin-top: 4px;
+}

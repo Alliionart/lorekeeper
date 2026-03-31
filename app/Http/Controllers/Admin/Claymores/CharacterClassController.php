@@ -37,10 +37,10 @@ class CharacterClassController extends Controller {
      */
     public function getCreateCharacterClass() {
         return view('admin.claymores.classes.create_edit_character_class', [
-            'class'     => new CharacterClass,
-            'classes'   => [0 => 'No Parent'] + CharacterClass::pluck('name', 'id')->toArray(),
+            'class'         => new CharacterClass,
+            'classes'       => [0 => 'No Parent'] + CharacterClass::pluck('name', 'id')->toArray(),
             'class_types'   => [0 => 'None'] + CharacterClassType::pluck('name', 'id')->toArray(),
-            'abilities' => [0 => 'None'] + Ability::pluck('name', 'id')->toArray(),
+            'abilities'     => [0 => 'None'] + Ability::pluck('name', 'id')->toArray(),
         ]);
     }
 

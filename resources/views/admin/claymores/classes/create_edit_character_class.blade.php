@@ -69,7 +69,7 @@
         <div class="col-md-6">
             <div class="form-group">
                 {!! Form::label('abilities[]', 'Linked Abilities') !!} {!! add_help('Select applicable abilities for this class. If there are multiple options you may select up to 5. Note that if there ARE multiple options, characters will be required to choose one.') !!}
-                {!! Form::select('abilities[]', $abilities, $c_ability, ['class' => 'form-control', 'id' => 'abilities', 'multiple']) !!}
+                {!! Form::select('abilities[]', $abilities, isset($c_ability) ? $c_ability : null, ['class' => 'form-control', 'id' => 'abilities', 'multiple']) !!}
             </div>
         </div>
     </div>

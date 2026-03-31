@@ -50,6 +50,19 @@ class Handler extends ExceptionHandler {
      * @return \Illuminate\Http\Response
      */
     public function render($request, Throwable $exception) {
+
+        if ($this->isHttpException($exception)) {
+            return $this->renderHttpException($exception);
+        } else {
+            // Custom error 500 view on production
+            if (app()->environment() == 'production') {
+                return response()->view('errors.500', [
+                    'exception' => $exception,
+                ], 500);
+            }
+            return parent::render($request, $exception);
+        }
+
         return parent::render($request, $exception);
     }
 }

@@ -59,7 +59,7 @@
             <div class="form-group">
                 {!! Form::label(__('art_tracker.xp') . ' Calculator Options') !!}
                 @if ($xp_calc_data)
-                    <div id="calcList">
+                    <div id="calcList" class="sortable">
                         @foreach ($xp_calc_data as $i => $field)
                             <div class="option-row mb-2 p-2 border border-secondary rounded d-flex flex-column" field-id="{{ $i }}">
                                 <div class="row-parent mb-2 d-flex">
@@ -225,6 +225,10 @@
         $(document).ready(function() {
 
             $field_count = {{ $xp_calc_data && count($xp_calc_data) > 0 ? count($xp_calc_data) : 0 }};
+
+            // $( function() {
+            //     $( ".sortable" ).sortable();
+            // } );
 
             $('.enable-rounding').on('change', function() {
                 if ($(this).is(':checked')) {
