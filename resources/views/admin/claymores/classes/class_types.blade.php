@@ -35,7 +35,7 @@
                             {{ $type->parent_type_id ? $type->parent->name : '' }}
                         </td>
                         <td class="text-right">
-                            <a href="{{ url('admin/classes/edit/' . $type->id) }}" class="btn btn-primary">Edit</a>
+                            <a href="{{ url('admin/character-classes/types/edit/' . $type->id) }}" class="btn btn-primary">Edit</a>
                         </td>
                     </tr>
                 @endforeach

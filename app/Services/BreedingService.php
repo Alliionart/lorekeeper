@@ -235,9 +235,15 @@ class BreedingService extends Service {
                 //Refactor the array BEFORE saving
                 foreach ($data['mutations'] as $i => $row) {
                     $trait_category_name = FeatureCategory::where('id', $row['category'])->pluck('name')[0];
-                    $rarity_name = Rarity::where('id', $row['rarity'])->pluck('name')[0];
+                    if ( $row['rarity'] !== 0 || $row['rarity'] !== '0' ) {
+                        $rarity_name = Rarity::where('id', $row['rarity'])->pluck('name');
+                        $rarity_name = isset($rarity_name[0]) ? $rarity_name[0] : null;
+                    } else {
+                        $rarity_name = null;
+                    }
                     $temp = $row;
-                    $mutation_rates[$trait_category_name.'|'.$rarity_name] = $row;
+                    $key = $trait_category_name . ($rarity_name ? '|'.$rarity_name : '');
+                    $mutation_rates[$key] = $row;
                 }
                 if ($mutation_rates && count($mutation_rates) > 0) {
                     //Save the info in the DB
@@ -290,7 +296,8 @@ class BreedingService extends Service {
 
             return $this->commitReturn(true);
         } catch (\Exception $e) {
-            $this->setError('error', $e->getMessage());
+            dd($e);
+            $this->setError('error', $e->getLine().': '.$e->getMessage());
         }
 
         return $this->rollbackReturn(false);

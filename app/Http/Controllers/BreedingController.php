@@ -34,9 +34,9 @@ class BreedingController extends Controller {
         })->toArray();
 
         return view('breeding.breeding_form', [
-            'user'        => Auth::user()->id,
-            'permissions' => $this->getUserBreedingEntries($permissions->get()),
-            'tokens'      => [0 => 'Select a token'] + $tokens,
+            'user'          => Auth::user()->id,
+            'permissions'   => $this->getUserBreedingEntries($permissions->get()),
+            'tokens'        => [0 => 'Select a token'] + $tokens,
             'own_characters' => [0 => 'Select a character'] + $filtered_own_characters,
         ]);
     }
