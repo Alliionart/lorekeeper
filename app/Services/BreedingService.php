@@ -257,6 +257,7 @@ class BreedingService extends Service {
                         $skills_rates[$rarity_id] = $rate;
                     }
                 }
+
                 if ($skills_rates && count($skills_rates) > 0) {
                     //Save the info in the DB
                     $this->saveBreedingSetting('breeding_skills_rates', $skills_rates);
@@ -264,7 +265,7 @@ class BreedingService extends Service {
             }
 
             if($data['mod']) {
-                foreach($data['mod'] as $id => $rows) {
+                foreach($data['mod'] as $id => $row) {
                     if (isset($row['type']) && isset($row['item']) && $row['type'] && $row['rate']) {
                         $modifiers['items'][$row['item']] = [
                             'type' => $row['type'],

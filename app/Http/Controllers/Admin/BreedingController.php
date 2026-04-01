@@ -51,6 +51,9 @@ class BreedingController extends Controller {
                 'mutation_rates'    => $this->getBreedingSetting('breeding_mutation_rates'),
                 'subtype_rates'     => $this->getBreedingSetting('breeding_subtype_rates'),
                 'trait_rates'       => $this->getBreedingSetting('breeding_trait_rates'),
+                'skill_rates'       => $this->getBreedingSetting('breeding_skills_rates'),
+                'modifiers'         => $this->getBreedingSetting('breeding_modifiers'),
+                'inbreeding'        => $this->getBreedingSetting('breeding_inbreeding_trait_rates'),
             ],
         ]);
     }

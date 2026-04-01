@@ -14,7 +14,7 @@
     {!! Form::open(['url' => 'admin/breedings/settings/save']) !!}
 
     <pre style="background-color:#eee;" class="hide">
-        {{ print_r($currentSettings, true) }}
+        {{ print_r($currentSettings['modifiers'], true) }}
     </pre>
 
     <div class="card mb-3">
@@ -303,9 +303,12 @@
                         <div class="card-body">
                             @if ($skillRarities)
                                 @foreach ($skillRarities as $id => $name)
+                                    <?php
+                                        $percent = isset($currentSettings['skill_rates']) && $currentSettings['skill_rates'] && property_exists($currentSettings['skill_rates'], $id) ? $currentSettings['skill_rates']->$id : null;
+                                    ?>
                                     <div class="d-flex form-group mb-2">
                                         <div class="mr-2" style="min-width:200px;">{{ $name }} Skills (Drop rate (%))</div>
-                                        {!! Form::number('skill_rates[' . $id . ']', null, ['class' => 'form-control', 'id' => 'skill', 'min' => 0, 'step' => 'any', 'max' => 100]) !!}
+                                        {!! Form::number('skill_rates[' . $id . ']', $percent ?? null, ['class' => 'form-control', 'id' => 'skill', 'min' => 0, 'step' => 'any', 'max' => 100]) !!}
                                     </div>
                                 @endforeach
                             @endif
@@ -332,7 +335,7 @@
                         <div class="col-md-2">Value</div>
                     </div>
                     <div class="repeaterBody">
-                        <div class="row modifier-row mb-2" type="modifier" data="row-start">
+                        <div class="row modifier-row mb-2{{ isset($currentSettings['modifiers']) && $currentSettings['modifiers'] ? ' delete' : '' }}" type="modifier" data="row-start">
                             <div class="col-md-4 form-group mb-0">
                                 {!! Form::select('mod[__INDEX__][type]', $modifier_types, null, ['class' => 'form-control', 'id' => 'mod']) !!}
                             </div>
@@ -346,6 +349,26 @@
                                 <a class="btn btn-danger remove-row">-</a>
                             </div>
                         </div>
+                        @if ( $currentSettings['modifiers'] )
+                            <?php $i = 0; ?>
+                            @foreach ($currentSettings['modifiers']->items as $item_id => $row)
+                                <div class="row modifier-row mb-2" type="modifier" data="row-start">
+                                    <div class="col-md-4 form-group mb-0">
+                                        {!! Form::select('mod['.$i.'][type]', $modifier_types, $row->type ?? null, ['class' => 'form-control', 'id' => 'modifier_type']) !!}
+                                    </div>
+                                    <div class="col-md-4 form-group mb-0">
+                                        {!! Form::select('mod['.$i.'][item]', $items, $item_id, ['class' => 'form-control', 'id' => 'modifier_item']) !!}
+                                    </div>
+                                    <div class="col-md-2 form-group mb-0">
+                                        {!! Form::text('mod['.$i.'][rate]', $row->rate ?? null, ['class' => 'form-control', 'id' => 'modifier_rate', 'placeholder' => 'Enter value']) !!}
+                                    </div>
+                                    <div class="col-md-2 d-flex align-items-center justify-content-end">
+                                        <a class="btn btn-danger remove-row">-</a>
+                                    </div>
+                                </div>
+                                <?php $i++; ?>
+                            @endforeach
+                        @endif
                     </div>
                     <div class="text-right">
                         <a class="btn btn-primary add-row">Add Row</a>
@@ -366,9 +389,12 @@
                 <p>Note that these are automatically pulled from the set Inbreeding trait category. If you would like to change this, you can do so in the site settings. Stillborn does NOT need to be added, as it is automatic.</p>
 
                 @foreach ($inbreeding_traits as $id => $name)
+                <?php 
+                    $percent = isset($currentSettings['inbreeding']) && $currentSettings['inbreeding'] && property_exists($currentSettings['inbreeding'], $id) ? $currentSettings['inbreeding']->$id : null;
+                ?>
                     <div class="d-flex form-group mb-2">
                         <div class="mr-2" style="min-width:200px;">{{ $name }} (Drop rate (%))</div>
-                        {!! Form::number('inbreeding_trait[' . $id . ']', null, ['class' => 'form-control', 'id' => 'skill', 'min' => 0, 'step' => 'any', 'max' => 100]) !!}
+                        {!! Form::number('inbreeding_trait[' . $id . ']', $percent ?? null, ['class' => 'form-control', 'id' => 'skill', 'min' => 0, 'step' => 'any', 'max' => 100]) !!}
                     </div>
                 @endforeach
             </div>
