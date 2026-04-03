@@ -150,6 +150,7 @@ class CharacterManager extends Service {
 
             // Create character image
             $data['is_valid'] = true; // New image of new characters are always valid
+
             $image = $this->handleCharacterImage($data, $character, $isMyo);
             if (!$image) {
                 throw new \Exception('Error happened while trying to create image.');
@@ -2666,9 +2667,9 @@ class CharacterManager extends Service {
                 $data['transformation_id'] = isset($data['transformation_id']) && $data['transformation_id'] ? $data['transformation_id'] : null;
                 $data['transformation_info'] = isset($data['transformation_info']) && $data['transformation_info'] ? $data['transformation_info'] : null;
                 $data['transformation_description'] = isset($data['transformation_description']) && $data['transformation_description'] ? $data['transformation_description'] : null;
-
+                
                 // Use default images for MYO slots without an image provided
-                if (!isset($data['image'])) {
+                if ( ! isset($data['image']) ) {
                     $data['image'] = public_path('images/myo.png');
                     $data['thumbnail'] = public_path('images/myo-th.png');
                     $data['extension'] = config('lorekeeper.settings.masterlist_image_format') ?? 'png';
