@@ -84,32 +84,32 @@
             <div class="card-body">
                 <ul class="list-group list-group-flush" style="line-height: 1em;">
                     <li class="list-group-item">
-                        <a href="https://wor-directory.weebly.com/newbie-guide.html">
+                        <a href="/info/newbie-guide">
                             Newbie Guide
                         </a>
                     </li>
                     <li class="list-group-item">
-                        <a href="https://wor-directory.weebly.com/faq.html">
+                        <a href="/info/faq">
                             FAQ
                         </a>
                     </li>
                     <li class="list-group-item">
-                        <a href="https://wor-directory.weebly.com/group-rules.html">
+                        <a href="/info/group-rules">
                             Group Rules
                         </a>
                     </li>
                     <li class="list-group-item">
-                        <a href="https://wor-directory.weebly.com/admin-team.html">
+                        <a href="#">
                             Admin Team
                         </a>
                     </li>
                     <li class="list-group-item">
-                        <a href="https://wor-directory.weebly.com/semi-custom-sale-guide.html">
+                        <a href="/info/sales-guide">
                             Sales Guide
                         </a>
                     </li>
                     <li class="list-group-item">
-                        <a href="https://sta.sh/0iug87t44nd">
+                        <a href="/info/semi-custom-tiers">
                             Semi-Custom Tiers
                         </a>
                     </li>
@@ -126,8 +126,8 @@
             <div class="card-body">
                 <ul class="list-group list-group-flush" style="line-height: 1em;">
                     <li class="list-group-item">
-
-                        Reos History
+                        <a href="#">
+                            Reos History
                         </a>
                     </li>
                     <li class="list-group-item">
@@ -141,7 +141,7 @@
                         </a>
                     </li>
                     <li class="list-group-item">
-                        <a href="https://wor-directory.weebly.com/vocabulary.html">
+                        <a href="/world/glossary">
                             Vocabulary
                         </a>
                     </li>
@@ -163,17 +163,12 @@
                         </a>
                     </li>
                     <li class="list-group-item">
-                        <a href="https://worldofreos.com/assets/external/cpcounter/index.html">
-                            CP Calculator
-                        </a>
-                    </li>
-                    <li class="list-group-item">
                         <a href="https://wor-directory.weebly.com/political-status-updates.html">
                             Political Status Update
                         </a>
                     </li>
                     <li class="list-group-item">
-                        <a href="https://www.deviantart.com/reos-empire/journal/Rider-Companion-info-616601061">
+                        <a href="/info/riders-and-companions">
                             Rider/Companion Info
                         </a>
                     </li>
@@ -208,27 +203,22 @@
             <div class="card-body">
                 <ul class="list-group list-group-flush" style="line-height: 1em;">
                     <li class="list-group-item">
-                        <a href=" https://wor-directory.weebly.com/design-approval.html">
+                        <a href="/design-hub">
                             Design Approval
                         </a>
                     </li>
                     <li class="list-group-item">
-                        <a href="https://wor-directory.weebly.com/import-templates.html">
+                        <a href="/world/subtypes">
                             Official Templates
                         </a>
                     </li>
                     <li class="list-group-item">
-                        <a href="https://sta.sh/01mb2udepegz">
-                            Template How To
+                        <a href="/info/designing-your-import">
+                            Designing Your Import
                         </a>
                     </li>
                     <li class="list-group-item">
-                        <a href="https://wor-directory.weebly.com/import-text-template.html">
-                            Import Text Template
-                        </a>
-                    </li>
-                    <li class="list-group-item">
-                        <a href="https://www.deviantart.com/reos-empire/journal/Reos-Adoption-Centre-2025-1146439497">
+                        <a href="/adoptions">
                             Adoption Center
                         </a>
                     </li>
@@ -302,7 +292,7 @@
                             Monthly Prompt
                         </a>
                     </li>
-                    <li class="list-group-item"><a href="https://wor-directory.weebly.com/the-purity-trials.html">
+                    <li class="list-group-item"><a href="{{ url('info/the-purity-trials') }}">
                             The Purity Trials
                         </a>
                     </li>
@@ -312,7 +302,7 @@
                         </a>
                     </li>
                     <li class="list-group-item">
-                        <a href="https://wor-directory.weebly.com/training.html">
+                        <a href="{{ url('info/training') }}">
                             Training
                         </a>
                     </li>
@@ -349,9 +339,10 @@
                 <h5>Current Event</h5>
             </div>
             <div class="card-body">
-                <a href="https://wor-directory.weebly.com/reos-world-fair.html">
+                <p>There are no current events.</p>
+                <!-- <a href="https://wor-directory.weebly.com/reos-world-fair.html">
                     <img src="https://wor-keeper.com/files/front_page_banners/world%20fair%202025.png" class="img-fluid">
-                </a>
+                </a> -->
             </div>
         </div>
     </div>
@@ -390,5 +381,6 @@
             </div>
         </div>
     </div>
+</div>
 
 @include('widgets._recent_gallery_submissions', ['gallerySubmissions' => $gallerySubmissions])
