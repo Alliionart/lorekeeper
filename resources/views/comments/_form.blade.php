@@ -1,3 +1,4 @@
+@if(empty($read_only) || !$read_only)
 <div class="{{ isset($compact) && !$compact ? 'card' : '' }} mt-3">
     <div class="{{ isset($compact) && !$compact ? 'card-body' : '' }}">
         {!! Form::open(['url' => 'comments/make/' . base64_encode(urlencode(get_class($model))) . '/' . $model->getKey()]) !!}
@@ -14,4 +15,5 @@
         {!! Form::close() !!}
     </div>
 </div>
+@endif
 <br />

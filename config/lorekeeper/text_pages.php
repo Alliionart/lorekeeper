@@ -36,6 +36,9 @@ return [
         'title' => 'Event Tracker',
         'text' => 'This page will have information on the current event, to be displayed alongside information on a global event score. It does not need to be viewable, as it is automatically embedded into the event tracking page.'
     ],
-
+    'app-intro' => [
+        'title' => 'Team Info Into',
+        'text'  => 'This page contains the starting content of the team information page. Its a good idea to put application forms, information, staff exceptions, etc here! ',
+    ],
 
 ];

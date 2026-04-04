@@ -26,6 +26,7 @@ Route::group(['prefix' => 'users', 'namespace' => 'Users'], function () {
         Route::post('{name}/basic', 'UserController@postUserBasicInfo');
         Route::post('{name}/location', 'UserController@postUserLocation');
         Route::post('{name}/faction', 'UserController@postUserFaction');
+        Route::post('{name}/teams', 'UserController@updateTeams');
         Route::post('{name}/alias/{id}', 'UserController@postUserAlias');
         Route::post('{name}/account', 'UserController@postUserAccount');
         Route::post('{name}/banner', 'UserController@postDeleteBanner');
@@ -515,6 +516,16 @@ Route::group(['prefix' => 'data', 'namespace' => 'Data', 'middleware' => 'power:
     Route::post('borders/item/{id}', 'BorderController@postCreateItem');
 });
 
+Route::group(['prefix' => 'teams', 'middleware' => 'power:edit_teams'], function () {
+    Route::get('/', 'TeamController@getIndex');
+    Route::get('create', 'TeamController@getCreateTeam');
+    Route::get('edit/{id}', 'TeamController@getEditTeam');
+    Route::get('delete/{id}', 'TeamController@getDeleteTeam');
+    Route::post('create', 'TeamController@postCreateEditTeam');
+    Route::post('edit/{id?}', 'TeamController@postCreateEditTeam');
+    Route::post('delete/{id}', 'TeamController@postDeleteTeam');
+});
+
 // PAGES
 Route::group(['prefix' => 'pages', 'middleware' => 'power:edit_pages'], function () {
     Route::get('/', 'PageController@getIndex');
@@ -805,6 +816,14 @@ Route::group(['prefix' => 'submissions', 'middleware' => 'power:manage_submissio
     Route::get('/{status}', 'SubmissionController@getSubmissionIndex')->where('status', 'pending|approved|rejected');
     Route::get('edit/{id}', 'SubmissionController@getSubmission');
     Route::post('edit/{id}/{action}', 'SubmissionController@postSubmission')->where('action', 'approve|reject|cancel');
+});
+
+Route::group(['prefix' => 'applications', 'middleware' => 'power:edit_teams'], function () {
+    Route::get('/', 'AdminApplicationController@getApplicationIndex');
+    Route::get('/{status}', 'AdminApplicationController@getApplicationIndex')->where('status', 'pending|accepted|denied');
+    Route::get('edit/{id}', 'AdminApplicationController@getApplication');
+    Route::post('edit/{id}/{action}', 'AdminApplicationController@getApplication')->where('action', 'pending|accepted|denied');
+    Route::post('edit/{id}', 'AdminApplicationController@postApplication')    ->name('admin.applications.post');
 });
 
 // CLAIMS

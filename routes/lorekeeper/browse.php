@@ -430,3 +430,9 @@ Route::group(['prefix' => 'world', 'namespace' => 'WorldExpansion'], function ()
 **************************************************************************************************/
 Route::get('/submit-xp', 'XPCalcController@getXPCalc');
 Route::post('/submit-xp', 'XPCalcController@postXPForm');
+
+/**************************************************************************************************
+    Teams
+**************************************************************************************************/
+Route::get('/teams', 'BrowseController@getTeamsIndex');
+Route::get('/join-the-team', 'BrowseController@getJoinTeam');

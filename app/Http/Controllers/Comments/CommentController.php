@@ -7,6 +7,7 @@ use App\Facades\Settings;
 use App\Models\Character\CharacterDesignUpdate;
 use App\Models\Comment\Comment;
 use App\Models\Gallery\GallerySubmission;
+use App\Models\Submission\AdminApplication;
 use App\Models\News;
 use App\Models\Report\Report;
 use App\Models\Sales\Sales;
@@ -165,6 +166,12 @@ class CommentController extends Controller {
             case 'App\Models\Forum':
                 flash('Thread created successfully.')->success();
                 return redirect('/forum/'.$comment->commentable_id.'/~'.$comment->id);
+                break;
+            case 'App\Models\Submission\AdminApplication':
+                $application = AdminApplication::find($comment->commentable_id);
+                $recipient = $application->user;
+                $post = 'your submission';
+                $link = $application->url.'/#comment-'.$comment->getKey();
                 break;
             default:
                 throw new \Exception('Comment type not supported.');

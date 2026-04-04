@@ -12,4 +12,6 @@ return [
     'App\Models\Submission\Submission',
     'App\Models\Character\CharacterDesignUpdate',
     'App\Models\Forum',
+    'App\Models\Submission\AdminApplication'
+
 ];

@@ -100,6 +100,7 @@
         </div>
 
         {{-- Recursion for children --}}
+        @if(empty($read_only) || !$read_only)
         <div class="w-100 mw-100">
             @if ($grouped_comments->has($comment->getKey()))
                 @foreach ($grouped_comments[$comment->getKey()] as $child)
@@ -118,6 +119,7 @@
             @endforeach
         @endif
     </div>
+    @endif
 </div>
 </div>
 @endif

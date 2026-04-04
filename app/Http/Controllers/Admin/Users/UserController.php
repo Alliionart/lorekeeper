@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin\Users;
 
 use App\Http\Controllers\Controller;
 use App\Models\Rank\Rank;
+use App\Models\Team;
 use App\Models\User\User;
 use App\Models\User\UserAlias;
 use App\Models\User\UserUpdateLog;
@@ -94,6 +95,7 @@ class UserController extends Controller {
         return view('admin.users.user', [
             'user'                  => $user,
             'ranks'                 => Rank::orderBy('ranks.sort')->pluck('name', 'id')->toArray(),
+            'teams'  => Team::orderBy('id')->pluck('name', 'id'),
             'locations'             => Location::all()->where('is_user_home')->pluck('style', 'id')->toArray(),
             'factions'              => Faction::all()->where('is_user_faction')->pluck('style', 'id')->toArray(),
             'user_enabled'          => Settings::get('WE_user_locations'),
@@ -132,6 +134,11 @@ class UserController extends Controller {
             } else {
                 flash('Failed to update user\'s information.')->error();
             }
+        }
+
+        //automatically remove teams if a staff or admin member is set to the player/member rank
+        if ($user->rank_id == 2) {
+            $user->teams()->detach();
         }
 
         return redirect()->to($user->adminUrl);
@@ -504,4 +511,25 @@ class UserController extends Controller {
 
         return redirect()->back();
     }
+    
+    public function updateTeams(Request $request, $name)
+{
+    $user = User::where('name', $name)->firstOrFail();
+
+    $teamIds = $request->input('team_ids', []);
+    $types   = $request->input('type', []); // matches form
+
+    $syncData = [];
+
+    foreach ($teamIds as $i => $teamId) {
+        if (!empty($teamId)) {
+            $syncData[$teamId] = ['type' => $types[$i] ?? null];
+        }
+    }
+
+    $user->teams()->sync($syncData);
+
+    return redirect()->back()->with('success', 'Teams updated!');
+}
+
 }

@@ -15,6 +15,8 @@ use App\Models\Submission\Submission;
 use App\Models\Tracker\Tracker;
 use App\Models\Trade;
 use App\Models\User\User;
+use App\Models\Team;
+use App\Models\Submission\AdminApplication;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -48,6 +50,8 @@ class HomeController extends Controller {
             'galleryAwardCount'      => GallerySubmission::requiresAward()->where('is_valued', 0)->count(),
             'affiliateCount'         => Affiliate::where('status', 'Pending')->count(),
             'trackerCount'           => Tracker::where('status', 'Pending')->whereNotNull('character_id')->count(),
+            'teams'                  => Team::orderBy('id')->get(),
+            'AppCount'               => AdminApplication::where('status', 'Pending')->count(),
         ]);
     }
 

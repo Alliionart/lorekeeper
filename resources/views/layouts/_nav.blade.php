@@ -63,6 +63,9 @@
                             <a class="dropdown-item" href="{{ url('surrenders') }}">
                                 My Surrenders
                             </a>
+                            <a class="dropdown-item" href="{{ url('applications') }}">
+                                My Applications
+                            </a>
                         </div>
                     </li>
                     <li class="nav-item dropdown">
@@ -171,6 +174,9 @@
                     <div class="dropdown-menu" aria-labelledby="browseDropdown">
                         <a class="dropdown-item" href="{{ url('users') }}">
                             Users
+                        </a>
+                        <a class="dropdown-item" href="{{ url('teams') }}">
+                            Staff and Admins
                         </a>
                         <a class="dropdown-item" href="{{ url('masterlist') }}">
                             {{ ucwords( __('lorekeeper.characters')) }} Masterlist

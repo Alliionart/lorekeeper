@@ -337,6 +337,14 @@ Route::group(['prefix' => 'event-tracking'], function() {
     Route::post('team/{id}', 'EventController@postJoinTeam');
 });
 
+Route::group(['prefix' => 'applications', 'namespace' => 'Users'], function () {
+    Route::get('/', 'AdminApplicationController@getIndex');
+    Route::get('new', 'AdminApplicationController@getNewApplication');
+    Route::post('new', 'AdminApplicationController@postNewApplication')->name('applications.store');
+    Route::get('{id}', 'AdminApplicationController@getApplication');
+    
+});
+
 /**************************************************************************************************
     Shops
 **************************************************************************************************/

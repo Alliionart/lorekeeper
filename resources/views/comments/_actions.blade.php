@@ -1,6 +1,7 @@
 {{-- Action buttons --}}
 @if (Auth::check())
     <div class="my-1 row justify-content-between no-gutters">
+    @if(empty($read_only) || !$read_only)
         <div class="col-auto">
             @can('reply-to-comment', $comment)
                 <button data-toggle="modal" data-target="#reply-modal-{{ $comment->getKey() }}" class="btn btn-sm px-3 py-2 px-sm-2 py-sm-1 btn-faded text-uppercase"><i class="fas fa-comment"></i><span
@@ -18,6 +19,7 @@
                 <button data-toggle="modal" data-target="#delete-modal-{{ $comment->getKey() }}" class="btn btn-sm px-3 py-2 px-sm-2 py-sm-1 btn-outline-danger text-uppercase"><i class="fas fa-minus-circle"></i><span
                         class="ml-2 d-none d-sm-inline-block">Delete</span></button>
             @endcan
+    @endif
         </div>
         <div class="col-auto text-right">
             {{-- Likes Section --}}

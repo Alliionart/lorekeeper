@@ -29,6 +29,8 @@ use App\Models\User\UserPet;
 use App\Models\User\UserUpdateLog;
 use App\Models\Character\CharacterCategory;
 use App\Models\Border\Border;
+use App\Models\Team;
+use App\Models\User\UserTeam;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -95,6 +97,8 @@ class UserController extends Controller {
             $aliases->visible();
         }
 
+        $teams = $this->user->teams()->get();
+
         return view('user.profile', [
             'user'       => $this->user,
             'name'       => $name,
@@ -106,6 +110,7 @@ class UserController extends Controller {
             'awards'     => $this->user->awards()->orderBy('user_awards.updated_at', 'DESC')->whereNull('deleted_at')->where('count', '>', 0)->take(4)->get(),
             'user_enabled'          => Settings::get('WE_user_locations'),
             'user_factions_enabled' => Settings::get('WE_user_factions'),
+            'teams'      => $teams
         ]);
     }
 

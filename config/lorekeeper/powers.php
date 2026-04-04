@@ -87,4 +87,8 @@ return [
         'name'        => 'Manage Files',
         'description' => 'Allow rank to access the file manager and upload files through the rich text editor.',
     ],
+    'edit_teams' => [
+        'name'        => 'Edit Teams',
+        'description' => 'Allow rank to edit admin teams/departments.',
+    ],
 ];
