@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\SitePage;
 use App\Models\SitePageCategory;
 use App\Models\SitePageSection;
+use DB;
 
 class PageController extends Controller {
     /*

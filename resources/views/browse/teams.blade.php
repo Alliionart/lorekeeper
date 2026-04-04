@@ -13,15 +13,16 @@
     <div class="text-center">
         <!--Leadership teams ALWAYS show all members-->
         @foreach($leadership as $teamId => $members)
-            <div class="card mt-3 pt-2 rounded">
+            <div class="card mt-3 pt-2 rounded border border-primary">
                 <h3>{{ $members->first()->team->name }}</h3>
                 <div class="row justify-content-center mt-3">
                     @foreach($members as $entry)
                         <div class="col-md-3">
                             <div class="card mb-3" style="background-color:transparent; border-width:0px;">
                                 <div class="card-body text-center">
-                                <img src="/images/avatars/{{ $entry->user->avatar }}" class="rounded-circle" style="width:100px; height:100px;" alt="{{ $entry->user->name }}">
+                                <img src="/images/avatars/{{ $entry->user->avatar }}" class="rounded-circle mb-2" style="width:100px; height:100px;" alt="{{ $entry->user->name }}">
                                     <h5>{!! $entry->user->displayName !!}</h5>
+                                    <h6 class="text-uppercase text-muted">{{ $entry->role }}</h6>
                                 </div>
                             </div>
                         </div>
@@ -42,7 +43,7 @@
                                     <div class="card-body text-center">
                                     <img src="/images/avatars/{{ $entry->user->avatar }}" class="rounded-circle" style="width:100px; height:100px;" alt="{{ $entry->user->name }}">
                                         <h4>{!! $entry->user->displayName !!}</h4>
-                                            <h5>{{ $entry->role }}</h5>
+                                            <h6 class="text-uppercase text-muted">{{ $entry->role }}</h6>
                                             @if($entry->otherRoles->isNotEmpty())
                                                 <div class="text-center">
                                                     @foreach($entry->otherRoles as $role)
