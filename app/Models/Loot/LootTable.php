@@ -12,7 +12,7 @@ class LootTable extends Model {
      * @var array
      */
     protected $fillable = [
-        'name', 'display_name', 'data',
+        'name', 'display_name', 'data', 'disclose_loots'
     ];
 
     /**
@@ -40,6 +40,7 @@ class LootTable extends Model {
         'display_name'        => 'required',
         'subtable_criteria.*' => 'required_with:subtable_status_id.*',
         'subtable_quantity.*' => 'required_with:subtable_quantity.*',
+        'disclose_loots' => 'required',
     ];
 
     /**
@@ -52,6 +53,7 @@ class LootTable extends Model {
         'display_name'        => 'required',
         'subtable_criteria.*' => 'required_with:subtable_status_id.*',
         'subtable_quantity.*' => 'required_with:subtable_quantity.*',
+        'disclose_loots' => 'required',
     ];
 
     /**********************************************************************************************
@@ -65,6 +67,46 @@ class LootTable extends Model {
      */
     public function loot() {
         return $this->hasMany(Loot::class, 'loot_table_id');
+    }
+
+    /**********************************************************************************************
+
+        SCOPES
+
+    **********************************************************************************************/
+
+    /**
+     * Scope a query to sort items in alphabetical order.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param  bool                                   $reverse
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeSortAlphabetical($query, $reverse = false)
+    {
+        return $query->orderBy('name', $reverse ? 'DESC' : 'ASC');
+    }
+
+    /**
+     * Scope a query to sort items by newest first.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeSortNewest($query)
+    {
+        return $query->orderBy('id', 'DESC');
+    }
+
+    /**
+     * Scope a query to sort features oldest first.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeSortOldest($query)
+    {
+        return $query->orderBy('id');
     }
 
     /**********************************************************************************************
@@ -107,6 +149,16 @@ class LootTable extends Model {
      */
     public function getAdminPowerAttribute() {
         return 'edit_data';
+    }
+
+    /**
+     * Gets the URL of the model's encyclopedia page.
+     *
+     * @return string
+     */
+    public function getUrlAttribute()
+    {
+        return url('world/loot-tables?name='.$this->name);
     }
 
     /**********************************************************************************************

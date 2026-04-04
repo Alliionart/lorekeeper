@@ -181,6 +181,7 @@ Route::group(['prefix' => 'world'], function () {
     Route::get(__('awards.awards'), 'WorldController@getAwards');
     Route::get(__('awards.awards').'/{id}', 'WorldController@getAward');
     Route::get('items/{id}', 'WorldController@getItem');
+    Route::get('loot-tables', 'WorldController@getLootTables');
     Route::get('trait-categories', 'WorldController@getFeatureCategories');
     Route::get('traits', 'WorldController@getFeatures');
     Route::get('pet-categories', 'WorldController@getPetCategories');

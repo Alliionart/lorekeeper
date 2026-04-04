@@ -45,6 +45,7 @@
                 <ul class="list-group list-group-flush">
                     <li class="list-group-item"><a href="{{ url('world/item-categories') }}">Item Categories</a></li>
                     <li class="list-group-item"><a href="{{ url('world/items') }}">All Items</a></li>
+                    <li class="list-group-item"><a href="{{ url('world/loot-tables') }}">Loot Tables</a></li>
                     <li class="list-group-item"><a href="{{ url('world/skill-categories') }}">Skill Categories</a></li>
                     <li class="list-group-item"><a href="{{ url('world/skills') }}">All Skills</a></li>
                     <li class="list-group-item"><a href="{{ url('world/' . __('awards.award') . '-categories') }}">{{ ucfirst(__('awards.award')) }} Categories</a></li>

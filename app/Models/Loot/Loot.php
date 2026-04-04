@@ -106,4 +106,32 @@ class Loot extends Model {
 
         return json_decode($this->attributes['data'], true);
     }
+
+    /**
+     * Display the loot item and link to it's encylopedia entry.
+     *
+     * @return string
+     */
+    public function getDisplayNameAttribute()
+    {
+        // Adds spaces to the rewardable_type between capital letters
+        $displayType = preg_replace('/(?<!\ )[A-Z]/', ' $0', $this->rewardable_type);
+
+        if($this->rewardable_type == 'None')
+            return 'No Loot Drop';
+        else
+            return $displayType.' : <a href="'.$this->reward->url.'">'.$this->reward->name.'</a>';
+    }
+
+    /**
+     * Displays the drop rate of a loot.
+     *
+     * @return string
+     */
+    public function getDropRateAttribute()
+    {
+        $totalWeight = Loot::where('loot_table_id', $this->loot_table_id)->sum('weight');
+        $dropRate = $this->weight / $totalWeight * 100;
+        return number_format((float)$dropRate, 2, '.', '').'%';
+    }
 }

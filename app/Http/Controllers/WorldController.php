@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Award\Award;
 use App\Models\Award\AwardCategory;
+use App\Models\Loot\Loot;
+use App\Models\Loot\LootTable;
 use App\Models\Character\CharacterCategory;
 use App\Models\Character\CharacterClass;
 use App\Models\Character\CharacterTransformation as Transformation;
@@ -560,6 +562,42 @@ class WorldController extends Controller {
 
                 return $shops->where('is_staff', 0);
             })->whereIn('id', ShopStock::where('item_id', $item->id)->pluck('shop_id')->unique()->toArray())->orderBy('sort', 'DESC')->get(),
+        ]);
+    }
+
+    /**
+     * Shows the loot tables page.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function getLootTables(Request $request)
+    {
+        $query = LootTable::query();
+        $data = $request->only(['name', 'sort']);
+        if(isset($data['name']))
+            $query->where('name', 'LIKE', '%'.$data['name'].'%');
+
+        if(isset($data['sort']))
+        {
+            switch($data['sort']) {
+                case 'alpha':
+                    $query->sortAlphabetical();
+                    break;
+                case 'alpha-reverse':
+                    $query->sortAlphabetical(true);
+                    break;
+                case 'newest':
+                    $query->sortNewest();
+                    break;
+                case 'oldest':
+                    $query->sortOldest();
+                    break;
+            }
+        }
+
+        return view('world.loot_tables', [
+            'tables' => $query->paginate(20)->appends($request->query()),
         ]);
     }
 

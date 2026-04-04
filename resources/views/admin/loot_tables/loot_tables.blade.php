@@ -22,11 +22,14 @@
                     <div class="col-3 col-md-2">
                         <div class="logs-table-cell">ID</div>
                     </div>
-                    <div class="col-3 col-md-4">
+                    <div class="col-3 col-md-3">
                         <div class="logs-table-cell">Name</div>
                     </div>
-                    <div class="col-6 col-md-5">
+                    <div class="col-3 col-md-3">
                         <div class="logs-table-cell">Display Name</div>
+                    </div>
+                    <div class="col-3 col-md-2 d-none d-md-inline font-weight-bold">
+                        <div class="logs-table-cell">Disclose Drops</div>
                     </div>
                 </div>
             </div>
@@ -42,6 +45,10 @@
                             </div>
                             <div class="col-3 col-md-5">
                                 <div class="logs-table-cell">{!! $table->display_name !!}</div>
+                            </div>
+                            <div class="d-none d-md-inline col-md-2"><i class="far
+                                {{ $table->disclose_loots == 1 ? 'fa-check-circle text-success' : ($table->disclose_loots == 2 ? 'fa-pause-circle text-secondary' : 'fa-times-circle text-danger') }}
+                                "></i>
                             </div>
                             <div class="col-3 col-md-1 text-right">
                                 <div class="logs-table-cell"><a href="{{ url('admin/data/loot-tables/edit/' . $table->id) }}" class="btn btn-primary py-0 px-2">Edit</a></div>

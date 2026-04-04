@@ -62,8 +62,7 @@ class LootService extends Service {
                     ];
                 }
             }
-
-            $table = LootTable::create(Arr::only($data, ['name', 'display_name', 'data']));
+            $table = LootTable::create(Arr::only($data, ['name', 'display_name', 'data', 'disclose_loots']));
 
             $this->populateLootTable($table, Arr::only($data, ['rewardable_type', 'rewardable_id', 'quantity', 'weight', 'criteria', 'rarity', 'subtable_id']));
 
@@ -121,7 +120,7 @@ class LootService extends Service {
                 }
             }
 
-            $table->update(Arr::only($data, ['name', 'display_name', 'data']));
+            $table->update(Arr::only($data, ['name', 'display_name', 'data', 'disclose_loots']));
 
             $this->populateLootTable($table, Arr::only($data, ['rewardable_type', 'rewardable_id', 'quantity', 'weight', 'criteria', 'rarity', 'subtable_id']));
 

@@ -23,9 +23,19 @@
         {!! Form::text('name', $table->name, ['class' => 'form-control']) !!}
     </div>
 
-    <div class="form-group">
-        {!! Form::label('Display Name') !!} {!! add_help('This is the name that will be shown to users, for example when displaying the rewards for doing a prompt. This is for display purposes and can be something more vague than the above, e.g. "A Random Rare Item"') !!}
-        {!! Form::text('display_name', $table->getRawOriginal('display_name'), ['class' => 'form-control']) !!}
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-group">
+                {!! Form::label('Display Name') !!} {!! add_help('This is the name that will be shown to users, for example when displaying the rewards for doing a prompt. This is for display purposes and can be something more vague than the above, e.g. "A Random Rare Item"') !!}
+                {!! Form::text('display_name', $table->getRawOriginal('display_name'), ['class' => 'form-control']) !!}
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                {!! Form::label('Disclose Loots') !!} {!! add_help('This determines if users can see the potential rewards dropped from this table on the encyclopedia page.') !!}
+                {!! Form::select('disclose_loots', ['0' => '0: This table\'s loots are hidden.', '1' => '1: Users can see both loots and drop rates.', '2' => '2: Users can see loots, but not drop rates.'],$table->disclose_loots, ['class' => 'form-control']) !!}
+            </div>
+        </div>
     </div>
 
     <h3>Loot</h3>

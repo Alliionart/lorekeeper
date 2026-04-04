@@ -29,6 +29,7 @@
         <div class="sidebar-section-header">Items</div>
         <div class="sidebar-item"><a href="{{ url('world/item-categories') }}" class="{{ set_active('world/item-categories*') }}">Item Categories</a></div>
         <div class="sidebar-item"><a href="{{ url('world/items') }}" class="{{ set_active('world/items*') }}">All Items</a></div>
+        <div class="sidebar-item"><a href="{{ url('world/loot-tables') }}" class="{{ set_active('world/loot-tables*') }}">Loot Tables</a></div>
         <div class="sidebar-item"><a href="{{ url('world/currencies') }}" class="{{ set_active('world/currencies*') }}">Currencies</a></div>
         <div class="sidebar-item"><a href="{{ url('world/pet-categories') }}" class="{{ set_active('world/pet-categories*') }}">Familiar Categories</a></div>
         <div class="sidebar-item"><a href="{{ url('world/pets') }}" class="{{ set_active('world/pets*') }}">Familiars</a></div>

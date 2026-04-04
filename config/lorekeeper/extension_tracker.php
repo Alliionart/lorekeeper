@@ -12,6 +12,15 @@ return [
     //     ]),
     //     'version' => '1.0.0',
     // ],
+
+    'encyclopedia_loot_tables' => [
+        'key' => 'encyclopedia_loot_tables',
+        'wiki_key' => 'Encyclopedia_Loot_Tables',
+            'creators' => json_encode([
+            'AnimatedCritter' => 'https://github.com/animatedcritter/',
+        ]),
+        'version' => '1.0.0',
+    ],
     
 	'sellablecharacters' => [
          'key' => 'sellablecharacters',
