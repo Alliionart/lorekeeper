@@ -15,6 +15,9 @@ use App\Models\Character\CharacterImage;
 use App\Models\Character\CharacterItem;
 use App\Models\Character\CharacterProfile;
 use App\Models\Character\CharacterTransfer;
+use App\Models\Character\CharacterClass;
+use App\Models\Character\CharacterClassType;
+use App\Models\Claymore\Ability;
 use App\Models\Currency\Currency;
 use App\Models\Gallery\GallerySubmission;
 use App\Models\Item\Item;
@@ -271,6 +274,41 @@ class CharacterController extends Controller {
             'character' => $character,
             'location'  => $location,
             'ajax'      => true,
+        ]);
+    }
+
+    /**
+     * Refresh's a character's class options via AJAX.
+     *
+     * @return array
+     */
+    public function getRefreshCharacterClassOptions(Request $request) {
+        $class_type_id = $request->input('class_type_id');
+        $id = $request->input('id');
+        $character = Character::find($id);
+        $classes = CharacterClass::where('class_type', $class_type_id)->pluck('name', 'id')->toArray();
+
+        return view('character._class_refresh', [
+            'character'     => $character,
+            'classes'       => ['' => 'Select a Class...'] + $classes,
+            'ajax'          => true,
+        ]);
+    }
+
+    /**
+     * Refresh's a character's class options via AJAX.
+     *
+     * @return array
+     */
+    public function getRefreshCharacterAbilityOptions(Request $request) {
+        $class_id = $request->input('class_id');
+        $class = CharacterClass::find($class_id);
+        $ability = $class->ability;
+
+        return view('character._class_refresh', [
+            'character'     => $character,
+            'abilities'       => ['' => 'Select an Ability...'] + $ability,
+            'ajax'          => true,
         ]);
     }
 

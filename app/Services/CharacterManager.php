@@ -11,6 +11,7 @@ use App\Models\Character\Character;
 use App\Models\Character\CharacterBookmark;
 use App\Models\Character\CharacterCategory;
 use App\Models\Character\CharacterClass;
+use App\Models\Character\CharacterClassAssignment;
 use App\Models\Character\CharacterCurrency;
 use App\Models\Character\CharacterDesignUpdate;
 use App\Models\Character\CharacterFeature;
@@ -2475,21 +2476,34 @@ class CharacterManager extends Service {
     public function editClass($data, $character, $user) {
         DB::beginTransaction();
 
-        try {
-            if ($data['class_id'] != 'none') {
-                $class = CharacterClass::find($data['class_id']);
-                if (!$class) {
-                    throw new \Exception('Invalid class.');
-                }
-                $character->class_id = $class->id;
-                $character->save();
+        dd($data);
 
-                if (!$this->createLog($user->id, null, $character->user_id, ($character->user_id ? null : $character->owner_url), $character->id, 'Character Class Updated', '['.$class->displayName.']', 'character')) {
+        try {
+            if ($data['class_id'] != 'none' && count($data['class_id']) > 0) {
+                $names = [];
+                
+                foreach ($data['class_id'] as $i => $classId) {
+                    if ($classId != 'none') {
+                        $class = CharacterClass::find($classId);
+                        if (!$class) {
+                            throw new \Exception('Invalid class.');
+                        }
+
+                        $names[] = $class->displayName;
+
+                        $ca = CharacterClassAssignment::create([
+                            'character_id'      => $character->id,
+                            'class_id'          => $class->id,
+                            'chosen_ability'    => isset($data['chosen_ability']) && isset($data['chosen_ability'][$i]) ? $data['chosen_ability'][$i] : null,
+                        ]);
+                    }
+                }
+
+                if (!$this->createLog($user->id, null, $character->user_id, ($character->user_id ? null : $character->owner_url), $character->id, 'Character Class Updated', '['.implode(', ', $names).']', 'character')) {
                     throw new \Exception('Failed to create log.');
                 }
             } else {
-                $character->class_id = null;
-                $character->save();
+                $cas = CharacterClassAssignment::where('character_id', $character->id)->delete();
 
                 if (!$this->createLog($user->id, null, $character->user_id, ($character->user_id ? null : $character->owner_url), $character->id, 'Character Class Removed', '[None]', 'character')) {
                     throw new \Exception('Failed to create log.');

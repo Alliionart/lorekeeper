@@ -55,7 +55,7 @@ class CharacterClassTypeController extends Controller {
 
         return view('admin.claymores.classes.create_edit_type', [
             'type'     => $type,
-            'types'    => CharacterClassType::pluck('name', 'id')->toArray(),
+            'types'    => ['' => 'None'] + CharacterClassType::pluck('name', 'id')->toArray(),
         ]);
     }
 

@@ -6,6 +6,8 @@ use App\Facades\Settings;
 use App\Http\Controllers\Controller;
 use App\Models\Character\Character;
 use App\Models\Character\CharacterClass;
+use App\Models\Character\CharacterClassType;
+use App\Models\Character\CharacterClassAssignment;
 use App\Models\Character\CharacterTransfer;
 use App\Models\User\User;
 use App\Services\CharacterManager;
@@ -167,7 +169,8 @@ class CharacterController extends Controller {
         }
 
         return view('admin.claymores.classes._modal', [
-            'classes'   => ['none' => 'No Class'] + CharacterClass::orderBy('name', 'DESC')->pluck('name', 'id')->toArray(),
+            'class_types' => ['' => 'Select class type...'] + CharacterClassType::orderBy('name', 'DESC')->pluck('name', 'id')->toArray(),
+            'classes'   => ['none' => 'Select class...'] + CharacterClass::orderBy('name', 'DESC')->pluck('name', 'id')->toArray(),
             'character' => $this->character,
         ]);
     }
@@ -177,7 +180,7 @@ class CharacterController extends Controller {
         if (!$this->character) {
             abort(404);
         }
-        if ($service->editClass($request->only(['class_id']), $this->character, Auth::user())) {
+        if ($service->editClass($request->only(['class_id', 'class_type_id', 'chosen_ability']), $this->character, Auth::user())) {
             flash('Character class edited successfully.')->success();
         } else {
             foreach ($service->errors()->getMessages()['error'] as $error) {

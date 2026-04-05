@@ -138,6 +138,7 @@ Route::group(['prefix' => 'character', 'namespace' => 'Characters'], function ()
     Route::get('{slug}/image/{id}', 'CharacterController@getCharacterImage');
     Route::get('{slug}/image-single/{id}', 'CharacterController@getCharacterSingleImage');
     Route::get('{slug}/get-bg-options', 'CharacterController@getRefreshCharacterBgOptions');
+    Route::get('{slug}/get-class-options', 'CharacterController@getRefreshCharacterClassOptions');
     Route::get('{slug}/xp-logs', 'CharacterController@getCharacterXPLogs');
 
     Route::get('{slug}/gallery', 'CharacterController@getCharacterGallery');

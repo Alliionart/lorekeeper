@@ -56,6 +56,15 @@ class CharacterClassType extends Model {
         return $this->belongsTo(self::class, 'parent_type_id');
     }
 
+    /**
+     * Child classes.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function classes() {
+        return $this->hasMany(CharacterClass::class, 'type_id');
+    }
+
     /**********************************************************************************************
 
         SCOPES
