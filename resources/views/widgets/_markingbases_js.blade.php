@@ -2,8 +2,9 @@
     $(document).on('ready', function() {
         $('#markings').selectize();
         $('.selectize').selectize();
-            $('select[multiple]').selectize(
-            multiple: true
+            $('select[multiple]').selectize({
+                multiple: true,
+            }
         ); 
     });
     
