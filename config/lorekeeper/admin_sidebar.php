@@ -510,6 +510,10 @@ return [
                 'name' => 'Log Viewer',
                 'url' => 'admin/error-logs'
             ],
+            [
+                'name' => 'Ajax Search Settings',
+                'url'  => 'admin/ajax-search',
+            ],
         ],
     ],
     'Discord' => [
