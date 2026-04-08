@@ -11,7 +11,7 @@
     <div class="card-body">
         <div class="form-group">
             {!! Form::label('character_id', 'Character') !!}
-            {!! Form::select('character_id', $characters, null, ['class' => 'form-control stock-field', 'data-name' => 'character_id']) !!}
+            {!! Form::select('character_id', $characters, null, ['class' => 'form-control stock-field selectize', 'data-name' => 'character_id']) !!}
         </div>
 
         <div><a href="#" class="btn btn-primary mb-3" id="add-feature">Add Currency</a></div>
@@ -57,7 +57,8 @@
 @parent
 <script>
 $( document ).ready(function() {
-$('#add-feature').on('click', function(e) {
+    $('.selectize').selectize();
+    $('#add-feature').on('click', function(e) {
         e.preventDefault();
         addFeatureRow();
     });

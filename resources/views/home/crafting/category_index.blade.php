@@ -38,7 +38,7 @@
                     <input type="text" placeholder="Search recipes by name..." class="searchBar rounded border-0 mb-4 form-control" data-id="unlockedSearch" />
                     @if ($default->count())
                         <div class="row mx-0 searchContent" data-id="unlockedSearch">
-                            @foreach ($default as $recipe)
+                            @foreach (Auth::user()->recipes as $recipe)
                                 @include('home.crafting._smaller_recipe_card', ['recipe' => $recipe])
                             @endforeach
                         </div>
@@ -68,11 +68,12 @@
             $('.btn-craft').on('click', function(e) {
                 e.preventDefault();
                 var $parent = $(this).parent().parent().parent();
+                $craftingArea.addClass('loading');
 
                 if(!$parent.hasClass('active')){
                     $parent.addClass('active');
                     $($craftingArea).html('');
-                    $craftingArea.load("{{ url('crafting/craft') }}/" + $parent.data('id'), $parent.data('name'));
+                    $craftingArea.load("{{ url('crafting/craft') }}/" + $parent.data('id'), $parent.data('name')).removeClass('loading');
                 }
             });
 
