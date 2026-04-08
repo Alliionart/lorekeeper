@@ -34,14 +34,8 @@
                             <a class="dropdown-item" href="{{ url('characters') }}">
                                 My {{ ucwords( __('lorekeeper.characters')) }}
                             </a>
-                            <a class="dropdown-item" href="{{ url('breeding-permissions') }}">
-                                Breeding Permissions
-                            </a>
                             <a class="dropdown-item" href="{{ url('characters/myos') }}">
                                 My {{ ucwords( __('lorekeeper.myos')) }}
-                            </a>
-                            <a class="dropdown-item" href="{{ url('pets') }}">
-                                My {{ ucwords( __('pets.pets')) }}
                             </a>
                             <div class="dropdown-divider"></div>
                             <a class="dropdown-item" href="{{ url('inventory') }}">
@@ -50,21 +44,27 @@
                             <a class="dropdown-item" href="{{ url('bank') }}">
                                 Bank
                             </a>
-                            <a class="dropdown-item" href="{{ url('awardcase') }}">
-                                {{ ucfirst(__('awards.awards')) }}
+                            <a class="dropdown-item" href="{{ url('pets') }}">
+                                My {{ ucwords( __('pets.pets')) }}
                             </a>
-                            <a class="dropdown-item" href="{{ url('userstats') }}">
-                                Stat Information
-                            </a>
-                            <div class="dropdown-divider"></div>
-                            <a class="dropdown-item" href="{{ url('comments/liked') }}">
-                                Liked Comments
+                             <a class="dropdown-item" href="{{ url('breeding-permissions') }}">
+                                Breeding Permissions
                             </a>
                             <a class="dropdown-item" href="{{ url('surrenders') }}">
                                 My Surrenders
                             </a>
                             <a class="dropdown-item" href="{{ url('applications') }}">
                                 My Applications
+                            </a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="{{ url('comments/liked') }}">
+                                Liked Comments
+                            </a>
+                            <a class="dropdown-item" href="{{ url('awardcase') }}">
+                                {{ ucfirst(__('awards.awards')) }}
+                            </a>
+                            <a class="dropdown-item" href="{{ url('userstats') }}">
+                                Stat Information
                             </a>
                         </div>
                     </li>
@@ -101,19 +101,19 @@
                                 </div>
                                 <div class="col-md-4">
                                     <h5><i class="fas fa-medal mr-2"></i> Core</h5>
-                                    <a class="dropdown-item" href="#">
+                                    <a class="dropdown-item" href="{{ url('info/the-purity-trials') }}">
                                         Purity Trials
                                     </a>
-                                    <a class="dropdown-item" href="#">
+                                    <a class="dropdown-item" href="{{ url('info/training') }}">
                                         Training
                                     </a>
-                                    <a class="dropdown-item" href="#">
+                                    <a class="dropdown-item" href="{{ url('info/bonding') }}">
                                         Bonding
                                     </a>
-                                    <a class="dropdown-item" href="#">
+                                    <a class="dropdown-item" href="{{ url('info/classes') }}">
                                         Classes
                                     </a>
-                                    <a class="dropdown-item" href="#">
+                                    <a class="dropdown-item" href="{{ url('info/magi-path') }}">
                                         Magic Awakening
                                     </a>
 
@@ -122,19 +122,25 @@
                                     <a class="dropdown-item" href="{{ url('designs') }}">
                                         Design Approvals
                                     </a>
-                                    <a class="dropdown-item" href="#">
+                                    <a class="dropdown-item" href="{{ url('info/breeding') }}">
                                         Breeding
+                                    </a>
+                                    <a class="dropdown-item" href="{{ url('info/CPGuide') }}">
+                                        CP Guide
                                     </a>
                                 </div>
                                 <div class="col-md-4">
                                     <h5><i class="fas fa-redo-alt mr-2"></i> Repeat</h5>
-                                    <a class="dropdown-item" href="#">
+                                    <a class="dropdown-item" href="{{ url('info/battle-system') }}">
+                                        Battle
+                                    </a>
+                                    <a class="dropdown-item" href="{{ url('info/questing') }}">
                                         Questing
                                     </a>
-                                    <a class="dropdown-item" href="#">
+                                    <a class="dropdown-item" href="{{ url('info/hunting') }}">
                                         Hunting
                                     </a>
-                                    <a class="dropdown-item" href="#">
+                                    <a class="dropdown-item" href="{{ url('info/monthly-prompt') }}">
                                         Monthly Prompt
                                     </a>
                                     <a class="dropdown-item" href="{{ url('adoptions') }}">
@@ -151,15 +157,15 @@
                         <i class="fas fa-horse-head"></i> Design Hub
                     </a>
                     <div class="dropdown-menu" aria-labelledby="designhubDropdown">
-                        <a class="dropdown-item" href="{{ url('info/designing-your-import') }}">
-                            Designing Your Import
+                        <a class="dropdown-item" href="{{ url('design-hub') }}">
+                            Design Hub
                         </a>
                         <a class="dropdown-item" href="{{ url('design-hub/base-coats') }}">
                             Base Coats
                         </a>
                         <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="{{ url('design-hub') }}">
-                            Design Hub
+                        <a class="dropdown-item" href="{{ url('info/designing-your-import') }}">
+                            Designing Your Import
                         </a>
                         <a class="dropdown-item" href="{{ url('info/design-checklist') }}">
                             Design Approval Checklist
@@ -172,17 +178,18 @@
                     </a>
 
                     <div class="dropdown-menu" aria-labelledby="browseDropdown">
-                        <a class="dropdown-item" href="{{ url('users') }}">
-                            Users
-                        </a>
-                        <a class="dropdown-item" href="{{ url('teams') }}">
-                            Staff and Admins
-                        </a>
                         <a class="dropdown-item" href="{{ url('masterlist') }}">
                             {{ ucwords( __('lorekeeper.characters')) }} Masterlist
                         </a>
                         <a class="dropdown-item" href="{{ url('myos') }}">
                             {{ ucwords( __('lorekeeper.myos')) }} Masterlist
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="{{ url('users') }}">
+                            Users
+                        </a>
+                        <a class="dropdown-item" href="{{ url('teams') }}">
+                            Staff and Admins
                         </a>
                         <div class="dropdown-divider"></div>
                         <a class="dropdown-item" href="{{ url('raffles') }}">
