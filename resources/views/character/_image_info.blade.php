@@ -127,7 +127,7 @@
                             @endphp
                             @if ($image->features()->count())
                                 @foreach ($traitgroup as $key => $group)
-                                    <div class="mb-2">
+                                    <div class="mb-2 d-flex">
                                         @if ($key)
                                             <strong>{!! $group->first()->feature->category->displayName !!}:</strong>
                                         @else
@@ -195,16 +195,18 @@
                     </div>
                 </div>
                 @endif
-                <div class="row no-gutters">
-                    <div class="col-lg-4 col-5">
-                        <h5>Class</h5>
+                @if ( !$character->is_myo_slot )
+                    <div class="row no-gutters">
+                        <div class="col-lg-4 col-5">
+                            <h5>Class</h5>
+                        </div>
+                        <div class="col-lg-8 col-md-6 col-8">{!! $image->character->class_id ? $image->character->class->displayName : 'None' !!}
+                            @if (Auth::check() && Auth::user()->isStaff)
+                                <a href="#" class="btn btn-outline-info btn-sm edit-class ml-1" data-id="{{ $image->character->id }}"><i class="fas fa-cog"></i></a>
+                            @endif
+                        </div>
                     </div>
-                    <div class="col-lg-8 col-md-6 col-8">{!! $image->character->class_id ? $image->character->class->displayName : 'None' !!}
-                        @if (Auth::check() && Auth::user()->isStaff)
-                            <a href="#" class="btn btn-outline-info btn-sm edit-class ml-1" data-id="{{ $image->character->id }}"><i class="fas fa-cog"></i></a>
-                        @endif
-                    </div>
-                </div>
+                @endif
 
                 @include('character._tab_stats', ['character' => $character])
 

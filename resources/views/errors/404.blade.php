@@ -19,7 +19,7 @@
                 $randomImage = $images[array_rand($images)];
                 $relativePath = 'files/errors/' . basename($randomImage);
             }
-            if ( file_exists(public_path($relativePath)) ) {
+            if ( isset($relativePath) && file_exists(public_path($relativePath)) ) {
                 @endphp 
                 <img src="{{ asset($relativePath) }}" alt="Error 404 Image" class="img-fluid my-4" style="max-height: 400px;">
                 @php

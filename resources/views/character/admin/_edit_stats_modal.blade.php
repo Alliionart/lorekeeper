@@ -73,7 +73,7 @@
 <div class="row">
     <div class="col-md-6">
         <div class="form-group">
-            {!! Form::label('Base Color') !!}
+            {!! Form::label('Base') !!}
             {!! Form::select('base', $bases, $is_chimera ? explode('|', $character->base)[0] : $character->base, ['class' => 'form-control']) !!}
         </div>
     </div>

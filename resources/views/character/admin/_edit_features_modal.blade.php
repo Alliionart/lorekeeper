@@ -32,9 +32,9 @@
 
 <?php
 $size = $image->size ? json_decode($image->size) : null;
-$size_rules = $image->subtype->size_data ? json_decode($image->subtype->size_data) : null;
+$size_rules = $image->subtype && $image->subtype->size_data ? json_decode($image->subtype->size_data) : null;
 ?>
-@if ($image->subtype->allow_wingspan)
+@if ( $image->subtype && $image->subtype->allow_wingspan)
     <div class="form-group">
         <div class="form-group">
             <?php $range = ' | ' . $image->subtype->name . ': ' . $size_rules->wingspan->min . ' - ' . $size_rules->wingspan->max; ?>
@@ -43,7 +43,7 @@ $size_rules = $image->subtype->size_data ? json_decode($image->subtype->size_dat
         </div>
     </div>
 @endif
-@if ($image->subtype->allow_height)
+@if ( $image->subtype && $image->subtype->allow_height)
     <div class="form-group">
         <?php $range = ' | ' . $image->subtype->name . ': ' . $size_rules->height->min . ' - ' . $size_rules->height->max; ?>
         {!! Form::label('Character Height ' . $range . (isset($size_rules->height) ? ' (' . $size_rules->height->unit . ')' : '')) !!}

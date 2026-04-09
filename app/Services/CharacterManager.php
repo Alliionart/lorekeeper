@@ -1471,13 +1471,15 @@ class CharacterManager extends Service {
             $characterData = Arr::only($data, [
                 'character_category_id',
                 'number', 'slug',
-                'sex',
+                'sex', 'base', 'secondary_base', 'is_chimera'
             ]);
             $characterData['is_sellable'] = isset($data['is_sellable']);
             $characterData['is_tradeable'] = isset($data['is_tradeable']);
             $characterData['is_giftable'] = isset($data['is_giftable']);
             $characterData['sale_value'] = $data['sale_value'] ?? 0;
             $characterData['transferrable_at'] = $data['transferrable_at'] ?? null;
+            $characterData['base'] = (isset($data['is_chimera']) ? $data['base'].'|'.$data['secondary_base'] : $data['base']);
+            unset($characterData['secondary_base']);
             if ($character->is_myo_slot) {
                 $characterData['name'] = (isset($data['name']) && $data['name']) ? $data['name'] : null;
             }
@@ -1539,8 +1541,11 @@ class CharacterManager extends Service {
                 $old['transferrable_at'] = $character->transferrable_at;
                 $new['transferrable_at'] = $characterData['transferrable_at'];
             }
-
-            \Log::info($characterData);
+            if ($characterData['base'] != $character->base) {
+                $result[] = 'base';
+                $old['base'] = $character->base;
+                $new['base'] = $characterData['base'];
+            }
 
             if (count($result)) {
                 $character->update($characterData);
@@ -2568,17 +2573,6 @@ class CharacterManager extends Service {
                         }
                     }
 
-                    \Log::info('Processing marking', [
-                        'loop'          => $i,
-                        'markingId'     => $markingId,
-                        'code'          => ($is_dominant ? $temp->dominant : $temp->recessive),
-                        'order'         => $temp->order_in_genome ?? 0,
-                        'is_dominant'   => $is_dominant,
-                        'data'          => $data['side_id'][$i] ?? 0,
-                        'base_id'       => $glint,
-                        'carrier_id'    => $carrier_id ?? null,
-                    ]);
-
                     $marking = CharacterMarking::create([
                         'character_id'  => $character->id,
                         'marking_id'    => $markingId,
@@ -2597,7 +2591,6 @@ class CharacterManager extends Service {
 
             return $this->commitReturn(true);
         } catch (\Exception $e) {
-            \Log::error('Marking error', ['error' => $e->getMessage()]);
             $this->setError('error', $e->getMessage());
         }
 
@@ -2614,6 +2607,7 @@ class CharacterManager extends Service {
      */
     private function handleCharacter($data, $isMyo = false) {
         try {
+
             if ($isMyo) {
                 $data['character_category_id'] = null;
                 $data['number'] = null;
@@ -2624,13 +2618,15 @@ class CharacterManager extends Service {
                 $data['transformation_id'] = isset($data['transformation_id']) && $data['transformation_id'] ? $data['transformation_id'] : null;
                 $data['transformation_info'] = isset($data['transformation_info']) && $data['transformation_info'] ? $data['transformation_info'] : null;
                 $data['transformation_description'] = isset($data['transformation_description']) && $data['transformation_description'] ? $data['transformation_description'] : null;
+                $data['base'] = (isset($data['is_chimera']) ? $data['base'].'|'.$data['secondary_base'] : $data['base']);
+                $data['sex'] = isset($data['sex']) ? $data['sex'] : 'Male';
             }
 
             $characterData = Arr::only($data, [
                 'character_category_id', 'rarity_id', 'user_id',
                 'number', 'slug', 'description',
                 'sale_value', 'transferrable_at', 'is_visible',
-                'base', 'secondary_base', 'is_chimera',
+                'base', 'secondary_base', 'is_chimera', 'sex',
             ]);
 
             $characterData['name'] = ($isMyo && isset($data['name'])) ? $data['name'] : null;
@@ -2645,6 +2641,7 @@ class CharacterManager extends Service {
             $characterData['is_trading'] = 0;
             $characterData['parsed_description'] = parse($data['description']);
             $characterData['base'] = (isset($data['is_chimera']) ? $data['base'].'|'.$data['secondary_base'] : $data['base']);
+            $characterData['sex'] = isset($data['sex']) ? $data['sex'] : 'Male';
             if ($isMyo) {
                 $characterData['is_myo_slot'] = 1;
             }
@@ -2996,8 +2993,6 @@ class CharacterManager extends Service {
      */
     private function handleCharacterMarkings($data, $character) {
         try {
-            \Log::info($data);
-
             $markingData = Arr::only($data, [
                 'marking_id', 'is_dominant', 'side_id', 'marking_color_0', 'marking_color_1',
             ]);

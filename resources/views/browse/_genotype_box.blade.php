@@ -11,7 +11,7 @@
             @endif
         </div>
         <div class="mt-1 card-body pt-2">
-            {!! $character->image->species_id ? $character->image->species->displayName : 'No Species' !!} ・ {!! $character->image->subtype_id ? $character->image->subtype->displayName : 'No Subtype' !!}
+            {!! $character->image->species_id ? $character->image->species->displayName : 'No Species' !!} ・ {!! $character->image->subtype_id ? $character->image->subtype->displayName : 'No Subtype' !!}  ・ {!! $character->sex !!}
             <?php $features = $character->image
                 ->features()
                 ->with('feature.category')
