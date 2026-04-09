@@ -228,7 +228,7 @@ class Surrender extends Model
             switch ($category->name) {
                 case 'Eyes':
                 case 'Ears':
-                case 'Tails':
+                case 'Tail':
                     switch ($rarity->name) {
                         case 'Common':
                             $cost = 100;
