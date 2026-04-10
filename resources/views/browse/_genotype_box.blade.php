@@ -24,7 +24,7 @@
                 return $feature->feature->category && $feature->feature->category->name === 'Ears';
             });
             $tail = $features->first(function ($feature) {
-                return $feature->feature->category && $feature->feature->category->name === 'Tails';
+                return $feature->feature->category && $feature->feature->category->name === 'Tail';
             });
             $eyes = $features->first(function ($feature) {
                 return $feature->feature->category && $feature->feature->category->name === 'Eyes';
