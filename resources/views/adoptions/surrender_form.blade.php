@@ -18,7 +18,7 @@
     <div class="card-body">
         <div class="form-group">
             {!! Form::label('character_id', 'Character or Genotype') !!}
-            {!! Form::select('character_id', $characters, null, ['class' => 'form-control stock-field', 'data-name' => 'character_id']) !!}
+            {!! Form::select('character_id', $characters, null, ['class' => 'form-control stock-field selectize', 'data-name' => 'character_id']) !!}
         </div>
         <div class="card mb-3">
             <h4 class="card-header">Surrender Calculator</h4>
@@ -53,6 +53,8 @@
     @parent
     <script>
     $(document).ready(function() {
+
+        $('.selectize').selectize();
 
         if({{ $primaryCurrency ? 'true' : 'false' }}) {
             $('#currency_id option:not(:selected)').prop('disabled', true);

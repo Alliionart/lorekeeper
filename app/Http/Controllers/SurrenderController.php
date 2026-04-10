@@ -55,14 +55,14 @@ class SurrenderController extends Controller
     {
         $characters = Character::orderBy('id')->where('user_id', Auth::user()->id)->where(function ($query) {
             return $query->where('is_sellable', 1)->orWhere('is_tradeable', 1)->orwhere('is_giftable', 1);
-        })->get()->pluck('fullName', 'id');
+        })->get()->pluck('fullName', 'id')->toArray();
         $adoption = Adoption::where('id', 1)->where('is_active', 1)->first();
         if(!$adoption) abort(404);
         return view('adoptions.surrender_form', [
-            'adoption' => $adoption,
-            'characters' =>  $characters,
-            'adoptions' => Adoption::where('is_active', 1)->get(),
-            'currencies' => Currency::orderBy('name')->pluck('name', 'id'),
+            'adoption'      => $adoption,
+            'characters'    => ['', 'Select character or genotype...'] + $characters,
+            'adoptions'     => Adoption::where('is_active', 1)->get(),
+            'currencies'    => Currency::orderBy('name')->pluck('name', 'id'),
             'primaryCurrency' => Settings::get('background_location_change_currency'),
         ]);
     }
