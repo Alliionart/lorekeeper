@@ -316,8 +316,6 @@ class Surrender extends Model
         //Calculate worth based on skills
         $skills = $character->skills;
 
-        
-
         if($skills) {
             foreach($skills as $skill) {
                 $rarity = Rarity::where('id', $skill->skill->rarity_id)->first();
