@@ -83,6 +83,8 @@ class AddSiteSettings extends Command {
 
         $this->addSiteSetting('comment_dislikes_enabled', 0, '0: Dislikes disabled, 1: Dislikes enabled.');
 
+        $this->addSiteSetting('is_design_queue_public', 0, '0: Design queue is hidden, 1: Design queue is public.');
+
         $this->line("\nSite settings up to date!");
     }
 
