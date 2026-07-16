@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Character\CharacterDesignUpdate;
 use App\Models\Prompt\PromptCategory;
 use App\Models\Submission\Submission;
-use App\Models\Character\CharacterDesignUpdate;
 use Illuminate\Http\Request;
 
 class QueueController extends Controller {
@@ -17,7 +17,7 @@ class QueueController extends Controller {
      */
     public function getQueueIndex(Request $request, $status = null) {
         $submissions = Submission::with('prompt')->where('status', $status ? ucfirst($status) : 'Pending')->whereNotNull('prompt_id');
-        $designs = CharacterDesignUpdate::where('status', $status ? ucfirst($status) :'Pending');
+        $designs = CharacterDesignUpdate::where('status', $status ? ucfirst($status) : 'Pending');
         $data = $request->only(['prompt_category_id', 'sort']);
         if (isset($data['prompt_category_id']) && $data['prompt_category_id'] != 'none') {
             $submissions->whereHas('prompt', function ($query) use ($data) {
@@ -43,7 +43,7 @@ class QueueController extends Controller {
 
         return view('queues.queues', [
             'submissions' => $submissions->paginate(30)->appends($request->query()),
-            'designs'     => $designs ->paginate(30)->appends($request->query()),
+            'designs'     => $designs->paginate(30)->appends($request->query()),
             'categories'  => ['none' => 'Any Category'] + PromptCategory::orderBy('sort', 'DESC')->pluck('name', 'id')->toArray(),
             'isClaims'    => false,
         ]);
