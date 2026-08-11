@@ -42,12 +42,7 @@
     <div class="form-inline justify-content-end">
         @if (isset($showTrainees) && $showTrainees)
             <div class="form-group ml-3 mb-3">
-                {!! Form::select(
-                    'trainee',
-                    $trainees,
-                    Request::get('trainee') ?: null,
-                    ['class' => 'form-control'],
-                ) !!}
+                {!! Form::select('trainee', $trainees, Request::get('trainee') ?: null, ['class' => 'form-control']) !!}
             </div>
         @endif
         <div class="form-group ml-3 mb-3">
@@ -133,7 +128,8 @@
                             </div>
                             <div class="col-3 col-md-1">
                                 <div class="logs-table-cell">
-                                    <span class="btn btn-{{ $submission->status == 'Pending' ? 'secondary' : ($submission->status == 'Approved' ? 'success' : 'danger') }} btn-sm py-0 px-1">{{ $submission->trainee ? 'Trainee Hold' : $submission->status }}</span>
+                                    <span
+                                        class="btn btn-{{ $submission->status == 'Pending' ? 'secondary' : ($submission->status == 'Approved' ? 'success' : 'danger') }} btn-sm py-0 px-1">{{ $submission->trainee ? 'Trainee Hold' : $submission->status }}</span>
                                 </div>
                             </div>
                             <div class="col-3 col-md-1">

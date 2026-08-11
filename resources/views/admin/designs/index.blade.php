@@ -42,12 +42,7 @@
             </div>
             @if (isset($showTrainees) && $showTrainees)
                 <div class="form-group ml-3 mb-3">
-                    {!! Form::select(
-                        'trainee',
-                        $trainees,
-                        Request::get('trainee') ?: null,
-                        ['class' => 'form-control'],
-                    ) !!}
+                    {!! Form::select('trainee', $trainees, Request::get('trainee') ?: null, ['class' => 'form-control']) !!}
                 </div>
             @endif
             <div class="form-group ml-3 mb-3">
@@ -165,7 +160,7 @@
                             <div class="col-3 col-md-3">
                                 <div class="logs-table-cell">{!! $r->user->displayName !!}</div>
                             </div>
-                            
+
                             <div class="col-2 col-md-2">
                                 <div class="logs-table-cell">{!! $r->submitted_at ? pretty_date($r->submitted_at) : '---' !!}</div>
                             </div>

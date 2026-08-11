@@ -8,8 +8,18 @@
 </div>
 <div class="trainee-fields" style="display:none;">
     <p>This will mark the Design Request as a trainee claim.</p>
-    <?php 
-        $trainees = ['' => 'Select Trainee'] + \App\Models\User\User::whereIn('id', \App\Models\User\UserTeam::where('type', 'Trainee')->pluck('user_id')->toArray())->orderBy('name')->pluck('name', 'id')->toArray();
+    <?php
+    $trainees =
+        ['' => 'Select Trainee'] +
+        \App\Models\User\User::whereIn(
+            'id',
+            \App\Models\User\UserTeam::where('type', 'Trainee')
+                ->pluck('user_id')
+                ->toArray(),
+        )
+            ->orderBy('name')
+            ->pluck('name', 'id')
+            ->toArray();
     ?>
     {!! Form::select('trainee_id', $trainees, null, ['class' => 'form-control', 'placeholder' => 'Select Trainee']) !!}
 </div>
@@ -23,7 +33,7 @@
     $(document).ready(function() {
 
         $('#holding_for_trainee').on('change', function() {
-            if ( $(this).is(':checked') ) {
+            if ($(this).is(':checked')) {
                 $('.trainee-fields').show();
             } else {
                 $('.trainee-fields').hide();

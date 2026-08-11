@@ -69,7 +69,7 @@
         @endif
     @elseif ($request->status == 'Hold')
         <div class="alert alert-warning">
-            @if ( $request->trainee )
+            @if ($request->trainee)
                 This design update is held under trainee review for {!! $request->trainee->displayName !!}. It may take additional time to be processed.
             @else
                 This design update has been put on hold by {!! $request->staff->displayName !!} for review. It may take additional time for our staff to review.

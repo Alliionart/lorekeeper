@@ -27,7 +27,7 @@
                 </div>
                 <div class="col-md-10 col-8">{!! $submission->user->displayName !!}</div>
             </div>
-            @if ( $submission->status == 'Hold' )
+            @if ($submission->status == 'Hold')
                 <div class="row mb-2 no-gutters">
                     <div class="col-md-2">
                         <h5 class="mb-0"><i class="fas fa-hand-paper text-warning"></i> On Hold for Review</h5>
@@ -399,7 +399,7 @@
                 });
 
                 $('#holding_for_trainee').on('change', function() {
-                    if ( $(this).is(':checked') ) {
+                    if ($(this).is(':checked')) {
                         $('.trainee-fields').show();
                     } else {
                         $('.trainee-fields').hide();
