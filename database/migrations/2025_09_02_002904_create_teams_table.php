@@ -16,7 +16,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');   //name of the team
             $table->enum('type', ['Main Team', 'Sub Team', 'Admin Accounts', 'Leadership'])->nullable()->default('Main Team');
-            $table->string('relation')->nullable()->default(null);   //team relation, applicable to sub teams only
+            $table->string('relation')->nullable()->default(null);   //team relation, applicable to sub teams only, currently not in use
             $table->boolean('apps_open')->unsigned()->default(0);   //apps open, for admin applications
             $table->text('description')->nullable()->default(null);     //description
             $table->timestamps();

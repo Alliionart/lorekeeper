@@ -30,7 +30,7 @@ class UserTeam extends Model
      *
      * @var array
      */
-    protected $with = ['teams'];
+    protected $with = ['team'];
 
     
   
@@ -40,10 +40,25 @@ class UserTeam extends Model
 
     **********************************************************************************************/
 
-   /**
-     * Get the team associated with this record.
-     */
-    public function team() {
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+    
+    public function team()
+    {
         return $this->belongsTo(Team::class, 'team_id');
     }
+    
+    public function getRolePriorityAttribute()
+    {
+        return match ($this->type ?? 'Primary') {
+            'Lead'      => 1,
+            'Primary'   => 2,
+            'Secondary' => 3,
+            'Trainee'   => 4,
+            default     => 2,
+        };
+}
+    
 }

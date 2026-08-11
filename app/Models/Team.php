@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\User\UserTeam;
 
 class Team extends Model
 {
@@ -13,7 +14,7 @@ class Team extends Model
      * @var array
      */
     protected $fillable = [
-        'name', 'type', 'relation', 'apps_open', 'description',
+        'name', 'type', 'relation', 'apps_open', 'description', 'responsibilities',
     ];
 
     /**
@@ -38,6 +39,7 @@ class Team extends Model
     public static $createRules = [
         'name'        => 'unique:teams|required|between:2,225',
         'description' => 'nullable',
+        'responsibilities' => 'nullable',
     ];
 
     /**
@@ -84,5 +86,25 @@ class Team extends Model
      */
     public function getDisplayNameAttribute() {
         return '<a href="'.$this->url.'" class="display-team">'.$this->name.'</a>';
+    }
+
+    public function users() {
+        return $this->belongsToMany(User::class, 'user_admin_role', 'team_id', 'user_id')
+                    ->withPivot('type')
+                    ->withTimestamps();
+    }
+
+    public function userTeams() {
+        return $this->hasMany(UserTeam::class, 'team_id');
+    }
+
+    public function parent()
+    {
+        return $this->belongsTo(Team::class, 'relation');
+    }
+
+    public function children()
+    {
+        return $this->hasMany(Team::class, 'relation');
     }
 }

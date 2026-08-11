@@ -15,10 +15,9 @@ return new class extends Migration
             $table->id();
             $table->integer('user_id')->unsigned();//user ID
             $table->integer('team_id')->unsigned();//Team ID (team applied to)
-            $table->integer('admin_id')->unsigned();//admin ID (admin who accepts or rejects it)
+            $table->integer('admin_id')->unsigned()->nullable();//admin ID (admin who accepts or rejects it)
             $table->text('application');//application
             $table->enum('status', ['accepted', 'denied', 'pending'])->nullable()->default('pending');//status (accept or decline)
-            $table->text('admin_message');//admin message
             $table->timestamps();
         });
     }

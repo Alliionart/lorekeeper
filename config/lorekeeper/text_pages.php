@@ -28,5 +28,9 @@ return [
         'title' => 'Credits',
         'text'  => 'This page will contain credits for code, art, ect that has been used on your site!',
     ],
+    'app-intro' => [
+        'title' => 'Team Info Into',
+        'text'  => 'This page contains the starting content of the team information page. Its a good idea to put application forms, information, staff exceptions, etc here! ',
+    ],
 
 ];

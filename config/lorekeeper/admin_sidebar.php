@@ -80,6 +80,19 @@ return [
             ],
         ],
     ],
+    'Teams'       => [
+        'power' => 'edit_teams',
+        'links' => [
+            [
+                'name' => 'Teams',
+                'url'  => 'admin/teams',
+            ],
+            [
+                'name' => 'Admin Applications',
+                'url'  => 'admin/applications',
+            ],
+        ],
+    ],
     'Queues'     => [
         'power' => 'manage_submissions',
         'links' => [

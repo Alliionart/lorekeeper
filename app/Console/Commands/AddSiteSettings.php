@@ -83,6 +83,10 @@ class AddSiteSettings extends Command {
 
         $this->addSiteSetting('comment_dislikes_enabled', 0, '0: Dislikes disabled, 1: Dislikes enabled.');
 
+        $this->addSiteSetting('notify_staff_applicants', 0, 'Toggle notifications sent when accepting/denying applicants to the staff team. 0: notifications disabled, 1 notifications enabled');
+
+        $this->addSiteSetting('is_applications_comment_read_only', 1, 'Allow/disallow replies to comments from staff on applications. 0: applicants CAN reply to comments 1: applicants CANT reply to comments.');
+
         $this->line("\nSite settings up to date!");
     }
 

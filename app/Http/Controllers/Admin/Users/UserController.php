@@ -115,6 +115,11 @@ class UserController extends Controller {
             }
         }
 
+        //automatically remove teams if a staff or admin member is set to the player/member rank
+        if ($user->rank_id == 2) {
+            $user->teams()->detach();
+        }
+
         return redirect()->to($user->adminUrl);
     }
 

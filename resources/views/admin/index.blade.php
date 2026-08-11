@@ -201,5 +201,42 @@
                 </div>
             @endif
         @endif
-    </div>
+        @if (Auth::user()->hasPower('edit_teams'))
+        <div class="col-sm-6">
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Team applications
+                            @if ($AppCount)
+                                <span class="badge badge-primary">{{ $AppCount }}</span>
+                            @endif
+                        </h5>
+                        <p class="card-text">
+                            @if ($AppCount)
+                                {{ $AppCount }} application{{ $AppCount == 1 ? '' : 's' }} awaiting review.
+                            @else
+                                No applications waiting review
+                            @endif
+                        </p>
+                        <div class="text-right">
+                            <a href="{{ url('admin/applications') }}" class="card-link">View Applications <span class="fas fa-caret-right ml-1"></span></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @endif
+    <h3>Team responsibilities</h3>
+    
+        <div class="row">
+            @foreach ($teams as $team)
+                @if($team->responsibilities)
+                    <div class="col-md-3">
+                        <div class="card p-3">
+                            <h4>{{ $team->name }}</h4>
+                            <p>{!! $team->responsibilities !!}</p>
+                        </div>
+                    </div>
+                @endif
+            @endforeach
+        </div>
 @endsection

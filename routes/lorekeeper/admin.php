@@ -239,14 +239,16 @@ Route::group(['prefix' => 'data', 'namespace' => 'Data', 'middleware' => 'power:
     Route::post('prompts/create', 'PromptController@postCreateEditPrompt');
     Route::post('prompts/edit/{id?}', 'PromptController@postCreateEditPrompt');
     Route::post('prompts/delete/{id}', 'PromptController@postDeletePrompt');
+});
 
-    Route::get('teams', 'TeamController@getIndex');
-    Route::get('teams/create', 'TeamController@getCreateTeam');
-    Route::get('teams/edit/{id}', 'TeamController@getEditTeam');
-    Route::get('teams/delete/{id}', 'TeamController@getDeletePrompt');
-    Route::post('teams/create', 'TeamController@postCreateEditTeam');
-    Route::post('teams/edit/{id?}', 'TeamController@postCreateEditTeam');
-    Route::post('prompts/delete/{id}', 'PromptController@postDeletePrompt');
+Route::group(['prefix' => 'teams', 'middleware' => 'power:edit_teams'], function () {
+    Route::get('/', 'TeamController@getIndex');
+    Route::get('create', 'TeamController@getCreateTeam');
+    Route::get('edit/{id}', 'TeamController@getEditTeam');
+    Route::get('delete/{id}', 'TeamController@getDeleteTeam');
+    Route::post('create', 'TeamController@postCreateEditTeam');
+    Route::post('edit/{id?}', 'TeamController@postCreateEditTeam');
+    Route::post('delete/{id}', 'TeamController@postDeleteTeam');
 });
 
 // PAGES
@@ -421,9 +423,9 @@ Route::group(['prefix' => 'submissions', 'middleware' => 'power:manage_submissio
 
 Route::group(['prefix' => 'applications', 'middleware' => 'power:edit_teams'], function () {
     Route::get('/', 'AdminApplicationController@getApplicationIndex');
-    Route::get('/{status}', 'AdminApplicationController@getApplicationIndex')->where('status', 'pending|approved|rejected');
+    Route::get('/{status}', 'AdminApplicationController@getApplicationIndex')->where('status', 'pending|accepted|denied');
     Route::get('edit/{id}', 'AdminApplicationController@getApplication');
-    Route::post('edit/{id}/{action}', 'AdminApplicationController@getApplication')->where('action', 'approve|reject|cancel');
+    Route::post('edit/{id}/{action}', 'AdminApplicationController@getApplication')->where('action', 'pending|accepted|denied');
     Route::post('edit/{id}', 'AdminApplicationController@postApplication')    ->name('admin.applications.post');
 });
 

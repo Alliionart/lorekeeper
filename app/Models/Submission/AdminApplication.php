@@ -4,11 +4,13 @@ namespace App\Models\Submission;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\Commentable;
 use App\Models\User\User;
 use App\Models\Team;
 
 class AdminApplication extends Model
 {
+    use Commentable;
     use HasFactory;
 
        /**
@@ -17,9 +19,9 @@ class AdminApplication extends Model
      * @var array
      */
     protected $fillable = [
-        'prompt_id', 'user_id', 'staff_id', 'url',
-        'comments', 'staff_comments', 'parsed_staff_comments',
-        'status', 'data',
+        'team_id', 'user_id', 'admin_id', 
+        'application', 'admin_message', 
+        'status', 
     ];
 
     /**
@@ -35,23 +37,6 @@ class AdminApplication extends Model
      */
     public $timestamps = true;
 
-    /**
-     * Validation rules for application creation.
-     *
-     * @var array
-     */
-    public static $createRules = [
-        'url' => 'nullable|url',
-    ];
-
-    /**
-     * Validation rules for application updating.
-     *
-     * @var array
-     */
-    public static $updateRules = [
-        'url' => 'nullable|url',
-    ];
 
     /**********************************************************************************************
 
@@ -133,4 +118,5 @@ class AdminApplication extends Model
         return url('admin/applications/edit/'.$this->id);
     }
 
-}
+    }
+

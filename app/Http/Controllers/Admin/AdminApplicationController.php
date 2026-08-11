@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Facades\Settings;
 use App\Models\Submission\AdminApplication;
 use App\Models\Team;
+use App\Services\AdminApplicationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -32,10 +34,9 @@ class AdminApplicationController extends Controller {
             $applications->sortOldest();
         }
 
-        return view('admin.submissions.application_index', [
+        return view('admin.team.application_index', [
             'applications' => $applications->paginate(30)->appends($request->query()),
             'teams' => Team::orderBy('id')->first(),
-
         ]);
     }
 
@@ -47,15 +48,16 @@ class AdminApplicationController extends Controller {
      * @return \Illuminate\Contracts\Support\Renderable
      */
     public function getApplication($id) {
-        $applications = AdminApplication::where('id', $id)->where('status', '!=', 'Draft')->first();
+        $applications = AdminApplication::where('id', $id)->first();
         
         if (!$applications) {
             abort(404);
         }
 
-        return view('admin.submissions.application', [
+        return view('admin.team.application', [
             'applications'       => $applications,
             'teams' => Team::orderBy('id')->first(),
+            'settings'   => Settings::get('notify_staff_applicants'),
         ]);
     }
 
@@ -63,28 +65,27 @@ class AdminApplicationController extends Controller {
     /**
      * Accept or deny a application
      */
-    public function postApplication(Request $request, $id = null)
+    public function postApplication(Request $request, $id = null, AdminApplicationService $service)
     {
         $application = AdminApplication::findOrFail($id);
 
-        // Only allow valid statuses
         if (!in_array($request->input('status'), ['accepted', 'denied'])) {
             return redirect()->back()->with('error', 'Invalid status.');
         }
 
-        $application->status = $request->input('status');
+        $data = [
+            'id'            => $application->id,
+        ];
 
-        // Optional: track which staff handled it
-        $application->admin_id = auth()->id();
+        $userId = auth()->id();
 
-        // Optional: save staff comments
-        if ($request->filled('admin_message')) {
-            $application->admin_message = $request->input('admin_message');
+        if ($request->input('status') === 'accepted') {
+            $service->acceptApplicant($data, $userId);
+        } elseif ($request->input('status') === 'denied') {
+            $service->rejectApplicant($data, $userId);
         }
 
-        $application->save();
-
-        return redirect()->back()->with('success', 'Application ' . strtolower($application->status) . ' successfully.');
+        return redirect()->back()->with('success', 'Application ' . strtolower($request->input('status')) . ' successfully.');
     }
 
  

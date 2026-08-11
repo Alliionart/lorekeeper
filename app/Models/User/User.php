@@ -247,6 +247,7 @@ class User extends Authenticatable implements MustVerifyEmail {
             ->orderByRaw('user_aliases.alias IS NULL ASC, user_aliases.alias '.($reverse ? 'DESC' : 'ASC'));
     }
 
+
     /**********************************************************************************************
 
         ACCESSORS
@@ -685,11 +686,14 @@ class User extends Authenticatable implements MustVerifyEmail {
         return CharacterBookmark::where('user_id', $this->id)->where('character_id', $character->id)->first();
     }
 
-    public function teams()
-    {
-        return $this->belongsToMany(Team::class, 'user_admin_role')
-                    ->withPivot('type') // if you store role type
-                    ->withTimestamps();
+    public function adminRoles(){
+        return $this->hasMany(UserTeam::class, 'user_id');
     }
+
+    public function teams(){
+            return $this->belongsToMany(Team::class, 'user_admin_role', 'user_id', 'team_id')
+                        ->withPivot('type')
+                        ->withTimestamps();
+        }
 
 }
