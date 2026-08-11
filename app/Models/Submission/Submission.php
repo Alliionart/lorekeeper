@@ -14,7 +14,7 @@ class Submission extends Model {
      * @var array
      */
     protected $fillable = [
-        'prompt_id', 'user_id', 'staff_id', 'url',
+        'prompt_id', 'user_id', 'staff_id', 'url', 'trainee_id',
         'comments', 'staff_comments', 'parsed_staff_comments',
         'status', 'data',
     ];
@@ -69,12 +69,20 @@ class Submission extends Model {
     public function user() {
         return $this->belongsTo(User::class, 'user_id');
     }
+    
 
     /**
      * Get the staff who processed the submission.
      */
     public function staff() {
         return $this->belongsTo(User::class, 'staff_id');
+    }
+
+    /**
+     * Get the trainee who processed the submission.
+     */
+    public function trainee() {
+        return $this->belongsTo(User::class, 'trainee_id');
     }
 
     /**
