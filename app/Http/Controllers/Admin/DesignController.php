@@ -45,10 +45,10 @@ class DesignController extends Controller {
         }
 
         return view('admin.designs.index', [
-            'requests' => $requests->paginate(30)->appends($request->query()),
-            'isMyo'    => ($type == 'myo-approvals'),
+            'requests'      => $requests->paginate(30)->appends($request->query()),
+            'isMyo'         => ($type == 'myo-approvals'),
             'showTrainees'  => $status === 'hold',
-            ...( $status === 'hold' ? [ 'trainees' => ['' => 'Select Trainee'] + User::whereIn('id', UserTeam::where('type', 'Trainee')->pluck('user_id')->toArray())->orderBy('name')->pluck('name', 'id')->toArray() ] : [] )
+            ...($status === 'hold' ? ['trainees' => ['' => 'Select Trainee'] + User::whereIn('id', UserTeam::where('type', 'Trainee')->pluck('user_id')->toArray())->orderBy('name')->pluck('name', 'id')->toArray()] : []),
         ]);
     }
 

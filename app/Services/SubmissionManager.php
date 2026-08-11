@@ -506,7 +506,7 @@ class SubmissionManager extends Service {
 
     /**
      * Marks a submission as claimed for a trainee.
-     * 
+     *
      * @param array                 $data
      * @param \App\Models\User\User $user
      */
@@ -521,11 +521,10 @@ class SubmissionManager extends Service {
                 throw new \Exception('Invalid submission.');
             }
 
-            if ( isset($data['holding_for_trainee']) ) {
-
+            if (isset($data['holding_for_trainee'])) {
                 $trainee = User::find($data['trainee_id']);
 
-                if ( !$trainee || !$trainee->teams()->wherePivot('type', 'Trainee')->exists() ) {
+                if (!$trainee || !$trainee->teams()->wherePivot('type', 'Trainee')->exists()) {
                     throw new \Exception('Trainee could not be found. Please ensure they are a trainee.');
                 }
 
@@ -543,7 +542,6 @@ class SubmissionManager extends Service {
                 if (!$this->logAdminAction($user, 'Submission Marked as Claimed for Trainee', 'Marked submission <a href="'.$submission->viewurl.'">#'.$submission->id.'</a> as claimed for trainee - '.$trainee->name ?? '')) {
                     throw new \Exception('Failed to log admin action.');
                 }
-
             } else {
                 $submission->update([
                     'staff_id'              => $user->id,

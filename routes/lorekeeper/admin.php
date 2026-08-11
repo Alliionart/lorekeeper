@@ -426,7 +426,7 @@ Route::group(['prefix' => 'applications', 'middleware' => 'power:edit_teams'], f
     Route::get('/{status}', 'AdminApplicationController@getApplicationIndex')->where('status', 'pending|accepted|denied');
     Route::get('edit/{id}', 'AdminApplicationController@getApplication');
     Route::post('edit/{id}/{action}', 'AdminApplicationController@getApplication')->where('action', 'pending|accepted|denied');
-    Route::post('edit/{id}', 'AdminApplicationController@postApplication')    ->name('admin.applications.post');
+    Route::post('edit/{id}', 'AdminApplicationController@postApplication')->name('admin.applications.post');
 });
 
 // CLAIMS

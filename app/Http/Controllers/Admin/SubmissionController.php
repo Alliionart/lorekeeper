@@ -7,11 +7,11 @@ use App\Models\Character\Character;
 use App\Models\Currency\Currency;
 use App\Models\Item\Item;
 use App\Models\Loot\LootTable;
-use App\Models\User\User;
-use App\Models\User\UserTeam;
 use App\Models\Prompt\PromptCategory;
 use App\Models\Raffle\Raffle;
 use App\Models\Submission\Submission;
+use App\Models\User\User;
+use App\Models\User\UserTeam;
 use App\Services\SubmissionManager;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -49,11 +49,11 @@ class SubmissionController extends Controller {
         }
 
         return view('admin.submissions.index', [
-            'submissions' => $submissions->paginate(30)->appends($request->query()),
-            'categories'  => ['none' => 'Any Category'] + PromptCategory::orderBy('sort', 'DESC')->pluck('name', 'id')->toArray(),
-            'isClaims'    => false,
+            'submissions'   => $submissions->paginate(30)->appends($request->query()),
+            'categories'    => ['none' => 'Any Category'] + PromptCategory::orderBy('sort', 'DESC')->pluck('name', 'id')->toArray(),
+            'isClaims'      => false,
             'showTrainees'  => $status === 'hold',
-            ...( $status === 'hold' ? [ 'trainees' => ['' => 'Select Trainee'] + User::whereIn('id', UserTeam::where('type', 'Trainee')->pluck('user_id')->toArray())->orderBy('name')->pluck('name', 'id')->toArray() ] : [] )
+            ...($status === 'hold' ? ['trainees' => ['' => 'Select Trainee'] + User::whereIn('id', UserTeam::where('type', 'Trainee')->pluck('user_id')->toArray())->orderBy('name')->pluck('name', 'id')->toArray()] : []),
         ]);
     }
 
@@ -117,7 +117,7 @@ class SubmissionController extends Controller {
             'submissions'   => $submissions->paginate(30),
             'isClaims'      => true,
             'showTrainees'  => $status === 'hold',
-            ...( $status === 'hold' ? [ 'trainees' => ['' => 'Select Trainee'] + User::whereIn('id', UserTeam::where('type', 'Trainee')->pluck('user_id')->toArray())->orderBy('name')->pluck('name', 'id')->toArray() ] : [] )
+            ...($status === 'hold' ? ['trainees' => ['' => 'Select Trainee'] + User::whereIn('id', UserTeam::where('type', 'Trainee')->pluck('user_id')->toArray())->orderBy('name')->pluck('name', 'id')->toArray()] : []),
         ]);
     }
 
@@ -173,7 +173,7 @@ class SubmissionController extends Controller {
             flash('Submission approved successfully.')->success();
         } elseif ($action == 'traineemark' && $service->holdSubmission($data + ['id' => $id], Auth::user())) {
             $trainee_name = User::find($data['trainee_id'])->name ?? 'trainee';
-            flash('Submission marked as claimed for ' . $trainee_name . ' successfully.')->success();
+            flash('Submission marked as claimed for '.$trainee_name.' successfully.')->success();
         } else {
             foreach ($service->errors()->getMessages()['error'] as $error) {
                 flash($error)->error();

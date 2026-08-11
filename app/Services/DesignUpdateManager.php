@@ -940,10 +940,10 @@ class DesignUpdateManager extends Service {
                 throw new \Exception('This request cannot be processed.');
             }
 
-            if ( isset($data['holding_for_trainee']) ) {
+            if (isset($data['holding_for_trainee'])) {
                 $trainee = User::find($data['trainee_id']);
 
-                if ( !$trainee ) {
+                if (!$trainee) {
                     throw new \Exception('Trainee could not be found. Please ensure they are a trainee.');
                 }
 
@@ -963,10 +963,8 @@ class DesignUpdateManager extends Service {
                     'character_url' => $request->character->url,
                     'name'          => $request->character->fullName,
                 ]);
-
             } else {
-
-                if (!$this->logAdminAction($user, 'Held Design Update', 'Held design update <a href="'.$request->url.'">#'.$request->id.'</a> for '. $user->displayName. '.')) {
+                if (!$this->logAdminAction($user, 'Held Design Update', 'Held design update <a href="'.$request->url.'">#'.$request->id.'</a> for '.$user->displayName.'.')) {
                     throw new \Exception('Failed to log admin action.');
                 }
 
@@ -982,7 +980,6 @@ class DesignUpdateManager extends Service {
                     'character_url' => $request->character->url,
                     'name'          => $request->character->fullName,
                 ]);
-
             }
 
             return $this->commitReturn(true);
