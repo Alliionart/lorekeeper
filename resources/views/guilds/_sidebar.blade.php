@@ -31,7 +31,7 @@
             @if ($guild->shop)
                 <div class="sidebar-item"><a href="{{ $guild->shop->editUrl }}" class="{{ set_active('*shop/edit') }}">Edit Shop</a></div>
             @else
-                <div class="sidebar-item"><a href="{{ url('guilds/create/'.$guild->id.'/shop') }}" class="{{ set_active('*shop/edit') }}">Create Shop</a></div>
+                <div class="sidebar-item"><a href="{{ url('guilds/create/' . $guild->id . '/shop') }}" class="{{ set_active('*shop/edit') }}">Create Shop</a></div>
             @endif
         </li>
     @endif
