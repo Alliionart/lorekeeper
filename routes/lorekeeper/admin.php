@@ -471,7 +471,7 @@ Route::group(['prefix' => 'queue-submissions', 'middleware' => 'power:manage_sub
 });
 
 // GUILDS
-Route::group(['prefix' => 'guilds', 'middleware' => 'power:manage_guilds'], function () {
+Route::group(['prefix' => 'guilds', 'namespace' => 'Guilds', 'middleware' => 'power:manage_guilds'], function () {
     Route::get('/', 'GuildController@getGuildIndex');
     Route::get('/queue', 'GuildController@getGuildQueue');
     Route::get('/queue/{status}', 'GuildController@getGuildQueue')->where('status', 'pending|approved|rejected');

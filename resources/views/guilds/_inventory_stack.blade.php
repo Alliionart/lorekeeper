@@ -11,7 +11,7 @@
         <p class="alert alert-warning my-2">Note: Your rank allows you to transfer guild-bound items.</p>
     @endif
 
-    {!! Form::open(['url' => 'guild/' . $guild->id . '/inventory/edit']) !!}
+    {!! Form::open(['url' => 'guilds/' . $guild->id . '/inventory/edit']) !!}
     <div class="card" style="border: 0px">
         <table class="table table-sm">
             <thead class="thead">
@@ -50,7 +50,7 @@
                         @endif
                         <td class="col-1">
                             @if (!$itemRow->isTransferrable)
-                                <i class="fas fa-lock" data-toggle="tooltip" title="Character-bound items cannot be transferred but can be deleted."></i>
+                                <i class="fas fa-lock" data-toggle="tooltip" title="Guild-bound items cannot be transferred but can be deleted."></i>
                             @endif
                         </td>
                     </tr>
@@ -82,25 +82,34 @@
                         </div>
                     </li>
                 @endif
-                @if ($owner_id != null)
-                    <li class="list-group-item">
-                        <a class="card-title h5 collapse-title" data-toggle="collapse" href="#transferForm">
-                            @if ($owner_id != $user->id)
-                                [ADMIN]
-                            @endif Transfer Item
-                        </a>
-                        <div id="transferForm" class="collapse">
-                            <p>This will transfer this item back to @if ($owner_id != $user->id)
-                                    this user's
-                                @else
-                                    your
-                                @endif inventory.</p>
-                            <div class="text-right">
-                                {!! Form::button('Transfer', ['class' => 'btn btn-primary', 'name' => 'action', 'value' => 'take', 'type' => 'submit']) !!}
-                            </div>
+                <li class="list-group-item">
+                    <a class="card-title h5 collapse-title" data-toggle="collapse" href="#transferForm">
+                        @if ($owner_id != $user->id)
+                            [ADMIN]
+                        @endif Transfer Item to Member
+                    </a>
+                    <div id="transferForm" class="collapse">
+                        <p>This will transfer this item back to the desired guild member.</p>
+                        {!! Form::select('Guild Member', $members, null, ['class' => 'selectize form-control', 'name' => 'user', 'placeholder' => 'Select a user...']) !!}
+                        <div class="text-right mt-2">
+                            {!! Form::button('Transfer', ['class' => 'btn btn-primary', 'name' => 'action', 'value' => 'transfer', 'type' => 'submit']) !!}
                         </div>
-                    </li>
-                @endif
+                    </div>
+                </li>
+                <li class="list-group-item">
+                    <a class="card-title h5 collapse-title" data-toggle="collapse" href="#characterTransferForm">
+                        @if ($owner_id != $user->id)
+                            [ADMIN]
+                        @endif Transfer Item to Character
+                    </a>
+                    <div id="characterTransferForm" class="collapse">
+                        <p>This will transfer this item back to the desired guild character.</p>
+                        {!! Form::select('Guild Character', $characters, null, ['class' => 'selectize form-control', 'name' => 'character_id', 'placeholder' => 'Select a character...']) !!}
+                        <div class="text-right mt-2">
+                            {!! Form::button('Transfer', ['class' => 'btn btn-primary', 'name' => 'action', 'value' => 'characterTransfer', 'type' => 'submit']) !!}
+                        </div>
+                    </div>
+                </li>
                 <li class="list-group-item">
                     <a class="card-title h5 collapse-title" data-toggle="collapse" href="#deleteForm">
                         @if ($owner_id != $user->id)
@@ -138,4 +147,8 @@
         var $rowId = "#itemRow" + $checkbox.value
         $($rowId).find('.quantity-select').prop('name', $checkbox.checked ? 'quantities[]' : '')
     }
+
+    $(document).ready(function() {
+        $('.selectize').selectize();
+    });
 </script>

@@ -150,7 +150,7 @@
         </div>
     </div>
     <div class="text-right">
-        <a href="{{ url($guild->getViewUrlAttribute() . '/item-logs') }}">View all...</a>
+        <a href="{{ url($guild->viewUrl . '/item-logs') }}">View all...</a>
     </div>
 
     @if (Auth::check() && Auth::user()->hasPower('edit_inventories'))

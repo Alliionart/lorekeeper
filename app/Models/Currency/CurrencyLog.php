@@ -5,6 +5,7 @@ namespace App\Models\Currency;
 use App\Models\Character\Character;
 use App\Models\Model;
 use App\Models\User\User;
+use App\Models\Guild\Guild;
 
 class CurrencyLog extends Model {
     /**
@@ -42,22 +43,28 @@ class CurrencyLog extends Model {
      * Get the user who initiated the logged action.
      */
     public function sender() {
-        if ($this->sender_type == 'User') {
-            return $this->belongsTo(User::class, 'sender_id');
+        switch ( $this->sender_type ) {
+            case 'User':
+                return $this->belongsTo(User::class, 'sender_id');
+            case 'Character':
+                return $this->belongsTo(Character::class, 'sender_id');
+            case 'Guild':
+                return $this->belongsTo(Guild::class, 'sender_id');
         }
-
-        return $this->belongsTo(Character::class, 'sender_id');
     }
 
     /**
      * Get the user who received the logged action.
      */
     public function recipient() {
-        if ($this->recipient_type == 'User') {
-            return $this->belongsTo(User::class, 'recipient_id');
+        switch ( $this->sender_type ) {
+            case 'User':
+                return $this->belongsTo(User::class, 'sender_id');
+            case 'Character':
+                return $this->belongsTo(Character::class, 'sender_id');
+            case 'Guild':
+                return $this->belongsTo(Guild::class, 'sender_id');
         }
-
-        return $this->belongsTo(Character::class, 'recipient_id');
     }
 
     /**

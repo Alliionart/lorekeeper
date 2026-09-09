@@ -130,6 +130,12 @@ class InventoryController extends Controller {
         $hasPower = Auth::check() ? Auth::user()->hasPower('edit_inventories') : false;
         $readOnly = $request->get('read_only') ?: ((Auth::check() && $first_instance && (isset($ownerId) == true || $hasPower == true)) ? 0 : 1);
 
+        $members = $guild->members()
+                    ->with('user')
+                    ->get()
+                    ->mapWithKeys(fn ($m) => [$m->user_id => $m->user->name])
+                    ->all();
+
         return view('guilds._inventory_stack', [
             'stack'         => $stack,
             'item'          => $item,
@@ -138,6 +144,7 @@ class InventoryController extends Controller {
             'readOnly'      => $readOnly,
             'guild'         => $guild,
             'owner_id'      => $ownerId ?? null,
+            'members'       => $members,
             'allowed_users' => null, //Get users who can edit the guild here (Owner and Mods)!
         ]);
     }

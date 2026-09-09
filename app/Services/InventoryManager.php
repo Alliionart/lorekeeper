@@ -7,6 +7,8 @@ use App\Models\Character\CharacterItem;
 use App\Models\Item\Item;
 use App\Models\User\User;
 use App\Models\User\UserItem;
+use App\Models\Guild\Guild;
+use App\Models\Guild\GuildItem;
 use Carbon\Carbon;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
@@ -151,6 +153,72 @@ class InventoryManager extends Service {
     }
 
     /**
+     * Grants an item to a guild.
+     *
+     * @param array                           $data
+     * @param \App\Models\Guild\Guild $character
+     * @param \App\Models\User\User           $staff
+     *
+     * @return bool
+     */
+    public function grantGuildItems($data, $guild, $staff) {
+        DB::beginTransaction();
+
+        try {
+            if (!$guild) {
+                throw new \Exception('Invalid guild selected.');
+            }
+
+            foreach ($data['quantities'] as $q) {
+                if ($q <= 0) {
+                    throw new \Exception('All quantities must be at least 1.');
+                }
+            }
+
+            $keyed_quantities = [];
+            array_walk($data['item_ids'], function ($id, $key) use (&$keyed_quantities, $data) {
+                if ($id != null && !in_array($id, array_keys($keyed_quantities), true)) {
+                    $keyed_quantities[$id] = $data['quantities'][$key];
+                }
+            });
+
+            // Process item(s)
+            $items = Item::find($data['item_ids']);
+            foreach ($items as $i) {
+                if (!$i->category->is_guild_owned) {
+                    throw new \Exception('One of these items cannot be owned by guilds.');
+                }
+            }
+            if (!count($items)) {
+                throw new \Exception('No valid items found.');
+            }
+
+            foreach ($items as $item) {
+                if (!$this->logAdminAction($staff, 'Item Grant', 'Granted '.$keyed_quantities[$item->id].' '.$item->displayName.' to '.$guild->displayname)) {
+                    throw new \Exception('Failed to log admin action.');
+                }
+
+                if ($guild->status === 'active' && $this->creditItem($staff, $guild, 'Staff Grant', Arr::only($data, ['data', 'disallow_transfer', 'notes']), $item, $keyed_quantities[$item->id])) {
+                    // Notifications::create('GUILD_ITEM_GRANT', $user, [
+                    //     'item_name'     => $item->name,
+                    //     'item_quantity' => $keyed_quantities[$item->id],
+                    //     'sender_url'    => $staff->url,
+                    //     'sender_name'   => $staff->name,
+                    // ]);
+                } else {
+                    throw new \Exception('Failed to credit items to '.$guild->name.'.');
+                }
+            }
+
+            return $this->commitReturn(true);
+        } catch (\Exception $e) {
+            $this->setError('error', $e->getMessage());
+        }
+
+        return $this->rollbackReturn(false);
+    }
+
+    /**
      * Transfers items between a user and character.
      *
      * @param \App\Models\Character\Character|\App\Models\User\User         $sender
@@ -226,6 +294,145 @@ class InventoryManager extends Service {
 
                 $stack->count -= $quantity;
                 $stack->save();
+            }
+
+            return $this->commitReturn(true);
+        } catch (\Exception $e) {
+            $this->setError('error', $e->getMessage());
+        }
+
+        return $this->rollbackReturn(false);
+    }
+
+    /**
+     * Transfers an item stack from a guild source to a user, character, or guild,
+     * or from a user/character source to a guild target.
+     *
+     * @param mixed $sender
+     * @param mixed $recipient
+     * @param mixed $stacks
+     * @param array $quantities
+     * @param mixed $user
+     *
+     * @return bool
+     */
+    public function transferGuildStack($sender, $recipient, $stacks, $quantities, $user = null) {
+        DB::beginTransaction();
+
+        try {
+            if (!$sender) {
+                throw new \Exception('Invalid sender selected.');
+            }
+            if (!$recipient) {
+                throw new \Exception('Invalid recipient selected.');
+            }
+            if (!$stacks || $stacks->isEmpty()) {
+                throw new \Exception('Invalid or no stack selected.');
+            }
+
+            $senderType = $sender->logType ?? null;
+            $recipientType = $recipient->logType ?? null;
+            $allowedTypes = ['Guild', 'User', 'Character'];
+
+            if (!in_array($senderType, $allowedTypes, true) || !in_array($recipientType, $allowedTypes, true)) {
+                throw new \Exception('Invalid transfer direction selected.');
+            }
+
+            // One-way stack model to source owner restriction.
+            $sourceMap = [
+                'Guild'     => 'guild_id',
+                'User'      => 'user_id',
+                'Character' => 'character_id',
+            ];
+
+            foreach ($stacks as $key => $stack) {
+                $quantity = (int) $quantities[$key] ?? 0;
+                if (!$stack) {
+                    throw new \Exception('Invalid or no stack selected.');
+                }
+                if ($quantity <= 0) {
+                    throw new \Exception('Invalid quantity entered.');
+                }
+                if ($stack->count < $quantity) {
+                    throw new \Exception('Quantity to transfer exceeds item count.');
+                }
+                if ((!$stack->item->allow_transfer || isset($stack->data['disallow_transfer'])) && !($user && $user->hasPower('edit_inventories'))) {
+                    throw new \Exception('One of the selected items cannot be transferred.');
+                }
+
+                // Reject impossible direction pairs such as user->character or character->user.
+                // Only the guild route is treated as a generic mix-container here, while the user/character
+                // transfer routes remain the standard user/character controller flow.
+                $validDirections = [
+                    ['Guild', 'User'],
+                    ['Guild', 'Character'],
+                    ['User', 'Guild'],
+                    ['Character', 'Guild'],
+                ];
+                $direction = [$senderType, $recipientType];
+                if (!in_array($direction, $validDirections, true)) {
+                    throw new \Exception('This transfer direction is not supported.');
+                }
+
+                // Recipient character capacity checks, if target is a character.
+                if ($recipientType == 'Character') {
+                    if (!$recipient->is_visible && !($user && $user->hasPower('edit_inventories'))) {
+                        throw new \Exception('Invalid character selected.');
+                    }
+                    if (!$stack->item->category->is_character_owned) {
+                        throw new \Exception('One of the selected items cannot be owned by characters.');
+                    }
+
+                    if ($stack->item->category->character_limit > 0) {
+                        $limitedItems = Item::where('item_category_id', $stack->item->category->id);
+                        $ownedLimitedItems = CharacterItem::with('item')
+                            ->whereIn('item_id', $limitedItems->pluck('id'))
+                            ->whereNull('deleted_at')
+                            ->where('count', '>', '0')
+                            ->where('character_id', $recipient->id)
+                            ->get();
+                        $newOwnedLimit = $ownedLimitedItems->pluck('count')->sum() + $quantity;
+
+                        if ($ownedLimitedItems->pluck('count')->sum() >= $stack->item->category->character_limit || $newOwnedLimit > $stack->item->category->character_limit) {
+                            throw new \Exception('One of the selected items exceeds the limit characters can own for its category.');
+                        }
+                    }
+                }
+
+                // Permission checks for source side.
+                if ($senderType == 'User' && $stack->user_id != $sender->id && !($user && $user->hasPower('edit_inventories'))) {
+                    throw new \Exception('You do not own one of the selected items.');
+                }
+                if ($senderType == 'Character' && $stack->character->user_id != $sender->user_id && !($user && $user->hasPower('edit_inventories'))) {
+                    throw new \Exception('You do not own one of the selected items.');
+                }
+                if ($senderType == 'Guild' && $stack->guild_id != $sender->id && !($user && $user->hasPower('edit_inventories'))) {
+                    throw new \Exception('You do not own one of the selected items.');
+                }
+
+                // Transfer log reason string.
+                $type = $senderType.' → '.$recipientType.' Transfer';
+
+                // Credit the intended target stack before reducing the source stack count.
+                if (!$this->creditItem($sender, $recipient, $type, $stack->data, $stack->item, $quantity)) {
+                    throw new \Exception('Failed to credit the recipient stack.');
+                }
+
+                // Reduce the source stack.
+                switch ($senderType) {
+                    case 'User':
+                        $stack->count -= $quantity;
+                        $stack->save();
+                        break;
+                    case 'Character':
+                        $stack->count -= $quantity;
+                        $stack->save();
+                        break;
+                    case 'Guild':
+                        $stack->count -= $quantity;
+                        $stack->save();
+                        break;
+                }
             }
 
             return $this->commitReturn(true);
@@ -456,7 +663,7 @@ class InventoryManager extends Service {
     }
 
     /**
-     * Credits an item to a user or character.
+     * Credits an item to a user, character or guild.
      *
      * @param \App\Models\Character\Character|\App\Models\User\User $sender
      * @param \App\Models\Character\Character|\App\Models\User\User $recipient
@@ -473,30 +680,52 @@ class InventoryManager extends Service {
         try {
             $encoded_data = \json_encode($data);
 
-            if ($recipient->logType == 'User') {
-                $recipient_stack = UserItem::where([
-                    ['user_id', '=', $recipient->id],
-                    ['item_id', '=', $item->id],
-                    ['data', '=', $encoded_data],
-                ])->first();
+            switch ($recipient->logType) {
+                case 'User':
 
-                if (!$recipient_stack) {
-                    $recipient_stack = UserItem::create(['user_id' => $recipient->id, 'item_id' => $item->id, 'data' => $encoded_data]);
-                }
-                $recipient_stack->count += $quantity;
-                $recipient_stack->save();
-            } else {
-                $recipient_stack = CharacterItem::where([
-                    ['character_id', '=', $recipient->id],
-                    ['item_id', '=', $item->id],
-                    ['data', '=', $encoded_data],
-                ])->first();
+                    $recipient_stack = UserItem::where([
+                        ['user_id', '=', $recipient->id],
+                        ['item_id', '=', $item->id],
+                        ['data', '=', $encoded_data],
+                    ])->first();
 
-                if (!$recipient_stack) {
-                    $recipient_stack = CharacterItem::create(['character_id' => $recipient->id, 'item_id' => $item->id, 'data' => $encoded_data]);
-                }
-                $recipient_stack->count += $quantity;
-                $recipient_stack->save();
+                    if (!$recipient_stack) {
+                        $recipient_stack = UserItem::create(['user_id' => $recipient->id, 'item_id' => $item->id, 'data' => $encoded_data]);
+                    }
+                    $recipient_stack->count += $quantity;
+                    $recipient_stack->save();
+
+                    break;
+                case 'Character':
+
+                    $recipient_stack = CharacterItem::where([
+                        ['character_id', '=', $recipient->id],
+                        ['item_id', '=', $item->id],
+                        ['data', '=', $encoded_data],
+                    ])->first();
+
+                    if (!$recipient_stack) {
+                        $recipient_stack = CharacterItem::create(['character_id' => $recipient->id, 'item_id' => $item->id, 'data' => $encoded_data]);
+                    }
+                    $recipient_stack->count += $quantity;
+                    $recipient_stack->save();
+
+                    break;
+                case 'Guild':
+
+                    $recipient_stack = GuildItem::where([
+                        ['guild_id', '=', $recipient->id],
+                        ['item_id', '=', $item->id],
+                        ['data', '=', $encoded_data],
+                    ])->first();
+
+                    if (!$recipient_stack) {
+                        $recipient_stack = GuildItem::create(['guild_id' => $recipient->id, 'item_id' => $item->id, 'data' => $encoded_data]);
+                    }
+                    $recipient_stack->count += $quantity;
+                    $recipient_stack->save();
+
+                    break;
             }
 
             if (!$item->is_released) {
@@ -643,6 +872,8 @@ class InventoryManager extends Service {
      * @return int
      */
     public function createLog($senderId, $senderType, $recipientId, $recipientType, $stackId, $type, $data, $itemId, $quantity) {
+        $logData = is_array($data) || is_object($data) ? json_encode($data) : (string) $data;
+
         return DB::table('items_log')->insert(
             [
                 'sender_id'      => $senderId,
@@ -650,9 +881,9 @@ class InventoryManager extends Service {
                 'recipient_id'   => $recipientId,
                 'recipient_type' => $recipientType,
                 'stack_id'       => $stackId,
-                'log'            => $type.($data ? ' ('.$data.')' : ''),
+                'log'            => $type.($logData ? ' ('.$logData.')' : ''),
                 'log_type'       => $type,
-                'data'           => $data, // this should be just a string
+                'data'           => $logData, // this should be just a string
                 'item_id'        => $itemId,
                 'quantity'       => $quantity,
                 'created_at'     => Carbon::now(),

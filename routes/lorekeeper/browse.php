@@ -16,7 +16,7 @@
 
 Route::get('items/{id}', 'Users\InventoryController@getStack');
 Route::get('items/character/{id}', 'Users\InventoryController@getCharacterStack');
-Route::get('items/guild/{id}', 'Users\InventoryController@getGuildStack');
+Route::get('items/guild/{id}', 'Guilds\InventoryController@getGuildStack');
 
 /**************************************************************************************************
     News
@@ -193,25 +193,36 @@ Route::group(['prefix' => 'queue-submissions', 'namespace' => 'Users'], function
 /**************************************************************************************************
     Guilds
 **************************************************************************************************/
-Route::group(['prefix' => __('guilds.guilds')], function () {
+Route::group(['prefix' => __('guilds.guilds'), 'namespace' => 'Guilds'], function () {
     Route::get('/', 'GuildController@getGuildIndex');
-    Route::get('view/{id}', 'GuildController@getGuild');
-    Route::get('edit/{id}', 'GuildController@getGuildEdit');
-    Route::post('edit/{id}', 'GuildController@postGuildEdit');
-    Route::get('edit-ranks/{id}', 'GuildController@getGuildEditRanks');
-    Route::post('edit-ranks/{id}', 'GuildController@postGuildEditRanks');
+    
+    Route::group(['prefix' => '{id}'], function() {
+        Route::get('/', 'GuildController@getGuild');
 
-    Route::get('view/{id}/shop', 'GuildController@getGuildShop');
-    Route::get('view/{id}/members', 'GuildController@getGuildMembers');
-    Route::get('view/{id}/characters', 'GuildController@getGuildCharacters');
-    Route::get('view/{id}/inventory', 'GuildController@getGuildInventory');
-    Route::get('view/{id}/bank', 'GuildController@getGuildBank');
+        Route::get('edit', 'GuildController@getGuildEdit');
+        Route::post('edit', 'GuildController@postGuildEdit');
+
+        Route::get('edit-ranks', 'GuildController@getGuildEditRanks');
+        Route::post('edit-ranks', 'GuildController@postGuildEditRanks');
+
+        Route::get('shop', 'GuildController@getGuildShop');
+        Route::get('shop/create', 'GuildController@getGuildShopCreate');
+        Route::post('shop/create', 'GuildController@postGuildShopCreate');
+        Route::get('shop/edit', 'GuildController@getGuildShopEdit');
+        Route::post('shop/edit', 'GuildController@postGuildShopEdit');
+
+        Route::get('members', 'GuildController@getGuildMembers');
+        Route::get('characters', 'GuildController@getGuildCharacters');
+
+        Route::get('inventory', 'GuildController@getGuildInventory');
+        Route::post('inventory/edit', 'InventoryController@postEdit');
+        
+        Route::get('bank', 'GuildController@getGuildBank');
+        Route::get(''.strtolower(__('guilds.playpen')), 'GuildController@getGuildPets');
+        Route::get('armory', 'GuildController@getGuildArmory');
+
+    });
 
     Route::post('{id}/bank/transfer', 'GuildController@postBuildBankTransfer');
     Route::get('shops/{id}/{stockId}', 'GuildController@getShopStock')->where(['id' => '[0-9]+', 'stockId' => '[0-9]+']);
-    Route::get('view/{id}/shop/edit', 'GuildController@getGuildShopEdit');
-    Route::post('view/{id}/shop/edit', 'GuildController@postGuildShopEdit');
-
-    Route::get('view/{id}/'.strtolower(__('guilds.playpen')), 'GuildController@getGuildPets');
-    Route::get('view/{id}/armory', 'GuildController@getGuildArmory');
 });

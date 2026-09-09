@@ -100,14 +100,14 @@ class Guild extends Model {
      * Get the members in the guild.
      */
     public function members() {
-        return $this->hasMany(GuildMember::class, 'user_id');
+        return $this->hasMany(GuildMember::class, 'guild_id');
     }
 
     /**
      * Get the mods in the guild.
      */
     public function mods() {
-        return $this->hasMany(GuildMember::class, 'user_id')->where('rank', 'Mod');
+        return $this->hasMany(GuildMember::class, 'guild_id')->where('rank', 'Mod');
     }
 
     /**********************************************************************************************
@@ -263,7 +263,7 @@ class Guild extends Model {
      * @return string
      */
     public function getViewUrlAttribute() {
-        return url(__('guilds.guilds').'/view/'.$this->id);
+        return url(__('guilds.guilds') . '/' . $this->id);
     }
 
     /**
@@ -272,7 +272,7 @@ class Guild extends Model {
      * @return string
      */
     public function getEditUrlAttribute() {
-        return url(__('guilds.guilds').'/edit/'.$this->id);
+        return url(__('guilds.guilds') . '/' . $this->id . '/edit');
     }
 
     /**
@@ -281,7 +281,7 @@ class Guild extends Model {
      * @return string
      */
     public function getEditRankUrlAttribute() {
-        return url(__('guilds.guilds').'/edit-ranks/'.$this->id);
+        return url(__('guilds.guilds') . '/' . $this->id . '/edit-ranks/');
     }
 
     /**
@@ -365,4 +365,23 @@ class Guild extends Model {
 
         return asset($this->imageDirectory.'/'.$this->BannerFileName);
     }
+
+    /**
+     * Gets the character's asset type for asset management.
+     *
+     * @return string
+     */
+    public function getAssetTypeAttribute() {
+        return 'guild';
+    }
+
+    /**
+     * Gets the character's log type for log creation.
+     *
+     * @return string
+     */
+    public function getLogTypeAttribute() {
+        return 'Guild';
+    }
+
 }

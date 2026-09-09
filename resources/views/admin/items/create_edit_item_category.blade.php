@@ -54,13 +54,33 @@
     <div class="card mb-3" id="characterOptions">
         <div class="card-body">
             <div class="mb-2">
-                <div class="form-group">
-                    {!! Form::checkbox('is_character_owned', 1, $category->is_character_owned, ['class' => 'form-check-input', 'data-toggle' => 'toggle', 'data-on' => 'Allow', 'data-off' => 'Disallow']) !!}
-                    {!! Form::label('is_character_owned', 'Can Be Owned by Characters', ['class' => 'form-check-label ml-3']) !!} {!! add_help('This will allow items in this category to be owned by characters.') !!}
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            {!! Form::checkbox('is_character_owned', 1, $category->is_character_owned, ['class' => 'form-check-input', 'data-toggle' => 'toggle', 'data-on' => 'Allow', 'data-off' => 'Disallow']) !!}
+                            {!! Form::label('is_character_owned', 'Can Be Owned by Characters', ['class' => 'form-check-label ml-3']) !!} {!! add_help('This will allow items in this category to be owned by characters.') !!}
+                        </div>
+                    </div>
+                    <div class="col-md-8">
+                        <div class="form-group">
+                            {!! Form::label('character_limit', 'Character Hold Limit') !!} {!! add_help('This is the maximum amount of items from this category a character can possess. Set to 0 to allow infinite.') !!}
+                            {!! Form::text('character_limit', $category ? $category->character_limit : 0, ['class' => 'form-control stock-field', 'data-name' => 'character_limit']) !!}
+                        </div>
+                    </div>
                 </div>
-                <div class="form-group">
-                    {!! Form::label('character_limit', 'Character Hold Limit') !!} {!! add_help('This is the maximum amount of items from this category a character can possess. Set to 0 to allow infinite.') !!}
-                    {!! Form::text('character_limit', $category ? $category->character_limit : 0, ['class' => 'form-control stock-field', 'data-name' => 'character_limit']) !!}
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            {!! Form::checkbox('is_guild_owned', 1, $category->is_guild_owned, ['class' => 'form-check-input', 'data-toggle' => 'toggle', 'data-on' => 'Allow', 'data-off' => 'Disallow']) !!}
+                            {!! Form::label('is_guild_owned', 'Can Be Owned by Guilds', ['class' => 'form-check-label ml-3']) !!} {!! add_help('This will allow items in this category to be owned by guilds.') !!}
+                        </div>
+                    </div>
+                    <div class="col-md-8">
+                        <div class="form-group">
+                            {!! Form::label('guild_limit', 'Guild Hold Limit') !!} {!! add_help('This is the maximum amount of items from this category a guild can possess. Set to 0 to allow infinite.') !!}
+                            {!! Form::text('guild_limit', $category ? $category->guild_limit : 0, ['class' => 'form-control stock-field', 'data-name' => 'guild_limit']) !!}
+                        </div>
+                    </div>
                 </div>
                 <div class="form-group">
                     {!! Form::checkbox('can_name', 1, $category->can_name, ['class' => 'form-check-input', 'data-toggle' => 'toggle', 'data-on' => 'Allow', 'data-off' => 'Disallow']) !!}

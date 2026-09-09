@@ -355,31 +355,43 @@ class CurrencyManager extends Service {
             if (is_numeric($currency)) {
                 $currency = Currency::find($currency);
             }
-            if ($recipient->logType == 'User') {
-                $record = UserCurrency::where('user_id', $recipient->id)->where('currency_id', $currency->id)->first();
-                if ($record) {
-                    // Laravel doesn't support composite primary keys, so directly updating the DB row here
-                    DB::table('user_currencies')->where('user_id', $recipient->id)->where('currency_id', $currency->id)->update(['quantity' => $record->quantity + $quantity]);
-                } else {
-                    $record = UserCurrency::create(['user_id' => $recipient->id, 'currency_id' => $currency->id, 'quantity' => $quantity]);
-                }
-            } elseif ($recipient->logType == 'Guild') {
-                $record = GuildCurrency::where('guild_id', $recipient->id)->where('currency_id', $currency->id)->first();
-                if ($record) {
-                    // Laravel doesn't support composite primary keys, so directly updating the DB row here
-                    DB::table('guild_currencies')->where('guild_id', $recipient->id)->where('currency_id', $currency->id)->update(['quantity' => $record->quantity + $quantity]);
-                } else {
-                    $record = GuildCurrency::create(['guild_id' => $recipient->id, 'currency_id' => $currency->id, 'quantity' => $quantity]);
-                }
-            } else {
-                $record = CharacterCurrency::where('character_id', $recipient->id)->where('currency_id', $currency->id)->first();
-                if ($record) {
-                    // Laravel doesn't support composite primary keys, so directly updating the DB row here
-                    DB::table('character_currencies')->where('character_id', $recipient->id)->where('currency_id', $currency->id)->update(['quantity' => $record->quantity + $quantity]);
-                } else {
-                    $record = CharacterCurrency::create(['character_id' => $recipient->id, 'currency_id' => $currency->id, 'quantity' => $quantity]);
-                }
+
+            switch ( $recipient->logType ) {
+                case 'User':
+
+                    $record = UserCurrency::where('user_id', $recipient->id)->where('currency_id', $currency->id)->first();
+                    if ($record) {
+                        // Laravel doesn't support composite primary keys, so directly updating the DB row here
+                        DB::table('user_currencies')->where('user_id', $recipient->id)->where('currency_id', $currency->id)->update(['quantity' => $record->quantity + $quantity]);
+                    } else {
+                        $record = UserCurrency::create(['user_id' => $recipient->id, 'currency_id' => $currency->id, 'quantity' => $quantity]);
+                    }
+
+                    break;
+                case 'Character':
+
+                    $record = CharacterCurrency::where('character_id', $recipient->id)->where('currency_id', $currency->id)->first();
+                    if ($record) {
+                        // Laravel doesn't support composite primary keys, so directly updating the DB row here
+                        DB::table('character_currencies')->where('character_id', $recipient->id)->where('currency_id', $currency->id)->update(['quantity' => $record->quantity + $quantity]);
+                    } else {
+                        $record = CharacterCurrency::create(['character_id' => $recipient->id, 'currency_id' => $currency->id, 'quantity' => $quantity]);
+                    }
+
+                    break;
+                case 'Guild':
+
+                    $record = GuildCurrency::where('guild_id', $recipient->id)->where('currency_id', $currency->id)->first();
+                    if ($record) {
+                        // Laravel doesn't support composite primary keys, so directly updating the DB row here
+                        DB::table('guild_currencies')->where('guild_id', $recipient->id)->where('currency_id', $currency->id)->update(['quantity' => $record->quantity + $quantity]);
+                    } else {
+                        $record = GuildCurrency::create(['guild_id' => $recipient->id, 'currency_id' => $currency->id, 'quantity' => $quantity]);
+                    }
+
+                    break;
             }
+
             if ($type && !$this->createLog(
                 $sender ? $sender->id : null,
                 $sender ? $sender->logType : null,
