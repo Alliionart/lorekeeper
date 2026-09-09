@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Guilds;
 
 use App\Facades\Settings;
+use App\Http\Controllers\Controller;
 use App\Models\Currency\Currency;
 use App\Models\Guild\Guild;
 use App\Models\Guild\GuildCharacter;
@@ -16,7 +17,6 @@ use App\Models\Item\ItemCategory;
 use App\Models\User\UserCurrency;
 use App\Services\GuildManager;
 use App\Services\GuildShopManager;
-use App\Http\Controllers\Controller;
 use Auth;
 use Illuminate\Http\Request;
 

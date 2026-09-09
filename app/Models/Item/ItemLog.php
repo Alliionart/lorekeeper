@@ -3,9 +3,9 @@
 namespace App\Models\Item;
 
 use App\Models\Character\Character;
+use App\Models\Guild\Guild;
 use App\Models\Model;
 use App\Models\User\User;
-use App\Models\Guild\Guild;
 
 class ItemLog extends Model {
     /**
@@ -43,7 +43,7 @@ class ItemLog extends Model {
      * Get the user who initiated the logged action.
      */
     public function sender() {
-        switch ( $this->sender_type ) {
+        switch ($this->sender_type) {
             case 'User':
                 return $this->belongsTo(User::class, 'sender_id');
             case 'Character':
@@ -57,7 +57,7 @@ class ItemLog extends Model {
      * Get the user who received the logged action.
      */
     public function recipient() {
-        switch ( $this->sender_type ) {
+        switch ($this->sender_type) {
             case 'User':
                 return $this->belongsTo(User::class, 'sender_id');
             case 'Character':

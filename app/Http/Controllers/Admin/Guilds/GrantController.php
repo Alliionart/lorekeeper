@@ -4,9 +4,9 @@ namespace App\Http\Controllers\Admin\Guilds;
 
 use App\Http\Controllers\Controller;
 use App\Models\Currency\Currency;
+use App\Models\Guild\Guild;
 use App\Services\CurrencyManager;
 use App\Services\InventoryManager;
-use App\Models\Guild\Guild;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -14,8 +14,8 @@ class GrantController extends Controller {
     /**
      * Grants or removes currency from a character.
      *
-     * @param string                       $slug
      * @param App\Services\CurrencyManager $service
+     * @param mixed                        $id
      *
      * @return \Illuminate\Http\RedirectResponse
      */
@@ -35,8 +35,8 @@ class GrantController extends Controller {
     /**
      * Grants items to characters.
      *
-     * @param string                        $slug
      * @param App\Services\InventoryManager $service
+     * @param mixed                         $id
      *
      * @return \Illuminate\Http\RedirectResponse
      */

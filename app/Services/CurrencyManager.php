@@ -356,7 +356,7 @@ class CurrencyManager extends Service {
                 $currency = Currency::find($currency);
             }
 
-            switch ( $recipient->logType ) {
+            switch ($recipient->logType) {
                 case 'User':
 
                     $record = UserCurrency::where('user_id', $recipient->id)->where('currency_id', $currency->id)->first();

@@ -195,8 +195,8 @@ Route::group(['prefix' => 'queue-submissions', 'namespace' => 'Users'], function
 **************************************************************************************************/
 Route::group(['prefix' => __('guilds.guilds'), 'namespace' => 'Guilds'], function () {
     Route::get('/', 'GuildController@getGuildIndex');
-    
-    Route::group(['prefix' => '{id}'], function() {
+
+    Route::group(['prefix' => '{id}'], function () {
         Route::get('/', 'GuildController@getGuild');
 
         Route::get('edit', 'GuildController@getGuildEdit');
@@ -216,11 +216,10 @@ Route::group(['prefix' => __('guilds.guilds'), 'namespace' => 'Guilds'], functio
 
         Route::get('inventory', 'GuildController@getGuildInventory');
         Route::post('inventory/edit', 'InventoryController@postEdit');
-        
+
         Route::get('bank', 'GuildController@getGuildBank');
         Route::get(''.strtolower(__('guilds.playpen')), 'GuildController@getGuildPets');
         Route::get('armory', 'GuildController@getGuildArmory');
-
     });
 
     Route::post('{id}/bank/transfer', 'GuildController@postBuildBankTransfer');
