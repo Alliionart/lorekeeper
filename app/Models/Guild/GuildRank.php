@@ -108,7 +108,7 @@ class GuildRank extends Model {
     }
 
     public function getImageUrlAttribute() {
-        return asset($this->imageDirectory .'/'. ( $this->for_user ? 'user' : 'character' ) . '_rank_'. $this->id .'.png');
+        return asset($this->imageDirectory.'/'.($this->for_user ? 'user' : 'character').'_rank_'.$this->id.'.png');
     }
 
     /**
@@ -117,11 +117,11 @@ class GuildRank extends Model {
      * @return string
      */
     public function getDisplayNameAttribute() {
-        return '<span class="d-flex align-items-center"><img class="mr-2" style="max-width:25px;" src="'. $this->imageUrl .'" loading="lazy"/> '. $this->name .'</span>';
+        return '<span class="d-flex align-items-center"><img class="mr-2" style="max-width:25px;" src="'.$this->imageUrl.'" loading="lazy"/> '.$this->name.'</span>';
     }
 
     public function getRankImageNameAttribute() {
-        return ( $this->for_user ? 'user' : 'character' ) . '_rank_'.$this->id.'.png';
+        return ($this->for_user ? 'user' : 'character').'_rank_'.$this->id.'.png';
     }
 
     /**********************************************************************************************
@@ -130,11 +130,11 @@ class GuildRank extends Model {
 
     **********************************************************************************************/
 
-    public function getRankImageName( $id ) {
-        return ( $this->for_user ? 'user' : 'character' ) . '_rank_'.$id.'.png';
+    public function getRankImageName($id) {
+        return ($this->for_user ? 'user' : 'character').'_rank_'.$id.'.png';
     }
 
-    public function getRankImagePath( $id ) {
-        return $this->imageDirectory .'/'. ( $this->for_user ? 'user' : 'character' ) . '_rank_'. $this->id .'.png';
+    public function getRankImagePath($id) {
+        return $this->imageDirectory.'/'.($this->for_user ? 'user' : 'character').'_rank_'.$this->id.'.png';
     }
 }
