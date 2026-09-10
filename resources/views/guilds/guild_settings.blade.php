@@ -138,29 +138,28 @@
         <div class="card-body">
             {!! Form::open(['url' => '/guilds/' . $guild->id . '/edit/staff', 'id' => 'guildSettingForm']) !!}
 
-                <div class="row">
-                    <div class="col-md-3">
-                        <div class="form-group">
-                            {!! Form::label('Guild Owner') !!}
-                            {!! Form::select('owner_id', $members, $guild->owner_id, ['class' => 'form-control selectize']) !!}
-                        </div>
-                    </div>
-                    <div class="col-md-9">
-                        <div class="form-group">
-                            {!! Form::label('Guild Moderators') !!}
-                            {!! Form::select('mods[]', $members, $guild->mods()->pluck('user_id') ?? null, ['class' => 'form-control selectize', 'multiple']) !!}
-                        </div>
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="form-group">
+                        {!! Form::label('Guild Owner') !!}
+                        {!! Form::select('owner_id', $members, $guild->owner_id, ['class' => 'form-control selectize']) !!}
                     </div>
                 </div>
+                <div class="col-md-9">
+                    <div class="form-group">
+                        {!! Form::label('Guild Moderators') !!}
+                        {!! Form::select('mods[]', $members, $guild->mods()->pluck('user_id') ?? null, ['class' => 'form-control selectize', 'multiple']) !!}
+                    </div>
+                </div>
+            </div>
 
-                <div class="text-right">
-                    {!! Form::submit('Update Guild Staff', ['class' => 'btn btn-primary update-guild']) !!}
-                </div>
+            <div class="text-right">
+                {!! Form::submit('Update Guild Staff', ['class' => 'btn btn-primary update-guild']) !!}
+            </div>
 
             {!! Form::close() !!}
         </div>
     </div>
-
 @endsection
 
 @section('scripts')
