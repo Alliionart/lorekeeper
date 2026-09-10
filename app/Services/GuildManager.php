@@ -219,7 +219,7 @@ class GuildManager extends Service {
             if (isset($data['user_ranks'])) {
                 $userRanks = [];
                 foreach ($data['user_ranks'] as $index => $rank) {
-                    if ( !$rank['rank_name'] ) {
+                    if (!$rank['rank_name']) {
                         continue;
                     }
 
@@ -253,7 +253,7 @@ class GuildManager extends Service {
                             'has_image'             => $icon ? true : false,
                         ]);
                     }
-                    if ( $icon ) {
+                    if ($icon) {
                         $this->handleImage($icon, $guild->imagePath, $currentRank->rankImageName);
                         $currentRank->update([
                             'has_image' => true,
@@ -276,7 +276,7 @@ class GuildManager extends Service {
             if (isset($data['character_ranks'])) {
                 $characterRanks = [];
                 foreach ($data['character_ranks'] as $index => $rank) {
-                    if ( !$rank['rank_name'] ) {
+                    if (!$rank['rank_name']) {
                         continue;
                     }
 
@@ -308,7 +308,7 @@ class GuildManager extends Service {
                             'description'           => $rank['description'],
                         ]);
                     }
-                    if ( $icon ) {
+                    if ($icon) {
                         $this->handleImage($icon, $guild->imagePath, $currentRank->rankImageName);
                         $currentRank->update([
                             'has_image' => true,

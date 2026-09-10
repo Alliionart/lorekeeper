@@ -4,7 +4,7 @@
             @if ($guild->has_logo)
                 <div class="col-md-3">
                     <a href="{{ $guild->viewUrl }}">
-                        <img src="{{ $guild->logoUrl }}" class="img-fluid" alt="{{ $guild->name }} Logo"/>
+                        <img src="{{ $guild->logoUrl }}" class="img-fluid" alt="{{ $guild->name }} Logo" />
                     </a>
                 </div>
             @endif
