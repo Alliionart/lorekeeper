@@ -106,13 +106,17 @@ class GuildController extends Controller {
         }
 
         if (($guild->owner_id !== Auth::user()->id) || !Auth::user()->isStaff) {
-            return redirect('/guilds/view'.$guild->id)->with('error', 'You do not have permission to edit this guild.');
+            return redirect('/guilds/'.$guild->id)->with('error', 'You do not have permission to edit this guild.');
         }
 
         return view('guilds.guild_settings', [
             'guild'                 => $guild,
             'global_max_players'    => Settings::get('guilds_max_players'),
             'global_max_characters' => Settings::get('guilds_max_characters'),
+            'members'               => $guild->members()
+                                        ->join('users', 'guild_users.user_id', '=', 'users.id')
+                                        ->pluck('users.name', 'guild_users.user_id')
+                                        ->toArray(),
         ]);
     }
 
@@ -147,6 +151,31 @@ class GuildController extends Controller {
             flash('Guild created successfully.')->success();
 
             return redirect()->to('guilds/edit/'.$guild->id);
+        } else {
+            foreach ($service->errors()->getMessages()['error'] as $error) {
+                flash($error)->error();
+            }
+        }
+
+        return redirect()->back();
+    }
+
+    /**
+     * Edits the guild staff.
+     *
+     * @param App\Services\GuildManager $service
+     * @param int|null                  $id
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function postGuildStaffEdit(Request $request, GuildManager $service, $id = null) {
+        $id ? $request->validate(Guild::$updateRules) : $request->validate(Guild::$createRules);
+        $data = $request->only([
+            'owner_id', 'mods'
+        ]);
+
+        if ($id && $service->updateGuildStaff(Guild::find($id), $data, Auth::user())) {
+            flash('Guild staff updated successfully.')->success();
         } else {
             foreach ($service->errors()->getMessages()['error'] as $error) {
                 flash($error)->error();

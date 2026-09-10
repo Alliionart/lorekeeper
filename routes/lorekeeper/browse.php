@@ -201,6 +201,7 @@ Route::group(['prefix' => __('guilds.guilds'), 'namespace' => 'Guilds'], functio
 
         Route::get('edit', 'GuildController@getGuildEdit');
         Route::post('edit', 'GuildController@postGuildEdit');
+        Route::post('edit/staff', 'GuildController@postGuildStaffEdit');
 
         Route::get('edit-ranks', 'GuildController@getGuildEditRanks');
         Route::post('edit-ranks', 'GuildController@postGuildEditRanks');

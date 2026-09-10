@@ -58,6 +58,59 @@ class GuildManager extends Service {
     }
 
     /**
+     * Updates guild staff.
+     *
+     * @param \App\Models\Guild\Guild $guild
+     * @param array                   $data
+     * @param \App\Models\User\User   $user
+     *
+     * @return \App\Models\Guild\Guild|bool
+     */
+    public function updateGuildStaff($guild, $data, $user) {
+        DB::beginTransaction();
+
+        try {
+            
+            if ( !$guild ) {
+                throw new \Exception('Invalid guild.');
+            }
+            if ( $user->id !== $guild->owner_id ) {
+                throw new \Exception('Only the guild owner may edit staff!');
+            }
+
+            if ( (int) $data['owner_id'] !== (int) $guild->owner_id ) {
+                $guild->update([
+                    'owner_id'  => $data['owner_id'],
+                ]);
+            }
+
+            $mods = $guild->mods()->get();
+            $newMods = $data['mods'];
+            
+            $removeMods = array_diff($mods->pluck('user_id')->toArray(), $newMods);
+            $newMods = array_diff($newMods, $mods->pluck('user_id')->toArray());
+            
+            if ( ! empty($removeMods) ) {
+                $guild->mods()
+                    ->whereIn('user_id', $removeMods)
+                    ->update(['permissions' => 0]);
+            }
+            if ( ! empty($newMods) ) {
+                $guild->mods()
+                    ->whereIn('user_id', $newMods)
+                    ->update(['permissions' => 1]);
+            }
+
+            return $this->commitReturn(true);
+        } catch (\Exception $e) {
+            $this->setError('error', $e->getMessage());
+        }
+
+        return $this->rollbackReturn(false);
+
+    }
+
+    /**
      * Updates a prompt.
      *
      * @param \App\Models\Guild\Guild $guild

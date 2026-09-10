@@ -108,7 +108,7 @@ class Guild extends Model {
      * Get the mods in the guild.
      */
     public function mods() {
-        return $this->hasMany(GuildMember::class, 'guild_id')->where('rank', 'Mod');
+        return $this->hasMany(GuildMember::class, 'guild_id')->where('permissions', 1);
     }
 
     /**

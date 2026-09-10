@@ -66,4 +66,26 @@ class GuildMember extends Model {
         ACCESSORS
 
     **********************************************************************************************/
+
+    /**********************************************************************************************
+
+        OTHER FUNCTIONS
+
+    **********************************************************************************************/
+
+    public function isOwner() {
+        if ( $this->permissions > 1 ) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public function isMod() {
+        if ( $this->permissions < 2 && $this->permissions > 0 ) {
+            return true;
+        }
+
+        return false;
+    }
 }
