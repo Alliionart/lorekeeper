@@ -4,15 +4,10 @@ namespace App\Http\Controllers\Guilds;
 
 use App\Http\Controllers\Controller;
 use App\Models\Character\Character;
-use App\Models\Character\CharacterItem;
 use App\Models\Guild\Guild;
 use App\Models\Guild\GuildItem;
 use App\Models\Item\Item;
-use App\Models\Item\ItemCategory;
-use App\Models\Queue\QueueSubmission;
-use App\Models\Submission\Submission;
 use App\Models\User\User;
-use App\Models\User\UserItem;
 use App\Services\InventoryManager;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -47,16 +42,16 @@ class InventoryController extends Controller {
         $readOnly = $request->get('read_only') ?: ((Auth::check() && $first_instance && (isset($ownerId) == true || $hasPower == true)) ? 0 : 1);
 
         $members = $guild->members()
-                    ->with('user')
-                    ->get()
-                    ->mapWithKeys(fn ($m) => [$m->user_id => $m->user->name])
-                    ->all();
+            ->with('user')
+            ->get()
+            ->mapWithKeys(fn ($m) => [$m->user_id => $m->user->name])
+            ->all();
 
         $characters = $guild->characters()
-                    ->with('character')
-                    ->get()
-                    ->mapWithKeys(fn ($c) => [$c->character_id => $c->character->fullName])
-                    ->all();
+            ->with('character')
+            ->get()
+            ->mapWithKeys(fn ($c) => [$c->character_id => $c->character->fullName])
+            ->all();
 
         return view('guilds._inventory_stack', [
             'stack'         => $stack,
@@ -135,7 +130,7 @@ class InventoryController extends Controller {
      */
     private function postTransfer(Request $request, InventoryManager $service) {
         $guild = Guild::find($request->route('id'));
-        
+
         if ($service->transferGuildStack($guild, User::visible()->where('id', $request->get('user'))->first(), GuildItem::find($request->get('ids')), $request->get('quantities'), Auth::user())) {
             flash('Item transferred successfully.')->success();
         } else {

@@ -4,11 +4,11 @@ namespace App\Services;
 
 use App\Facades\Notifications;
 use App\Models\Character\CharacterItem;
+use App\Models\Guild\Guild;
+use App\Models\Guild\GuildItem;
 use App\Models\Item\Item;
 use App\Models\User\User;
 use App\Models\User\UserItem;
-use App\Models\Guild\Guild;
-use App\Models\Guild\GuildItem;
 use Carbon\Carbon;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
@@ -155,9 +155,9 @@ class InventoryManager extends Service {
     /**
      * Grants an item to a guild.
      *
-     * @param array                           $data
-     * @param \App\Models\Guild\Guild $character
-     * @param \App\Models\User\User           $staff
+     * @param array                 $data
+     * @param \App\Models\User\User $staff
+     * @param mixed                 $guild
      *
      * @return bool
      */

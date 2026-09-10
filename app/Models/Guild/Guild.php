@@ -271,7 +271,7 @@ class Guild extends Model {
      * @return string
      */
     public function getViewUrlAttribute() {
-        return url(__('guilds.guilds') . '/' . $this->id);
+        return url(__('guilds.guilds').'/'.$this->id);
     }
 
     /**
@@ -280,7 +280,7 @@ class Guild extends Model {
      * @return string
      */
     public function getEditUrlAttribute() {
-        return url(__('guilds.guilds') . '/' . $this->id . '/edit');
+        return url(__('guilds.guilds').'/'.$this->id.'/edit');
     }
 
     /**
@@ -289,7 +289,7 @@ class Guild extends Model {
      * @return string
      */
     public function getEditRankUrlAttribute() {
-        return url(__('guilds.guilds') . '/' . $this->id . '/edit-ranks/');
+        return url(__('guilds.guilds').'/'.$this->id.'/edit-ranks/');
     }
 
     /**
@@ -391,7 +391,5 @@ class Guild extends Model {
     public function getLogTypeAttribute() {
         return 'Guild';
     }
-
-    
 
 }

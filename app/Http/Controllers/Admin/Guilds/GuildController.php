@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Admin\Guilds;
 
 use App\Http\Controllers\Controller;
-use App\Http\Controllers\Admin\Guilds\GrantController;
 use App\Models\Guild\Guild;
 use Illuminate\Http\Request;
 use Settings;
@@ -93,6 +92,4 @@ class GuildController extends Controller {
      */
     public function postEditGuild(Request $request, $id) {
     }
-
-    
 }
