@@ -206,11 +206,14 @@ Route::group(['prefix' => __('guilds.guilds'), 'namespace' => 'Guilds'], functio
         Route::get('edit-ranks', 'GuildController@getGuildEditRanks');
         Route::post('edit-ranks', 'GuildController@postGuildEditRanks');
 
-        Route::get('shop', 'GuildController@getGuildShop');
-        Route::get('shop/create', 'GuildController@getGuildShopCreate');
-        Route::post('shop/create', 'GuildController@postGuildShopCreate');
-        Route::get('shop/edit', 'GuildController@getGuildShopEdit');
-        Route::post('shop/edit', 'GuildController@postGuildShopEdit');
+        Route::group(['prefix' => 'shop'], function () {
+            Route::get('/', 'GuildController@getGuildShop');
+            Route::get('create', 'GuildController@getGuildShopCreate');
+            Route::post('create', 'GuildController@postCreateEditShop');
+
+            Route::get('edit', 'GuildController@getGuildShopEdit');
+            Route::post('edit', 'GuildController@postCreateEditShop');
+        });
 
         Route::get('members', 'GuildController@getGuildMembers');
         Route::get('characters', 'GuildController@getGuildCharacters');

@@ -9,7 +9,7 @@
 @endsection
 
 @section('content')
-    {!! breadcrumbs([ucwords(__('guilds.guilds')) => __('guilds.guilds'), $guild->name => '/guilds/' . $guild->id, 'Settings' => 'settings']) !!}
+    {!! breadcrumbs([ucwords(__('guilds.guilds')) => __('guilds.guilds'), $guild->name => $guild->viewUrl, 'Settings' => 'settings']) !!}
 
     <h1>Edit {{ $guild->name }}</h1>
     <p>Edit your {{ __('guilds.guild') }} below. Only {{ __('guilds.guild') }} owners and mods may edit the guild. Staff may edit your guild as well.</p>

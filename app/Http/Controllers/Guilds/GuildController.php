@@ -486,6 +486,28 @@ class GuildController extends Controller {
     /**
      * Shows the guild shop edit page.
      */
+    public function getGuildShopCreate($id) {
+        $guild = Guild::where('id', $id)->first();
+
+        if (!$guild) {
+            abort(404);
+        }
+
+        if (($guild->owner_id !== Auth::user()->id) || !Auth::user()->isStaff) {
+            return redirect('/guilds/view'.$guild->id.'/shop')->with('error', 'You do not have permission to edit this guild shop.');
+        }
+
+        return view('guilds.shop_edit', [
+            'guild'      => $guild,
+            'shop'       => null,
+            'items'      => Item::orderBy('name')->pluck('name', 'id'),
+            'currencies' => Currency::orderBy('name')->pluck('name', 'id'),
+        ]);
+    }
+
+    /**
+     * Shows the guild shop edit page.
+     */
     public function getGuildShopEdit($id) {
         $guild = Guild::where('id', $id)->first();
         $shop = $guild->shop;
@@ -504,6 +526,36 @@ class GuildController extends Controller {
             'items'      => Item::orderBy('name')->pluck('name', 'id'),
             'currencies' => Currency::orderBy('name')->pluck('name', 'id'),
         ]);
+    }
+
+    /**
+     * Creates or edits a guild shop.
+     *
+     * @param App\Services\GuildManager $service
+     * @param int                       $id
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function postCreateEditShop(Request $request, GuildManager $service, $id) {
+        $data = $request->only([
+            'name', 'description', 'image', 'remove_image', 'is_active',
+        ]);
+
+        $guild = Guild::find($id);
+
+        if ($guild->shop && $service->updateShop($guild, $data, Auth::user())) {
+            flash('Shop updated successfully.')->success();
+        } elseif (!$guild->shop && $shop = $service->createShop($guild, $data, Auth::user())) {
+            flash('Shop created successfully.')->success();
+
+            return redirect()->to( $guild->viewUrl . '/shop' );
+        } else {
+            foreach ($service->errors()->getMessages()['error'] as $error) {
+                flash($error)->error();
+            }
+        }
+
+        return redirect()->back();
     }
 
     /**

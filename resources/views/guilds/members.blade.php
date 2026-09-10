@@ -9,7 +9,7 @@
 @endsection
 
 @section('content')
-    {!! breadcrumbs([ucwords(__('guilds.guilds')) => __('guilds.guilds')]) !!}
+    {!! breadcrumbs([ucwords(__('guilds.guilds')) => __('guilds.guilds'), $guild->name => $guild->viewUrl, 'Members' => 'members']) !!}
 
     <h1>{{ $guild->name }}'s Members</h1>
 

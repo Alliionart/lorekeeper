@@ -9,21 +9,21 @@
 @endsection
 
 @section('content')
-    {!! breadcrumbs([ucwords(__('guilds.guilds')) => __('guilds.guilds'), $guild->name => $guild->name]) !!}
+    {!! breadcrumbs([ucwords(__('guilds.guilds')) => __('guilds.guilds'), $guild->name => $guild->viewUrl . '/shop', 'Create Shop' => 'create']) !!}
 
-    <h1>{{ $shop->id ? 'Edit' : 'Create' }} Shop
-        @if ($shop->id)
+    <h1>{{ $shop && $shop->id ? 'Edit' : 'Create' }} Shop
+        @if ($shop && $shop->id)
             ({!! $shop->displayName !!})
         @endif
     </h1>
 
-    {!! Form::open(['url' => $shop->id ? 'admin/data/shops/edit/' . $shop->id : 'admin/data/shops/create', 'files' => true]) !!}
+    {!! Form::open(['url' => 'guilds/'.$guild->id.'/shop/' . ( $shop ? 'edit' : 'create' ), 'files' => true]) !!}
 
     <h3>Basic Information</h3>
 
     <div class="form-group">
         {!! Form::label('Name') !!}
-        {!! Form::text('name', $shop->name, ['class' => 'form-control']) !!}
+        {!! Form::text('name', $shop ? $shop->name : null, ['class' => 'form-control']) !!}
     </div>
 
     <div class="form-group">
@@ -33,7 +33,7 @@
             {!! Form::file('image', ['class' => 'custom-file-input']) !!}
         </div>
         <div class="text-muted">Recommended size: None (Choose a standard size for all shop images)</div>
-        @if ($shop->has_image)
+        @if ($shop && $shop->has_image)
             <div class="form-check">
                 {!! Form::checkbox('remove_image', 1, false, ['class' => 'form-check-input']) !!}
                 {!! Form::label('remove_image', 'Remove current image', ['class' => 'form-check-label']) !!}
@@ -43,21 +43,21 @@
 
     <div class="form-group">
         {!! Form::label('Description (Optional)') !!}
-        {!! Form::textarea('description', $shop->description, ['class' => 'form-control wysiwyg']) !!}
+        {!! Form::textarea('description', $shop ? $shop->description : null, ['class' => 'form-control wysiwyg']) !!}
     </div>
 
     <div class="form-group">
-        {!! Form::checkbox('is_active', 1, $shop->id ? $shop->is_active : 1, ['class' => 'form-check-input', 'data-toggle' => 'toggle']) !!}
+        {!! Form::checkbox('is_active', 1, $shop && $shop->id ? $shop->is_active : 1, ['class' => 'form-check-input', 'data-toggle' => 'toggle']) !!}
         {!! Form::label('is_active', 'Set Active', ['class' => 'form-check-label ml-3']) !!} {!! add_help('If turned off, the shop will not be visible to regular users.') !!}
     </div>
 
     <div class="text-right">
-        {!! Form::submit($shop->id ? 'Edit' : 'Create', ['class' => 'btn btn-primary']) !!}
+        {!! Form::submit($shop && $shop->id ? 'Edit' : 'Create', ['class' => 'btn btn-primary']) !!}
     </div>
 
     {!! Form::close() !!}
 
-    @if ($shop->id)
+    @if ($shop && $shop->id)
         <h3>Shop Stock</h3>
         {!! Form::open(['url' => 'guilds/view/' . $shop->id . 'shop/edit/stock/' . $shop->id]) !!}
         <div class="text-right mb-3">
@@ -86,7 +86,7 @@
 
             $('.delete-shop-button').on('click', function(e) {
                 e.preventDefault();
-                loadModal("{{ url('admin/data/shops/delete') }}/{{ $shop->id }}", 'Delete Shop');
+                loadModal("{{ url('admin/data/shops/delete') }}/{{ $shop->id ?? null }}", 'Delete Shop');
             });
             $('.add-stock-button').on('click', function(e) {
                 e.preventDefault();
