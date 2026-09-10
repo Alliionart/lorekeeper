@@ -12,7 +12,7 @@ class GuildCharacter extends Model {
      * @var array
      */
     protected $fillable = [
-        'guild_id', 'character_id', 'rank', 'reputation', 'joined_at',
+        'guild_id', 'character_id', 'rank_id', 'reputation', 'joined_at',
     ];
 
     /**
@@ -51,6 +51,14 @@ class GuildCharacter extends Model {
      */
     public function character() {
         return $this->belongsTo(Character::class, 'character_id');
+    }
+
+    /**
+     * Get the guild rank associated with the character.
+     */
+    public function rank() {
+        return $this->belongsTo(GuildRank::class, 'rank_id')
+            ->where('guild_id', $this->guild_id);
     }
 
     /**********************************************************************************************

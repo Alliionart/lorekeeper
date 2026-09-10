@@ -88,4 +88,53 @@ class GuildRank extends Model {
         ACCESSORS
 
     **********************************************************************************************/
+
+    /**
+     * Gets the file directory containing the model's image.
+     *
+     * @return string
+     */
+    public function getImageDirectoryAttribute() {
+        return 'images/data/guilds/'.$this->guild->id;
+    }
+
+    /**
+     * Gets the path to the file directory containing the model's image.
+     *
+     * @return string
+     */
+    public function getImagePathAttribute() {
+        return public_path($this->imageDirectory);
+    }
+
+    public function getImageUrlAttribute() {
+        return asset($this->imageDirectory .'/'. ( $this->for_user ? 'user' : 'character' ) . '_rank_'. $this->id .'.png');
+    }
+
+    /**
+     * Gets the display name for the rank.
+     *
+     * @return string
+     */
+    public function getDisplayNameAttribute() {
+        return '<span class="d-flex align-items-center"><img class="mr-2" style="max-width:25px;" src="'. $this->imageUrl .'" loading="lazy"/> '. $this->name .'</span>';
+    }
+
+    public function getRankImageNameAttribute() {
+        return ( $this->for_user ? 'user' : 'character' ) . '_rank_'.$this->id.'.png';
+    }
+
+    /**********************************************************************************************
+
+        OTHER FUNCTIONS
+
+    **********************************************************************************************/
+
+    public function getRankImageName( $id ) {
+        return ( $this->for_user ? 'user' : 'character' ) . '_rank_'.$id.'.png';
+    }
+
+    public function getRankImagePath( $id ) {
+        return $this->imageDirectory .'/'. ( $this->for_user ? 'user' : 'character' ) . '_rank_'. $this->id .'.png';
+    }
 }

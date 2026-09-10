@@ -7,6 +7,7 @@ use App\Models\Currency\CurrencyLog;
 use App\Models\Item\Item;
 use App\Models\Model;
 use App\Models\User\User;
+use App\Models\Guild\GuildRank;
 use Carbon\Carbon;
 
 class Guild extends Model {
@@ -38,7 +39,7 @@ class Guild extends Model {
      *
      * @var string
      */
-    public $timestamps = false;
+    public $timestamps = true;
 
     /**
      * Validation rules for guild creation.
@@ -108,6 +109,13 @@ class Guild extends Model {
      */
     public function mods() {
         return $this->hasMany(GuildMember::class, 'guild_id')->where('rank', 'Mod');
+    }
+
+    /**
+     * Get the ranks in the guild.
+     */
+    public function ranks() {
+        return $this->hasMany(GuildRank::class, 'guild_id');
     }
 
     /**********************************************************************************************
@@ -383,5 +391,7 @@ class Guild extends Model {
     public function getLogTypeAttribute() {
         return 'Guild';
     }
+
+    
 
 }

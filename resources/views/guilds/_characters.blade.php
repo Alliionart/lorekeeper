@@ -13,7 +13,10 @@
                     @endif {{ Illuminate\Support\Str::limit($character->fullName, 20, $end = '...') }}
                 </a>
             </div>
-            {!! $character->getDisplayOwnerAttribute() !!}
+            <div class="d-flex align-items-center justify-content-between">
+                {!! $character->displayOwner !!}
+                {!! $gc->rank->displayName !!}
+            </div>
         </div>
         @if (isset($limit) && $i === $limit - 1)
         @break

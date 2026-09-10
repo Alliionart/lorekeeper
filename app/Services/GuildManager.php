@@ -77,8 +77,6 @@ class GuildManager extends Service {
                 throw new \Exception('The name has already been taken.');
             }
 
-            \Log::info($data);
-
             $logo = null;
             if (isset($data['logo']) && $data['logo']) {
                 $data['has_logo'] = 1;
@@ -95,7 +93,7 @@ class GuildManager extends Service {
 
             $data = $this->populateData($data, $guild);
 
-            $guild->update(Arr::only($data, ['name', 'summary', 'description', 'parsed_description']));
+            $guild->update($data);
 
             if ($guild && $logo) {
                 $this->handleImage($logo, $guild->imagePath, $guild->logoFileName);
@@ -168,27 +166,44 @@ class GuildManager extends Service {
             if (isset($data['user_ranks'])) {
                 $userRanks = [];
                 foreach ($data['user_ranks'] as $index => $rank) {
+                    if ( !$rank['rank_name'] ) {
+                        continue;
+                    }
+
                     $currentRank = GuildRank::where('guild_id', $guild->id)
                         ->where('name', $rank['rank_name'])
                         ->where('for_user', 1)
                         ->where('for_character', 0)
                         ->first();
 
-                    //TODO: Handle rank icons here. All rank icons should have the same naming convention: guild_{guildid}_rank_{rankid}.png
+                    $icon = null;
+                    if (isset($rank['icon']) && $rank['icon']) {
+                        $icon = $rank['icon'];
+                    }
 
                     if (!$currentRank) {
-                        GuildRank::create([
+                        $currentRank = GuildRank::create([
                             'guild_id'              => $guild->id,
                             'name'                  => $rank['rank_name'],
-                            'reputation_threshold'  => $rank['reputation_threshold'],
+                            'required_reputation'   => $rank['rank_threshold'],
                             'is_character_rank'     => 0,
                             'description'           => $rank['description'],
+                            'has_image'             => $icon ? true : false,
+                            'for_character'         => true,
+                            'for_user'              => false,
                         ]);
                     } else {
                         $currentRank->update([
                             'name'                  => $rank['rank_name'],
-                            'reputation_threshold'  => $rank['reputation_threshold'],
+                            'required_reputation'   => $rank['rank_threshold'],
                             'description'           => $rank['description'],
+                            'has_image'             => $icon ? true : false,
+                        ]);
+                    }
+                    if ( $icon ) {
+                        $this->handleImage($icon, $guild->imagePath, $currentRank->rankImageName);
+                        $currentRank->update([
+                            'has_image' => true,
                         ]);
                     }
                 }
@@ -208,38 +223,55 @@ class GuildManager extends Service {
             if (isset($data['character_ranks'])) {
                 $characterRanks = [];
                 foreach ($data['character_ranks'] as $index => $rank) {
+                    if ( !$rank['rank_name'] ) {
+                        continue;
+                    }
+
                     $currentRank = GuildRank::where('guild_id', $guild->id)
                         ->where('name', $rank['rank_name'])
                         ->where('for_user', 0)
                         ->where('for_character', 1)
                         ->first();
 
+                    $icon = null;
+                    if (isset($rank['icon']) && $rank['icon']) {
+                        $icon = $rank['icon'];
+                    }
+
                     if (!$currentRank) {
-                        GuildRank::create([
+                        $currentRank = GuildRank::create([
                             'guild_id'              => $guild->id,
                             'name'                  => $rank['rank_name'],
-                            'reputation_threshold'  => $rank['reputation_threshold'],
+                            'required_reputation'   => $rank['rank_threshold'],
                             'is_character_rank'     => 0,
                             'description'           => $rank['description'],
+                            'for_character'         => true,
+                            'for_user'              => false,
                         ]);
                     } else {
                         $currentRank->update([
                             'name'                  => $rank['rank_name'],
-                            'reputation_threshold'  => $rank['reputation_threshold'],
+                            'required_reputation'   => $rank['rank_threshold'],
                             'description'           => $rank['description'],
+                        ]);
+                    }
+                    if ( $icon ) {
+                        $this->handleImage($icon, $guild->imagePath, $currentRank->rankImageName);
+                        $currentRank->update([
+                            'has_image' => true,
                         ]);
                     }
                 }
                 // Delete ranks that do not exist in the new data
-                $newRankNames = array_map(function ($rank) {
-                    return $rank['rank_name'];
-                }, $data['user_ranks']);
+                // $newRankNames = array_map(function ($rank) {
+                //     return $rank['rank_name'];
+                // }, $data['user_ranks']);
 
-                $guild->ranks()
-                    ->where('for_user', 0)
-                    ->where('for_character', 1)
-                    ->whereNotIn('name', $newRankNames)
-                    ->delete();
+                // $guild->ranks()
+                //     ->where('for_user', 0)
+                //     ->where('for_character', 1)
+                //     ->whereNotIn('name', $newRankNames)
+                //     ->delete();
             }
 
             return $this->commitReturn($guild);

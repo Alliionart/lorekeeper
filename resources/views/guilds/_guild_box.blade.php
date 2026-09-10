@@ -1,12 +1,16 @@
 <div class="card rounded">
     <div class="card-body">
         <div class="row">
-            <div class="col-md-3">
-                Guild_Logo_Here
-            </div>
+            @if ($guild->has_logo)
+                <div class="col-md-3">
+                    <a href="{{ $guild->viewUrl }}">
+                        <img src="{{ $guild->logoUrl }}" class="img-fluid" alt="{{ $guild->name }} Logo"/>
+                    </a>
+                </div>
+            @endif
             <div class="col-md-9">
                 <div class="d-flex justify-content-between align-items-center">
-                    <h2>{{ $guild->name }}</h2>
+                    <h2><a href="{{ $guild->viewUrl }}">{{ $guild->name }}</a></h2>
 
                     <div>
                         @if ($guild->status === 'active')
@@ -22,19 +26,19 @@
                         <h5>Formed</h5>
                     </div>
                     <div class="col-md-4">
-                        <p class="mb-0">{{ $guild->created_at }}</p>
+                        <p class="mb-0">{!! pretty_date($guild->created_at) !!}</p>
                     </div>
                     <div class="col-md-2">
                         <h5>Players</h5>
                     </div>
                     <div class="col-md-4">
-                        <p class="mb-0">0</p>
+                        <p class="mb-0">{{ $guild->members->count() }}</p>
                     </div>
                     <div class="col-md-2">
                         <h5>Characters</h5>
                     </div>
                     <div class="col-md-4">
-                        <p class="mb-0">0</p>
+                        <p class="mb-0">{{ $guild->characters->count() }}</p>
                     </div>
                     <div class="col-md-2">
                         <h5>Location</h5>
@@ -44,7 +48,7 @@
                     </div>
                 </div>
                 <div class="text-right mt-2">
-                    <a href="{{ url()->current() }}/view/{{ $guild->id }}" class="btn btn-outline-primary">Visit Guild</a>
+                    <a href="{{ $guild->viewUrl }}" class="btn btn-outline-primary">Visit Guild</a>
                     @if ($guild->open_new_users)
                         <a href="{{ url()->current() }}/application/{{ $guild->id }}" class="ml-2 btn btn-primary">Submit an Application</a>
                     @endif

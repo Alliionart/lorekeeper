@@ -143,7 +143,7 @@ class GuildController extends Controller {
 
         if ($id && $service->updateGuild(Guild::find($id), $data, Auth::user())) {
             flash('Guild updated successfully.')->success();
-        } elseif (!$id && $category = $service->updateGuild($data, Auth::user())) {
+        } elseif (!$id && $category = $service->createGuild($data, Auth::user())) {
             flash('Guild created successfully.')->success();
 
             return redirect()->to('guilds/edit/'.$guild->id);
@@ -258,18 +258,18 @@ class GuildController extends Controller {
     public function getGuildCharacters(Request $request, $id) {
         $guild = Guild::where('id', $id)->first();
 
-        $query = GuildCharacter::query();
+        $query = $guild->characters();
         $sort = $request->only(['sort']);
         $rank = $request->only(['rank']);
 
-        if ($request->get('name')) {
-            $query->join('characters', 'guild_characters.character_id', '=', 'characters.id')
-                ->where('characters.name', 'LIKE', '%'.$request->get('name').'%');
-        }
+        // if ($request->get('name')) {
+        //     $query->join('characters', 'guild_characters.character_id', '=', 'characters.id')
+        //         ->where('characters.name', 'LIKE', '%'.$request->get('name').'%');
+        // }
 
-        if ($rank && $rank !== '') {
-            $query->where('rank', $rank);
-        }
+        // if ($rank && $rank !== '') {
+        //     $query->where('rank', $rank);
+        // }
 
         switch ($sort['sort'] ?? null) {
             default:
@@ -310,18 +310,18 @@ class GuildController extends Controller {
     public function getGuildMembers(Request $request, $id) {
         $guild = Guild::where('id', $id)->first();
 
-        $query = GuildMember::query();
+        $query = $guild->members();
         $sort = $request->only(['sort']);
         $rank = $request->only(['rank']);
 
-        if ($request->get('name')) {
-            $query->join('users', 'guild_users.user_id', '=', 'users.id')
-                ->where('users.name', 'LIKE', '%'.$request->get('name').'%');
-        }
+        // if ($request->get('name')) {
+        //     $query->join('users', 'guild_users.user_id', '=', 'users.id')
+        //         ->where('users.name', 'LIKE', '%'.$request->get('name').'%');
+        // }
 
-        if ($rank !== '') {
-            $query->where('rank', $rank);
-        }
+        // if ($rank !== '') {
+        //     $query->where('rank', $rank);
+        // }
 
         switch ($sort['sort'] ?? null) {
             default:
