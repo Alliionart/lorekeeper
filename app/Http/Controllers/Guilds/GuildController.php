@@ -112,9 +112,9 @@ class GuildController extends Controller {
             'global_max_players'    => Settings::get('guilds_max_players'),
             'global_max_characters' => Settings::get('guilds_max_characters'),
             'members'               => $guild->members()
-                                        ->join('users', 'guild_users.user_id', '=', 'users.id')
-                                        ->pluck('users.name', 'guild_users.user_id')
-                                        ->toArray(),
+                ->join('users', 'guild_users.user_id', '=', 'users.id')
+                ->pluck('users.name', 'guild_users.user_id')
+                ->toArray(),
         ]);
     }
 
@@ -169,7 +169,7 @@ class GuildController extends Controller {
     public function postGuildStaffEdit(Request $request, GuildManager $service, $id = null) {
         $id ? $request->validate(Guild::$updateRules) : $request->validate(Guild::$createRules);
         $data = $request->only([
-            'owner_id', 'mods'
+            'owner_id', 'mods',
         ]);
 
         if ($id && $service->updateGuildStaff(Guild::find($id), $data, Auth::user())) {

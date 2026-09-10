@@ -74,7 +74,7 @@ class GuildMember extends Model {
     **********************************************************************************************/
 
     public function isOwner() {
-        if ( $this->permissions > 1 ) {
+        if ($this->permissions > 1) {
             return true;
         }
 
@@ -82,7 +82,7 @@ class GuildMember extends Model {
     }
 
     public function isMod() {
-        if ( $this->permissions < 2 && $this->permissions > 0 ) {
+        if ($this->permissions < 2 && $this->permissions > 0) {
             return true;
         }
 
