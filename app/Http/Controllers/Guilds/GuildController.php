@@ -507,6 +507,8 @@ class GuildController extends Controller {
 
     /**
      * Shows the guild shop edit page.
+     *
+     * @param mixed $id
      */
     public function getGuildShopEdit($id) {
         $guild = Guild::where('id', $id)->first();
@@ -548,7 +550,7 @@ class GuildController extends Controller {
         } elseif (!$guild->shop && $shop = $service->createShop($guild, $data, Auth::user())) {
             flash('Shop created successfully.')->success();
 
-            return redirect()->to( $guild->viewUrl . '/shop' );
+            return redirect()->to($guild->viewUrl.'/shop');
         } else {
             foreach ($service->errors()->getMessages()['error'] as $error) {
                 flash($error)->error();

@@ -334,49 +334,6 @@ class GuildManager extends Service {
         return $this->rollbackReturn(false);
     }
 
-    /**
-     * Processes user input for creating/updating a guild.
-     *
-     * @param array                   $data
-     * @param \App\Models\Guild\Guild $guild
-     *
-     * @return array
-     */
-    private function populateData($data, $guild = null) {
-        if (isset($data['description']) && $data['description']) {
-            $data['parsed_description'] = parse($data['description']);
-        }
-
-        if (!isset($data['open_inventory'])) {
-            $data['open_inventory'] = 0;
-        }
-        if (!isset($data['open_bank'])) {
-            $data['open_bank'] = 0;
-        }
-        if (!isset($data['open_pets'])) {
-            $data['open_pets'] = 0;
-        }
-        if (!isset($data['open_armory'])) {
-            $data['open_armory'] = 0;
-        }
-        if (!isset($data['open_new_users'])) {
-            $data['open_new_users'] = 0;
-        }
-        if (!isset($data['automatic_app_approval'])) {
-            $data['automatic_app_approval'] = 0;
-        }
-
-        if (isset($data['remove_image'])) {
-            if ($guild && $guild->has_image && $data['remove_image']) {
-                $data['has_image'] = 0;
-                $this->deleteImage($guild->imagePath, $guild->imageFileName);
-            }
-            unset($data['remove_image']);
-        }
-
-        return $data;
-    }
-
     /*
      * ---------------------------------------------------------------------------
      * GUILD SHOPS
@@ -388,6 +345,7 @@ class GuildManager extends Service {
      *
      * @param array                 $data
      * @param \App\Models\User\User $user
+     * @param mixed                 $guild
      *
      * @return \App\Models\Shop\Shop|bool
      */
@@ -426,9 +384,9 @@ class GuildManager extends Service {
     /**
      * Updates a shop.
      *
-     * @param \App\Models\Guild\GuildShop $shop
      * @param array                 $data
      * @param \App\Models\User\User $user
+     * @param mixed                 $guild
      *
      * @return \App\Models\Guild\GuildShop|bool
      */
@@ -438,7 +396,7 @@ class GuildManager extends Service {
         try {
             $shop = $guild->shop()->first();
 
-            if ( !$shop ) {
+            if (!$shop) {
                 throw new \Exception('Invalid shop!');
             }
             if (GuildShop::where('name', $data['name'])->where('id', '!=', $shop->id)->exists()) {
@@ -519,6 +477,49 @@ class GuildManager extends Service {
         }
 
         return $this->rollbackReturn(false);
+    }
+
+    /**
+     * Processes user input for creating/updating a guild.
+     *
+     * @param array                   $data
+     * @param \App\Models\Guild\Guild $guild
+     *
+     * @return array
+     */
+    private function populateData($data, $guild = null) {
+        if (isset($data['description']) && $data['description']) {
+            $data['parsed_description'] = parse($data['description']);
+        }
+
+        if (!isset($data['open_inventory'])) {
+            $data['open_inventory'] = 0;
+        }
+        if (!isset($data['open_bank'])) {
+            $data['open_bank'] = 0;
+        }
+        if (!isset($data['open_pets'])) {
+            $data['open_pets'] = 0;
+        }
+        if (!isset($data['open_armory'])) {
+            $data['open_armory'] = 0;
+        }
+        if (!isset($data['open_new_users'])) {
+            $data['open_new_users'] = 0;
+        }
+        if (!isset($data['automatic_app_approval'])) {
+            $data['automatic_app_approval'] = 0;
+        }
+
+        if (isset($data['remove_image'])) {
+            if ($guild && $guild->has_image && $data['remove_image']) {
+                $data['has_image'] = 0;
+                $this->deleteImage($guild->imagePath, $guild->imageFileName);
+            }
+            unset($data['remove_image']);
+        }
+
+        return $data;
     }
 
     /**
