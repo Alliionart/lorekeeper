@@ -40,7 +40,7 @@
                                     <div class="form-group mr-2">
                                         {!! Form::label('Rank Icon (Optional)') !!} {!! add_help('Add an optional icon to distinguish the rank.') !!}
                                         <div class="custom-file">
-                                            {!! Form::label('user_ranks[0][icon]', $rank->has_image ? $rank->getRankImageName( $rank->id ) : 'Choose file...', ['class' => 'custom-file-label']) !!}
+                                            {!! Form::label('user_ranks[0][icon]', $rank->has_image ? $rank->getRankImageName($rank->id) : 'Choose file...', ['class' => 'custom-file-label']) !!}
                                             {!! Form::file('user_ranks[0][icon]', ['class' => 'custom-file-input']) !!}
                                         </div>
                                         <div class="text-muted">Recommended size: 50px x 50px</div>
