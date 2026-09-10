@@ -70,15 +70,14 @@ class GuildManager extends Service {
         DB::beginTransaction();
 
         try {
-            
-            if ( !$guild ) {
+            if (!$guild) {
                 throw new \Exception('Invalid guild.');
             }
-            if ( $user->id !== $guild->owner_id ) {
+            if ($user->id !== $guild->owner_id) {
                 throw new \Exception('Only the guild owner may edit staff!');
             }
 
-            if ( (int) $data['owner_id'] !== (int) $guild->owner_id ) {
+            if ((int) $data['owner_id'] !== (int) $guild->owner_id) {
                 $guild->update([
                     'owner_id'  => $data['owner_id'],
                 ]);
@@ -86,16 +85,16 @@ class GuildManager extends Service {
 
             $mods = $guild->mods()->get();
             $newMods = $data['mods'];
-            
+
             $removeMods = array_diff($mods->pluck('user_id')->toArray(), $newMods);
             $newMods = array_diff($newMods, $mods->pluck('user_id')->toArray());
-            
-            if ( ! empty($removeMods) ) {
+
+            if (!empty($removeMods)) {
                 $guild->mods()
                     ->whereIn('user_id', $removeMods)
                     ->update(['permissions' => 0]);
             }
-            if ( ! empty($newMods) ) {
+            if (!empty($newMods)) {
                 $guild->mods()
                     ->whereIn('user_id', $newMods)
                     ->update(['permissions' => 1]);
@@ -107,7 +106,6 @@ class GuildManager extends Service {
         }
 
         return $this->rollbackReturn(false);
-
     }
 
     /**
