@@ -4,8 +4,11 @@ namespace App\Services;
 
 use App\Models\Character\Character;
 use App\Models\Guild\Guild;
+use App\Models\Guild\GuildShop;
 use App\Models\Guild\GuildShopLog;
 use App\Models\Guild\GuildShopStock;
+use App\Models\Guild\GuildMember;
+use App\Models\Guild\GuildCharacter;
 use Illuminate\Support\Facades\DB;
 
 class GuildShopManager extends Service {
@@ -29,6 +32,8 @@ class GuildShopManager extends Service {
     public function buyStock($data, $user) {
         DB::beginTransaction();
 
+        //Guild shops automatically may use user or character banks (so long as they are attached to the guild)
+
         try {
             $quantity = ceil($data['quantity']);
             if (!$quantity || $quantity == 0) {
@@ -36,7 +41,7 @@ class GuildShopManager extends Service {
             }
 
             // Check that the shop exists and is open
-            $shop = Shop::where('id', $data['guild_shop_id'])->where('is_active', 1)->first();
+            $shop = GuildShop::where('id', $data['guild_shop_id'])->where('is_active', 1)->first();
             if (!$shop) {
                 throw new \Exception('Invalid shop selected.');
             }
@@ -61,39 +66,63 @@ class GuildShopManager extends Service {
                 throw new \Exception('The quantity specified exceeds the amount of this item you can buy.');
             }
 
-            $total_cost = $shopStock->cost * $quantity;
+            $guild = $shop->guild()->first();
 
             $character = null;
             if ($data['bank'] == 'character') {
                 // Check if the user is using a character to pay
-                // - stock must be purchaseable with characters
                 // - currency must be character-held
                 // - character has enough currency
-                if (!$shopStock->use_character_bank || !$shopStock->currency->is_character_owned) {
+                if (!$shopStock->currency->is_character_owned) {
                     throw new \Exception("You cannot use a character's bank to pay for this item.");
                 }
-                if (!$data['slug']) {
-                    throw new \Exception('Please enter a character code.');
+
+                $characterId = $data['character_id'] ?? null;
+                if (!$characterId) {
+                    throw new \Exception('Please select a character.');
                 }
-                $character = Character::where('slug', $data['slug'])->first();
+
+                $character = Character::where('id', $characterId)->where('user_id', $user->id)->first();
                 if (!$character) {
-                    throw new \Exception('Please enter a valid character code.');
-                }
-                if ($character->user_id != $user->id) {
                     throw new \Exception('That character does not belong to you.');
                 }
-                if (!(new CurrencyManager)->debitCurrency($character, null, 'Shop Purchase', 'Purchased '.$shopStock->item->name.' from '.$shop->name, $shopStock->currency, $total_cost)) {
+
+                $in_guild = GuildCharacter::where([
+                    ['guild_id', $guild->id],
+                    ['character_id', $characterId]
+                ])->exists();
+
+                if ( $shopStock->is_guild_only && !$in_guild ) {
+                    throw new \Exception('Only guild members may purchase this item.');
+                }
+
+                $cost = $in_guild ? ($shopStock->guild_cost ?? $shopStock->cost) : $shopStock->cost;
+                $total_cost = $cost * $quantity;
+
+                if (!(new CurrencyManager)->debitCurrency($character, null, 'Guild Shop ('.$guild->name.') Purchase', 'Purchased '.$shopStock->item->name.' from '.$shop->name, $shopStock->currency, $total_cost)) {
                     throw new \Exception('Not enough currency to make this purchase.');
                 }
             } else {
                 // If the user is paying by themselves
-                // - stock must be purchaseable by users
                 // - currency must be user-held
                 // - user has enough currency
-                if (!$shopStock->use_user_bank || !$shopStock->currency->is_user_owned) {
+                if (!$shopStock->currency->is_user_owned) {
                     throw new \Exception('You cannot use your user bank to pay for this item.');
                 }
-                if ($shopStock->cost > 0 && !(new CurrencyManager)->debitCurrency($user, null, 'Shop Purchase', 'Purchased '.$shopStock->item->name.' from '.$shop->name, $shopStock->currency, $total_cost)) {
+
+                $in_guild = GuildMember::where([
+                    ['guild_id', $guild->id],
+                    ['user_id', $user->id]
+                ])->exists();
+
+                if ( $shopStock->is_guild_only && !$in_guild ) {
+                    throw new \Exception('Only guild members may purchase this item.');
+                }
+
+                $cost = $in_guild ? $shopStock->guild_cost : $shopStock->cost;
+                $total_cost = $cost * $quantity;
+
+                if ($shopStock->cost > 0 && !(new CurrencyManager)->debitCurrency($user, null, 'Guild Shop ('.$guild->name.') Purchase', 'Purchased '.$shopStock->item->name.' from '.$shop->name, $shopStock->currency, $total_cost)) {
                     throw new \Exception('Not enough currency to make this purchase.');
                 }
             }
@@ -106,6 +135,7 @@ class GuildShopManager extends Service {
 
             // Add a purchase log
             $shopLog = GuildShopLog::create([
+                'guild_id'      => $guild->id,
                 'guild_shop_id' => $shop->id,
                 'character_id'  => $character ? $character->id : null,
                 'user_id'       => $user->id,
@@ -116,7 +146,7 @@ class GuildShopManager extends Service {
             ]);
 
             // Give the user the item, noting down 1. whose currency was used (user or character) 2. who purchased it 3. which shop it was purchased from
-            if (!(new InventoryManager)->creditItem(null, $user, 'Shop Purchase', [
+            if (!(new InventoryManager)->creditItem($guild, $user, 'Guild Shop ('.$guild->name.') Purchase', [
                 'data'  => $shopLog->itemData,
                 'notes' => 'Purchased '.format_date($shopLog->created_at),
             ], $shopStock->item, $quantity)) {

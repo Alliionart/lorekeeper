@@ -13,7 +13,7 @@ class GuildShopLog extends Model {
      * @var array
      */
     protected $fillable = [
-        'guild_shop_id', 'guild_id', 'item_id', 'currency_id', 'cost', 'quantity',
+        'guild_shop_id', 'guild_id', 'character_id', 'user_id', 'item_id', 'currency_id', 'cost', 'quantity',
     ];
 
     /**
@@ -39,7 +39,7 @@ class GuildShopLog extends Model {
      *
      * @var string
      */
-    public $timestamps = false;
+    public $timestamps = true;
 
     /**********************************************************************************************
 

@@ -84,10 +84,11 @@ class GuildShop extends Model {
      * Get the shop stock as items for display purposes.
      */
     public function displayStock() {
-        return $this->belongsToMany(Item::class, 'guild_shop_stock')
-            ->withPivot('item_id', 'currency_id', 'cost', 'quantity', 'id')
-            ->wherePivot('is_visible', 1)
-            ->wherePivot('quantity', '>', 0);
+        return $this->belongsToMany(Item::class, 'guild_shop_stock', 'guild_shop_id', 'item_id')
+            ->where('guild_shop_stock.stock_type', 'Item')
+            ->withPivot('id', 'item_id', 'currency_id', 'cost', 'guild_cost', 'quantity', 'is_visible', 'is_limited_stock', 'purchase_limit', 'guild_only')
+            ->wherePivot('quantity', '>', 0)
+            ->wherePivot('is_visible', 1);
     }
 
     /**

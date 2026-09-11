@@ -208,11 +208,15 @@ Route::group(['prefix' => __('guilds.guilds'), 'namespace' => 'Guilds'], functio
 
         Route::group(['prefix' => 'shop'], function () {
             Route::get('/', 'GuildController@getGuildShop');
-            Route::get('create', 'GuildController@getGuildShopCreate');
+            Route::get('create', 'GuildController@getGuildShopCreateEdit');
             Route::post('create', 'GuildController@postCreateEditShop');
 
-            Route::get('edit', 'GuildController@getGuildShopEdit');
+            Route::get('edit', 'GuildController@getGuildShopCreateEdit');
             Route::post('edit', 'GuildController@postCreateEditShop');
+
+            //Route::get('edit/stock', 'GuildController@getStockModal');
+            Route::post('edit/stock', 'GuildController@postEditShopStock');
+            Route::post('buy', 'GuildController@postBuy');
         });
 
         Route::get('members', 'GuildController@getGuildMembers');
@@ -224,6 +228,8 @@ Route::group(['prefix' => __('guilds.guilds'), 'namespace' => 'Guilds'], functio
         Route::get('bank', 'GuildController@getGuildBank');
         Route::get(''.strtolower(__('guilds.playpen')), 'GuildController@getGuildPets');
         Route::get('armory', 'GuildController@getGuildArmory');
+
+        Route::post('disband', 'GuildController@postDisbandGuild');
     });
 
     Route::post('{id}/bank/transfer', 'GuildController@postBuildBankTransfer');

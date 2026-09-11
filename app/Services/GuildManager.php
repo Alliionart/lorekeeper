@@ -169,10 +169,13 @@ class GuildManager extends Service {
      *
      * @return bool
      */
-    public function disbandGuild($guild) {
+    public function disbandGuild($guild, $user) {
         DB::beginTransaction();
 
         try {
+            if ( $user->id !== $guild->owner_id || ! $user->isStaff ) {
+                throw new \Exception( 'Only the Guild Owner or staff may disband the guild.' );
+            }
             if ($guild->members) {
                 //Delete the members rows from the guild_users table here
             }
@@ -180,6 +183,11 @@ class GuildManager extends Service {
                 //Delete the members rows from the guild_characters table here
             }
             //Delete other relational data besides bank/inv
+
+            $guild->update([
+                'is_disbanded'  => true,
+                'status'        => 'disbanded',
+            ]);
 
             return $this->commitReturn(true);
         } catch (\Exception $e) {
@@ -472,16 +480,26 @@ class GuildManager extends Service {
     /**
      * Updates shop stock.
      *
-     * @param \App\Models\Shop\Shop $shop
+     * @param \App\Models\Guild\Guild $guild
      * @param array                 $data
      * @param \App\Models\User\User $user
      *
-     * @return \App\Models\Shop\Shop|bool
+     * @return \App\Models\Guild\GuildShop|bool
      */
-    public function updateShopStock($shop, $data, $user) {
+    public function updateShopStock($guild, $data, $user) {
         DB::beginTransaction();
 
         try {
+            $shop = $guild->shop()->first();
+            if (!$shop) {
+                throw new \Exception('Invalid shop!');
+            }
+
+            $member = $guild->members()->where('user_id', $user->id)->first();
+            if (!$user->isStaff && $user->id !== $guild->owner_id && (!$member || !$member->isMod())) {
+                throw new \Exception('Only guild staff or site staff may update shop stock.');
+            }
+
             if (isset($data['item_id'])) {
                 foreach ($data['item_id'] as $key => $itemId) {
                     if ($data['cost'][$key] == null) {
@@ -496,16 +514,20 @@ class GuildManager extends Service {
                 $shop->stock()->delete();
 
                 foreach ($data['item_id'] as $key => $itemId) {
+                    //REMOVE FROM THE GUILD INVENTORY HERE AS WELL
+                    
                     $shop->stock()->create([
-                        'shop_id'               => $shop->id,
+                        'guild_shop_id'         => $shop->id,
                         'item_id'               => $data['item_id'][$key],
                         'currency_id'           => $data['currency_id'][$key],
                         'cost'                  => $data['cost'][$key],
-                        'use_user_bank'         => isset($data['use_user_bank'][$key]),
-                        'use_character_bank'    => isset($data['use_character_bank'][$key]),
+                        'guild_cost'            => $data['guild_cost'][$key] ?? $data['cost'][$key],
                         'is_limited_stock'      => isset($data['is_limited_stock'][$key]),
-                        'quantity'              => isset($data['is_limited_stock'][$key]) ? $data['quantity'][$key] : 0,
+                        'quantity'              => $data['quantity'][$key] ?? 0,
                         'purchase_limit'        => $data['purchase_limit'][$key],
+                        'is_visible'            => 1,
+                        'guild_only'            => isset($data['guild_only']),
+                        'stock_type'            => 'Item', //Maybe change this so we can support other things?
                     ]);
                 }
             } else {

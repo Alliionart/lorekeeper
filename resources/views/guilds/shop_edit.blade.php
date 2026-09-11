@@ -58,22 +58,26 @@
     {!! Form::close() !!}
 
     @if ($shop && $shop->id)
-        <h3>Shop Stock</h3>
-        {!! Form::open(['url' => 'guilds/view/' . $shop->id . 'shop/edit/stock/' . $shop->id]) !!}
-        <div class="text-right mb-3">
-            <a href="#" class="add-stock-button btn btn-outline-primary">Add Stock</a>
-        </div>
-        <div id="shopStock">
-            @foreach ($shop->stock as $key => $stock)
-                @include('guilds._stock', ['stock' => $stock, 'key' => $key])
-            @endforeach
-        </div>
-        <div class="text-right">
-            {!! Form::submit('Edit', ['class' => 'btn btn-primary']) !!}
-        </div>
-        {!! Form::close() !!}
-        <div class="" id="shopStockData">
-            @include('guilds._stock', ['stock' => null, 'key' => 0])
+        <div class="card">
+            <h3 class="card-header">Shop Stock</h3>
+            <div class="card-body">
+                {!! Form::open(['url' => '/guilds/' . $guild->id . '/shop/edit/stock/']) !!}
+                <div class="text-right mb-3">
+                    <a href="#" class="add-stock-button btn btn-outline-primary">Add Stock</a>
+                </div>
+                <div id="shopStock">
+                    @foreach ($shop->stock as $key => $stock)
+                        @include('guilds._stock', ['stock' => $stock, 'key' => $key])
+                    @endforeach
+                </div>
+                <div class="text-right">
+                    {!! Form::submit('Edit', ['class' => 'btn btn-primary']) !!}
+                </div>
+                {!! Form::close() !!}
+                <div class="" id="shopStockData">
+                    @include('guilds._stock', ['stock' => null, 'key' => 0])
+                </div>
+            </div>
         </div>
     @endif
 
@@ -83,6 +87,8 @@
         $(document).ready(function() {
             var $shopStock = $('#shopStock');
             var $stock = $('#shopStockData').find('.stock');
+
+            $('#shopStock .selectize').selectize();
 
             $('.delete-shop-button').on('click', function(e) {
                 e.preventDefault();
@@ -96,6 +102,8 @@
                 clone.removeClass('hide');
                 attachStockListeners(clone);
                 refreshStockFieldNames();
+
+                clone.find('.selectize').selectize();
             });
 
             attachStockListeners($('#shopStock .stock'));

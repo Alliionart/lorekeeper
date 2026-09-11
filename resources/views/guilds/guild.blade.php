@@ -12,9 +12,12 @@
     {!! breadcrumbs([ucwords(__('guilds.guilds')) => __('guilds.guilds'), $guild->name => $guild->name]) !!}
 
     <div class="jumbotron guild-banner jumbotron-fluid text-left pb-0 rounded bg-dark mb-5" {!! $guild->has_banner ? 'style="background-image: url(\'' . $guild->bannerUrl . '\');"' : '' !!}>
+        @if ($guild->is_disbanded)
+            <span class="badge badge-danger text-uppercase" style="position:absolute;top:20px;left:20px;font-size:18px;">Disbanded</span>
+        @endif
         <div class="jumbo-inner py-3 px-5 d-flex align-items-center" style="transform:translateY(45px)">
             @if ($guild->has_logo)
-                <img class="guild-logo" src="{{ $guild->getLogoUrlAttribute() }}" />
+                <img class="guild-logo mr-4" src="{{ $guild->getLogoUrlAttribute() }}" />
             @endif
             <h1 class="display-5 text-white">{{ $guild->name }}</h1>
         </div>
@@ -34,7 +37,7 @@
                     @if ($guild->status === 'active')
                         <span class="h6 p-1 rounded bg-success text-white">Active</span>
                     @else
-                        <span class="h6 p-1 rounded bg-secondary text-white">Inactive</span>
+                        <span class="h6 p-1 rounded bg-secondary text-white">Disbanded</span>
                     @endif
                     <span class="h6 p-1 rounded border ml-2 {{ $guild->open_new_users ? 'border-success text-success' : 'border-danger text-danger' }}">{{ $guild->open_new_users ? 'Open Applications' : 'Closed Applications' }}</span>
                 </div>

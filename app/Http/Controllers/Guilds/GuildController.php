@@ -10,6 +10,7 @@ use App\Models\Guild\GuildCurrency;
 use App\Models\Guild\GuildItem;
 use App\Models\Guild\GuildShop;
 use App\Models\Guild\GuildShopStock;
+use App\Models\Guild\GuildShopLog;
 use App\Models\Item\Item;
 use App\Models\Item\ItemCategory;
 use App\Models\User\UserCurrency;
@@ -247,7 +248,7 @@ class GuildController extends Controller {
      */
     public function getGuildShop($id) {
         $guild = Guild::where('id', $id)->first();
-        $shop = $guild->shop;
+        $shop = $guild->shop->first();
 
         if (!$guild || !$shop || !$shop->is_active) {
             abort(404);
@@ -486,8 +487,9 @@ class GuildController extends Controller {
     /**
      * Shows the guild shop edit page.
      */
-    public function getGuildShopCreate($id) {
+    public function getGuildShopCreateEdit($id) {
         $guild = Guild::where('id', $id)->first();
+        $shop = $guild->shop ?? null;
 
         if (!$guild) {
             abort(404);
@@ -497,34 +499,13 @@ class GuildController extends Controller {
             return redirect('/guilds/view'.$guild->id.'/shop')->with('error', 'You do not have permission to edit this guild shop.');
         }
 
-        return view('guilds.shop_edit', [
-            'guild'      => $guild,
-            'shop'       => null,
-            'items'      => Item::orderBy('name')->pluck('name', 'id'),
-            'currencies' => Currency::orderBy('name')->pluck('name', 'id'),
-        ]);
-    }
-
-    /**
-     * Shows the guild shop edit page.
-     */
-    public function getGuildShopEdit($id) {
-        $guild = Guild::where('id', $id)->first();
-        $shop = $guild->shop;
-
-        if (!$guild || !$shop) {
-            abort(404);
-        }
-
-        if (($guild->owner_id !== Auth::user()->id) || !Auth::user()->isStaff) {
-            return redirect('/guilds/view'.$guild->id.'/shop')->with('error', 'You do not have permission to edit this guild shop.');
-        }
+        $guild_items = $guild->items()->get()->pluck('id')->toArray();
 
         return view('guilds.shop_edit', [
             'guild'      => $guild,
-            'shop'       => $shop,
-            'items'      => Item::orderBy('name')->pluck('name', 'id'),
-            'currencies' => Currency::orderBy('name')->pluck('name', 'id'),
+            'shop'       => $shop ?? null,
+            'items'      => Item::whereIn('id', $guild_items)->orderBy('name')->pluck('name', 'id'),
+            'currencies' => Currency::orderBy('name')->where('is_guild_owned', 1)->pluck('name', 'id'),
         ]);
     }
 
@@ -569,43 +550,97 @@ class GuildController extends Controller {
      */
     public function getShopStock(GuildShopManager $service, $id, $stockId) {
         $shop = GuildShop::where('id', $id)->where('is_active', 1)->first();
+        if (!$shop) {
+            abort(404);
+        }
+
+        $guild = $shop->guild()->first();
         $stock = GuildShopStock::with('item')->where('id', $stockId)->where('guild_shop_id', $id)->first();
 
         $user = Auth::user();
         $quantityLimit = 0;
         $userPurchaseCount = 0;
         $purchaseLimitReached = false;
+        $guildOwned = null;
+        $characters = collect();
+
         if ($user) {
             $quantityLimit = $service->getStockPurchaseLimit($stock, Auth::user());
             $userPurchaseCount = $service->checkUserPurchases($stock, Auth::user());
             $purchaseLimitReached = $service->checkPurchaseLimitReached($stock, Auth::user());
-            $userOwned = UserItem::where('user_id', $user->id)->where('item_id', $stock->item->id)->where('count', '>', 0)->get();
+            if ($guild) {
+                $guildOwned = GuildItem::where('guild_id', $guild->id)
+                    ->where('item_id', $stock->item->id)
+                    ->where('count', '>', 0)
+                    ->get();
+
+                $characters = $guild->characters()
+                    ->whereHas('character', function ($query) use ($user) {
+                        $query->where('user_id', $user->id);
+                    })
+                    ->with('character')
+                    ->get()
+                    ->map(function ($guildCharacter) {
+                        return $guildCharacter->character;
+                    })
+                    ->filter();
+            }
         }
 
-        if (!$shop) {
-            abort(404);
-        }
-
-        return view('shops._stock_modal', [
+        return view('guilds._stock_modal', [
+            'guild'                => $guild,
             'shop'                 => $shop,
             'stock'                => $stock,
             'quantityLimit'        => $quantityLimit,
             'userPurchaseCount'    => $userPurchaseCount,
             'purchaseLimitReached' => $purchaseLimitReached,
-            'userOwned'            => $user ? $userOwned : null,
+            'guildOwned'           => $guild ? $guildOwned : null,
+            'characters'           => $characters->pluck('fullName', 'id')->toArray(),
         ]);
+    }
+
+    /**
+     * Edits a shop's stock.
+     *
+     * @param App\Services\GuildManager $service
+     * @param int                      $id
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function postEditShopStock(Request $request, GuildManager $service, $id) {
+        $data = $request->only([
+            'item_id', 'currency_id', 'cost', 'guild_cost', 'is_limited_stock', 'guild_only', 'quantity', 'purchase_limit',
+        ]);
+
+        if ($service->updateShopStock(Guild::find($id), $data, Auth::user())) {
+            flash('Shop stock updated successfully.')->success();
+
+            return redirect()->back();
+        } else {
+            foreach ($service->errors()->getMessages()['error'] as $error) {
+                flash($error)->error();
+            }
+        }
+
+        return redirect()->back();
     }
 
     /**
      * Buys an item from a shop.
      *
-     * @param App\Services\ShopManager $service
+     * @param App\Services\GuildShopManager $service
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function postBuy(Request $request, ShopManager $service) {
-        $request->validate(ShopLog::$createRules);
-        if ($service->buyStock($request->only(['stock_id', 'shop_id', 'slug', 'bank', 'quantity']), Auth::user())) {
+    public function postBuy(Request $request, GuildShopManager $service) {
+        $request->validate(GuildShopLog::$createRules);
+
+        $data = $request->only(['stock_id', 'shop_id', 'guild_shop_id', 'slug', 'character_id', 'bank', 'quantity']);
+        if (empty($data['guild_shop_id']) && !empty($data['shop_id'])) {
+            $data['guild_shop_id'] = $data['shop_id'];
+        }
+
+        if ($service->buyStock($data, Auth::user())) {
             flash('Successfully purchased item.')->success();
         } else {
             foreach ($service->errors()->getMessages()['error'] as $error) {
@@ -626,5 +661,27 @@ class GuildController extends Controller {
             'logs'  => Auth::user()->getShopLogs(0),
             'shops' => Shop::where('is_active', 1)->orderBy('sort', 'DESC')->get(),
         ]);
+    }
+
+    /**
+     * Buys an item from a shop.
+     *
+     * @param int                       $id
+     * @param App\Services\GuildManager $service
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function postDisbandGuild($id, Request $request, GuildManager $service) {
+        $guild = Guild::find($id);
+    
+        if ($service->disbandGuild($guild, Auth::user())) {
+            flash('Guild was successfully disbanded and members, characters and all removed.')->success();
+        } else {
+            foreach ($service->errors()->getMessages()['error'] as $error) {
+                flash($error)->error();
+            }
+        }
+
+        return redirect()->back();
     }
 }

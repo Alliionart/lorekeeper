@@ -11,8 +11,17 @@
 @section('content')
     {!! breadcrumbs([ucwords(__('guilds.guilds')) => __('guilds.guilds'), $guild->name => $guild->viewUrl, 'Settings' => 'settings']) !!}
 
-    <h1>Edit {{ $guild->name }}</h1>
-    <p>Edit your {{ __('guilds.guild') }} below. Only {{ __('guilds.guild') }} owners and mods may edit the guild. Staff may edit your guild as well.</p>
+    <div class="row">
+        <div class="col-md-10">
+            <h1>Edit {{ $guild->name }}</h1>
+            <p>Edit your {{ __('guilds.guild') }} below. Only {{ __('guilds.guild') }} owners and mods may edit the guild. Staff may edit your guild as well.</p>
+        </div>
+        @if ( Auth::check() && (Auth::user()->id == $guild->owner_id || Auth::user()->isStaff) )
+            <div class="col-md-2 text-right">
+                <a class="btn btn-danger disband">Disband Guild</a>
+            </div>
+        @endif
+    </div>
 
     {!! Form::open(['url' => '/guilds/' . $guild->id . '/edit', 'id' => 'guildSettingForm', 'files' => true]) !!}
 
@@ -160,6 +169,25 @@
             {!! Form::close() !!}
         </div>
     </div>
+
+    <div class="modal fade" id="disbandModal" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <span class="modal-title h5 mb-0">Confirm Disbanding</span>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        {!! Form::open(['url' => '/guilds/' . $guild->id . '/disband']) !!}
+                        <p>This will disband the {{ __('guilds.guild') }} and remove all members and characters. This action cannot be undone.</p>
+                        <div class="text-right">
+                            {!! Form::submit('Disband Guild', ['class' => 'btn btn-danger', 'id' => 'disbandSubmit']) !!}
+                        </div>
+                        {!! Form::close() !!}
+                    </div>
+                </div>
+            </div>
+        </div>
 @endsection
 
 @section('scripts')
@@ -167,6 +195,14 @@
     <script>
         $(document).ready(function() {
             $('.selectize').selectize();
+            var $disbandModal = $('#disbandModal');
+            var $disbandButton = $('.disband');
+            var $disbandSubmit = $('#disbandSubmit');
+
+            $disbandButton.on('click', function(e) {
+                e.preventDefault();
+                $disbandModal.modal('show');
+            });
         });
     </script>
 @endsection
