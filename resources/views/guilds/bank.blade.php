@@ -132,3 +132,18 @@
     @endif
 
 @endsection
+@section('scripts')
+    @parent
+    <script>
+        $(document).ready(function() {
+            $('.take-button').on('click', function() {
+                $('.take').removeClass('hide');
+                $('.give').addClass('hide');
+            })
+            $('.give-button').on('click', function() {
+                $('.give').removeClass('hide');
+                $('.take').addClass('hide');
+            })
+        });
+    </script>
+@endsection
