@@ -4,11 +4,11 @@ namespace App\Services;
 
 use App\Models\Character\Character;
 use App\Models\Guild\Guild;
+use App\Models\Guild\GuildCharacter;
+use App\Models\Guild\GuildMember;
 use App\Models\Guild\GuildShop;
 use App\Models\Guild\GuildShopLog;
 use App\Models\Guild\GuildShopStock;
-use App\Models\Guild\GuildMember;
-use App\Models\Guild\GuildCharacter;
 use Illuminate\Support\Facades\DB;
 
 class GuildShopManager extends Service {
@@ -89,10 +89,10 @@ class GuildShopManager extends Service {
 
                 $in_guild = GuildCharacter::where([
                     ['guild_id', $guild->id],
-                    ['character_id', $characterId]
+                    ['character_id', $characterId],
                 ])->exists();
 
-                if ( $shopStock->is_guild_only && !$in_guild ) {
+                if ($shopStock->is_guild_only && !$in_guild) {
                     throw new \Exception('Only guild members may purchase this item.');
                 }
 
@@ -112,10 +112,10 @@ class GuildShopManager extends Service {
 
                 $in_guild = GuildMember::where([
                     ['guild_id', $guild->id],
-                    ['user_id', $user->id]
+                    ['user_id', $user->id],
                 ])->exists();
 
-                if ( $shopStock->is_guild_only && !$in_guild ) {
+                if ($shopStock->is_guild_only && !$in_guild) {
                     throw new \Exception('Only guild members may purchase this item.');
                 }
 
