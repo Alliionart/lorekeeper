@@ -39,12 +39,12 @@
             @if ($stock->purchase_limit)
                 <div class="alert alert-warning mb-3">You have purchased this item {{ $userPurchaseCount }} times.</div>
             @endif
-            {!! Form::open(['url' => 'guilds/'.$guild->id.'/shop/buy']) !!}
+            {!! Form::open(['url' => 'guilds/' . $guild->id . '/shop/buy']) !!}
             {!! Form::hidden('guild_shop_id', $shop->id) !!}
             {!! Form::hidden('stock_id', $stock->id) !!}
             {!! Form::label('quantity', 'Quantity') !!}
             {!! Form::selectRange('quantity', 1, $quantityLimit, 1, ['class' => 'form-control mb-3']) !!}
-            
+
             <p>This item can be paid for with either your user account bank, or a character's bank. Please choose which you would like to use.</p>
             <div class="form-group">
                 <div>
@@ -62,7 +62,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <div class="text-right">
                 {!! Form::submit('Purchase', ['class' => 'btn btn-primary']) !!}
             </div>

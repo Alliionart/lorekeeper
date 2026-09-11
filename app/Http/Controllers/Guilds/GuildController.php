@@ -9,8 +9,8 @@ use App\Models\Guild\Guild;
 use App\Models\Guild\GuildCurrency;
 use App\Models\Guild\GuildItem;
 use App\Models\Guild\GuildShop;
-use App\Models\Guild\GuildShopStock;
 use App\Models\Guild\GuildShopLog;
+use App\Models\Guild\GuildShopStock;
 use App\Models\Item\Item;
 use App\Models\Item\ItemCategory;
 use App\Models\User\UserCurrency;
@@ -603,7 +603,7 @@ class GuildController extends Controller {
      * Edits a shop's stock.
      *
      * @param App\Services\GuildManager $service
-     * @param int                      $id
+     * @param int                       $id
      *
      * @return \Illuminate\Http\RedirectResponse
      */
@@ -673,7 +673,7 @@ class GuildController extends Controller {
      */
     public function postDisbandGuild($id, Request $request, GuildManager $service) {
         $guild = Guild::find($id);
-    
+
         if ($service->disbandGuild($guild, Auth::user())) {
             flash('Guild was successfully disbanded and members, characters and all removed.')->success();
         } else {

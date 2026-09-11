@@ -20,7 +20,7 @@ class Guild extends Model {
         'parsed_description', 'location', 'reputation',
         'max_users', 'max_characters',
         'open_new_users', 'automatic_app_approval', 'open_inventory', 'open_bank', 'open_inventory', 'open_pets', 'open_armory',
-        'has_logo', 'has_banner', 'is_disbanded'
+        'has_logo', 'has_banner', 'is_disbanded',
     ];
 
     /**

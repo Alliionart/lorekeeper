@@ -166,6 +166,7 @@ class GuildManager extends Service {
      * Disbands a guild.
      *
      * @param \App\Models\Guild\Guild $guild
+     * @param mixed                   $user
      *
      * @return bool
      */
@@ -173,8 +174,8 @@ class GuildManager extends Service {
         DB::beginTransaction();
 
         try {
-            if ( $user->id !== $guild->owner_id || ! $user->isStaff ) {
-                throw new \Exception( 'Only the Guild Owner or staff may disband the guild.' );
+            if ($user->id !== $guild->owner_id || !$user->isStaff) {
+                throw new \Exception('Only the Guild Owner or staff may disband the guild.');
             }
             if ($guild->members) {
                 //Delete the members rows from the guild_users table here
@@ -439,8 +440,8 @@ class GuildManager extends Service {
      * Updates shop stock.
      *
      * @param \App\Models\Guild\Guild $guild
-     * @param array                 $data
-     * @param \App\Models\User\User $user
+     * @param array                   $data
+     * @param \App\Models\User\User   $user
      *
      * @return \App\Models\Guild\GuildShop|bool
      */
@@ -473,7 +474,7 @@ class GuildManager extends Service {
 
                 foreach ($data['item_id'] as $key => $itemId) {
                     //REMOVE FROM THE GUILD INVENTORY HERE AS WELL
-                    
+
                     $shop->stock()->create([
                         'guild_shop_id'         => $shop->id,
                         'item_id'               => $data['item_id'][$key],
