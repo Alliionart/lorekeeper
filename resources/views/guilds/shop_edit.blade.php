@@ -17,7 +17,7 @@
         @endif
     </h1>
 
-    {!! Form::open(['url' => 'guilds/'.$guild->id.'/shop/' . ( $shop ? 'edit' : 'create' ), 'files' => true]) !!}
+    {!! Form::open(['url' => 'guilds/' . $guild->id . '/shop/' . ($shop ? 'edit' : 'create'), 'files' => true]) !!}
 
     <h3>Basic Information</h3>
 

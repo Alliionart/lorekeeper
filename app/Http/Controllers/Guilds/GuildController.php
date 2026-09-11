@@ -529,7 +529,7 @@ class GuildController extends Controller {
         } elseif (!$guild->shop && $shop = $service->createShop($guild, $data, Auth::user())) {
             flash('Shop created successfully.')->success();
 
-            return redirect()->to( $guild->viewUrl . '/shop' );
+            return redirect()->to($guild->viewUrl.'/shop');
         } else {
             foreach ($service->errors()->getMessages()['error'] as $error) {
                 flash($error)->error();
