@@ -15,6 +15,7 @@ return new class extends Migration {
             $table->string('name')->default('Unknown');
             $table->integer('owner_id')->nullable();
             $table->string('status')->default('inactive');
+            $table->boolean('is_disbanded')->default(0);
             $table->text('description')->nullable();
             $table->text('parsed_description')->nullable();
             $table->string('location')->nullable();
@@ -27,6 +28,8 @@ return new class extends Migration {
             $table->boolean('open_bank')->default(0);
             $table->boolean('open_pets')->default(0);
             $table->boolean('open_armory')->default(0);
+            $table->boolean('has_logo')->default(0);
+            $table->boolean('has_banner')->default(0);
             $table->timestamps();
         });
 
@@ -34,7 +37,8 @@ return new class extends Migration {
             $table->engine = 'InnoDB';
             $table->integer('guild_id');
             $table->integer('user_id');
-            $table->string('rank');
+            $table->integer('permissions')->default(0)->after('user_id');
+            $table->string('rank_id');
             $table->integer('reputation')->default(0);
             $table->timestamp('joined_at', precision: 0)->nullable();
 
@@ -65,6 +69,7 @@ return new class extends Migration {
             $table->engine = 'InnoDB';
             $table->increments('id');
             $table->integer('item_id');
+            $table->text('stack_name')->nullable();
             $table->integer('guild_id');
             $table->integer('count')->default(1);
             $table->text('data')->nullable();
@@ -126,6 +131,8 @@ return new class extends Migration {
             $table->increments('id');
             $table->integer('guild_shop_id');
             $table->string('guild_id');
+            $table->integer('user_id');
+            $table->integer('character_id')->nullable();
             $table->integer('item_id');
             $table->integer('currency_id');
             $table->integer('cost');
@@ -139,11 +146,28 @@ return new class extends Migration {
             $table->integer('guild_shop_id');
             $table->integer('item_id');
             $table->integer('currency_id');
+            $table->boolean('guild_only')->default(false);
             $table->float('cost')->default(1.0);
-            $table->text('data');
-            $table->integer('quantity');
-            $table->string('stock_type');
+            $table->float('guild_cost')->after('cost')->nullable();
+            $table->text('data')->nullable();
+            $table->integer('quantity')->default(1);
+            $table->boolean('is_limited_stock')->default(false);
+            $table->integer('purchase_limit')->nullable();
+            $table->string('stock_type')->default('Item');
             $table->boolean('is_visible')->default(0);
+        });
+
+        Schema::create('guild_ranks', function (Blueprint $table) {
+            $table->id();
+            $table->integer('guild_id');
+            $table->string('name');
+            $table->integer('level')->default(0);
+            $table->integer('required_reputation')->default(0);
+            $table->text('description')->nullable();
+            $table->boolean('for_character')->default(1);
+            $table->boolean('for_user')->default(1);
+            $table->boolean('has_image')->default(0);
+            $table->string('hash', 10)->nullable();
         });
     }
 
@@ -163,5 +187,6 @@ return new class extends Migration {
         Schema::dropIfExists('guild_shops');
         Schema::dropIfExists('guild_shop_log');
         Schema::dropIfExists('guild_shop_stock');
+        Schema::dropIfExists('guild_ranks');
     }
 };
