@@ -69,6 +69,7 @@ class GuildShopManager extends Service {
             $guild = $shop->guild()->first();
 
             $character = null;
+            $recipient = $user;
             if ($data['bank'] == 'character') {
                 // Check if the user is using a character to pay
                 // - currency must be character-held
@@ -102,6 +103,8 @@ class GuildShopManager extends Service {
                 if (!(new CurrencyManager)->debitCurrency($character, null, 'Guild Shop ('.$guild->name.') Purchase', 'Purchased '.$shopStock->item->name.' from '.$shop->name, $shopStock->currency, $total_cost)) {
                     throw new \Exception('Not enough currency to make this purchase.');
                 }
+
+                $recipient = $character;
             } else {
                 // If the user is paying by themselves
                 // - currency must be user-held
@@ -145,8 +148,8 @@ class GuildShopManager extends Service {
                 'quantity'      => $quantity,
             ]);
 
-            // Give the user the item, noting down 1. whose currency was used (user or character) 2. who purchased it 3. which shop it was purchased from
-            if (!(new InventoryManager)->creditItem($guild, $user, 'Guild Shop ('.$guild->name.') Purchase', [
+            // Give the correct recipient the item, noting down 1. whose currency was used (user or character) 2. who purchased it 3. which shop it was purchased from
+            if (!(new InventoryManager)->creditItem($guild, $recipient, 'Guild Shop ('.$guild->name.') Purchase', [
                 'data'  => $shopLog->itemData,
                 'notes' => 'Purchased '.format_date($shopLog->created_at),
             ], $shopStock->item, $quantity)) {
