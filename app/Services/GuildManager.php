@@ -5,6 +5,9 @@ namespace App\Services;
 use App\Models\Guild\Guild;
 use App\Models\Guild\GuildRank;
 use App\Models\Guild\GuildShop;
+use App\Models\Guild\GuildItem;
+use App\Services\InventoryManager;
+use App\Services\CurrencyManager;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 
@@ -473,16 +476,44 @@ class GuildManager extends Service {
                 $shop->stock()->delete();
 
                 foreach ($data['item_id'] as $key => $itemId) {
-                    //REMOVE FROM THE GUILD INVENTORY HERE AS WELL
+                    $qtyRemaining = (int) ($data['quantity'][$key] ?? 1);
+                    $stacks = GuildItem::where([
+                        ['item_id', $itemId],
+                        ['guild_id', $guild->id],
+                        ['count', '>', 0],
+                    ])->orderBy('id')->get();
+
+                    $inventoryManager = new InventoryManager;
+
+                    foreach ($stacks as $stack) {
+                        if ($qtyRemaining <= 0) {
+                            break;
+                        }
+
+                        $debitQuantity = min($stack->count, $qtyRemaining);
+                        if ($debitQuantity <= 0) {
+                            continue;
+                        }
+
+                        if (!$inventoryManager->debitStack($guild, 'Shop Stock Creation', ['data' => 'Reserved for shop stock'], $stack, $debitQuantity)) {
+                            throw new \Exception('Failed to debit the guild item stack for shop stock creation.');
+                        }
+
+                        $qtyRemaining -= $debitQuantity;
+                    }
+
+                    if ($qtyRemaining > 0) {
+                        throw new \Exception('Not enough guild-owned items are available to create this shop stock quantity.');
+                    }
 
                     $shop->stock()->create([
                         'guild_shop_id'         => $shop->id,
-                        'item_id'               => $data['item_id'][$key],
+                        'item_id'               => $itemId,
                         'currency_id'           => $data['currency_id'][$key],
                         'cost'                  => $data['cost'][$key],
                         'guild_cost'            => $data['guild_cost'][$key] ?? $data['cost'][$key],
                         'is_limited_stock'      => isset($data['is_limited_stock'][$key]),
-                        'quantity'              => $data['quantity'][$key] ?? 0,
+                        'quantity'              => $data['quantity'][$key] ?? 1,
                         'purchase_limit'        => $data['purchase_limit'][$key],
                         'is_visible'            => 1,
                         'guild_only'            => isset($data['guild_only']),

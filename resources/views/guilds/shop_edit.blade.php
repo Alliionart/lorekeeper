@@ -67,7 +67,7 @@
                 </div>
                 <div id="shopStock">
                     @foreach ($shop->stock as $key => $stock)
-                        @include('guilds._stock', ['stock' => $stock, 'key' => $key])
+                        @include('guilds._stock', ['stock' => $stock, 'key' => $key, 'itemCounts' => $item_maxes])
                     @endforeach
                 </div>
                 <div class="text-right">
@@ -87,6 +87,7 @@
         $(document).ready(function() {
             var $shopStock = $('#shopStock');
             var $stock = $('#shopStockData').find('.stock');
+            var itemCounts = @json($item_maxes);
 
             $('#shopStock .selectize').selectize();
 
@@ -104,6 +105,16 @@
                 refreshStockFieldNames();
 
                 clone.find('.selectize').selectize();
+            });
+            $('#shopStock').on('change', '.item-select', function() {
+                console.log('item changed!');
+                var item_id = $(this).val();
+                var $container = $(this).closest('.stock');
+
+                var max = itemCounts[item_id] ?? 1;
+
+                $container.find('.quantity').attr('max', max);
+                $container.find('.qty-wrapper small').text('Currently in Inventory: ' + max).removeClass('hide');
             });
 
             attachStockListeners($('#shopStock .stock'));

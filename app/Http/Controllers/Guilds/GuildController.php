@@ -502,12 +502,25 @@ class GuildController extends Controller {
             return redirect('/guilds/view'.$guild->id.'/shop')->with('error', 'You do not have permission to edit this guild shop.');
         }
 
-        $guild_items = $guild->items()->get()->pluck('id')->toArray();
+        $guild_item_ids = $guild->items()->get()->pluck('id')->toArray();
+
+        $itemTotals = GuildItem::where('guild_id', $guild->id)
+            ->whereNull('deleted_at')
+            ->where('count', '>', 0)
+            ->selectRaw('item_id, SUM(count) AS total')
+            ->groupBy('item_id')
+            ->get()
+            ->keyBy('item_id')
+            ->mapWithKeys(function ($row) {
+                return [$row->item_id => (int) $row->total];
+            })
+            ->toArray();
 
         return view('guilds.shop_edit', [
             'guild'      => $guild,
             'shop'       => $shop ?? null,
-            'items'      => Item::whereIn('id', $guild_items)->orderBy('name')->pluck('name', 'id'),
+            'items'      => Item::whereIn('id', $guild_item_ids)->orderBy('name')->pluck('name', 'id'),
+            'item_maxes' => $itemTotals,
             'currencies' => Currency::orderBy('name')->where('is_guild_owned', 1)->pluck('name', 'id'),
         ]);
     }
