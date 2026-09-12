@@ -13,6 +13,8 @@ use App\Models\Guild\GuildShopLog;
 use App\Models\Guild\GuildShopStock;
 use App\Models\Item\Item;
 use App\Models\Item\ItemCategory;
+use App\Models\User\User;
+use App\Models\Character\Character;
 use App\Models\User\UserCurrency;
 use App\Services\CurrencyManager;
 use App\Services\GuildManager;
@@ -473,6 +475,219 @@ class GuildController extends Controller {
 
         return redirect()->back();
     }
+
+    /** --------------------------------------------------------------
+     * GUILD MEMBERS & CHARACTERS
+     * -------------------------------------------------------------- */
+
+    /**
+     * Shows the modal to invite users to the guild.
+     *
+     * @param mixed $id
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function getGuildAddMembersModal($id) {
+        $guild = Guild::where('id', $id)->first();
+
+        $in_guild = $guild->members->pluck('user_id')->toArray();
+        $applicable_users = User::visible()->whereNotIn('id', $in_guild)->orderBy('name')->get()->pluck('verified_name', 'id')->toArray();
+
+        return view('guilds._invite_users_modal', [
+            'guild'     => $guild,
+            'users'     => $applicable_users,
+        ]);
+    }
+
+    /**
+     * Shows the modal to add characters to the guild.
+     *
+     * @param mixed $id
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function getGuildAddCharactersModal($id) {
+        $guild = Guild::where('id', $id)->first();
+
+        $in_guild = $guild->characters->pluck('character_id')->toArray();
+        $user_ids = $guild->members->pluck('user_id')->toArray();
+        $characters = Character::visible()->whereNotIn('id', $in_guild)->whereIn('user_id', $user_ids)->where('is_myo_slot', 0)->orderBy('name')->get()->pluck('fullName', 'id')->toArray();
+
+        return view('guilds._add_characters_modal', [
+            'guild'         => $guild,
+            'characters'    => $characters,
+        ]);
+    }
+
+    /**
+     * Shows the guild bank.
+     *
+     * @param mixed $id
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function getManageMembers($id) {
+        $guild = Guild::where('id', $id)->first();
+
+        return view('guilds.manage_members', [
+            'guild'                 => $guild,
+            'userRanks'             => $guild->ranks->where('for_user', 1)->pluck('name', 'id')->toArray(),
+            'characterRanks'        => $guild->ranks->where('for_character', 1)->pluck('name', 'id')->toArray(),
+        ]);
+    }
+
+    /**
+     * Manages either users or characters in a guild using bulk actions.
+     *
+     * @param App\Services\GuildManager $service
+     * @param int|null                     $id
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function postEditManageMembers(Request $request, GuildManager $service, $id) {
+
+        $guild = Guild::find($id);
+        $manage_type = $request->only('manage-type')['manage-type'];
+        $data = $request->only(['action', 'user_rank', 'character_rank', 'user_ids', 'character_ids']);
+
+        if ($invited = $service->manageMembers($guild, $manage_type, $data, Auth::user())) {
+            flash('Edited '.$manage_type.' successfully.')->success();
+        } else {
+            foreach ($service->errors()->getMessages()['error'] as $error) {
+                flash($error)->error();
+            }
+        }
+
+        return redirect()->back();
+    }
+
+    /**
+     * Adds members to the guild. Requires an array of user ids to be passed in the request.
+     *
+     * @param App\Services\GuildManager $service
+     * @param int|null                     $id
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function postGuildInvitationAction(Request $request, GuildManager $service, $id = null, $action = 'reject') {
+
+        $guild = Guild::find($id);
+
+        if ($invited = $service->handleInvitation($guild, $action, Auth::user())) {
+            flash('Invitation ' . $action.'ed Succesfully.')->success();
+        } else {
+            foreach ($service->errors()->getMessages()['error'] as $error) {
+                flash($error)->error();
+            }
+        }
+
+        return redirect()->back();
+    }
+
+    /**
+     * Adds members to the guild. Requires an array of user ids to be passed in the request.
+     *
+     * @param App\Services\GuildManager $service
+     * @param int|null                     $id
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function postGuildAddMembers(Request $request, GuildManager $service, $id = null) {
+        $data = $request->only([
+            'users',
+        ]);
+
+        $guild = Guild::find($id);
+
+        if ($invited = $service->addMembers($guild, $data, Auth::user())) {
+            flash('Invitations sent to: '. join(', ', $invited))->success();
+        } else {
+            foreach ($service->errors()->getMessages()['error'] as $error) {
+                flash($error)->error();
+            }
+        }
+
+        return redirect()->back();
+    }
+
+    /**
+     * Removes members from the guild. Requires an array of user ids to be passed in the request.
+     *
+     * @param App\Services\GuildManager $service
+     * @param int|null                     $id
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function postGuildRemoveMembers(Request $request, GuildManager $service, $id = null) {
+        $data = $request->only([
+            'users',
+        ]);
+
+        $guild = Guild::find($id);
+
+        if ($service->removeMembers($guild, $data, Auth::user())) {
+            flash('Members successfully removed.')->success();
+        } else {
+            foreach ($service->errors()->getMessages()['error'] as $error) {
+                flash($error)->error();
+            }
+        }
+
+        return redirect()->back();
+    }
+
+    /**
+     * Adds characters to the guild. Requires an array of character ids to be passed in the request.
+     *
+     * @param App\Services\GuildManager $service
+     * @param int|null                     $id
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function postGuildAddCharacters(Request $request, GuildManager $service, $id = null) {
+        $data = $request->only([
+            'characters',
+        ]);
+
+        $guild = Guild::find($id);
+
+        if ($service->addCharacters($guild, $data, Auth::user())) {
+            flash('Characters successfully added.')->success();
+        } else {
+            foreach ($service->errors()->getMessages()['error'] as $error) {
+                flash($error)->error();
+            }
+        }
+
+        return redirect()->back();
+    }
+
+    /**
+     * Removes characters from the guild. Requires an array of character ids to be passed in the request.
+     *
+     * @param App\Services\GuildManager $service
+     * @param int|null                     $id
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function postGuildRemoveCharacters(Request $request, GuildManager $service, $id = null) {
+        $data = $request->only([
+            'characters',
+        ]);
+
+        $guild = Guild::find($id);
+
+        if ($service->removeCharacters($guild, $data, Auth::user())) {
+            flash('Characters successfully removed.')->success();
+        } else {
+            foreach ($service->errors()->getMessages()['error'] as $error) {
+                flash($error)->error();
+            }
+        }
+
+        return redirect()->back();
+    }
+
 
     //Future TODO:
     /*

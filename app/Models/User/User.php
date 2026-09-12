@@ -19,6 +19,8 @@ use App\Models\Rank\Rank;
 use App\Models\Rank\RankPower;
 use App\Models\Shop\ShopLog;
 use App\Models\Submission\Submission;
+use App\Models\Guild\Guild;
+use App\Models\Guild\GuildInvitation;
 use App\Traits\Commenter;
 use Carbon\Carbon;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -204,6 +206,20 @@ class User extends Authenticatable implements MustVerifyEmail {
      */
     public function commentLikes() {
         return $this->hasMany(CommentLike::class);
+    }
+
+    /**
+     * Gets all of a user's guilds.
+     */
+    public function guilds() {
+        return $this->hasMany(Guild::class);
+    }
+
+    /**
+     * Gets all of a user's guilds.
+     */
+    public function guildInvites() {
+        return $this->hasMany(GuildInvitation::class);
     }
 
     /**********************************************************************************************
