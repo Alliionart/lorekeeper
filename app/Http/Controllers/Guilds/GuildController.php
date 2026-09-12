@@ -16,6 +16,7 @@ use App\Models\Item\ItemCategory;
 use App\Models\User\UserCurrency;
 use App\Services\GuildManager;
 use App\Services\GuildShopManager;
+use App\Services\CurrencyManager;
 use Auth;
 use Illuminate\Http\Request;
 
@@ -446,22 +447,24 @@ class GuildController extends Controller {
     /**
      * Transfers currency between guild and user.
      *
-     * @param App\Services\GuildManager $service
+     * @param App\Services\CurrencyManager $service
      * @param int|null                  $id
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function postBuildBankTransfer(Request $request, GuildManager $service, $id = null) {
+    public function postCurrencyTransfer(Request $request, CurrencyManager $service, $id = null) {
         $data = $request->only([
             'quantity', 'take_currency_id', 'give_currency_id',
         ]);
 
-        if ($id && $service->updateGuildRanks(Guild::find($id), $data, Auth::user())) {
-            flash('Guild ranks updated successfully.')->success();
-        } elseif (!$id && $category = $service->updateGuildRanks($data, Auth::user())) {
-            flash('Guild ranks created successfully.')->success();
+        $guild = Guild::find($id);
 
-            return redirect()->to('guilds/view/'.$guild->id.'/bank');
+        $action = $request->get('action');
+        $sender = ($action == 'take') ? $guild : Auth::user();
+        $recipient = ($action == 'take') ? Auth::user() : $guild;
+
+        if ($service->transferGuildCurrency($sender, $recipient, Currency::where(($action == 'take') ? 'allow_guild_to_user' : 'allow_user_to_guild', 1)->where('id', $request->get(($action == 'take') ? 'take_currency_id' : 'give_currency_id'))->first(), $request->get('quantity'))) {
+            flash('Currency transferred successfully.')->success();
         } else {
             foreach ($service->errors()->getMessages()['error'] as $error) {
                 flash($error)->error();
@@ -548,7 +551,7 @@ class GuildController extends Controller {
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getShopStock(GuildShopManager $service, $id, $stockId) {
+    public function getShopStock(GuildShopManager $service, $id, $shopId, $stockId) {
         $shop = GuildShop::where('id', $id)->where('is_active', 1)->first();
         if (!$shop) {
             abort(404);

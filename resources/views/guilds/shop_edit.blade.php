@@ -17,7 +17,7 @@
         @endif
     </h1>
 
-    {!! Form::open(['url' => 'guilds/' . $guild->id . '/shop/' . ($shop ? 'edit' : 'create'), 'files' => true]) !!}
+    {!! Form::open(['url' => __('guilds.guilds').'/' . $guild->id . '/shop/' . ($shop ? 'edit' : 'create'), 'files' => true]) !!}
 
     <h3>Basic Information</h3>
 
@@ -61,7 +61,7 @@
         <div class="card">
             <h3 class="card-header">Shop Stock</h3>
             <div class="card-body">
-                {!! Form::open(['url' => '/guilds/' . $guild->id . '/shop/edit/stock/']) !!}
+                {!! Form::open(['url' => '/'.__('guilds.guilds').'/' . $guild->id . '/shop/edit/stock/']) !!}
                 <div class="text-right mb-3">
                     <a href="#" class="add-stock-button btn btn-outline-primary">Add Stock</a>
                 </div>

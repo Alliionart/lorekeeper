@@ -39,7 +39,7 @@
             @if ($stock->purchase_limit)
                 <div class="alert alert-warning mb-3">You have purchased this item {{ $userPurchaseCount }} times.</div>
             @endif
-            {!! Form::open(['url' => 'guilds/' . $guild->id . '/shop/buy']) !!}
+            {!! Form::open(['url' => __('guilds.guilds').'/' . $guild->id . '/shop/buy']) !!}
             {!! Form::hidden('guild_shop_id', $shop->id) !!}
             {!! Form::hidden('stock_id', $stock->id) !!}
             {!! Form::label('quantity', 'Quantity') !!}

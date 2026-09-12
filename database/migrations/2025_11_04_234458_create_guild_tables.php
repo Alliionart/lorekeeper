@@ -37,7 +37,7 @@ return new class extends Migration {
             $table->engine = 'InnoDB';
             $table->integer('guild_id');
             $table->integer('user_id');
-            $table->integer('permissions')->default(0)
+            $table->integer('permissions')->default(0);
             $table->string('rank_id');
             $table->integer('reputation')->default(0);
             $table->timestamp('joined_at', precision: 0)->nullable();
