@@ -29,9 +29,9 @@
             <div class="sidebar-item"><a href="{{ $guild->editUrl }}" class="{{ set_active('*edit') }}">Settings</a></div>
             <div class="sidebar-item"><a href="{{ $guild->editRankUrl }}" class="{{ set_active('*edit-ranks') }}">Edit Ranks</a></div>
             @if ($guild->shop)
-                <div class="sidebar-item"><a href="{{ url(__('guilds.guilds').'/' . $guild->id . '/shop/edit') }}" class="{{ set_active('*shop/edit') }}">Edit Shop</a></div>
+                <div class="sidebar-item"><a href="{{ url(__('guilds.guilds') . '/' . $guild->id . '/shop/edit') }}" class="{{ set_active('*shop/edit') }}">Edit Shop</a></div>
             @else
-                <div class="sidebar-item"><a href="{{ url(__('guilds.guilds').'/' . $guild->id . '/shop/create') }}" class="{{ set_active('*shop/create') }}">Create Shop</a></div>
+                <div class="sidebar-item"><a href="{{ url(__('guilds.guilds') . '/' . $guild->id . '/shop/create') }}" class="{{ set_active('*shop/create') }}">Create Shop</a></div>
             @endif
         </li>
     @endif

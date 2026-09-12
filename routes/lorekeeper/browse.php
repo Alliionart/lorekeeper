@@ -231,14 +231,11 @@ Route::group(['prefix' => __('guilds.guilds'), 'namespace' => 'Guilds'], functio
         Route::group(['prefix' => 'inventory'], function () {
             Route::get('/', 'GuildController@getGuildInventory');
             Route::post('edit', 'InventoryController@postEdit');
-        });        
-        
+        });
+
         Route::get(strtolower(__('guilds.playpen')), 'GuildController@getGuildPets');
         Route::get('armory', 'GuildController@getGuildArmory');
 
         Route::post('disband', 'GuildController@postDisbandGuild');
     });
-
-    
-    
 });

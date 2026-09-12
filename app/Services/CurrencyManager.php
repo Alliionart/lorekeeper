@@ -315,9 +315,9 @@ class CurrencyManager extends Service {
             }
 
             $in_guild = GuildMember::where([
-                    ['guild_id', $guild->id],
-                    ['user_id', $user->id],
-                ])->exists();
+                ['guild_id', $guild->id],
+                ['user_id', $user->id],
+            ])->exists();
 
             if (!$in_guild) {
                 throw new \Exception('Only guild members may withdraw currency.');

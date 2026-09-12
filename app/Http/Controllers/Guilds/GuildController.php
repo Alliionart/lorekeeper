@@ -14,9 +14,9 @@ use App\Models\Guild\GuildShopStock;
 use App\Models\Item\Item;
 use App\Models\Item\ItemCategory;
 use App\Models\User\UserCurrency;
+use App\Services\CurrencyManager;
 use App\Services\GuildManager;
 use App\Services\GuildShopManager;
-use App\Services\CurrencyManager;
 use Auth;
 use Illuminate\Http\Request;
 
@@ -448,7 +448,7 @@ class GuildController extends Controller {
      * Transfers currency between guild and user.
      *
      * @param App\Services\CurrencyManager $service
-     * @param int|null                  $id
+     * @param int|null                     $id
      *
      * @return \Illuminate\Http\RedirectResponse
      */
@@ -561,6 +561,7 @@ class GuildController extends Controller {
      * @param App\Services\GuildShopManager $service
      * @param int                           $id
      * @param int                           $stockId
+     * @param mixed                         $shopId
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
