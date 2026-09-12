@@ -59,7 +59,7 @@
         <h3>
             Take/Give Currency
         </h3>
-        {!! Form::open(['url' => __('guilds.guilds').'/' . $guild->id . '/bank/transfer']) !!}
+        {!! Form::open(['url' => __('guilds.guilds') . '/' . $guild->id . '/bank/transfer']) !!}
         <div class="form-group">
             <div class="row">
                 <div class="col-md-6">

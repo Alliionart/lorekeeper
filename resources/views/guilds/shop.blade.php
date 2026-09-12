@@ -80,7 +80,7 @@
         $(document).ready(function() {
             $('.inventory-item').on('click', function(e) {
                 e.preventDefault();
-                loadModal("{{ url(__('guilds.guilds').'/'.$guild->id.'/shop/' . $shop->id) }}/" + $(this).data('id'), 'Purchase Item');
+                loadModal("{{ url(__('guilds.guilds') . '/' . $guild->id . '/shop/' . $shop->id) }}/" + $(this).data('id'), 'Purchase Item');
             });
         });
     </script>
