@@ -15,11 +15,7 @@
 
     <div class="row">
         <div class="col-md-8">
-            {!! Form::select('user_id',
-                $users,
-                null,
-                ['class' => 'form-control selectize'],
-            ) !!}
+            {!! Form::select('user_id', $users, null, ['class' => 'form-control selectize']) !!}
         </div>
         <div class="col-md-4">
             {!! Form::submit('Login As User', ['class' => 'btn btn-secondary']) !!}
@@ -27,8 +23,6 @@
     </div>
 
     {!! Form::close() !!}
-    
-
 @endsection
 @section('scripts')
     <script>
