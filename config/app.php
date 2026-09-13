@@ -180,6 +180,7 @@ return [
         App\Providers\CommentProvider::class,
         Intervention\Image\ImageServiceProvider::class,
         App\Providers\FortifyServiceProvider::class,
+        App\Providers\PluginServiceProvider::class,
 
     ],
 

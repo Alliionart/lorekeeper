@@ -177,6 +177,7 @@
             });
         </script>
     </div>
+    @stack('body-end')
 </body>
 
 </html>

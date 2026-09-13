@@ -63,7 +63,8 @@
     },
     "autoload": {
         "psr-4": {
-            "App\\": "app/"
+            "App\\": "app/",
+            "Plugins\\": "plugins/"
         },
         "classmap": [
             "database/seeds",
