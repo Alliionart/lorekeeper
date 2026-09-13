@@ -1,7 +1,7 @@
 @extends('admin.layout')
 
 @section('admin-title')
-    $guild->id ? Edit Guild
+    {{ $guild ? 'Edit Guild' : 'Create Guild' }}
 @endsection
 
 @section('admin-content')

@@ -421,7 +421,7 @@ class GuildController extends Controller {
             'categories'    => $categories->keyBy('id'),
             'items'         => $items,
             'logs'          => [] /* $guild->getItemLogs() */,
-        ] + (Auth::check() && (Auth::user()->hasPower('edit_inventories') || Auth::user()->id == $this->character->user_id) ? [
+        ] + (Auth::check() && (Auth::user()->hasPower('edit_inventories') || Auth::user()->id == $guild->owner_id) ? [
             'itemOptions'       => $itemOptions->pluck('name', 'id'),
             'guildInventory'    => GuildItem::with('item')->whereIn('item_id', $itemOptions->pluck('id'))->whereNull('deleted_at')->where('count', '>', '0')->where('guild_id', $guild->id)->get()->filter(function ($guildItem) {
                 return $guildItem->isTransferrable == true;
