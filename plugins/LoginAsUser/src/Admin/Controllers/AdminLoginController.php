@@ -1,4 +1,5 @@
 <?php
+
 namespace Plugins\LoginAsUser\src\Admin\Controllers;
 
 use App\Http\Controllers\Controller;
@@ -11,12 +12,12 @@ class AdminLoginController extends Controller {
      * Show the login selection screen.
      */
     public function getLoginAs() {
-
-        if ( !Auth::user()->isStaff ) {
+        if (!Auth::user()->isStaff) {
             abort(404);
         }
 
         $users = User::visible()->pluck('name', 'id')->toArray();
+
         return view('LoginAsUser::select_user', compact('users'));
     }
 
@@ -25,7 +26,7 @@ class AdminLoginController extends Controller {
      */
     public function login(Request $request) {
         $request->validate([
-            'user_id' => 'required|exists:users,id'
+            'user_id' => 'required|exists:users,id',
         ]);
 
         if (Auth::check()) {
