@@ -5,6 +5,7 @@ namespace App\Models\Submission;
 use App\Models\Model;
 use App\Models\Prompt\Prompt;
 use App\Models\User\User;
+use App\Models\Guild\Guild;
 use Carbon\Carbon;
 
 class Submission extends Model {
@@ -82,6 +83,13 @@ class Submission extends Model {
      */
     public function characters() {
         return $this->hasMany(SubmissionCharacter::class, 'submission_id');
+    }
+
+    /**
+     * Get the characters attached to the submission.
+     */
+    public function guilds() {
+        return $this->hasMany(SubmissionGuild::class, 'submission_id');
     }
 
     /**********************************************************************************************

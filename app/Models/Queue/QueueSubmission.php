@@ -4,6 +4,7 @@ namespace App\Models\Queue;
 
 use App\Models\Model;
 use App\Models\User\User;
+use App\Models\Guild\Guild;
 use Carbon\Carbon;
 
 class QueueSubmission extends Model {
@@ -91,6 +92,13 @@ class QueueSubmission extends Model {
      */
     public function characters() {
         return $this->hasMany(QueueSubmissionCharacter::class, 'queue_submission_id');
+    }
+
+    /**
+     * Get the guilds attached to the submission.
+     */
+    public function guilds() {
+        return $this->hasMany(QueueSubmissionGuild::class, 'queue_submission_id');
     }
 
     /**********************************************************************************************

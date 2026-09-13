@@ -120,6 +120,40 @@
 
 <div class="card mb-3">
     <div class="card-header h2">
+        <a href="#" class="btn btn-outline-info float-right" id="addGuild">Add Guild</a>
+        Guilds
+    </div>
+    <div class="card-body" style="clear:both;">
+        @if ($isClaim)
+            <p>If there are guild-specific rewards you would like to claim, attach them here. Otherwise, this section can be left blank.</p>
+        @endif
+        <div id="guilds" class="mb-3">
+            @foreach ($submission->guilds as $guild)
+                @include('widgets._guild_select_entry', [
+                    'guildCurrencies' => $guildCurrencies,
+                    'items' => $items,
+                    'tables' => [],
+                    'showTables' => false,
+                    'guild' => $guild,
+                    'expanded_rewards' => $expanded_rewards,
+                ])
+            @endforeach
+            @if (old('id') && !$submission->id)
+                @php
+                    session()->forget('_old_input.guild_rewardable_type');
+                    session()->forget('_old_input.guild_rewardable_id');
+                    session()->forget('_old_input.guild_rewardable_quantity');
+                @endphp
+                @foreach (array_unique(old('id')) as $id)
+                    @include('widgets._guild_select_entry', ['guild' => \App\Models\Guild\Guild::where('id', $id)->first()])
+                @endforeach
+            @endif
+        </div>
+    </div>
+</div>
+
+<div class="card mb-3">
+    <div class="card-header h2">
         Add-Ons
     </div>
     <div class="card-body">
