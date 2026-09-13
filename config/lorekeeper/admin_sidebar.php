@@ -36,7 +36,7 @@ return [
         'links' => [
             [
                 'name'  => 'Installed Plugins',
-                'url'   => 'admin/plugins'
+                'url'   => 'admin/plugins',
             ],
         ],
     ],

@@ -19,8 +19,8 @@ Route::group(['middleware' => 'admin'], function () {
     Route::post('staff-reward-settings/{key}', 'HomeController@postEditStaffRewardSetting');
 });
 
-//PLUGINS
-Route::group(['prefix' => 'plugins', 'middleware' => 'power:manage_plugins'], function() {
+// PLUGINS
+Route::group(['prefix' => 'plugins', 'middleware' => 'power:manage_plugins'], function () {
     Route::get('/', 'PluginController@getPluginIndex');
 });
 

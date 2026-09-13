@@ -34,23 +34,19 @@ class PluginServiceProvider extends ServiceProvider {
 
     /**
      * Boot a single plugin.
-     * 
-     * @param string        $name
-     * @param string        $path
      */
-    protected function bootPlugin(string $name, string $path):void {
-
-        $configPath = $path . 'config/config.php';
+    protected function bootPlugin(string $name, string $path): void {
+        $configPath = $path.'config/config.php';
         if (File::exists($configPath)) {
             $this->mergeConfigFrom($configPath, $name);
         }
 
-        $langPath = $path . 'resources/lang';
+        $langPath = $path.'resources/lang';
         if (File::isDirectory($langPath)) {
             $this->loadTranslationsFrom($langPath, $name);
         }
 
-        $viewsPath = $path . '/resources/views';
+        $viewsPath = $path.'/resources/views';
         if (File::isDirectory($viewsPath)) {
             $this->loadViewsFrom($viewsPath, $name);
         }
@@ -78,7 +74,5 @@ class PluginServiceProvider extends ServiceProvider {
         if (File::isDirectory($migrationsPath)) {
             $this->loadMigrationsFrom($migrationsPath);
         }
-
-        
     }
 }

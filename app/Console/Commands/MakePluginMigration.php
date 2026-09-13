@@ -4,8 +4,7 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 
-class MakePluginMigration extends Command
-{
+class MakePluginMigration extends Command {
     /**
      * The name and signature of the console command.
      *
@@ -23,8 +22,7 @@ class MakePluginMigration extends Command
     /**
      * Execute the console command.
      */
-    public function handle()
-    {
+    public function handle() {
         $plugin = $this->argument('plugin');
         $name = $this->argument('name');
 
