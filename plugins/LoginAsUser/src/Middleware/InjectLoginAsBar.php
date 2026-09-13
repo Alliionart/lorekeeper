@@ -29,7 +29,7 @@ class InjectLoginAsBar
 
         $response = $next($request);
         if (method_exists($response, 'getContent') && Auth::check()) {
-            
+            // Add a button to the user's page
             if ($request->is('user/*')) {
                 $content = $response->getContent();
 

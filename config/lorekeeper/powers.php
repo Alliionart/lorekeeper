@@ -71,4 +71,8 @@ return [
         'name'        => 'Comment on Sales',
         'description' => 'Allow rank to comment on sales in preview mode.',
     ],
+    'manage_plugins' => [
+        'name'        => 'Manage Plugins',
+        'description' => 'Allow rank to add, remove or update plugins.',
+    ],
 ];

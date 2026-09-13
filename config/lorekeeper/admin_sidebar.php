@@ -31,6 +31,15 @@ return [
             ],
         ],
     ],
+    'Plugins'    => [
+        'power' => 'manage_plugins',
+        'links' => [
+            [
+                'name'  => 'Installed Plugins',
+                'url'   => 'admin/plugins'
+            ],
+        ],
+    ],
     'Reports'    => [
         'power' => 'manage_reports',
         'links' => [
