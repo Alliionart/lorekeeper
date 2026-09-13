@@ -263,10 +263,10 @@ class GuildController extends Controller {
         $categories = ItemCategory::visible(Auth::check() ? Auth::user() : null)->orderBy('sort', 'DESC')->get();
         $query = $shop->displayStock()->where(function ($query) use ($categories) {
             $query->whereIn('item_category_id', $categories->pluck('id')->toArray())
-                ->orWHereNull('item_category_id');
+                ->orWhereNull('item_category_id');
         });
 
-        if ( !$in_guild ) {
+        if (!$in_guild) {
             $query->where('is_guild_only', 0);
         }
 
@@ -499,7 +499,7 @@ class GuildController extends Controller {
     public function getGuildAddMembersModal($id) {
         $guild = Guild::where('id', $id)->first();
 
-        if ( !$guild->getPermission() ) {
+        if (!$guild->getPermission()) {
             abort(404);
         }
 
@@ -522,7 +522,7 @@ class GuildController extends Controller {
     public function getGuildAddCharactersModal($id) {
         $guild = Guild::where('id', $id)->first();
 
-        if ( !$guild->getPermission() ) {
+        if (!$guild->getPermission()) {
             abort(404);
         }
 
@@ -546,7 +546,7 @@ class GuildController extends Controller {
     public function getManageMembers($id) {
         $guild = Guild::where('id', $id)->first();
 
-        if ( !$guild->getPermission() ) {
+        if (!$guild->getPermission()) {
             abort(404);
         }
 
