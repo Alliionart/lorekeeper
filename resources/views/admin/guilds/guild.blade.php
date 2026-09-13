@@ -25,7 +25,7 @@
     <div class="form-group">
         {!! Form::label('Owner') !!}
         {!! Form::select('artist_id', $userOptions, $guild && $guild->owner_id ? $guild->owner_id : null, ['class' => 'form-control mr-2 selectize', 'placeholder' => 'Select a User']) !!}
-                        
+
     </div>
 
     <div class="form-group">
@@ -52,42 +52,40 @@
 
     <div class="col-md form-group">
         {!! Form::hidden('status', 'inactive') !!}
-        {!! Form::checkbox('status', 'active', ($guild->id ? $guild->status == 'active' : true), ['class' => 'form-check-input', 'data-toggle' => 'toggle']) !!}
-        {!! Form::label('status', 'Is Active?', ['class' => 'form-check-label ml-3']) !!} 
+        {!! Form::checkbox('status', 'active', $guild->id ? $guild->status == 'active' : true, ['class' => 'form-check-input', 'data-toggle' => 'toggle']) !!}
+        {!! Form::label('status', 'Is Active?', ['class' => 'form-check-label ml-3']) !!}
         {!! add_help('If this is off, users will not be able to view information for the item/it will be hidden from view. This is overridden by the item being owned at any point by anyone on the site.') !!}
     </div>
 
-    
 
-<div class="row">
-            <div class="col-md">
-                <div class="form-group">
-                    {!! Form::checkbox('open_new_users', 1, $guild->id ? $guild->open_new_users : 1, ['class' => 'form-check-input', 'data-toggle' => 'toggle']) !!}
-                    {!! Form::label('open_new_users', 'Open to new users?', ['class' => 'form-check-label ml-3']) !!} {!! add_help('If this is off, no one new can join the guild. This will not impact those already in the guild') !!}
-                </div>
-            </div>
-            <div class="col-md">
-                <div class="form-group">
-                    {!! Form::label( 'max_users', 'Max users', 'Quantity') !!}
-                    {!! Form::text('max_users', $guild->max_users, ['class' => 'form-control']) !!}
-                </div>
-            </div>
-            <div class="col-md">
-                <div class="form-group">
-                    {!! Form::label( 'max_characters', 'Max characters', 'Quantity') !!}
-                    {!! Form::text('max_characters', $guild->max_characters, ['class' => 'form-control']) !!}
-                </div>
+
+    <div class="row">
+        <div class="col-md">
+            <div class="form-group">
+                {!! Form::checkbox('open_new_users', 1, $guild->id ? $guild->open_new_users : 1, ['class' => 'form-check-input', 'data-toggle' => 'toggle']) !!}
+                {!! Form::label('open_new_users', 'Open to new users?', ['class' => 'form-check-label ml-3']) !!} {!! add_help('If this is off, no one new can join the guild. This will not impact those already in the guild') !!}
             </div>
         </div>
-  
+        <div class="col-md">
+            <div class="form-group">
+                {!! Form::label('max_users', 'Max users', 'Quantity') !!}
+                {!! Form::text('max_users', $guild->max_users, ['class' => 'form-control']) !!}
+            </div>
+        </div>
+        <div class="col-md">
+            <div class="form-group">
+                {!! Form::label('max_characters', 'Max characters', 'Quantity') !!}
+                {!! Form::text('max_characters', $guild->max_characters, ['class' => 'form-control']) !!}
+            </div>
+        </div>
+    </div>
+
 
     <div class="text-right">
         {!! Form::submit($guild->id ? 'Edit' : 'Create', ['class' => 'btn btn-primary']) !!}
     </div>
 
     {!! Form::close() !!}
-
-
 @endsection
 
 @section('scripts')

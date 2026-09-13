@@ -1,5 +1,7 @@
 @php
-    $userGuilds = Auth::user()->guilds->pluck('id')->toArray();
+    $userGuilds = Auth::user()
+        ->guilds->pluck('id')
+        ->toArray();
     $guilds = \App\Models\Guild\Guild::whereIn('id', $userGuilds)->where('status', 'active');
     $tables = \App\Models\Loot\LootTable::orderBy('name')->pluck('name', 'id');
 @endphp
