@@ -476,7 +476,13 @@ Route::group(['prefix' => 'guilds', 'namespace' => 'Guilds', 'middleware' => 'po
     Route::get('/queue', 'GuildController@getGuildQueue');
     Route::get('/queue/{status}', 'GuildController@getGuildQueue')->where('status', 'pending|approved|rejected');
     Route::get('edit/{id}', 'GuildController@getEditGuild');
+    Route::get('create', 'GuildController@getCreateGuild');
+    Route::post('create', 'GuildController@postCreateEditGuild');
+    Route::post('edit/{id}', 'GuildController@postCreateEditGuild');
     Route::post('edit/{id}/{action}', 'GuildController@postGuild')->where('action', 'pending|approved|rejected');
     Route::post('{id}/grant-items', 'GrantController@postGuildItems');
     Route::post('{id}/grant', 'GrantController@postGuildCurrency');
+    Route::get('delete/{id}', 'GuildController@getGuildDelete');
+    Route::post('delete/{id}', 'GuildController@postGuildDelete');
+
 });
