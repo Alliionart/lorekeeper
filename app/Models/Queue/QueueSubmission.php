@@ -4,7 +4,6 @@ namespace App\Models\Queue;
 
 use App\Models\Model;
 use App\Models\User\User;
-use App\Models\Guild\Guild;
 use Carbon\Carbon;
 
 class QueueSubmission extends Model {

@@ -4,7 +4,6 @@ namespace App\Models\Queue;
 
 use App\Models\Guild\Guild;
 use App\Models\Model;
-use App\Models\User\User;
 
 class QueueSubmissionGuild extends Model {
     /**
@@ -57,6 +56,4 @@ class QueueSubmissionGuild extends Model {
         ACCESSORS
 
     **********************************************************************************************/
-
-    
 }

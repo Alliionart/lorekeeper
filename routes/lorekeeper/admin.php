@@ -484,5 +484,4 @@ Route::group(['prefix' => 'guilds', 'namespace' => 'Guilds', 'middleware' => 'po
     Route::post('{id}/grant', 'GrantController@postGuildCurrency');
     Route::get('delete/{id}', 'GuildController@getGuildDelete');
     Route::post('delete/{id}', 'GuildController@postGuildDelete');
-
 });
