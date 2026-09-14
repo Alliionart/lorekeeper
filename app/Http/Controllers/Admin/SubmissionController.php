@@ -154,7 +154,7 @@ class SubmissionController extends Controller {
      */
     public function postSubmission(Request $request, SubmissionManager $service, $id, $action) {
         $data = $request->only([
-            'slug', 'character_rewardable_quantity', 'character_rewardable_id',  'character_rewardable_type', 'character_currency_id', 
+            'slug', 'character_rewardable_quantity', 'character_rewardable_id',  'character_rewardable_type', 'character_currency_id',
             'rewardable_type', 'rewardable_id', 'quantity', 'staff_comments',
             'guild_rewardable_quantity', 'guild_rewardable_id', 'guild_rewardable_type', 'guild_currency_id', 'guild_id',
         ]);

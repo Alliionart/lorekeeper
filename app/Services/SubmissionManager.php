@@ -5,8 +5,8 @@ namespace App\Services;
 use App\Facades\Notifications;
 use App\Facades\Settings;
 use App\Models\Character\Character;
-use App\Models\Guild\Guild;
 use App\Models\Currency\Currency;
+use App\Models\Guild\Guild;
 use App\Models\Item\Item;
 use App\Models\Loot\LootTable;
 use App\Models\Prompt\Prompt;
@@ -629,14 +629,13 @@ class SubmissionManager extends Service {
      * Processes reward data into a format that can be used for distribution.
      *
      * @param array  $data
-     * @param string $rewardType         (Must be "User", "Character", "Guild")
+     * @param string $rewardType (Must be "User", "Character", "Guild")
      * @param bool   $isStaff
      * @param bool   $isClaim
      *
      * @return array
      */
     private function processRewards($data, $rewardType, $isStaff = false, $isClaim = false) {
-
         switch ($rewardType) {
             case 'Character':
 

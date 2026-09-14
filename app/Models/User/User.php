@@ -11,7 +11,6 @@ use App\Models\Currency\CurrencyLog;
 use App\Models\Gallery\GalleryCollaborator;
 use App\Models\Gallery\GalleryFavorite;
 use App\Models\Gallery\GallerySubmission;
-use App\Models\Guild\Guild;
 use App\Models\Guild\GuildInvitation;
 use App\Models\Guild\GuildMember;
 use App\Models\Item\Item;

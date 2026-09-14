@@ -389,12 +389,12 @@ function fillCharacterAssets($assets, $sender, $recipient, $logType, $data, $sub
  * Distributes the assets in an assets array to the given recipient (guild).
  * Loot tables will be rolled before distribution.
  *
- * @param array                           $assets
- * @param \App\Models\User\User           $sender
- * @param \App\Models\Guild\Guild         $recipient
- * @param string                          $logType
- * @param string                          $data
- * @param mixed|null                      $submitter
+ * @param array                   $assets
+ * @param \App\Models\User\User   $sender
+ * @param \App\Models\Guild\Guild $recipient
+ * @param string                  $logType
+ * @param string                  $data
+ * @param mixed|null              $submitter
  *
  * @return array
  */
