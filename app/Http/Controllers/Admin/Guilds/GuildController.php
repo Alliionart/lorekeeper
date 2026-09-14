@@ -4,12 +4,12 @@ namespace App\Http\Controllers\Admin\Guilds;
 
 use App\Http\Controllers\Controller;
 use App\Models\Guild\Guild;
-use App\Services\GuildManager;
 use App\Models\User\User;
-use Illuminate\Http\Request;
+use App\Services\GuildManager;
 use Auth;
-use Settings;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Http\Request;
+use Settings;
 
 class GuildController extends Controller {
     use SoftDeletes;
@@ -116,7 +116,7 @@ class GuildController extends Controller {
         }
 
         return view('admin.guilds.guild', [
-            'guild' => $guild,
+            'guild'       => $guild,
             'userOptions' => User::query()->orderBy('name')->pluck('name', 'id')->toArray(),
         ]);
     }
@@ -124,12 +124,9 @@ class GuildController extends Controller {
     /**
      * create page an individual guild.
      *
-     * @param mixed $id
-     *
      * @return \Illuminate\Contracts\Support\Renderable
      */
     public function getCreateGuild() {
-
         return view('admin.guilds.guild', [
             'guild' => new Guild(),
             'users' => User::orderBy('id')->pluck('name', 'id'),
@@ -143,13 +140,13 @@ class GuildController extends Controller {
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function postCreateEditGuild(Request $request, GuildManager $service, $id=null) {
+    public function postCreateEditGuild(Request $request, GuildManager $service, $id = null) {
         $id ? $request->validate(Guild::$updateRules) : $request->validate(Guild::$createRules);
         $data = $request->only([
-            'name', 'description', 'location', 
+            'name', 'description', 'location',
             'location', 'max_users', 'max_characters',
-            'open_new_users', 
-            'logo', 'remove_logo', 
+            'open_new_users',
+            'logo', 'remove_logo',
         ]);
 
         if ($id && $service->updateGuild(Guild::find($id), $data, Auth::user())) {
@@ -189,7 +186,7 @@ class GuildController extends Controller {
      * Deletes a character.
      *
      * @param App\Services\CharacterManager $service
-     * @param string                        $slug
+     * @param mixed                         $id
      *
      * @return \Illuminate\Http\RedirectResponse
      */
@@ -211,5 +208,4 @@ class GuildController extends Controller {
 
         return redirect()->back();
     }
-
 }

@@ -209,8 +209,8 @@ class GuildManager extends Service {
     /**
      * Deletes a character.
      *
-     * @param \App\Models\Character\Character $character
-     * @param \App\Models\User\User           $user
+     * @param \App\Models\User\User $user
+     * @param mixed                 $guild
      *
      * @return bool
      */

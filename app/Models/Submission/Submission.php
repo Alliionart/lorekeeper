@@ -5,7 +5,6 @@ namespace App\Models\Submission;
 use App\Models\Model;
 use App\Models\Prompt\Prompt;
 use App\Models\User\User;
-use App\Models\Guild\Guild;
 use Carbon\Carbon;
 
 class Submission extends Model {
