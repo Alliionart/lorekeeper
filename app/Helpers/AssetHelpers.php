@@ -386,6 +386,49 @@ function fillCharacterAssets($assets, $sender, $recipient, $logType, $data, $sub
 }
 
 /**
+ * Distributes the assets in an assets array to the given recipient (guild).
+ * Loot tables will be rolled before distribution.
+ *
+ * @param array                           $assets
+ * @param \App\Models\User\User           $sender
+ * @param \App\Models\Guild\Guild         $recipient
+ * @param string                          $logType
+ * @param string                          $data
+ * @param mixed|null                      $submitter
+ *
+ * @return array
+ */
+function fillGuildAssets($assets, $sender, $recipient, $logType, $data, $submitter = null) {
+    // Roll on any loot tables
+    if (isset($assets['loot_tables'])) {
+        foreach ($assets['loot_tables'] as $table) {
+            $assets = mergeAssetsArrays($assets, $table['asset']->roll($table['quantity']));
+        }
+        unset($assets['loot_tables']);
+    }
+
+    foreach ($assets as $key => $contents) {
+        if ($key == 'currencies' && count($contents)) {
+            $service = new \App\Services\CurrencyManager;
+            foreach ($contents as $asset) {
+                if (!$service->creditCurrency($sender, ($asset['asset']->is_guild_owned ? $recipient : $item_recipient), $logType, $data['data'], $asset['asset'], $asset['quantity'])) {
+                    return false;
+                }
+            }
+        } elseif ($key == 'items' && count($contents)) {
+            $service = new \App\Services\InventoryManager;
+            foreach ($contents as $asset) {
+                if (!$service->creditItem($sender, (($asset['asset']->category && $asset['asset']->category->is_guild_owned) ? $recipient : $item_recipient), $logType, $data, $asset['asset'], $asset['quantity'])) {
+                    return false;
+                }
+            }
+        }
+    }
+
+    return $assets;
+}
+
+/**
  * Creates a rewards string from an asset array.
  *
  * @param array $array

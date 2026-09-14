@@ -165,6 +165,80 @@
     </div>
 </div>
 
+<div class="card mb-3">
+    <div class="card-header h2">Guilds</div>
+    <div class="card-body">
+        @if (count(
+                $submission->guilds()->whereRelation('guild', 'status', 'active')->get()) != count($submission->guilds()->get()))
+            <div class="alert alert-warning">
+                Some guilds have been disbanded since this submission was created.
+            </div>
+        @endif
+        @foreach ($submission->guilds()->whereRelation('guild', 'status', 'active')->get() as $guild)
+            <div class="submission-guild-row row mb-2">
+                <div class="col-md-2">
+                    <div class="submission-guild-thumbnail">
+                        <a href="{{ $guild->guild->viewUrl }}"><img src="{{ $guild->guild->logoUrl }}" class="img-thumbnail" alt="Thumbnail for {{ $guild->guild->name }}" /></a>
+                    </div>
+                </div>
+                <div class="col-md-10">
+                    <div class="submssion-guild-info card">
+                        <div class="card-body">
+                            <div class="submission-guild-info-content">
+                                <h3 class="mb-2 submission-guild-info-header"><a href="{{ $guild->guild->viewUrl }}">{{ $guild->guild->name }}</a></h3>
+                                <div class="submission-guild-info-body">
+                                    @if (array_filter(parseAssetData($guild->data)))
+                                        <table class="table table-sm mb-0">
+                                            <thead class="thead-light">
+                                                <tr>
+                                                    <th width="70%">Reward</th>
+                                                    <th width="30%">Amount</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach (parseAssetData($guild->data) as $key => $type)
+                                                    @foreach ($type as $asset)
+                                                        <tr>
+                                                            <td>{!! $asset['asset']->displayName !!} ({!! ucfirst($key) !!})</td>
+                                                            <td>{{ $asset['quantity'] }}</td>
+                                                        </tr>
+                                                    @endforeach
+                                                @endforeach
+
+                                                {{--
+
+                                                If you want to "Categorize" the rewards by type, uncomment this and comment or remove the above @foreach.
+
+                                                @foreach (parseAssetData($character->data) as $key => $type)
+                                                    @if (count($type))
+                                                    <tr><td colspan="2"><strong>{!! strtoupper($key) !!}</strong></td></tr>
+                                                        @foreach ($type as $asset)
+                                                            <tr>
+                                                                <td>{!! $asset['asset']->displayName !!}</td>
+                                                                <td>{{ $asset['quantity'] }}</td>
+                                                            </tr>
+                                                        @endforeach
+                                                    @endif
+                                                @endforeach
+
+                                                --}}
+                                            </tbody>
+                                        </table>
+                                    @else
+                                        <p>
+                                            No rewards set.
+                                        </p>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        @endforeach
+    </div>
+</div>
+
 @if (isset($inventory['user_items']) && array_filter($inventory['user_items']))
     <div class="card mb-3">
         <div class="card-header h2">Add-Ons</div>

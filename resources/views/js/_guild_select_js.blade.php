@@ -37,6 +37,7 @@
             node.find('.add-reward').on('click', function(e) {
                 e.preventDefault();
                 $clone = $components.find('.guild-reward-row').clone();
+                $clone.find('.selectize').selectize();
                 $clone.find('.remove-reward').on('click', function(e) {
                     e.preventDefault();
                     $(this).parent().parent().remove();

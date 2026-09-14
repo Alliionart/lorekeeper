@@ -1,8 +1,8 @@
 @php
     $userGuilds = Auth::user()
-        ->guilds->pluck('id')
+        ->guilds->pluck('guild_id')
         ->toArray();
-    $guilds = \App\Models\Guild\Guild::whereIn('id', $userGuilds)->where('status', 'active');
+    $guilds = \App\Models\Guild\Guild::whereIn('id', $userGuilds)->where('status', 'active')->pluck('name', 'id');
     $tables = \App\Models\Loot\LootTable::orderBy('name')->pluck('name', 'id');
 @endphp
 
@@ -21,7 +21,7 @@
             <div class="col-md-10">
                 <div class="form-group">
                     {!! Form::label('guild_id[]', 'Guild') !!}
-                    {!! Form::select('guild_id[]', $guilds, $guild ? $guild->id : null, ['class' => 'form-control guild-id', 'placeholder' => 'Select Guild']) !!}
+                    {!! Form::select('guild_id[]', $guilds, $guild ? $guild->guild->id : null, ['class' => 'form-control guild-id', 'placeholder' => 'Select Guild']) !!}
                 </div>
                 <div class="guild-rewards">
                     <h4>Guild Rewards</h4>
@@ -53,7 +53,7 @@
                                                 'placeholder' => 'Select Currency',
                                             ]) !!}</div>
                                             <div class="guild-items  {{ $reward->rewardable_type == 'Item' ? 'show' : 'hide' }}">{!! Form::select('guild_rewardable_id[' . $guild->guild_id . '][]', $items, $reward->rewardable_type == 'Item' ? $reward->rewardable_id : null, ['class' => 'form-control guild-item-id', 'placeholder' => 'Select Item']) !!}</div>
-                                            <div class="guild-tables {{ $reward->rewardable_type == 'Loot Table' ? 'show' : 'hide' }}">{!! Form::select('guild_rewardable_id[' . $guild->guild_id . '][]', $tables, $reward->rewardable_type == 'Loot Table' ? $reward->rewardable_id : null, [
+                                            <div class="guild-tables {{ $reward->rewardable_type == 'LootTable' ? 'show' : 'hide' }}">{!! Form::select('guild_rewardable_id[' . $guild->guild_id . '][]', $tables, $reward->rewardable_type == 'LootTable' ? $reward->rewardable_id : null, [
                                                 'class' => 'form-control guild-table-id',
                                                 'placeholder' => 'Select Loot Table',
                                             ]) !!}</div>

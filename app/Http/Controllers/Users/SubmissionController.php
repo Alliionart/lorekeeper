@@ -12,6 +12,7 @@ use App\Models\Prompt\Prompt;
 use App\Models\Raffle\Raffle;
 use App\Models\Submission\Submission;
 use App\Models\User\User;
+use App\Models\Guild\Guild;
 use App\Models\User\UserItem;
 use App\Services\SubmissionManager;
 use Illuminate\Http\Request;
@@ -93,6 +94,7 @@ class SubmissionController extends Controller {
             'submission'          => new Submission,
             'prompts'             => Prompt::active()->sortAlphabetical()->pluck('name', 'id')->toArray(),
             'characterCurrencies' => Currency::where('is_character_owned', 1)->orderBy('sort_character', 'DESC')->pluck('name', 'id'),
+            'guildCurrencies'     => Currency::where('is_guild_owned', 1)->orderBy('sort_character', 'DESC')->pluck('name', 'id'),
             'categories'          => ItemCategory::visible(Auth::check() ? Auth::user() : null)->orderBy('sort', 'DESC')->get(),
             'item_filter'         => Item::orderBy('name')->released()->get()->keyBy('id'),
             'items'               => Item::orderBy('name')->released()->pluck('name', 'id'),
@@ -126,6 +128,7 @@ class SubmissionController extends Controller {
             'submission'          => $submission,
             'prompts'             => Prompt::active()->sortAlphabetical()->pluck('name', 'id')->toArray(),
             'characterCurrencies' => Currency::where('is_character_owned', 1)->orderBy('sort_character', 'DESC')->pluck('name', 'id'),
+            'guildCurrencies'     => Currency::where('is_guild_owned', 1)->orderBy('sort_character', 'DESC')->pluck('name', 'id'),
             'categories'          => ItemCategory::orderBy('sort', 'DESC')->get(),
             'item_filter'         => Item::orderBy('name')->released()->get()->keyBy('id'),
             'items'               => Item::orderBy('name')->released()->pluck('name', 'id'),
@@ -151,6 +154,21 @@ class SubmissionController extends Controller {
 
         return view('home._character', [
             'character' => $character,
+        ]);
+    }
+
+    /**
+     * Shows guild information.
+     *
+     * @param string $id
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function getGuildInfo($id) {
+        $guild = Guild::find($id);
+
+        return view('home._guild', [
+            'guild' => $guild,
         ]);
     }
 
@@ -183,7 +201,12 @@ class SubmissionController extends Controller {
      */
     public function postNewSubmission(Request $request, SubmissionManager $service, $draft = false) {
         $request->validate(Submission::$createRules);
-        if ($submission = $service->createSubmission($request->only(['url', 'prompt_id', 'comments', 'slug', 'character_rewardable_type', 'character_rewardable_id', 'character_rewardable_quantity', 'rewardable_type', 'rewardable_id', 'quantity', 'stack_id', 'stack_quantity', 'currency_id', 'currency_quantity']), Auth::user(), false, $draft)) {
+        if ($submission = $service->createSubmission($request->only([
+                'url', 'prompt_id', 'comments', 'slug', 
+                'character_rewardable_type', 'character_rewardable_id', 'character_rewardable_quantity', 
+                'rewardable_type', 'rewardable_id', 'quantity', 'stack_id', 'stack_quantity', 'currency_id', 'currency_quantity',
+                'guild_id', 'guild_rewardable_type', 'guild_rewardable_id', 'guild_rewardable_quantity',
+            ]), Auth::user(), false, $draft)) {
             if ($submission->status == 'Draft') {
                 flash('Draft created successfully.')->success();
 
