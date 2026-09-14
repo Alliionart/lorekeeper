@@ -51,7 +51,7 @@
     <table>
         <tr class="guild-reward-row">
 
-            @if ($expanded_rewards) 
+            @if ($expanded_rewards)
                 <td>
                     {!! Form::select('guild_rewardable_type[]', ['Item' => 'Item', 'Currency' => 'Currency'] + (isset($showLootTables) && $showLootTables ? ['LootTable' => 'Loot Table'] : []), null, [
                         'class' => 'form-control guild-rewardable-type',

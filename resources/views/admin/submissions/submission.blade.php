@@ -96,7 +96,7 @@
         <div class="text-right mb-3">
             <a href="#" class="btn btn-outline-info" id="addCharacter">Add Character</a>
         </div>
-        
+
         <div class="card my-2">
             <h2 class="card-header">Guilds</h2>
             <div class="card-body">
