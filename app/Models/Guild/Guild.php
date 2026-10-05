@@ -481,5 +481,4 @@ class Guild extends Model {
             return $query->paginate(30);
         }
     }
-
 }
