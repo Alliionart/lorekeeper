@@ -335,6 +335,7 @@
     @parent
     @if (!$closed || ($submission->id && $submission->status != 'Rejected'))
         @include('galleries._character_select_js')
+        @include('js._guild_select_js')
 
         <script>
             $(document).ready(function() {

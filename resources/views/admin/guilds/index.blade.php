@@ -61,19 +61,16 @@
                             </div>
                             <div class="col-2 col-md-2">
                                 <div class="logs-table-cell">
-                                    {!! $guild->status === 'active' 
-                                        ? '<i class="text-success fas fa-check"></i>' 
-                                        : '<i class="text-danger fas fa-times"></i>' 
-                                    !!}
+                                    {!! $guild->status === 'active' ? '<i class="text-success fas fa-check"></i>' : '<i class="text-danger fas fa-times"></i>' !!}
                                 </div>
                             </div>
-                            
+
                             <div class="col-4 col-md-2">
                                 <div class="logs-table-cell">
                                     {!! $guild->created_at ? pretty_date($guild->created_at) : '-' !!}
                                 </div>
                             </div>
-                            
+
                             <div class="col-3 col-md-2 text-right">
                                 <div class="logs-table-cell">
                                     <a href="{{ url('admin/guilds/edit/' . $guild->id) }}" class="btn btn-primary py-0 px-2">Edit</a>

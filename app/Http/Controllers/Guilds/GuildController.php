@@ -9,6 +9,7 @@ use App\Models\Currency\Currency;
 use App\Models\Guild\Guild;
 use App\Models\Guild\GuildCurrency;
 use App\Models\Guild\GuildItem;
+use App\Models\Guild\GuildMember;
 use App\Models\Guild\GuildShop;
 use App\Models\Guild\GuildShopLog;
 use App\Models\Guild\GuildShopStock;
@@ -420,8 +421,8 @@ class GuildController extends Controller {
             'guild'         => $guild,
             'categories'    => $categories->keyBy('id'),
             'items'         => $items,
-            'logs'          => [] /* $guild->getItemLogs() */,
-        ] + (Auth::check() && (Auth::user()->hasPower('edit_inventories') || Auth::user()->id == $this->character->user_id) ? [
+            'logs'          => $guild->getItemLogs(0),
+        ] + (Auth::check() && (Auth::user()->hasPower('edit_inventories') || Auth::user()->id == $guild->owner_id) ? [
             'itemOptions'       => $itemOptions->pluck('name', 'id'),
             'guildInventory'    => GuildItem::with('item')->whereIn('item_id', $itemOptions->pluck('id'))->whereNull('deleted_at')->where('count', '>', '0')->where('guild_id', $guild->id)->get()->filter(function ($guildItem) {
                 return $guildItem->isTransferrable == true;
@@ -481,6 +482,46 @@ class GuildController extends Controller {
         }
 
         return redirect()->back();
+    }
+
+    /**
+     * Shows a guild's item logs.
+     *
+     * @param int $id
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function getGuildItemLogs($id) {
+        $guild = Guild::where('id', $id)->first();
+
+        if (!$guild) {
+            abort(404);
+        }
+
+        return view('guilds.item_logs', [
+            'guild' => $guild,
+            'logs'  => $guild->getItemLogs(0),
+        ]);
+    }
+
+    /**
+     * Shows a guild's currency logs.
+     *
+     * @param int $id
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function getGuildCurrencyLogs($id) {
+        $guild = Guild::where('id', $id)->first();
+
+        if (!$guild) {
+            abort(404);
+        }
+
+        return view('guilds.currency_logs', [
+            'guild' => $guild,
+            'logs'  => $guild->getCurrencyLogs(0),
+        ]);
     }
 
     /** --------------------------------------------------------------

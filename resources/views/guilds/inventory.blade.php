@@ -144,7 +144,7 @@
         <div class="logs-table-body">
             @foreach ($logs as $log)
                 <div class="logs-table-row">
-                    @include('guild._item_log_row', ['log' => $log, 'owner' => $guild])
+                    @include('guilds._item_log_row', ['log' => $log, 'owner' => $guild])
                 </div>
             @endforeach
         </div>

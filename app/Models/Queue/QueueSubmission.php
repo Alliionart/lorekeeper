@@ -93,6 +93,13 @@ class QueueSubmission extends Model {
         return $this->hasMany(QueueSubmissionCharacter::class, 'queue_submission_id');
     }
 
+    /**
+     * Get the guilds attached to the submission.
+     */
+    public function guilds() {
+        return $this->hasMany(QueueSubmissionGuild::class, 'queue_submission_id');
+    }
+
     /**********************************************************************************************
 
         SCOPES

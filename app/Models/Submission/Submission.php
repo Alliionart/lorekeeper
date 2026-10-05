@@ -84,6 +84,13 @@ class Submission extends Model {
         return $this->hasMany(SubmissionCharacter::class, 'submission_id');
     }
 
+    /**
+     * Get the characters attached to the submission.
+     */
+    public function guilds() {
+        return $this->hasMany(SubmissionGuild::class, 'submission_id');
+    }
+
     /**********************************************************************************************
 
         SCOPES

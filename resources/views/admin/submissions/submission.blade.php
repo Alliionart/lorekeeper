@@ -97,6 +97,26 @@
             <a href="#" class="btn btn-outline-info" id="addCharacter">Add Character</a>
         </div>
 
+        <div class="card my-2">
+            <h2 class="card-header">Guilds</h2>
+            <div class="card-body">
+                <div id="characters" class="mb-3">
+                    @if (count(
+                            $submission->guilds()->whereRelation('guild', 'status', 'active')->get()) != count($submission->guilds()->get()))
+                        <div class="alert alert-warning">
+                            Some guild have been disbanded since this submission was created.
+                        </div>
+                    @endif
+                    @foreach ($submission->guilds()->whereRelation('guild', 'status', 'active')->get() as $guild)
+                        @include('widgets._guild_select_entry', ['guildCurrencies' => $guildCurrencies, 'items' => $items, 'tables' => $tables, 'guild' => $guild, 'expanded_rewards' => $expanded_rewards])
+                    @endforeach
+                </div>
+                <div class="text-right">
+                    <a href="#" class="btn btn-outline-info" id="addGuild">Add Guild</a>
+                </div>
+            </div>
+        </div>
+
         @if (isset($inventory['user_items']))
             <h2>Add-Ons</h2>
             <p>These items have been removed from the {{ $submission->prompt_id ? 'submitter' : 'claimant' }}'s inventory and will be refunded if the request is rejected or consumed if it is approved.</p>
@@ -226,6 +246,7 @@
             </table>
         </div>
         @include('widgets._loot_select_row', ['showLootTables' => true, 'showRaffles' => true])
+        @include('widgets._guild_select', ['guildCurrencies' => $guildCurrencies, 'showLootTables' => true])
 
         <div class="modal fade" id="confirmationModal" tabindex="-1" role="dialog">
             <div class="modal-dialog" role="document">
@@ -279,6 +300,7 @@
     @if ($submission->status == 'Pending')
         @include('js._loot_js', ['showLootTables' => true, 'showRaffles' => true])
         @include('js._character_select_js')
+        @include('js._guild_select_js')
 
         <script>
             $(document).ready(function() {
