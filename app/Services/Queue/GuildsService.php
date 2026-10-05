@@ -59,22 +59,6 @@ class GuildsService extends Service {
         ];
     }
 
-    private function getTempLogoFileName() {
-        return 'guild-logo.png';
-    }
-
-    private function getTempDir($submission) {
-        return 'images/data/queue-submissions/'.$submission->id;
-    }
-
-    private function getTempLogoRelativePath($submission) {
-        return $this->getTempDir($submission).'/'.$this->getTempLogoFileName();
-    }
-
-    private function getTempLogoAbsolutePath($submission) {
-        return public_path($this->getTempLogoRelativePath($submission));
-    }
-
     /**
      * Handle any validation on-submit to the queue.
      *
@@ -151,6 +135,7 @@ class GuildsService extends Service {
             if (is_dir($tempDir)) {
                 File::deleteDirectory($tempDir);
             }
+
             return true;
         } catch (\Exception $e) {
             $this->setError('error', $e->getMessage());
@@ -219,8 +204,8 @@ class GuildsService extends Service {
             $submission->update([
                 'data' => array_replace_recursive($submission->data, [
                     'queue' => array_merge($qData, [
-                        'guild_id' => $guild->id,
-                        'logo_url' => $guild->logoUrl,
+                        'guild_id'  => $guild->id,
+                        'logo_url'  => $guild->logoUrl,
                         'logo_path' => null,
                     ]),
                 ]),
@@ -237,5 +222,21 @@ class GuildsService extends Service {
         }
 
         return false;
+    }
+
+    private function getTempLogoFileName() {
+        return 'guild-logo.png';
+    }
+
+    private function getTempDir($submission) {
+        return 'images/data/queue-submissions/'.$submission->id;
+    }
+
+    private function getTempLogoRelativePath($submission) {
+        return $this->getTempDir($submission).'/'.$this->getTempLogoFileName();
+    }
+
+    private function getTempLogoAbsolutePath($submission) {
+        return public_path($this->getTempLogoRelativePath($submission));
     }
 }
