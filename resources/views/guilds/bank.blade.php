@@ -54,6 +54,9 @@
             </div>
         </div>
     @endif
+    <div class="text-right">
+        <a href="{{ url($guild->viewUrl . '/currency-logs') }}">View all...</a>
+    </div>
 
     @if (Auth::check() && Auth::user()->id === $guild->owner_id && isset($takeCurrencyOptions) && isset($giveCurrencyOptions))
         <h3>

@@ -5,6 +5,7 @@ namespace App\Models\Guild;
 use App\Models\Currency\Currency;
 use App\Models\Currency\CurrencyLog;
 use App\Models\Item\Item;
+use App\Models\Item\ItemLog;
 use App\Models\Model;
 use App\Models\User\User;
 use Auth;
@@ -247,27 +248,6 @@ class Guild extends Model {
     }
 
     /**
-     * Get the guild's currency logs.
-     *
-     * @param int $limit
-     *
-     * @return \Illuminate\Pagination\LengthAwarePaginator|\Illuminate\Support\Collection
-     */
-    public function getCurrencyLogs($limit = 10) {
-        $guild = $this;
-        $query = CurrencyLog::with('currency')->where(function ($query) use ($guild) {
-            $query->with('sender')->where('sender_type', 'Guild')->where('sender_id', $guild->id)->whereNotIn('log_type', ['Staff Grant', 'Prompt Rewards', 'Claim Rewards', 'Gallery Submission Reward']);
-        })->orWhere(function ($query) use ($guild) {
-            $query->with('recipient')->where('recipient_type', 'Guild')->where('recipient_id', $guild->id)->where('log_type', '!=', 'Staff Removal');
-        })->orderBy('id', 'DESC');
-        if ($limit) {
-            return $query->take($limit)->get();
-        } else {
-            return $query->paginate(30);
-        }
-    }
-
-    /**
      * Get the linked display name of the guild.
      *
      * @return string
@@ -442,4 +422,64 @@ class Guild extends Model {
 
         return false;
     }
+
+    /**
+     * Get the guild's item logs.
+     *
+     * @param int $limit
+     *
+     * @return \Illuminate\Pagination\LengthAwarePaginator|\Illuminate\Support\Collection
+     */
+    public function getItemLogs($limit = 10) {
+        $guild = $this;
+        $query = ItemLog::with('item')->where(function ($query) use ($guild) {
+            $query->with('sender')->where('sender_type', 'Guild')->where('sender_id', $guild->id)->whereNotIn('log_type', ['Staff Grant', 'Prompt Rewards', 'Claim Rewards']);
+        })->orWhere(function ($query) use ($guild) {
+            $query->with('recipient')->where('recipient_type', 'Guild')->where('recipient_id', $guild->id)->where('log_type', '!=', 'Staff Removal');
+        })->orderBy('id', 'DESC');
+        if ($limit) {
+            return $query->take($limit)->get();
+        } else {
+            return $query->paginate(30);
+        }
+    }
+
+    /**
+     * Get the guild's currency logs.
+     *
+     * @param int $limit
+     *
+     * @return \Illuminate\Pagination\LengthAwarePaginator|\Illuminate\Support\Collection
+     */
+    public function getCurrencyLogs($limit = 10) {
+        $guild = $this;
+        $query = CurrencyLog::with('currency')->where(function ($query) use ($guild) {
+            $query->with('sender')->where('sender_type', 'Guild')->where('sender_id', $guild->id)->whereNotIn('log_type', ['Staff Grant', 'Prompt Rewards', 'Claim Rewards', 'Gallery Submission Reward']);
+        })->orWhere(function ($query) use ($guild) {
+            $query->with('recipient')->where('recipient_type', 'Guild')->where('recipient_id', $guild->id)->where('log_type', '!=', 'Staff Removal');
+        })->orderBy('id', 'DESC');
+        if ($limit) {
+            return $query->take($limit)->get();
+        } else {
+            return $query->paginate(30);
+        }
+    }
+
+    /**
+     * Get the guild's shop purchase logs.
+     *
+     * @param int $limit
+     *
+     * @return \Illuminate\Pagination\LengthAwarePaginator|\Illuminate\Support\Collection
+     */
+    public function getShopLogs($limit = 10) {
+        $guild = $this;
+        $query = ShopLog::where('guild_id', $this->id)->with('character')->with('shop')->with('item')->with('currency')->orderBy('id', 'DESC');
+        if ($limit) {
+            return $query->take($limit)->get();
+        } else {
+            return $query->paginate(30);
+        }
+    }
+
 }

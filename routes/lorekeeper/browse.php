@@ -208,6 +208,9 @@ Route::group(['prefix' => __('guilds.guilds'), 'namespace' => 'Guilds'], functio
         Route::get('manage-members', 'GuildController@getManageMembers');
         Route::post('manage-members', 'GuildController@postEditManageMembers');
 
+        Route::get('item-logs', 'GuildController@getGuildItemLogs');
+        Route::get('currency-logs', 'GuildController@getGuildCurrencyLogs');
+
         Route::group(['prefix' => 'shop'], function () {
             Route::get('/', 'GuildController@getGuildShop');
             Route::get('create', 'GuildController@getGuildShopCreateEdit');
