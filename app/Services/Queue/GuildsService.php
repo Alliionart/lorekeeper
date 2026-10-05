@@ -2,9 +2,14 @@
 
 namespace App\Services\Queue;
 
+use App\Models\Guild\Guild;
+use App\Models\Guild\GuildMember;
 use App\Models\User\User;
 use App\Services\Service;
-use DB;
+use Carbon\Carbon;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Validator;
 
 class GuildsService extends Service {
     /**
@@ -54,6 +59,22 @@ class GuildsService extends Service {
         ];
     }
 
+    private function getTempLogoFileName() {
+        return 'guild-logo.png';
+    }
+
+    private function getTempDir($submission) {
+        return 'images/data/queue-submissions/'.$submission->id;
+    }
+
+    private function getTempLogoRelativePath($submission) {
+        return $this->getTempDir($submission).'/'.$this->getTempLogoFileName();
+    }
+
+    private function getTempLogoAbsolutePath($submission) {
+        return public_path($this->getTempLogoRelativePath($submission));
+    }
+
     /**
      * Handle any validation on-submit to the queue.
      *
@@ -65,17 +86,50 @@ class GuildsService extends Service {
      * @return bool
      */
     public function submit($queue, $data, $user, $submission) {
-        DB::beginTransaction();
-
         try {
             //any data handled here should only be that which is required by this particular queue type, as the rest is already handled by the queue service itself
 
-            //let's start by validating the input we have from the user :tm:
+            $validator = Validator::make($data, [
+                'guild_name'        => 'required|between:3,100|unique:guilds,name',
+                'guild_description' => 'nullable',
+                'logo'              => 'nullable|image|mimes:png,gif|max:200',
+            ]);
+
+            if ($validator->fails()) {
+                throw new \Exception(implode(' ', $validator->errors()->all()));
+            }
+
+            if (isset($data['logo']) && $data['logo'] instanceof UploadedFile) {
+                File::ensureDirectoryExists(public_path($this->getTempDir($submission)));
+                $this->handleImage($data['logo'], public_path($this->getTempDir($submission)), $this->getTempLogoFileName());
+            }
+
+            return true;
         } catch (\Exception $e) {
             $this->setError('error', $e->getMessage());
         }
 
-        return $this->rollbackReturn(false);
+        return false;
+    }
+
+    public function processSubmit($queue, $data, $user, $submission) {
+        $parsed = null;
+        if (isset($data['guild_description']) && $data['guild_description']) {
+            $parsed = parse($data['guild_description']);
+        }
+
+        $logoUrl = null;
+        if (file_exists($this->getTempLogoAbsolutePath($submission))) {
+            $logoUrl = asset($this->getTempLogoRelativePath($submission));
+        }
+
+        return [
+            'guild_name'               => $data['guild_name'] ?? null,
+            'guild_description'        => $data['guild_description'] ?? null,
+            'parsed_guild_description' => $parsed,
+            'logo_url'                 => $logoUrl,
+            'logo_path'                => file_exists($this->getTempLogoAbsolutePath($submission)) ? $this->getTempLogoRelativePath($submission) : null,
+        ];
     }
 
     /**
@@ -89,17 +143,20 @@ class GuildsService extends Service {
      * @return bool
      */
     public function delete($queue, $data, $user, $submission) {
-        DB::beginTransaction();
-
         try {
             //handle any custom delete functions
 
-            return $this->commitReturn(true);
+            // remove any temporary logo for this submission
+            $tempDir = public_path($this->getTempDir($submission));
+            if (is_dir($tempDir)) {
+                File::deleteDirectory($tempDir);
+            }
+            return true;
         } catch (\Exception $e) {
             $this->setError('error', $e->getMessage());
         }
 
-        return $this->rollbackReturn(false);
+        return false;
     }
 
     /**
@@ -113,14 +170,72 @@ class GuildsService extends Service {
      * @return bool
      */
     public function approve($queue, $data, $user, $submission) {
-        DB::beginTransaction();
-
         try {
-            return $this->commitReturn(true);
+            $qData = $submission->data['queue'] ?? null;
+            if (!$qData) {
+                throw new \Exception('Missing guild submission data.');
+            }
+
+            if (!isset($qData['guild_name']) || !$qData['guild_name']) {
+                throw new \Exception('Missing guild name.');
+            }
+
+            if (Guild::where('name', $qData['guild_name'])->exists()) {
+                throw new \Exception('A guild with this name already exists.');
+            }
+
+            $guild = Guild::create([
+                'name'              => $qData['guild_name'],
+                'owner_id'          => $submission->user_id,
+                'status'            => 'Active',
+                'description'       => $qData['guild_description'] ?? null,
+                'parsed_description'=> $qData['parsed_guild_description'] ?? null,
+                'has_logo'          => isset($qData['logo_path']) && $qData['logo_path'] ? 1 : 0,
+                'has_banner'        => 0,
+                'is_disbanded'      => 0,
+            ]);
+
+            GuildMember::create([
+                'guild_id'    => $guild->id,
+                'user_id'     => $submission->user_id,
+                'rank_id'     => null,
+                'reputation'  => 0,
+                'joined_at'   => Carbon::now(),
+                'permissions' => 2,
+            ]);
+
+            if (isset($qData['logo_path']) && $qData['logo_path']) {
+                $src = public_path($qData['logo_path']);
+                if (file_exists($src)) {
+                    File::ensureDirectoryExists($guild->imagePath);
+                    copy($src, $guild->imagePath.DIRECTORY_SEPARATOR.$guild->logoFileName);
+
+                    $guild->update([
+                        'has_logo' => 1,
+                    ]);
+                }
+            }
+
+            $submission->update([
+                'data' => array_replace_recursive($submission->data, [
+                    'queue' => array_merge($qData, [
+                        'guild_id' => $guild->id,
+                        'logo_url' => $guild->logoUrl,
+                        'logo_path' => null,
+                    ]),
+                ]),
+            ]);
+
+            $tempDir = public_path($this->getTempDir($submission));
+            if (is_dir($tempDir)) {
+                File::deleteDirectory($tempDir);
+            }
+
+            return true;
         } catch (\Exception $e) {
             $this->setError('error', $e->getMessage());
         }
 
-        return $this->rollbackReturn(false);
+        return false;
     }
 }

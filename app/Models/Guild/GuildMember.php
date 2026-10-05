@@ -12,7 +12,7 @@ class GuildMember extends Model {
      * @var array
      */
     protected $fillable = [
-        'guild_id', 'user_id', 'rank_id', 'reputation', 'joined_at',
+        'guild_id', 'user_id', 'rank_id', 'reputation', 'joined_at', 'permissions',
     ];
 
     /**

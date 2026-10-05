@@ -31,7 +31,7 @@
 
 
 <div class="mb-3">
-    @include('home.queues._queue', ['staffView' => false])
+    @include('home.queues._queue', ['staffView' => false, 'editing' => true])
 </div>
 
 @if ($queue->configSet('character_submit') && View::exists('home.queues.types.characters.' . $queue->queue_type . '_select_entry'))
