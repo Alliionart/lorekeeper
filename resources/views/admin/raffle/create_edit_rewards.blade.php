@@ -12,7 +12,7 @@
     {!! Form::open(['url' => 'admin/raffles/' . $raffle->id . '/rewards']) !!}
 
     @php
-        $items =  \App\Models\Item\Item::orderBy('name')->pluck('name', 'id');
+        $items = \App\Models\Item\Item::orderBy('name')->pluck('name', 'id');
         $currencies = \App\Models\Currency\Currency::where('is_user_owned', 1)
             ->orderBy('name')
             ->pluck('name', 'id');
@@ -48,49 +48,51 @@
     @switch($raffle->rewards_type)
         @case('Tiered')
             @include('admin.raffle.rewards._tiered', ['rewardTypes' => $rewardTypes, 'rewardData' => $rewardData])
-            @break
+        @break
+
         @case('Random')
             @include('admin.raffle.rewards._random', ['rewardTypes' => $rewardTypes, 'rewardData' => $rewardData])
-            @break
+        @break
+
         @default
-        @case('Static')
-            @include('admin.raffle.rewards._static', ['rewardTypes' => $rewardTypes, 'rewardData' => $rewardData])
+            @case('Static')
+                @include('admin.raffle.rewards._static', ['rewardTypes' => $rewardTypes, 'rewardData' => $rewardData])
             @break
-    @endswitch
+        @endswitch
 
-    <div class="text-right">
-        {!! Form::submit($rewards ? 'Update Rewards' : 'Create Rewards', ['class' => 'btn btn-primary']) !!}
-    </div>
+        <div class="text-right">
+            {!! Form::submit($rewards ? 'Update Rewards' : 'Create Rewards', ['class' => 'btn btn-primary']) !!}
+        </div>
 
-    {!! Form::close() !!}
-@endsection
+        {!! Form::close() !!}
+    @endsection
 
-<div class="modal fade" id="dataModal" tabindex="-1" role="dialog">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <span class="modal-title h5 mb-0">Configure Reward Data</span>
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
-            </div>
-            <div class="modal-body">
-                <p>Configure the additional data for this reward.</p>
-
-                <div id="dataConfigContainer">
-                    <div class="form-group">
-                        {!! Form::label('notes', 'Notes') !!} {!! add_help('Any additional notes for this reward. For items, pets, gear, etc. this will be attached to the notes. Otherwise it will go to the description of the reward.') !!}
-                        {!! Form::text('notes', null, ['class' => 'form-control', 'placeholder' => 'Enter notes for this reward']) !!}
-                    </div>
+    <div class="modal fade" id="dataModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <span class="modal-title h5 mb-0">Configure Reward Data</span>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
+                <div class="modal-body">
+                    <p>Configure the additional data for this reward.</p>
 
-                <div class="text-right">
-                    <a href="#" id="dataSubmit" class="btn btn-primary">Save Data</a>
+                    <div id="dataConfigContainer">
+                        <div class="form-group">
+                            {!! Form::label('notes', 'Notes') !!} {!! add_help('Any additional notes for this reward. For items, pets, gear, etc. this will be attached to the notes. Otherwise it will go to the description of the reward.') !!}
+                            {!! Form::text('notes', null, ['class' => 'form-control', 'placeholder' => 'Enter notes for this reward']) !!}
+                        </div>
+                    </div>
+
+                    <div class="text-right">
+                        <a href="#" id="dataSubmit" class="btn btn-primary">Save Data</a>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
-@section('scripts')
-    @parent
-    @include('admin.raffle._rewards_js')
-@endsection
+    @section('scripts')
+        @parent
+        @include('admin.raffle._rewards_js')
+    @endsection

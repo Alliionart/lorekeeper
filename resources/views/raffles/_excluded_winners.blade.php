@@ -6,7 +6,7 @@
         <div class="row">
             @foreach ($raffle->excludedWinners as $reward)
                 <div class="col-md-3">
-                    <h5>{{ $reward['reward'] === 'all' ? 'All Rewards' : $reward['reward']->reward->name . ( isset($reward['reward']->datas['notes']) ? ' (' . $reward['reward']->datas['notes'] . ')' : '' ) }}</h5>
+                    <h5>{{ $reward['reward'] === 'all' ? 'All Rewards' : $reward['reward']->reward->name . (isset($reward['reward']->datas['notes']) ? ' (' . $reward['reward']->datas['notes'] . ')' : '') }}</h5>
                     <ul>
                         @foreach ($reward['users'] as $user)
                             <li>{!! $user->displayName !!}</li>

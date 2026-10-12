@@ -1,6 +1,6 @@
 <script>
     $(document).ready(function() {
-        
+
         const $rowTemplate = $('.loot-row.template').clone().removeClass('template');
         $('.loot-row.template').remove();
         let $activeDataInput = null;
@@ -109,7 +109,7 @@
             e.preventDefault();
             $('#lootTableBody').append($rowTemplate.clone());
         });
-        
+
         $(document).on('click', '.remove-loot-button', function(e) {
             e.preventDefault();
             $(this).closest('.loot-row').remove();
@@ -148,33 +148,33 @@
             const isTierReward = $row.hasClass('tier-reward-row');
 
             let options = '';
-            switch(rewardType) {
+            switch (rewardType) {
                 case 'Item':
                     options = `{!! Form::select('rewardable_id[]', $items, null, ['class' => 'form-control item-select selectize', 'placeholder' => 'Select Item', 'data-field' => 'rewardable_id']) !!}`;
                     break;
                 case 'Currency':
                     options = `{!! Form::select('rewardable_id[]', $currencies, null, ['class' => 'form-control currency-select selectize', 'placeholder' => 'Select Currency', 'data-field' => 'rewardable_id']) !!}`;
                     break;
-                @if (config('lorekeeper.raffle_options.pets'))
-                case 'Pet':
-                    options = `{!! Form::select('rewardable_id[]', $pets, null, ['class' => 'form-control pet-select selectize', 'placeholder' => 'Select Pet', 'data-field' => 'rewardable_id']) !!}`;
-                    break;
-                @endif
-                @if (config('lorekeeper.raffle_options.weapons'))
-                case 'Weapon':
-                    options = `{!! Form::select('rewardable_id[]', $weapons, null, ['class' => 'form-control weapon-select selectize', 'placeholder' => 'Select Weapon', 'data-field' => 'rewardable_id']) !!}`;
-                    break;
-                @endif
-                @if (config('lorekeeper.raffle_options.gears'))
-                case 'Gear':
-                    options = `{!! Form::select('rewardable_id[]', $gears, null, ['class' => 'form-control gear-select selectize', 'placeholder' => 'Select Gear', 'data-field' => 'rewardable_id']) !!}`;
-                    break;
-                @endif
-                @if (config('lorekeeper.raffle_options.breedingPermissions'))
-                case 'BreedingPermission':
-                    options = `{!! Form::select('rewardable_id[]', $characters, null, ['class' => 'form-control character-select selectize', 'placeholder' => 'Select Character', 'data-field' => 'rewardable_id']) !!}`;
-                    break;
-                @endif
+                    @if (config('lorekeeper.raffle_options.pets'))
+                        case 'Pet':
+                        options = `{!! Form::select('rewardable_id[]', $pets, null, ['class' => 'form-control pet-select selectize', 'placeholder' => 'Select Pet', 'data-field' => 'rewardable_id']) !!}`;
+                        break;
+                    @endif
+                    @if (config('lorekeeper.raffle_options.weapons'))
+                        case 'Weapon':
+                        options = `{!! Form::select('rewardable_id[]', $weapons, null, ['class' => 'form-control weapon-select selectize', 'placeholder' => 'Select Weapon', 'data-field' => 'rewardable_id']) !!}`;
+                        break;
+                    @endif
+                    @if (config('lorekeeper.raffle_options.gears'))
+                        case 'Gear':
+                        options = `{!! Form::select('rewardable_id[]', $gears, null, ['class' => 'form-control gear-select selectize', 'placeholder' => 'Select Gear', 'data-field' => 'rewardable_id']) !!}`;
+                        break;
+                    @endif
+                    @if (config('lorekeeper.raffle_options.breedingPermissions'))
+                        case 'BreedingPermission':
+                        options = `{!! Form::select('rewardable_id[]', $characters, null, ['class' => 'form-control character-select selectize', 'placeholder' => 'Select Character', 'data-field' => 'rewardable_id']) !!}`;
+                        break;
+                    @endif
                 default:
                     options = '';
             }

@@ -2,7 +2,7 @@
     <div class="card-body">
         <div class="d-flex justify-content-between align-items-center">
             <h4>Raffle Rewards</h4>
-            @if(Auth::check() && Auth::user()->hasPower('edit_raffles'))
+            @if (Auth::check() && Auth::user()->hasPower('edit_raffles'))
                 <a class="btn btn-primary" href="{{ $raffle->adminRewardsUrl }}">Edit Rewards</a>
             @endif
         </div>
@@ -28,7 +28,7 @@
                                     <td>{{ $reward->position }}</td>
                                     <td>
                                         @if ($reward->rewardable_type === 'BreedingPermission')
-                                            Breeding Permission(s) to 
+                                            Breeding Permission(s) to
                                         @endif
                                         {!! $reward->reward->displayName !!}
                                     </td>
@@ -50,16 +50,15 @@
                             @endforeach
                         </tbody>
                     </table>
+                @break
 
-                    @break
-            
                 @default
                     @if ($raffle->rewards_type === 'Static')
                         <p>Each winner for the raffle will receive the same reward.</p>
                     @else
                         <p>Each winner for the raffle will have their rewards rolled individually.</p>
                     @endif
-                
+
                     <table class="table">
                         <thead>
                             <tr>
@@ -76,9 +75,10 @@
                                 <tr>
                                     <td>
                                         @if ($reward->rewardable_type === 'BreedingPermission')
-                                            Breeding Permission(s) to 
+                                            Breeding Permission(s) to
                                         @endif
-                                        {!! $reward->reward->displayName !!}</td>
+                                        {!! $reward->reward->displayName !!}
+                                    </td>
                                     <td>{{ $reward->quantity }}</td>
                                     @if ($raffle->rewards_type === 'Random')
                                         <td>{{ $reward->weight }}</td>
@@ -96,7 +96,6 @@
                             @endforeach
                         </tbody>
                     </table>
-
             @endswitch
         @else
             <p>There are no rewards for this raffle.</p>

@@ -1,4 +1,4 @@
-<!-- 
+<!--
     Needs:
     - Allow adding data that will attach upon reward creation.
     - Might need modals for each award type?
@@ -25,12 +25,7 @@
         @if ($raffle->rewards()->count())
             @foreach ($raffle->rewards as $loot)
                 <tr class="loot-row">
-                    <td>{!! Form::select(
-                        'rewardable_type[]',
-                        $rewardTypes,
-                        $loot->rewardable_type,
-                        ['class' => 'form-control reward-type', 'placeholder' => 'Select Reward Type'],
-                    ) !!}</td>
+                    <td>{!! Form::select('rewardable_type[]', $rewardTypes, $loot->rewardable_type, ['class' => 'form-control reward-type', 'placeholder' => 'Select Reward Type']) !!}</td>
                     <td class="loot-row-select">
                         @if ($loot->rewardable_type == 'Item')
                             {!! Form::select('rewardable_id[]', $items, $loot->rewardable_id, ['class' => 'form-control item-select selectize', 'placeholder' => 'Select Item']) !!}
@@ -54,12 +49,7 @@
             @endforeach
         @endif
         <tr class="loot-row template">
-            <td>{!! Form::select(
-                'rewardable_type[]',
-                $rewardTypes,
-                null,
-                ['class' => 'form-control reward-type', 'placeholder' => 'Select Reward Type'],
-            ) !!}</td>
+            <td>{!! Form::select('rewardable_type[]', $rewardTypes, null, ['class' => 'form-control reward-type', 'placeholder' => 'Select Reward Type']) !!}</td>
             <td class="loot-row-select"></td>
             <td>{!! Form::text('quantity[]', 1, ['class' => 'form-control']) !!}</td>
             <td>
@@ -70,4 +60,3 @@
         </tr>
     </tbody>
 </table>
-

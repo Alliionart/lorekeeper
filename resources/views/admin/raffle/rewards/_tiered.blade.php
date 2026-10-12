@@ -7,7 +7,8 @@
 -->
 
 <h4>Tiered Rewards</h4>
-<p>Configure the rewards for each tier below. Players will have the option to opt out of specific tiers if desired. When entering a tier, you may enter a static number like <strong>1</strong> for first place, or a range like <strong>3-5</strong> and reward multiple positions at once.</p>
+<p>Configure the rewards for each tier below. Players will have the option to opt out of specific tiers if desired. When entering a tier, you may enter a static number like <strong>1</strong> for first place, or a range like <strong>3-5</strong> and
+    reward multiple positions at once.</p>
 <hr>
 
 <div class="text-right mb-3">
@@ -122,12 +123,7 @@
 
 <template id="tierRewardTemplate">
     <tr class="tier-reward-row">
-        <td>{!! Form::select(
-            'rewardable_type[]',
-            $rewardTypes,
-            null,
-            ['class' => 'form-control reward-type', 'placeholder' => 'Select Reward Type', 'data-field' => 'rewardable_type'],
-        ) !!}</td>
+        <td>{!! Form::select('rewardable_type[]', $rewardTypes, null, ['class' => 'form-control reward-type', 'placeholder' => 'Select Reward Type', 'data-field' => 'rewardable_type']) !!}</td>
         <td class="loot-row-select"></td>
         <td>{!! Form::number('quantity[]', 1, ['class' => 'form-control', 'min' => 1, 'data-field' => 'quantity']) !!}</td>
         <td>{!! Form::number('weight[]', 1, ['class' => 'form-control', 'min' => 1, 'data-field' => 'weight']) !!}</td>
