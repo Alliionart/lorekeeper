@@ -4,7 +4,6 @@ namespace App\Models\Breeding;
 
 use App\Models\Model;
 use App\Models\User\User;
-use App\Models\Breeding\Breeding;
 
 class BreedingLog extends Model {
     /**

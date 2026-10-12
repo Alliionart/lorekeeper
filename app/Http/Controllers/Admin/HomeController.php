@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Facades\Settings;
 use App\Http\Controllers\Controller;
 use App\Models\AdminLog;
+use App\Models\Breeding\Breeding;
 use App\Models\Character\CharacterDesignUpdate;
 use App\Models\Character\CharacterTransfer;
 use App\Models\Currency\Currency;
@@ -13,7 +14,6 @@ use App\Models\Report\Report;
 use App\Models\Submission\Submission;
 use App\Models\Trade;
 use App\Models\User\User;
-use App\Models\Breeding\Breeding;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -40,11 +40,11 @@ class HomeController extends Controller {
             'transferCount'          => $openTransfersQueue ? CharacterTransfer::active()->where('is_approved', 0)->count() : 0,
             'tradeCount'             => $openTransfersQueue ? Trade::where('status', 'Pending')->count() : 0,
             'breedingCount'          => Breeding::where('status', 'Pending')
-                                            ->whereNotNull('user_id')
-                                            ->where(function ($query) {
-                                                $query->whereNotIn('split_status', ['Pending', 'Rejected'])
-                                                    ->orWhereNull('split_status');
-                                        })->count(),
+                ->whereNotNull('user_id')
+                ->where(function ($query) {
+                    $query->whereNotIn('split_status', ['Pending', 'Rejected'])
+                        ->orWhereNull('split_status');
+                })->count(),
             'galleryRequireApproval' => $galleryRequireApproval,
             'galleryCurrencyAwards'  => $galleryCurrencyAwards,
             'gallerySubmissionCount' => GallerySubmission::collaboratorApproved()->where('status', 'Pending')->count(),

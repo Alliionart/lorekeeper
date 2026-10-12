@@ -18,10 +18,9 @@ use App\Models\Submission\SubmissionCharacter;
 use App\Models\Trade;
 use App\Models\User\User;
 use App\Models\User\UserCharacterLog;
-use App\Models\Character\BreedingPermission;
 use Carbon\Carbon;
-use Settings;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Settings;
 
 class Character extends Model {
     use SoftDeletes;

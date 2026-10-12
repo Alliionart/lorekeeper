@@ -3,10 +3,10 @@
 namespace App\Http\Controllers\Users;
 
 use App\Http\Controllers\Controller;
+use App\Models\Breeding\Breeding;
+use App\Models\Character\BreedingPermission;
 use App\Models\Character\Character;
 use App\Models\Character\CharacterImage;
-use App\Models\Character\BreedingPermission;
-use App\Models\Breeding\Breeding;
 use App\Models\Character\Sublist;
 use App\Models\Currency\Currency;
 use App\Models\Gallery\Gallery;
@@ -381,7 +381,7 @@ class UserController extends Controller {
      */
     public function getUserBreedings(Request $request) {
         $query = Breeding::where(function ($q) {
-                $q->where('user_id', $this->user->id)
+            $q->where('user_id', $this->user->id)
                 ->orWhere('split_user_id', $this->user->id);
         });
         $data = $request->only(['type', 'month', 'sort']);
@@ -394,7 +394,7 @@ class UserController extends Controller {
             ->sortBy('created_at')
             ->mapWithKeys(function ($breeding) {
                 return [
-                    $breeding->created_at->format('Y-m') => $breeding->created_at->format('M Y')
+                    $breeding->created_at->format('Y-m') => $breeding->created_at->format('M Y'),
                 ];
             })
             ->toArray();
@@ -409,7 +409,7 @@ class UserController extends Controller {
         });
 
         return view('user.breedings', [
-            'user'        => $this->user,
+            'user'             => $this->user,
             'breedings'        => $breedings,
             'breedingsGrouped' => $breedingsGrouped,
             'months'           => ['' => 'Any Month'] + $breedsByMonth,
@@ -431,5 +431,4 @@ class UserController extends Controller {
             'logs'     => $this->user->getBreedingLogs(0),
         ]);
     }
-
 }

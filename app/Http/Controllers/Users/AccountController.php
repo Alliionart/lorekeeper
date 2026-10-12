@@ -3,11 +3,11 @@
 namespace App\Http\Controllers\Users;
 
 use App\Http\Controllers\Controller;
+use App\Models\Breeding\Breeding;
+use App\Models\Character\BreedingPermission;
 use App\Models\Notification;
 use App\Models\User\User;
 use App\Models\User\UserAlias;
-use App\Models\Character\BreedingPermission;
-use App\Models\Breeding\Breeding;
 use App\Services\LinkService;
 use App\Services\UserService;
 use BaconQrCode\Renderer\Color\Rgb;
@@ -504,7 +504,7 @@ class AccountController extends Controller {
      */
     public function getBreedings(Request $request) {
         $query = Breeding::where(function ($q) {
-                $q->where('user_id', Auth::user()->id)
+            $q->where('user_id', Auth::user()->id)
                 ->orWhere('split_user_id', Auth::user()->id);
         });
         $data = $request->only(['type', 'month', 'sort']);
@@ -517,7 +517,7 @@ class AccountController extends Controller {
             ->sortBy('created_at')
             ->mapWithKeys(function ($breeding) {
                 return [
-                    $breeding->created_at->format('Y-m') => $breeding->created_at->format('M Y')
+                    $breeding->created_at->format('Y-m') => $breeding->created_at->format('M Y'),
                 ];
             })
             ->toArray();
@@ -537,5 +537,4 @@ class AccountController extends Controller {
             'months'           => ['' => 'Any Month'] + $breedsByMonth,
         ]);
     }
-
 }
