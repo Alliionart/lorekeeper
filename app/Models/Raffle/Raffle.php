@@ -3,7 +3,6 @@
 namespace App\Models\Raffle;
 
 use App\Models\Model;
-use App\Models\Raffle\RaffleRewards;
 use App\Models\User\User;
 
 class Raffle extends Model {
@@ -13,7 +12,7 @@ class Raffle extends Model {
      * @var array
      */
     protected $fillable = [
-        'name', 'is_active', 'is_admin_only', 'winner_count', 'group_id', 'order', 'ticket_cap', 'excluded_winners', 'rewards_type'
+        'name', 'is_active', 'is_admin_only', 'winner_count', 'group_id', 'order', 'ticket_cap', 'excluded_winners', 'rewards_type',
     ];
 
     /**
@@ -28,7 +27,7 @@ class Raffle extends Model {
      * @var array
      */
     protected $casts = [
-        'rolled_at' => 'datetime',
+        'rolled_at'        => 'datetime',
         'excluded_winners' => 'array',
     ];
 

@@ -2,10 +2,10 @@
 
 namespace App\Services;
 
+use App\Facades\Notifications;
 use App\Models\Raffle\Raffle;
 use App\Models\Raffle\RaffleTicket;
 use App\Models\User\User;
-use App\Facades\Notifications;
 use App\Services\Claymore\GearManager;
 use App\Services\Claymore\WeaponManager;
 use Carbon\Carbon;
@@ -86,42 +86,11 @@ class RaffleManager extends Service {
     }
 
     /**
-     * Checks whether a user is excluded from the raffle or every reward.
-     */
-    private function isUserExcludedFromRaffle($user, $raffle) {
-        $exclusions = collect($raffle->excluded_winners ?? []);
-        $userId = (int) $user->id;
-
-        if ($exclusions->contains(function ($exclusion) use ($userId) {
-            return ($exclusion['reward_id'] ?? null) === 'all'
-                && in_array($userId, array_map('intval', $exclusion['user_ids'] ?? []), true);
-        })) {
-            return true;
-        }
-
-        $rewardIds = $raffle->rewards()->pluck('id')->map(function ($id) {
-            return (int) $id;
-        });
-        if ($rewardIds->isEmpty()) {
-            return false;
-        }
-
-        $excludedRewardIds = $exclusions->filter(function ($exclusion) use ($userId) {
-            return ($exclusion['reward_id'] ?? null) !== 'all'
-                && in_array($userId, array_map('intval', $exclusion['user_ids'] ?? []), true);
-        })->pluck('reward_id')->map(function ($id) {
-            return (int) $id;
-        })->unique();
-
-        return $rewardIds->diff($excludedRewardIds)->isEmpty();
-    }
-
-    /**
      * Updates the Tiered raffle rewards a user opts out of.
      *
      * @param Raffle $raffle
-     * @param User $user
-     * @param array $optedOut
+     * @param User   $user
+     * @param array  $optedOut
      *
      * @return bool
      */
@@ -140,7 +109,7 @@ class RaffleManager extends Service {
 
             return [$key => [
                 'rewardable_type' => $reward->rewardable_type,
-                'rewardable_id' => (int) $reward->rewardable_id,
+                'rewardable_id'   => (int) $reward->rewardable_id,
             ]];
         });
 
@@ -242,6 +211,108 @@ class RaffleManager extends Service {
     }
 
     /**
+     * Distributes the rewards for the winners of the raffle.
+     *
+     * @param array  $winners
+     * @param Raffle $raffle
+     */
+    public function rewardWinners($winners, $raffle) {
+        $rewards = $raffle->rewards;
+        foreach ($winners as $winner) {
+            $user = $winner->user;
+
+            if ($raffle->rewards_type === 'Random') {
+                $eligibleRewards = $rewards->reject(function ($reward) use ($raffle, $user) {
+                    return $user && $this->isRewardExcludedForUser($raffle, $reward, $user->id);
+                });
+                $reward = $this->selectWeightedReward($eligibleRewards);
+                $winnerRewards = $reward ? collect([$reward]) : collect();
+            } elseif ($raffle->rewards_type === 'Tiered') {
+                $optedOut = collect($winner->opted_out ?? [])->map(function ($reward) {
+                    return $reward['rewardable_type'].':'.$reward['rewardable_id'];
+                });
+                $winnerRewards = $rewards->filter(function ($reward) use ($winner) {
+                    return $this->positionMatches($reward->position, $winner->position);
+                })->reject(function ($reward) use ($optedOut) {
+                    return $optedOut->contains($reward->rewardable_type.':'.$reward->rewardable_id);
+                })->reject(function ($reward) use ($raffle, $user) {
+                    return $user && $this->isRewardExcludedForUser($raffle, $reward, $user->id);
+                });
+            } else {
+                $winnerRewards = $rewards->reject(function ($reward) use ($raffle, $user) {
+                    return $user && $this->isRewardExcludedForUser($raffle, $reward, $user->id);
+                });
+            }
+
+            $winner->winner_data = $winnerRewards->map(function ($reward) {
+                return [
+                    'rewardable_type' => $reward->rewardable_type,
+                    'rewardable_id'   => (int) $reward->rewardable_id,
+                    'quantity'        => (int) $reward->quantity,
+                ];
+            })->values()->all();
+            $winner->save();
+
+            if (!$user || $winnerRewards->isEmpty()) {
+                continue;
+            }
+
+            foreach ($winnerRewards as $reward) {
+                if (!$this->grantReward($reward, $user, $raffle)) {
+                    return false;
+                }
+            }
+
+            $rewardNames = $winnerRewards->map(function ($reward) {
+                return 'x'.$reward->quantity.' '.$reward->reward->displayName.($reward->rewardable_type === 'BreedingPermission' ? ' breeding permission(s)' : '');
+            });
+            if (!Notifications::create('RAFFLE_REWARD', $user, [
+                'raffle_id'   => $raffle->id,
+                'raffle_name' => $raffle->name,
+                'rewards'     => $rewardNames->implode(', '),
+            ])) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Checks whether a user is excluded from the raffle or every reward.
+     *
+     * @param mixed $user
+     * @param mixed $raffle
+     */
+    private function isUserExcludedFromRaffle($user, $raffle) {
+        $exclusions = collect($raffle->excluded_winners ?? []);
+        $userId = (int) $user->id;
+
+        if ($exclusions->contains(function ($exclusion) use ($userId) {
+            return ($exclusion['reward_id'] ?? null) === 'all'
+                && in_array($userId, array_map('intval', $exclusion['user_ids'] ?? []), true);
+        })) {
+            return true;
+        }
+
+        $rewardIds = $raffle->rewards()->pluck('id')->map(function ($id) {
+            return (int) $id;
+        });
+        if ($rewardIds->isEmpty()) {
+            return false;
+        }
+
+        $excludedRewardIds = $exclusions->filter(function ($exclusion) use ($userId) {
+            return ($exclusion['reward_id'] ?? null) !== 'all'
+                && in_array($userId, array_map('intval', $exclusion['user_ids'] ?? []), true);
+        })->pluck('reward_id')->map(function ($id) {
+            return (int) $id;
+        })->unique();
+
+        return $rewardIds->diff($excludedRewardIds)->isEmpty();
+    }
+
+    /**
      * Rolls the winners of a raffle.
      *
      * @param Raffle $raffle
@@ -309,75 +380,11 @@ class RaffleManager extends Service {
     }
 
     /**
-     * Distributes the rewards for the winners of the raffle.
-     *
-     * @param array $winners
-     * @param Raffle $raffle
-     */
-    public function rewardWinners($winners, $raffle) {
-        $rewards = $raffle->rewards;
-        foreach ($winners as $winner) {
-            $user = $winner->user;
-
-            if ($raffle->rewards_type === 'Random') {
-                $eligibleRewards = $rewards->reject(function ($reward) use ($raffle, $winner, $user) {
-                    return $user && $this->isRewardExcludedForUser($raffle, $reward, $user->id);
-                });
-                $reward = $this->selectWeightedReward($eligibleRewards);
-                $winnerRewards = $reward ? collect([$reward]) : collect();
-            } elseif ($raffle->rewards_type === 'Tiered') {
-                $optedOut = collect($winner->opted_out ?? [])->map(function ($reward) {
-                    return $reward['rewardable_type'].':'.$reward['rewardable_id'];
-                });
-                $winnerRewards = $rewards->filter(function ($reward) use ($winner) {
-                    return $this->positionMatches($reward->position, $winner->position);
-                })->reject(function ($reward) use ($optedOut) {
-                    return $optedOut->contains($reward->rewardable_type.':'.$reward->rewardable_id);
-                })->reject(function ($reward) use ($raffle, $user) {
-                    return $user && $this->isRewardExcludedForUser($raffle, $reward, $user->id);
-                });
-            } else {
-                $winnerRewards = $rewards->reject(function ($reward) use ($raffle, $user) {
-                    return $user && $this->isRewardExcludedForUser($raffle, $reward, $user->id);
-                });
-            }
-
-            $winner->winner_data = $winnerRewards->map(function ($reward) {
-                return [
-                    'rewardable_type' => $reward->rewardable_type,
-                    'rewardable_id' => (int) $reward->rewardable_id,
-                    'quantity' => (int) $reward->quantity,
-                ];
-            })->values()->all();
-            $winner->save();
-
-            if (!$user || $winnerRewards->isEmpty()) {
-                continue;
-            }
-
-            foreach ($winnerRewards as $reward) {
-                if (!$this->grantReward($reward, $user, $raffle)) {
-                    return false;
-                }
-            }
-
-            $rewardNames = $winnerRewards->map(function ($reward) {
-                return 'x'.$reward->quantity.' '.$reward->reward->displayName . ($reward->rewardable_type === 'BreedingPermission' ? ' breeding permission(s)' : '');
-            });
-            if (!Notifications::create('RAFFLE_REWARD', $user, [
-                'raffle_id' => $raffle->id,
-                'raffle_name' => $raffle->name,
-                'rewards' => $rewardNames->implode(', '),
-            ])) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    /**
      * Maps the data attributes to the rewardable type.
+     *
+     * @param mixed      $data
+     * @param mixed      $rewardable_type
+     * @param mixed|null $raffle
      */
     private function mapData($data, $rewardable_type, $raffle = null) {
         if (is_string($data)) {
@@ -407,6 +414,8 @@ class RaffleManager extends Service {
 
     /**
      * Selects one reward using its configured weight.
+     *
+     * @param mixed $rewards
      */
     private function selectWeightedReward($rewards) {
         $totalWeight = $rewards->sum(function ($reward) {
@@ -429,6 +438,10 @@ class RaffleManager extends Service {
 
     /**
      * Checks whether a user is excluded from a specific reward row.
+     *
+     * @param mixed $raffle
+     * @param mixed $reward
+     * @param mixed $userId
      */
     private function isRewardExcludedForUser($raffle, $reward, $userId) {
         foreach ($raffle->excluded_winners ?? [] as $exclusion) {
@@ -444,6 +457,9 @@ class RaffleManager extends Service {
 
     /**
      * Checks whether a winning position is included in a tier definition.
+     *
+     * @param mixed $tier
+     * @param mixed $position
      */
     private function positionMatches($tier, $position) {
         foreach (preg_split('/\s*,\s*/', (string) $tier) as $positionRange) {
@@ -461,6 +477,10 @@ class RaffleManager extends Service {
 
     /**
      * Grants one configured reward to a raffle winner.
+     *
+     * @param mixed $reward
+     * @param mixed $user
+     * @param mixed $raffle
      */
     private function grantReward($reward, $user, $raffle) {
         $asset = $reward->reward;
@@ -487,11 +507,11 @@ class RaffleManager extends Service {
                     'recipient_id'  => $user->id,
                     'quantity'      => $quantity,
                 ];
+
                 return (new CharacterManager)->createBreedingPermission($permissionData, $asset, Auth::user());
         }
 
         return false;
-
     }
 
     /**

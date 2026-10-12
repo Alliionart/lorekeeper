@@ -1,13 +1,13 @@
 <?php
 /**
- * Raffle Extensions
- * 
+ * Raffle Extensions.
+ *
  * Adds the ability to reward prizes through Raffles. Each raffle has a "type" for configuring prizes.
  */
 
 return [
 
-    /**
+    /*
      * EXTENSIONS ACTIVE
      */
 

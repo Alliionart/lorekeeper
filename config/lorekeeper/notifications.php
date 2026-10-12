@@ -444,5 +444,5 @@ return [
         'message' => 'You won {rewards} from the raffle <a href="{url}">{raffle_name}</a>.',
         'url'     => 'raffles/view/{raffle_id}',
     ],
-    
+
 ];
