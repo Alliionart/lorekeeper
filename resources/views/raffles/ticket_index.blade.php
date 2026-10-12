@@ -25,17 +25,51 @@
                     <thead>
                         <th class="col-xs-1 text-center" style="width: 100px;">#</th>
                         <th>User</th>
+                        <th>Rewards</th>
                     </thead>
                     <tbody>
                         @foreach ($raffle->tickets()->winners()->get() as $winner)
                             <tr>
                                 <td class="text-center">{{ $winner->position }}</td>
                                 <td class="text-left">{!! $winner->displayHolderName !!}</td>
+                                <td class="text-left">
+                                    {!! collect($winner->winner_data ?? [])->map(function ($reward) {
+                                        $asset = $reward['rewardable_type'] === 'BreedingPermission'
+                                            ? \App\Models\Character\Character::find($reward['rewardable_id'])
+                                            : findReward($reward['rewardable_type'], $reward['rewardable_id'], true);
+
+                                        return 'x'.$reward['quantity'].' '.( ($reward['rewardable_type'] === 'BreedingPermission' ? 'Breeding Permission: ' : '') . $asset->displayName ?? $asset->name ?? 'Deleted reward');
+                                    })->implode(', ') !!}
+                                </td>
                             </tr>
                         @endforeach
                     </tbody>
                 </table>
             </div>
+        </div>
+    @endif
+
+    @include('raffles._raffle_rewards', ['raffle' => $raffle])
+    @include('raffles._excluded_winners', ['raffle' => $raffle])
+
+    @if ($raffle->is_active == 1 && $raffle->rewards_type === 'Tiered' && Auth::check() && $userCount)
+        <div class="mb-4">
+            <h3>Prize Preferences</h3>
+            <p>Select any tiered rewards you do not want to receive. This preference applies to all your tickets in this raffle.</p>
+            {!! Form::open(['url' => 'raffles/view/' . $raffle->id . '/opt-out']) !!}
+            @foreach ($raffle->rewards->unique(function ($reward) { return $reward->rewardable_type.':'.$reward->rewardable_id; }) as $reward)
+                @php $rewardKey = $reward->rewardable_type.':'.$reward->rewardable_id; @endphp
+                <div class="form-check mb-2">
+                    {!! Form::checkbox('opted_out[]', $rewardKey, in_array($rewardKey, $userOptedOut), ['id' => 'opt-out-' . $loop->index, 'class' => 'form-check-input']) !!}
+                    <label class="form-check-label" for="opt-out-{{ $loop->index }}">
+                        {{ $reward->rewardable_type === 'BreedingPermission' ? 'Breeding Permission: ' : '' }}{{ $reward->reward->name . (isset($reward->datas['notes']) ? ' (' . $reward->datas['notes'] . ')' : '') . ' x' . $reward->quantity ?? 'Deleted reward' }}
+                    </label>
+                </div>
+            @endforeach
+            <div class="text-right">
+                {!! Form::submit('Save Preferences', ['class' => 'btn btn-primary']) !!}
+            </div>
+            {!! Form::close() !!}
         </div>
     @endif
 
