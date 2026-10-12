@@ -34,12 +34,10 @@
                                 <td class="text-left">{!! $winner->displayHolderName !!}</td>
                                 <td class="text-left">
                                     {!! collect($winner->winner_data ?? [])->map(function ($reward) {
-                                        $asset = $reward['rewardable_type'] === 'BreedingPermission'
-                                            ? \App\Models\Character\Character::find($reward['rewardable_id'])
-                                            : findReward($reward['rewardable_type'], $reward['rewardable_id'], true);
-
-                                        return 'x'.$reward['quantity'].' '.( ($reward['rewardable_type'] === 'BreedingPermission' ? 'Breeding Permission: ' : '') . $asset->displayName ?? $asset->name ?? 'Deleted reward');
-                                    })->implode(', ') !!}
+                                            $asset = $reward['rewardable_type'] === 'BreedingPermission' ? \App\Models\Character\Character::find($reward['rewardable_id']) : findReward($reward['rewardable_type'], $reward['rewardable_id'], true);
+                                    
+                                            return 'x' . $reward['quantity'] . ' ' . (($reward['rewardable_type'] === 'BreedingPermission' ? 'Breeding Permission: ' : '') . $asset->displayName ?? ($asset->name ?? 'Deleted reward'));
+                                        })->implode(', ') !!}
                                 </td>
                             </tr>
                         @endforeach
@@ -57,7 +55,9 @@
             <h3>Prize Preferences</h3>
             <p>Select any tiered rewards you do not want to receive. This preference applies to all your tickets in this raffle.</p>
             {!! Form::open(['url' => 'raffles/view/' . $raffle->id . '/opt-out']) !!}
-            @foreach ($raffle->rewards->unique(function ($reward) { return $reward->rewardable_type.':'.$reward->rewardable_id; }) as $reward)
+            @foreach ($raffle->rewards->unique(function ($reward) {
+            return $reward->rewardable_type . ':' . $reward->rewardable_id;
+        }) as $reward)
                 @php $rewardKey = $reward->rewardable_type.':'.$reward->rewardable_id; @endphp
                 <div class="form-check mb-2">
                     {!! Form::checkbox('opted_out[]', $rewardKey, in_array($rewardKey, $userOptedOut), ['id' => 'opt-out-' . $loop->index, 'class' => 'form-check-input']) !!}
