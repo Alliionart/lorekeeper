@@ -10,6 +10,8 @@
     <h1>
         Raffle Tickets: {{ $raffle->name }}</h1>
 
+    @include('raffles._raffle_rewards', ['raffle' => $raffle])
+
     @if ($raffle->is_active == 0)
         <p>
             This raffle is currently hidden. (Number of winners to be drawn: {{ $raffle->winner_count }})<br />

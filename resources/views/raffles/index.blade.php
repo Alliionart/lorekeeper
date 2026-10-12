@@ -29,6 +29,9 @@
 
     <li class="list-group-item">
         <x-admin-edit title="Raffle" :object="$raffle" />
+        @if ($raffle->is_admin_only)
+            <span class="badge bg-warning mr-2"><i class="fas fa-crown"></i> Admin Only</span>
+        @endif
         <a href="{{ url('raffles/view/' . $raffle->id) }}">{{ $raffle->name }}</a>
     </li>
     <?php $prevGroup = $raffle->group_id; ?>

@@ -3,6 +3,8 @@
 namespace App\Models\Raffle;
 
 use App\Models\Model;
+use App\Models\Raffle\RaffleRewards;
+use App\Models\User\User;
 
 class Raffle extends Model {
     /**
@@ -11,7 +13,7 @@ class Raffle extends Model {
      * @var array
      */
     protected $fillable = [
-        'name', 'is_active', 'winner_count', 'group_id', 'order', 'ticket_cap',
+        'name', 'is_active', 'is_admin_only', 'winner_count', 'group_id', 'order', 'ticket_cap', 'excluded_winners', 'rewards_type'
     ];
 
     /**
@@ -20,7 +22,6 @@ class Raffle extends Model {
      * @var string
      */
     protected $table = 'raffles';
-
     /**
      * The attributes that should be cast to native types.
      *
@@ -28,6 +29,7 @@ class Raffle extends Model {
      */
     protected $casts = [
         'rolled_at' => 'datetime',
+        'excluded_winners' => 'array',
     ];
 
     /**
@@ -62,6 +64,13 @@ class Raffle extends Model {
      */
     public function group() {
         return $this->belongsTo(RaffleGroup::class, 'group_id');
+    }
+
+    /**
+     * Get the rewards data for this raffle.
+     */
+    public function rewards() {
+        return $this->hasMany(RaffleRewards::class, 'raffle_id');
     }
 
     /**********************************************************************************************
@@ -116,12 +125,47 @@ class Raffle extends Model {
     }
 
     /**
+     * Gets the raffle's admin rewards url.
+     *
+     * @return string
+     */
+    public function getAdminRewardsUrlAttribute() {
+        return url('admin/raffles/'.$this->id.'/rewards');
+    }
+
+    /**
      * Gets the power required to edit this model.
      *
      * @return string
      */
     public function getAdminPowerAttribute() {
         return 'manage_raffles';
+    }
+
+    public function getExcludedWinnersAttribute() {
+        $excluded = $this->attributes['excluded_winners'] ?? null;
+        if (is_string($excluded)) {
+            $excluded = json_decode($excluded, true);
+        }
+        if (!is_array($excluded)) {
+            return [];
+        }
+
+        return collect($excluded)->filter(function ($entry) {
+            return is_array($entry);
+        })->map(function ($entry) {
+            $rewardId = $entry['reward_id'] ?? null;
+            $userIds = collect($entry['user_ids'] ?? [])->filter()->unique()->values();
+
+            $entry['reward_id'] = $rewardId;
+            $entry['user_ids'] = $userIds->all();
+            $entry['reward'] = $rewardId === 'all'
+                ? 'all'
+                : $this->rewards()->find($rewardId);
+            $entry['users'] = User::whereIn('id', $userIds)->get();
+
+            return $entry;
+        })->values()->all();
     }
 
     /**********************************************************************************************

@@ -56,6 +56,9 @@
 
             <li class="list-group-item">
                 <i class="fas {{ $raffle->is_active ? 'fa-eye' : 'fa-eye-slash' }} mr-2"></i>
+                @if ($raffle->is_admin_only)
+                    <span class="badge bg-warning mr-2"><i class="fas fa-crown"></i> Admin Only</span>
+                @endif
                 <a href="{{ url('admin/raffles/view/' . $raffle->id) }}">{{ $raffle->name }}</a>
                 @if ($raffle->is_active < 2)
                     <div class="float-right">
@@ -64,6 +67,9 @@
                         @endif
                         <a href="#" class="edit-raffle btn btn-xs btn-outline-primary p-2" data-id="{{ $raffle->id }}">
                             Edit Raffle
+                        </a>
+                        <a href="{{ $raffle->adminRewardsUrl }}" class="btn btn-xs btn-outline-primary p-2" >
+                            <i class="fas fa-pencil-alt"></i> Edit Rewards
                         </a>
                     </div>
                 @endif

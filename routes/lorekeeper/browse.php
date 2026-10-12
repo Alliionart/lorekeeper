@@ -138,6 +138,7 @@ Route::get('info/{key}', 'PageController@getPage');
 Route::group(['prefix' => 'raffles'], function () {
     Route::get('/', 'RaffleController@getRaffleIndex');
     Route::get('view/{id}', 'RaffleController@getRaffleTickets');
+    Route::post('view/{id}/opt-out', 'RaffleController@postUpdateOptOuts');
 });
 
 /**************************************************************************************************

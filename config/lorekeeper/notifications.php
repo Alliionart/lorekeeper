@@ -437,4 +437,12 @@ return [
         'message' => '<a href="{sender_url}">{sender}</a> has added you as a participant on a gallery submission. (<a href="{url}">View Submission</a>)',
         'url'     => 'gallery/view/{submission_id}',
     ],
+
+    // RAFFLE_REWARD
+    1800 => [
+        'name'    => 'Raffle Reward',
+        'message' => 'You won {rewards} from the raffle <a href="{url}">{raffle_name}</a>.',
+        'url'     => 'raffles/view/{raffle_id}',
+    ],
+    
 ];

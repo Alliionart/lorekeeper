@@ -4,6 +4,15 @@ namespace App\Services;
 
 use App\Models\Raffle\Raffle;
 use App\Models\Raffle\RaffleGroup;
+use App\Models\Raffle\RaffleRewards;
+use App\Models\User;
+use App\Models\Item\Item;
+use App\Models\Character\Character;
+use App\Models\Currency\Currency;
+use App\Models\Character\BreedingPermission;
+use App\Models\Claymores\Gear;
+use App\Models\Claymores\Weapon;
+use App\Models\Pet\Pet;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 
@@ -22,14 +31,16 @@ class RaffleService extends Service {
      *
      * @param array $data
      *
-     * @return \App\Models\Raffle\Raffle
+     * @return Raffle
      */
     public function createRaffle($data) {
         DB::beginTransaction();
         if (!isset($data['is_active'])) {
             $data['is_active'] = 0;
         }
-        $raffle = Raffle::create(Arr::only($data, ['name', 'is_active', 'winner_count', 'group_id', 'order']));
+        $raffle = Raffle::create(Arr::only($data, ['name', 'is_active', 'is_admin_only', 'winner_count', 'group_id', 'order', 'rewards_type']));
+        $raffle->excluded_winners = $this->normalizeExcludedWinners($data['excluded_winners'] ?? [], $raffle);
+        $raffle->save();
         DB::commit();
 
         return $raffle;
@@ -38,17 +49,19 @@ class RaffleService extends Service {
     /**
      * Updates a raffle.
      *
-     * @param array                     $data
-     * @param \App\Models\Raffle\Raffle $raffle
+     * @param array  $data
+     * @param Raffle $raffle
      *
-     * @return \App\Models\Raffle\Raffle
+     * @return Raffle
      */
     public function updateRaffle($data, $raffle) {
         DB::beginTransaction();
         if (!isset($data['is_active'])) {
             $data['is_active'] = 0;
         }
-        $raffle->update(Arr::only($data, ['name', 'is_active', 'winner_count', 'group_id', 'order', 'ticket_cap']));
+        $raffle->update(Arr::only($data, ['name', 'is_active', 'is_admin_only', 'winner_count', 'group_id', 'order', 'ticket_cap', 'rewards_type']));
+        $raffle->excluded_winners = $this->normalizeExcludedWinners($data['excluded_winners'] ?? [], $raffle);
+        $raffle->save();
         DB::commit();
 
         return $raffle;
@@ -57,7 +70,7 @@ class RaffleService extends Service {
     /**
      * Deletes a raffle.
      *
-     * @param \App\Models\Raffle\Raffle $raffle
+     * @param Raffle $raffle
      *
      * @return bool
      */
@@ -77,7 +90,7 @@ class RaffleService extends Service {
      *
      * @param array $data
      *
-     * @return \App\Models\Raffle\RaffleGroup
+     * @return RaffleGroup
      */
     public function createRaffleGroup($data) {
         DB::beginTransaction();
@@ -96,7 +109,7 @@ class RaffleService extends Service {
      * @param array $data
      * @param mixed $group
      *
-     * @return \App\Models\Raffle\Raffle
+     * @return Raffle
      */
     public function updateRaffleGroup($data, $group) {
         DB::beginTransaction();
@@ -110,6 +123,39 @@ class RaffleService extends Service {
         DB::commit();
 
         return $group;
+    }
+
+    /**
+     * Validates and normalizes raffle and reward exclusions.
+     *
+     * @param array $entries
+     * @param Raffle $raffle
+     *
+     * @return array
+     */
+    private function normalizeExcludedWinners($entries, $raffle) {
+        $rewardIds = $raffle->rewards()->pluck('id')->map(function ($id) {
+            return (string) $id;
+        })->all();
+        $normalized = [];
+
+        foreach ((array) $entries as $entry) {
+            $rewardId = $entry['reward_id'] ?? null;
+            $userIds = collect($entry['user_ids'] ?? [])->filter()->unique()->take(20)->map(function ($id) {
+                return (int) $id;
+            })->values()->all();
+
+            if (!$rewardId || !$userIds || ($rewardId !== 'all' && !in_array((string) $rewardId, $rewardIds, true))) {
+                continue;
+            }
+
+            $normalized[] = [
+                'reward_id' => $rewardId === 'all' ? 'all' : (int) $rewardId,
+                'user_ids' => $userIds,
+            ];
+        }
+
+        return $normalized;
     }
 
     /**
@@ -129,4 +175,114 @@ class RaffleService extends Service {
 
         return true;
     }
+
+    /* *********************************
+    * Raffle Rewards Management
+    *********************************/
+
+    /**
+     * 
+     */
+    public function editRaffleRewards($raffle, $data, $user) {
+        DB::beginTransaction();
+
+        try {
+            if ( !$user->isStaff || !$user->hasPower('edit_raffles') ) {
+                throw new \Exception('Only staff or the owner of the raffle may edit.');
+            }
+            if ( !$raffle ) {
+                throw new \Exception('Raffle not found.');
+            }
+            
+            $raffle->rewards()->delete();
+
+            switch ($raffle->rewards_type) {
+                case 'Static':
+                default:
+                    $data = $this->handleStaticRewards($raffle, $data);
+                    break;
+                case 'Random':
+                    $data = $this->handleRandomRewards($raffle, $data);
+                    break;
+                case 'Tiered':
+                    $data = $this->handleTieredRewards($raffle, $data);
+                    break;
+            }
+
+            $new = [];
+            foreach ($data as $reward) {
+                $new[] = RaffleRewards::create($reward);
+            }
+
+            return $this->commitReturn($raffle);
+        } catch (\Exception $e) {
+            dd($e);
+            $this->setError('error', $e->getMessage());
+        }
+
+        return $this->rollbackReturn(false);
+    }
+
+    /**
+     * 
+     */
+    public function handleStaticRewards($raffle, $data) {
+        $newData = [];
+        if ( $data['rewardable_type'] ) {
+            foreach ($data['rewardable_type'] as $i => $type) {
+                $newData[$i] = [
+                    'raffle_id'         => $raffle->id,
+                    'rewardable_type'   => $type,
+                    'rewardable_id'     => (int) $data['rewardable_id'][$i] ?? null,
+                    'quantity'          => (int) $data['quantity'][$i] ?? 1,
+                    'data'              => $data['data'][$i] ?? null,
+                ];
+            }
+        }
+
+        return $newData;
+    }
+
+    public function handleRandomRewards($raffle, $data) {
+        $newData = [];
+        if ( $data['rewardable_type'] ) {
+            foreach ($data['rewardable_type'] as $i => $type) {
+                $newData[$i] = [
+                    'raffle_id'         => $raffle->id,
+                    'rewardable_type'   => $type,
+                    'rewardable_id'     => (int) $data['rewardable_id'][$i] ?? null,
+                    'quantity'          => (int) $data['quantity'][$i] ?? 1,
+                    'weight'            => (float) $data['weight'][$i] ?? 1,
+                    'data'              => $data['data'][$i] ?? null,
+                ];
+            }
+        }
+
+        return $newData;
+    }
+
+    public function handleTieredRewards($raffle, $data) {
+        $newData = [];
+        if ( $data['tiers'] ) {
+            foreach ($data['tiers'] as $tierIndex => $tier) {
+                if ( isset($tier['rewards']) && is_array($tier['rewards']) ) {
+                    foreach ($tier['rewards'] as $rewardIndex => $reward) {
+                        $newData[] = [
+                            'raffle_id'         => $raffle->id,
+                            'position'          => $tier['tier'] ?? null,
+                            'opt_out'           => isset($tier['opt_out']) ? (bool) $tier['opt_out'] : false,
+                            'rewardable_type'   => $reward['rewardable_type'] ?? null,
+                            'rewardable_id'     => (int) ($reward['rewardable_id'] ?? null),
+                            'quantity'          => (int) ($reward['quantity'] ?? 1),
+                            'weight'            => (float) ($reward['weight'] ?? 1),
+                            'data'              => $reward['data'] ?? null,
+                        ];
+                    }
+                }
+            }
+        }
+        
+        return $newData;
+    }
+
 }
