@@ -18,7 +18,9 @@ use App\Models\Submission\SubmissionCharacter;
 use App\Models\Trade;
 use App\Models\User\User;
 use App\Models\User\UserCharacterLog;
+use App\Models\Character\BreedingPermission;
 use Carbon\Carbon;
+use Settings;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Character extends Model {
@@ -197,6 +199,13 @@ class Character extends Model {
      */
     public function items() {
         return $this->belongsToMany(Item::class, 'character_items')->withPivot('count', 'data', 'updated_at', 'id')->whereNull('character_items.deleted_at');
+    }
+
+    /**
+     * Get the character's associated breeding permissions.
+     */
+    public function breedingPermissions() {
+        return $this->hasMany('App\Models\Character\BreedingPermission', 'character_id');
     }
 
     /**********************************************************************************************
@@ -379,6 +388,29 @@ class Character extends Model {
      */
     public function getLogTypeAttribute() {
         return 'Character';
+    }
+
+    /**
+     * Gets the character's maximum number of breeding permissions.
+     *
+     * @return int
+     */
+    public function getMaxBreedingPermissionsAttribute() {
+        $currencies = $this->getCurrencies(true)->where('id', Settings::get('breeding_permission_currency'))->first();
+        if (!$currencies) {
+            return 0;
+        }
+
+        return $currencies->quantity;
+    }
+
+    /**
+     * Gets the character's number of available breeding permissions.
+     *
+     * @return int
+     */
+    public function getAvailableBreedingPermissionsAttribute() {
+        return $this->maxBreedingPermissions - $this->breedingPermissions()->where('is_legacy', 0)->sum('full_quantity');
     }
 
     /**********************************************************************************************

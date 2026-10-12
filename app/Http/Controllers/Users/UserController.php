@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Users;
 use App\Http\Controllers\Controller;
 use App\Models\Character\Character;
 use App\Models\Character\CharacterImage;
+use App\Models\Character\BreedingPermission;
+use App\Models\Breeding\Breeding;
 use App\Models\Character\Sublist;
 use App\Models\Currency\Currency;
 use App\Models\Gallery\Gallery;
@@ -350,4 +352,84 @@ class UserController extends Controller {
             'favorites'  => $this->user->characters->count() ? GallerySubmission::whereIn('id', $userFavorites)->whereIn('id', GalleryCharacter::whereIn('character_id', $userCharacters)->pluck('gallery_submission_id')->toArray())->visible(Auth::check() ? Auth::user() : null)->orderBy('created_at', 'DESC')->paginate(20)->appends($request->query()) : null,
         ]);
     }
+
+    /**
+     * Shows the user's breeding permissions.
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function getUserBreedingPermissions(Request $request) {
+        $permissions = BreedingPermission::where('recipient_id', $this->user->id);
+        $used = $request->get('used');
+        if (!$used) {
+            $used = 0;
+        }
+
+        $permissions = $permissions->where('is_used', $used);
+
+        return view('user.breeding_permissions', [
+            'user'        => $this->user,
+            'permissions' => $permissions->orderBy('id', 'DESC')->paginate(20)->appends($request->query()),
+            'sublists'    => Sublist::orderBy('sort', 'DESC')->get(),
+        ]);
+    }
+
+    /**
+     * Shows the user's breedings.
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function getUserBreedings(Request $request) {
+        $query = Breeding::where(function ($q) {
+                $q->where('user_id', $this->user->id)
+                ->orWhere('split_user_id', $this->user->id);
+        });
+        $data = $request->only(['type', 'month', 'sort']);
+
+        if (isset($data['type']) && $data['type']) {
+            $query->where('type', $data['type']);
+        }
+
+        $breedsByMonth = $query->get()
+            ->sortBy('created_at')
+            ->mapWithKeys(function ($breeding) {
+                return [
+                    $breeding->created_at->format('Y-m') => $breeding->created_at->format('M Y')
+                ];
+            })
+            ->toArray();
+
+        if (isset($data['month']) && $data['month'] !== '') {
+            $query->whereRaw("DATE_FORMAT(created_at, '%Y-%m') = ?", [$data['month']]);
+        }
+
+        $breedings = $query->orderBy('id', 'DESC')->paginate(20)->appends($request->query());
+        $breedingsGrouped = $breedings->getCollection()->groupBy(function ($item) {
+            return $item->created_at->format('m-Y');
+        });
+
+        return view('user.breedings', [
+            'user'        => $this->user,
+            'breedings'        => $breedings,
+            'breedingsGrouped' => $breedingsGrouped,
+            'months'           => ['' => 'Any Month'] + $breedsByMonth,
+        ]);
+    }
+
+    /**
+     * Shows a user's breeding logs.
+     *
+     * @param string $name
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function getUserBreedingLogs($name) {
+        $user = $this->user;
+
+        return view('user.breeding_logs', [
+            'user'     => $this->user,
+            'logs'     => $this->user->getBreedingLogs(0),
+        ]);
+    }
+
 }

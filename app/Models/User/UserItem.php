@@ -86,7 +86,7 @@ class UserItem extends Model {
      * @return int
      */
     public function getAvailableQuantityAttribute() {
-        return $this->count - $this->trade_count - $this->update_count - $this->submission_count;
+        return $this->count - $this->trade_count - $this->update_count - $this->submission_count - $this->breeding_count;
     }
 
     /**
@@ -104,11 +104,12 @@ class UserItem extends Model {
      * @param mixed $tradeCount
      * @param mixed $updateCount
      * @param mixed $submissionCount
+     * @param mixed $breedingCount
      *
      * @return string
      */
-    public function getOthers($tradeCount = 0, $updateCount = 0, $submissionCount = 0) {
-        return $this->getHeldString($this->trade_count - $tradeCount, $this->update_count - $updateCount, $this->submission_count - $submissionCount);
+    public function getOthers($tradeCount = 0, $updateCount = 0, $submissionCount = 0, $breedingCount = 0) {
+        return $this->getHeldString($this->trade_count - $tradeCount, $this->update_count - $updateCount, $this->submission_count - $submissionCount, $this->breeding_count - $breedingCount);
     }
 
     /**
@@ -128,11 +129,12 @@ class UserItem extends Model {
      * @param mixed $tradeCount
      * @param mixed $updateCount
      * @param mixed $submissionCount
+     * @param mixed $breedingCount
      *
      * @return string
      */
-    private function getHeldString($tradeCount, $updateCount, $submissionCount) {
-        if (!$tradeCount && !$updateCount && !$submissionCount) {
+    private function getHeldString($tradeCount, $updateCount, $submissionCount, $breedingCount) {
+        if (!$tradeCount && !$updateCount && !$submissionCount && !$breedingCount) {
             return null;
         }
         $held = [];
@@ -144,6 +146,9 @@ class UserItem extends Model {
         }
         if ($submissionCount) {
             array_push($held, $submissionCount.' held in Submissions');
+        }
+        if ($breedingCount) {
+            array_push($held, $breedingCount.' held in Breedings');
         }
 
         return '('.implode(', ', $held).')';

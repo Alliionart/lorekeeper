@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Notification;
 use App\Models\User\User;
 use App\Models\User\UserAlias;
+use App\Models\Character\BreedingPermission;
+use App\Models\Breeding\Breeding;
 use App\Services\LinkService;
 use App\Services\UserService;
 use BaconQrCode\Renderer\Color\Rgb;
@@ -475,4 +477,65 @@ class AccountController extends Controller {
 
         return redirect()->back();
     }
+
+    /**
+     * Shows the user's owned breeding permissions.
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function getBreedingPermissions(Request $request) {
+        $permissions = BreedingPermission::where('recipient_id', Auth::user()->id);
+        $used = $request->get('used');
+        if (!$used) {
+            $used = 0;
+        }
+
+        $permissions = $permissions->where('is_used', $used);
+
+        return view('home.breeding_permissions', [
+            'permissions' => $permissions->orderBy('id', 'DESC')->paginate(20)->appends($request->query()),
+        ]);
+    }
+
+    /**
+     * Shows the user's breedings.
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function getBreedings(Request $request) {
+        $query = Breeding::where(function ($q) {
+                $q->where('user_id', Auth::user()->id)
+                ->orWhere('split_user_id', Auth::user()->id);
+        });
+        $data = $request->only(['type', 'month', 'sort']);
+
+        if (isset($data['type']) && $data['type']) {
+            $query->where('type', $data['type']);
+        }
+
+        $breedsByMonth = $query->get()
+            ->sortBy('created_at')
+            ->mapWithKeys(function ($breeding) {
+                return [
+                    $breeding->created_at->format('Y-m') => $breeding->created_at->format('M Y')
+                ];
+            })
+            ->toArray();
+
+        if (isset($data['month']) && $data['month'] !== '') {
+            $query->whereRaw("DATE_FORMAT(created_at, '%Y-%m') = ?", [$data['month']]);
+        }
+
+        $breedings = $query->orderBy('id', 'DESC')->paginate(20)->appends($request->query());
+        $breedingsGrouped = $breedings->getCollection()->groupBy(function ($item) {
+            return $item->created_at->format('m-Y');
+        });
+
+        return view('home.breedings', [
+            'breedings'        => $breedings,
+            'breedingsGrouped' => $breedingsGrouped,
+            'months'           => ['' => 'Any Month'] + $breedsByMonth,
+        ]);
+    }
+
 }

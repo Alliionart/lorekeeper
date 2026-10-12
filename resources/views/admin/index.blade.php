@@ -51,6 +51,23 @@
                     </div>
                 </div>
             </div>
+            <div class="col-sm-6">
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Breeding Requests @if($breedingCount)<span class="badge badge-primary">{{ $breedingCount }}</span>@endif</h5>
+                        <p class="card-text">
+                            @if($breedingCount)
+                                {{ $breedingCount }} breeding{{ $breedingCount == 1 ? '' : 's' }} awaiting processing.
+                            @else
+                                The breeding queue is clear. Hooray!
+                            @endif
+                        </p>
+                        <div class="text-right">
+                            <a href="{{ url('admin/breedings/pending') }}" class="card-link">View Queue <span class="fas fa-caret-right ml-1"></span></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
         @endif
         @if (Auth::user()->hasPower('manage_characters'))
             <div class="col-sm-6">

@@ -75,6 +75,14 @@ Route::group(['prefix' => 'characters', 'namespace' => 'Users'], function () {
     Route::get('myos', 'CharacterController@getMyos');
 });
 
+Route::group(['prefix' => 'breeding-permissions', 'namespace' => 'Users'], function () {
+    Route::get('/', 'AccountController@getBreedingPermissions');
+});
+
+Route::group(['prefix' => 'breedings', 'namespace' => 'Users'], function () {
+    Route::get('/', 'AccountController@getBreedings');
+});
+
 Route::group(['prefix' => 'bank', 'namespace' => 'Users'], function () {
     Route::get('/', 'BankController@getIndex');
     Route::post('transfer', 'BankController@postTransfer');
@@ -202,6 +210,13 @@ Route::group(['prefix' => 'designs', 'namespace' => 'Characters'], function () {
 
     Route::get('{id}/delete', 'DesignController@getDelete');
     Route::post('{id}/delete', 'DesignController@postDelete');
+
+    Route::get('{slug}/breeding-permissions/new', 'CharacterController@getNewBreedingPermission');
+    Route::post('{slug}/breeding-permissions/new', 'CharacterController@postNewBreedingPermission');
+    Route::get('{slug}/breeding-permissions/{id}/transfer', 'CharacterController@getTransferBreedingPermission');
+    Route::post('{slug}/breeding-permissions/{id}/transfer', 'CharacterController@postTransferBreedingPermission');
+    Route::get('{slug}/breeding-permissions/refresh', 'CharacterController@getRefreshBreedingPermissions');
+    //Route::post('{slug}/breeding-permissions/refresh', 'CharacterController@postRefreshBreedingPermissions'); Used for allowing players to infinitely grant breeding currency to their own characters. Remove if you don't need this.
 });
 
 /**************************************************************************************************

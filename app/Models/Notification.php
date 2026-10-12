@@ -157,4 +157,15 @@ class Notification extends Model {
     public const GALLERY_SUBMISSION_STAFF_COMMENTS = 513;
     public const GALLERY_SUBMISSION_EDITED = 514;
     public const GALLERY_SUBMISSION_PARTICIPANT = 515;
+    public const BREEDING_PERMISSION_GRANTED = 517;
+    public const BREEDING_PERMISSION_USED = 518;
+    public const BREEDING_PERMISSION_TRANSFER = 519;
+    public const FORCED_BREEDING_PERMISSION_TRANSFER = 520;
+    public const BREEDING_ROLLED = 1830;
+    public const BREEDING_REROLLED = 1831;
+    public const BREEDING_SPLIT_REQUEST = 1832;
+    public const BREEDING_SPLIT_APPROVAL = 1833;
+    public const BREEDING_SPLIT_REJECTION = 1834;
+    public const BREEDING_REJECTED = 1835;
+    public const BREEDING_SPLIT_CONFIRMATION = 1836;
 }

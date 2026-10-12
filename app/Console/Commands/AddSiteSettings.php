@@ -85,6 +85,16 @@ class AddSiteSettings extends Command {
 
         $this->addSiteSetting('designhub_trait_categories', 0, 'Enter in all of the trait categories you want to display on the design hub page. Seperate by comma. EX: "1,2,3"');
 
+        $this->addSiteSetting('breeding_max_full_slots', 3, 'The number of full breeding slots the user may have per month.');
+
+        $this->addSiteSetting('breeding_max_split_slots', 2, 'The number of split breeding slots the user may have per month.');
+
+        $this->addSiteSetting('breeding_queue_status', 0, '0: Queue is closed. 1: Queue is open to admins only. 2: Queue is open to all.');
+
+        $this->addSiteSetting('breeding_item_category_id', 0, 'Enter the ID for Breeding Item Category.');
+
+        $this->addSiteSetting('breeding_inbreeding_trait_category_id', 0, 'Enter the ID for Inbreeding Trait Category.');
+
         $this->line("\nSite settings up to date!");
     }
 

@@ -37,6 +37,12 @@
                             <a class="dropdown-item" href="{{ url('characters/myos') }}">
                                 My MYO Slots
                             </a>
+                            <a class="dropdown-item" href="{{ url('breedings') }}">
+                                My Breedings
+                            </a>
+                            <a class="dropdown-item" href="{{ url('breeding-permissions') }}">
+                                Breeding Permissions
+                            </a>
                             <a class="dropdown-item" href="{{ url('inventory') }}">
                                 Inventory
                             </a>
@@ -72,6 +78,9 @@
                             </a>
                             <a class="dropdown-item" href="{{ url('trades/open') }}">
                                 Trades
+                            </a>
+                            <a class="dropdown-item" href="{{ url('breeding') }}">
+                                Breeding
                             </a>
                         </div>
                     </li>
@@ -172,6 +181,9 @@
                             </a>
                             <a class="dropdown-item" href="{{ url('reports/new') }}">
                                 Submit Report
+                            </a>
+                            <a class="dropdown-item" href="{{ url('breeding/submit') }}">
+                                Submit Breeding
                             </a>
                         </div>
                     </li>

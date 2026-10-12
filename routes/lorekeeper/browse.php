@@ -57,6 +57,9 @@ Route::group(['prefix' => 'user', 'namespace' => 'Users'], function () {
     Route::get('{name}/myos', 'UserController@getUserMyoSlots');
     Route::get('{name}/inventory', 'UserController@getUserInventory');
     Route::get('{name}/bank', 'UserController@getUserBank');
+    Route::get('{name}/breeding-permissions', 'UserController@getUserBreedingPermissions');
+    Route::get('{name}/breedings', 'UserController@getUserBreedings');
+    Route::get('{name}/breeding-logs', 'UserController@getUserBreedingLogs');
 
     Route::get('{name}/currency-logs', 'UserController@getUserCurrencyLogs');
     Route::get('{name}/item-logs', 'UserController@getUserItemLogs');
@@ -82,6 +85,7 @@ Route::group(['prefix' => 'character', 'namespace' => 'Characters'], function ()
     Route::get('{slug}/ownership', 'CharacterController@getCharacterOwnershipLogs');
     Route::get('{slug}/change-log', 'CharacterController@getCharacterLogs');
     Route::get('{slug}/submissions', 'CharacterController@getCharacterSubmissions');
+    Route::get('{slug}/breeding-permissions', 'CharacterController@getCharacterBreedingPermissions');
 
     Route::get('{slug}/gallery', 'CharacterController@getCharacterGallery');
 });
@@ -181,4 +185,33 @@ Route::group(['prefix' => 'design-hub'], function () {
     Route::get('marking/{slug}', 'MarkingController@getMarkingPage');
     Route::get('base-coats/', 'BaseController@getBasePage');
     Route::get('trait/{slug}', 'FeatureController@getTraitPage');
+});
+
+/**************************************************************************************************
+    Breeding
+**************************************************************************************************/
+Route::group(['prefix' => 'breeding'], function () {
+    Route::get('/', 'BreedingController@getBreedingIndex');
+    Route::get('submit', 'BreedingController@getBreedingFormEntry');
+    Route::post('submit', 'BreedingController@postBreedingFormEntry');
+    Route::get('permission', 'BreedingController@getBreedingCharacter');
+    Route::get('starter', 'BreedingController@getStartersByToken');
+    Route::get('get-character', 'BreedingController@getCharacterById');
+    Route::get('/{id}', 'BreedingController@getBreedingPage');
+    Route::get('/{id}/cancel', 'BreedingController@getCancelBreeding');
+    Route::post('/{id}/cancel', 'BreedingController@postCancelBreeding');
+    Route::get('/{id}/edit', 'BreedingController@getEditBreeding');
+    Route::post('/{id}/edit', 'BreedingController@postEditBreeding');
+
+    Route::get('/{id}/split/approve', 'BreedingController@getApproveSplit');
+    Route::post('/{id}/split/approve', 'BreedingController@postApproveSplit');
+    Route::get('/{id}/split/reject', 'BreedingController@getRejectSplit');
+    Route::post('/{id}/split/reject', 'BreedingController@postRejectSplit');
+    Route::get('/{id}/split/confirm', 'BreedingController@getConfirmSplit');
+    Route::post('/{id}/split/confirm', 'BreedingController@postConfirmSplit');
+
+    Route::get('/{id}/{pup}/convert/{type}', 'BreedingController@getConvertPup');
+    Route::post('/{id}/{pup}/convert/{type}', 'BreedingController@postConvertPup');
+    Route::get('/{id}/{pup}/release', 'BreedingController@getReleasePup');
+    Route::post('/{id}/{pup}/release', 'BreedingController@postReleasePup');
 });

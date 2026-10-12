@@ -18,6 +18,8 @@ use App\Models\Rank\Rank;
 use App\Models\Rank\RankPower;
 use App\Models\Shop\ShopLog;
 use App\Models\Submission\Submission;
+use App\Models\Breeding\Breeding;
+use App\Models\Breeding\BreedingLog;
 use App\Traits\Commenter;
 use Carbon\Carbon;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -194,6 +196,13 @@ class User extends Authenticatable implements MustVerifyEmail {
      */
     public function commentLikes() {
         return $this->hasMany(CommentLike::class);
+    }
+
+    /**
+     * Get the user's breedings.
+     */
+    public function breedings() {
+        return $this->hasMany(Breeding::class, 'user_id');
     }
 
     /**********************************************************************************************
@@ -454,6 +463,36 @@ class User extends Authenticatable implements MustVerifyEmail {
             return true;
         }
     }
+
+    /**
+     * Gets the user's breed count for the current month.
+     */
+    public function getBreedCountAttribute() {
+        $user = $this;
+        $breeds = Breeding::where(function ($query) use ($user) {
+            $query->where('user_id', $user->id)->orWhere('split_user_id', $user->id);
+        });
+        $current_month_breeds = $breeds->whereIn('status', ['Pending', 'Approved'])->whereMonth('created_at', Carbon::now()->month)->whereYear('created_at', Carbon::now()->year)->get();
+        return [
+            'full'          => $current_month_breeds->where('type', 'Full')->count(),
+            'split'         => $current_month_breeds->where('type', 'Split')->count(),
+        ];
+    }
+
+    /**
+     * Get the user's remaining breed slots for the current month.
+     */
+    public function getLeftBreedSlotsAttribute() {
+        $counts = $this->getBreedCountAttribute();
+        $max_full = (int) Settings::get('breeding_max_full_slots');
+        $max_split = (int) Settings::get('breeding_max_split_slots');
+
+        return [
+            'full'      => $max_full - (int) $counts['full'],
+            'split'     => $max_split - (int) $counts['split'],
+        ];
+    }
+
     /**********************************************************************************************
 
         OTHER FUNCTIONS
@@ -592,6 +631,25 @@ class User extends Authenticatable implements MustVerifyEmail {
         })->orderBy('id', 'DESC');
 
         return $query->paginate(30);
+    }
+
+    /**
+     * Get the user's breeding logs.
+     *
+     * @param int $limit
+     *
+     * @return \Illuminate\Pagination\LengthAwarePaginator|\Illuminate\Support\Collection
+     */
+    public function getBreedingLogs($limit = 10) {
+        $user = $this;
+        $query = BreedingLog::with('sender')->with('breeding')->where(function ($query) use ($user) {
+            $query->where('sender_id', $user->id)->whereNotIn('log_type', ['Staff Grant', 'Prompt Rewards', 'Staff Removal']);
+        })->orderBy('id', 'DESC');
+        if ($limit) {
+            return $query->take($limit)->get();
+        } else {
+            return $query->paginate(30);
+        }
     }
 
     /**

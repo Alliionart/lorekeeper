@@ -99,6 +99,10 @@ return [
                 'name' => 'Claim Submissions',
                 'url'  => 'admin/claims',
             ],
+            [
+                'name' => 'Breeding Requests',
+                'url'  => 'admin/breedings',
+            ],
         ],
     ],
     'Grants'     => [
@@ -231,6 +235,10 @@ return [
             [
                 'name' => 'File Manager',
                 'url'  => 'admin/files',
+            ],
+            [
+                'name' => 'Breeding Settings',
+                'url'  => 'admin/breedings/settings',
             ],
         ],
     ],

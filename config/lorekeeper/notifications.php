@@ -437,4 +437,81 @@ return [
         'message' => '<a href="{sender_url}">{sender}</a> has added you as a participant on a gallery submission. (<a href="{url}">View Submission</a>)',
         'url'     => 'gallery/view/{submission_id}',
     ],
+
+    // BREEDING_PERMISSION_GRANTED
+    517 => [
+        'name'    => 'Breeding Permission Granted',
+        'message' => '<a href="{sender_url}">{sender_name}</a> has granted you x{quantity} {type} breeding permission(s) for <a href="character/{character_slug}">{character_displayName}</a>. (<a href="{url}">View Breeding Permissions</a>)',
+        'url'     => 'breeding-permissions',
+    ],
+
+    // BREEDING_PERMISSION_USED
+    518 => [
+        'name'    => 'Breeding Permission Used',
+        'message' => '<a href="{sender_url}">{sender_name}</a> has marked a {type} breeding permission (#{permission_id}) for <a href="character/{character_slug}">{character_displayName}</a> as used. (<a href="{url}">View Breeding</a>)',
+        'url'     => '{dynUrl}',
+    ],
+
+    // BREEDING_PERMISSION_TRANSFER
+    519 => [
+        'name'    => 'Breeding Permission Transfer',
+        'message' => '<a href="{sender_url}">{sender_name}</a> has transferred x{quantity} {type} breeding permission for <a href="character/{character_slug}">{character_displayName}</a> to you. (<a href="{url}">View Breeding Permissions</a>)',
+        'url'     => 'breeding-permissions',
+    ],
+
+    // FORCED_BREEDING_PERMISSION_TRANSFER
+    520 => [
+        'name'    => 'Forced Breeding Permission Transfer',
+        'message' => '<a href="{sender_url}">{sender_name}</a> has transferred x{quantity} {type} breeding permission for <a href="character/{character_slug}">{character_displayName}</a> from you. (<a href="{url}">View Breeding Permissions</a>)',
+        'url'     => 'breeding-permissions',
+    ],
+
+    // BREEDING_ROLLED
+    1830 => [
+        'name'    => 'Breeding Rolled',
+        'message' => 'Your breeding request was rolled by <a href="{sender_url}">{sender_name}</a>! (<a href="{url}">View Breeding</a>)',
+        'url'     => 'breeding/{id}',
+    ],
+
+    // BREEDING_REROLLED
+    1831 => [
+        'name'    => 'Breeding Re-Rolled',
+        'message' => 'Your breeding was rerolled by <a href="{sender_url}">{sender_name}</a> due to a previous error. Your litter results have changed. (<a href="{url}">View Breeding</a>)',
+        'url'     => 'breeding/{id}',
+    ],
+
+    // BREEDING_SPLIT_REQUEST
+    1832 => [
+        'name'    => 'Breeding Split Request',
+        'message' => 'You have recieved a breeding split request from <a href="{sender_url}">{sender_name}</a>. Please review the breeding request. (<a href="{url}">View Breeding</a>)',
+        'url'     => 'breeding/{id}',
+    ],
+
+    // BREEDING_SPLIT_APPROVAL
+    1833 => [
+        'name'    => 'Breeding Split Approved',
+        'message' => 'Your breeding split request was approved by <a href="{sender_url}">{sender_name}</a>. (<a href="{url}">View Breeding</a>)',
+        'url'     => 'breeding/{id}',
+    ],
+
+    // BREEDING_SPLIT_REJECTION
+    1834 => [
+        'name'    => 'Breeding Split Rejected',
+        'message' => 'Your breeding split request was rejected by <a href="{sender_url}">{sender_name}</a>. (<a href="{url}">View Breeding</a>)',
+        'url'     => 'breeding/{id}',
+    ],
+
+    // BREEDING_REJECTED
+    1835 => [
+        'name'    => 'Breeding Rejected',
+        'message' => 'Your breeding request was rejected by <a href="{sender_url}">{sender_name}</a>! (<a href="{url}">View Breeding</a>)',
+        'url'     => 'breeding/{id}',
+    ],
+
+    // BREEDING_SPLIT_CONFIRMATION
+    1836 => [
+        'name'    => 'Breeding Results Confirmed',
+        'message' => 'Your breeding split request was confirmed by <a href="{sender_url}">{sender_name}</a>. (<a href="{url}">View Breeding</a>)',
+        'url'     => 'breeding/{id}',
+    ],
 ];

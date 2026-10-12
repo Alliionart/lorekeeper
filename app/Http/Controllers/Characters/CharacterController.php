@@ -9,6 +9,7 @@ use App\Models\Character\CharacterCurrency;
 use App\Models\Character\CharacterItem;
 use App\Models\Character\CharacterProfile;
 use App\Models\Character\CharacterTransfer;
+use App\Models\Character\BreedingPermission;
 use App\Models\Currency\Currency;
 use App\Models\Gallery\GallerySubmission;
 use App\Models\Item\Item;
@@ -617,4 +618,153 @@ class CharacterController extends Controller {
 
         return redirect()->back();
     }
+
+    /**
+     * Shows a character's breeding permissions.
+     *
+     * @param string $slug
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function getCharacterBreedingPermissions(Request $request, $slug) {
+        return view('character.breeding_permissions', [
+            'character'   => $this->character,
+            'permissions' => $this->character->breedingPermissions()->orderBy('is_used')->paginate(20)->appends($request->query()),
+        ]);
+    }
+
+    /**
+     * Shows the new breeding permission modal.
+     *
+     * @param string $slug
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function getNewBreedingPermission($slug) {
+        if (!Auth::check() || (!Auth::user()->isStaff && $this->character->user_id != Auth::user()->id)) {
+            abort(404);
+        }
+
+        return view('character._create_edit_breeding_permission', [
+            'character'          => $this->character,
+            'breedingPermission' => new BreedingPermission,
+            'userOptions'        => User::orderBy('id')->pluck('name', 'id'),
+        ]);
+    }
+
+    /**
+     * Shows the refresh breeding permissions modal.
+     * Allows users to automatically refresh their own breeding slots, remove if unnecessary.
+     *
+     * @param string $slug
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function getRefreshBreedingPermissions($slug) {
+        if (!Auth::check() || $this->character->user_id != Auth::user()->id) {
+            abort(404);
+        }
+
+        return view('character._refresh_breeding_permissions', [
+            'character'          => $this->character,
+        ]);
+    }
+
+    /**
+     * Shows the transfer breeding permission modal.
+     *
+     * @param string $slug
+     * @param int    $id
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function getTransferBreedingPermission($slug, $id) {
+        $permission = BreedingPermission::where('id', $id)->first();
+        if (!Auth::check() || !$permission || ($permission->recipient_id != Auth::user()->id && !Auth::user()->hasPower('manage_characters'))) {
+            abort(404);
+        }
+
+        return view('character._transfer_breeding_permission', [
+            'character'          => $this->character,
+            'breedingPermission' => $permission,
+            'userOptions'        => User::orderBy('id')->pluck('name', 'id'),
+        ]);
+    }
+
+    /**
+     * Creates a new breeding permission for a character.
+     *
+     * @param App\Services\CharacterManager $service
+     * @param string                        $slug
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function postNewBreedingPermission(Request $request, CharacterManager $service, $slug) {
+        if (!Auth::check()) {
+            abort(404);
+        }
+
+        $request->validate(BreedingPermission::$createRules);
+
+        if ($service->createBreedingPermission($request->only(['recipient_id', 'type', 'description', 'quantity', 'is_legacy']), $this->character, Auth::user())) {
+            flash('Breeding permission(s) created successfully.')->success();
+        } else {
+            foreach ($service->errors()->getMessages()['error'] as $error) {
+                flash($error)->error();
+            }
+        }
+
+        return redirect()->back();
+    }
+
+    /**
+     * Refreshes character breeding permissions.
+     *
+     * @param App\Services\CharacterManager $service
+     * @param string                        $slug
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function postRefreshBreedingPermissions(Request $request, CharacterManager $service, $slug) {
+        if (!Auth::check()) {
+            abort(404);
+        }
+
+        $data = $request->only(['quantity']);
+
+        if ($service->grantNewBreedingPermissions( isset($data['quantity']) ? $data['quantity'] : 1 , $this->character, Auth::user())) {
+            flash('Breeding permission(s) refreshed successfully.')->success();
+        } else {
+            foreach ($service->errors()->getMessages()['error'] as $error) {
+                flash($error)->error();
+            }
+        }
+
+        return redirect()->back();
+    }
+
+    /**
+     * Transfers a breeding permission.
+     *
+     * @param App\Services\CharacterManager $service
+     * @param string                        $slug
+     * @param int                           $id
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function postTransferBreedingPermission(Request $request, CharacterManager $service, $slug, $id) {
+        $data = $request->only(['recipient_id', 'quantity']);
+        if ($service->transferBreedingPermission($this->character, BreedingPermission::where('id', $id)->first(), User::where('id', $data['recipient_id'])->first(), Auth::user(), $data['quantity'] ?? 1)) {
+            flash('Breeding permission(s) transferred successfully.')->success();
+
+            return redirect()->back();
+        } else {
+            foreach ($service->errors()->getMessages()['error'] as $error) {
+                flash($error)->error();
+            }
+        }
+
+        return redirect()->back();
+    }
+
 }

@@ -13,6 +13,7 @@ use App\Models\Report\Report;
 use App\Models\Submission\Submission;
 use App\Models\Trade;
 use App\Models\User\User;
+use App\Models\Breeding\Breeding;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -38,6 +39,12 @@ class HomeController extends Controller {
             'openTransfersQueue'     => $openTransfersQueue,
             'transferCount'          => $openTransfersQueue ? CharacterTransfer::active()->where('is_approved', 0)->count() : 0,
             'tradeCount'             => $openTransfersQueue ? Trade::where('status', 'Pending')->count() : 0,
+            'breedingCount'          => Breeding::where('status', 'Pending')
+                                            ->whereNotNull('user_id')
+                                            ->where(function ($query) {
+                                                $query->whereNotIn('split_status', ['Pending', 'Rejected'])
+                                                    ->orWhereNull('split_status');
+                                        })->count(),
             'galleryRequireApproval' => $galleryRequireApproval,
             'galleryCurrencyAwards'  => $galleryCurrencyAwards,
             'gallerySubmissionCount' => GallerySubmission::collaboratorApproved()->where('status', 'Pending')->count(),
