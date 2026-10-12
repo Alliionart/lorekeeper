@@ -20,7 +20,7 @@
                 <div class="col-md-6">
                     @if ($breeding->status === 'Approved')
                         <div>
-                            {!! $breeding->resultsCount > 0 ? '<strong>Litter Size: </strong>'.$breeding->resultsCount : 'Empty Litter' !!}
+                            {!! $breeding->resultsCount > 0 ? '<strong>Litter Size: </strong>' . $breeding->resultsCount : 'Empty Litter' !!}
                         </div>
                         <div>
                             <strong>Available pups</strong> {!! $breeding->getAvailablePupCount() !!}

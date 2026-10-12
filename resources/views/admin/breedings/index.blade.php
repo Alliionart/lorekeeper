@@ -11,8 +11,7 @@
 
     <ul class="nav nav-tabs mb-3">
         <li class="nav-item">
-            <a class="nav-link {{ set_active('admin/breedings/pending*') }} {{ set_active('admin/breedings') }}"
-                href="{{ url('admin/breedings/pending') }}">Pending</a>
+            <a class="nav-link {{ set_active('admin/breedings/pending*') }} {{ set_active('admin/breedings') }}" href="{{ url('admin/breedings/pending') }}">Pending</a>
         </li>
         <li class="nav-item">
             <a class="nav-link {{ set_active('admin/breedings/approved*') }}" href="{{ url('admin/breedings/approved') }}">Approved</a>
@@ -26,7 +25,7 @@
     <div class="form-inline justify-content-end mb-3" style="min-width:150px">
         {!! Form::select('user_ids', $users, Request::get('user_ids'), ['class' => 'form-control selectize w-100']) !!}
     </div>
-    
+
     <div class="form-inline justify-content-end">
         <div class="form-group ml-3 mb-3">
             {!! Form::select(

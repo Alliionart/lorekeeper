@@ -10,7 +10,7 @@
     <h1>
         Breeding Request (#{{ $breeding->id }})
         <div class="float-right">
-            @if($breeding->rerolls > 1)
+            @if ($breeding->rerolls > 1)
                 <span class="badge badge-warning">Rerolled x{{ $breeding->rerolls }}</span>
             @endif
             <span class="badge badge-{{ $breeding->type == 'full' ? 'warning' : 'success' }}">{{ $breeding->type }}</span>
@@ -34,17 +34,17 @@
 
     {!! Form::open(['url' => url()->current(), 'id' => 'breedingForm', 'class' => 'mt-4']) !!}
 
-        @include('breeding._details', ['breeding' => $breeding, 'show_fields' => $breeding->status == 'Pending', 'userCanTakeAction' => false])
+    @include('breeding._details', ['breeding' => $breeding, 'show_fields' => $breeding->status == 'Pending', 'userCanTakeAction' => false])
 
-        <input type="hidden" name="breeding_id" readonly value="{{ $breeding->id }}" />
-        @if ($breeding->status === 'Approved')
-            <input type="hidden" name="reroll" readonly value="1" />
-        @endif
-        <div class="text-right mt-3 pt-2">
-            <hr/>
-            <a href="#" class="btn btn-secondary mr-2" id="cancelButton">Cancel</a>
-            <a href="#" class="btn btn-success" id="approvalButton">{{ $breeding->status === 'Approved' ? 'Re-' : '' }}Roll Breeding</a>
-        </div>
+    <input type="hidden" name="breeding_id" readonly value="{{ $breeding->id }}" />
+    @if ($breeding->status === 'Approved')
+        <input type="hidden" name="reroll" readonly value="1" />
+    @endif
+    <div class="text-right mt-3 pt-2">
+        <hr />
+        <a href="#" class="btn btn-secondary mr-2" id="cancelButton">Cancel</a>
+        <a href="#" class="btn btn-success" id="approvalButton">{{ $breeding->status === 'Approved' ? 'Re-' : '' }}Roll Breeding</a>
+    </div>
     {!! Form::close() !!}
 
     <div class="modal fade" id="confirmationModal" tabindex="-1" role="dialog">
@@ -56,7 +56,7 @@
                 </div>
                 <div class="modal-body">
                     <p>This will roll the breeding and notify the player of their litter.</p>
-                    @if($breeding->rerolls > 1)
+                    @if ($breeding->rerolls > 1)
                         <div>This breeding has been rerolled {!! $breeding->rerolls !!} times, are you sure you want to reroll this breeding?</div>
                     @endif
                     <div class="text-right">
@@ -78,7 +78,6 @@
             </div>
         </div>
     </div>
-
 @endsection
 
 @if ($breeding->status !== 'Closed')
@@ -86,7 +85,7 @@
         @parent
         <script>
             $(document).ready(function() {
-                
+
                 var $confirmationModal = $('#confirmationModal');
                 var $trackerForm = $('#breedingForm');
 

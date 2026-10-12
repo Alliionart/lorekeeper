@@ -10,7 +10,7 @@
 
 @section('profile-content')
     @if ($character->is_myo_slot)
-        {!! breadcrumbs([ucwords( __('lorekeeper.myos')) . ' Masterlist' => 'myos', $character->fullName => $character->url]) !!}
+        {!! breadcrumbs([ucwords(__('lorekeeper.myos')) . ' Masterlist' => 'myos', $character->fullName => $character->url]) !!}
     @else
         {!! breadcrumbs([
             $character->category->masterlist_sub_id ? $character->category->sublist->name . ' Masterlist' : 'Character masterlist' => $character->category->masterlist_sub_id ? 'sublist/' . $character->category->sublist->key : 'masterlist',
@@ -20,10 +20,10 @@
 
     @include('character._header', ['character' => $character])
 
-    @if ((Auth::check() && Auth::user()->id == $character->user_id || Auth::user()->isStaff) && $character->isBreedable)
+    @if (((Auth::check() && Auth::user()->id == $character->user_id) || Auth::user()->isStaff) && $character->isBreedable)
         <div class="text-right mb-4">
             <a href="#" class="btn btn-success create-breeding-permission">{{ Auth::user()->isStaff ? '[ADMIN] ' : '' }}Create New Permission</a>
-            @if ( $character->availableBreedingPermissions < 1 && $character->citizenship == 'Paramount' )
+            @if ($character->availableBreedingPermissions < 1 && $character->citizenship == 'Paramount')
                 <a href="#" class="btn btn-primary refresh-permissions">Refresh Breeding Permissions {!! add_help('This will automatically grant your Reosean 50 more breeding slots.') !!}</a>
             @endif
         </div>
@@ -35,14 +35,15 @@
         @else
             This character has {{ $character->availableBreedingPermissions }} out of {{ $character->maxBreedingPermissions }} maximum breeding permission{{ $character->availableBreedingPermissions == 1 ? '' : 's' }} available to create.
             @if (Auth::check() && Auth::user()->id == $character->user_id)
-                As the character's owner, you may create and grant to other users up to this many breeding permissions. Other users may see how many of this character's breeding permissions have been created and/or used, and to whom they have been granted.
+                As the character's owner, you may create and grant to other users up to this many breeding permissions. Other users may see how many of this character's breeding permissions have been created and/or used, and to whom they have been
+                granted.
             @else
                 Only the character's owner can create and distribute breeding permissions.
             @endif
         @endif
     </p>
 
-    
+
 
     @if ($permissions->count())
         {!! $permissions->render() !!}
