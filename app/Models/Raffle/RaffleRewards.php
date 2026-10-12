@@ -2,15 +2,12 @@
 
 namespace App\Models\Raffle;
 
-use App\Models\Model;
-use App\Models\User;
-use App\Models\Raffle\Raffle;
-use App\Models\Item\Item;
 use App\Models\Character\Character;
-use App\Models\Currency\Currency;
-use App\Models\Character\BreedingPermission;
 use App\Models\Claymore\Gear;
 use App\Models\Claymore\Weapon;
+use App\Models\Currency\Currency;
+use App\Models\Item\Item;
+use App\Models\Model;
 use App\Models\Pet\Pet;
 
 class RaffleRewards extends Model {
@@ -142,5 +139,4 @@ class RaffleRewards extends Model {
 
         return number_format((float) $dropRate, 2, '.', '').'%';
     }
-    
 }

@@ -68,7 +68,7 @@
                         <a href="#" class="edit-raffle btn btn-xs btn-outline-primary p-2" data-id="{{ $raffle->id }}">
                             Edit Raffle
                         </a>
-                        <a href="{{ $raffle->adminRewardsUrl }}" class="btn btn-xs btn-outline-primary p-2" >
+                        <a href="{{ $raffle->adminRewardsUrl }}" class="btn btn-xs btn-outline-primary p-2">
                             <i class="fas fa-pencil-alt"></i> Edit Rewards
                         </a>
                     </div>

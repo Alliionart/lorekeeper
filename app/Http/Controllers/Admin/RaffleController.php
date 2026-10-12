@@ -9,8 +9,8 @@ use App\Models\Raffle\RaffleTicket;
 use App\Models\User\User;
 use App\Services\RaffleManager;
 use App\Services\RaffleService;
-use Illuminate\Http\Request;
 use Auth;
+use Illuminate\Http\Request;
 
 class RaffleController extends Controller {
     /**
@@ -59,10 +59,10 @@ class RaffleController extends Controller {
         }
 
         return view('admin.raffle._raffle_create_edit', [
-            'raffle' => $raffle,
-            'groups' => [0 => 'No group'] + RaffleGroup::where('is_active', '<', 2)->pluck('name', 'id')->toArray(),
+            'raffle'        => $raffle,
+            'groups'        => [0 => 'No group'] + RaffleGroup::where('is_active', '<', 2)->pluck('name', 'id')->toArray(),
             'rewardOptions' => $rewardOptions,
-            'users' => User::visible()->orderBy('name')->pluck('name', 'id')->toArray(),
+            'users'         => User::visible()->orderBy('name')->pluck('name', 'id')->toArray(),
         ]);
     }
 
@@ -76,9 +76,9 @@ class RaffleController extends Controller {
      */
     public function postCreateEditRaffle(Request $request, RaffleService $service, $id = null) {
         $request->validate([
-            'excluded_winners' => 'sometimes|array',
-            'excluded_winners.*.reward_id' => 'nullable|string',
-            'excluded_winners.*.user_ids' => 'nullable|array|max:20',
+            'excluded_winners'              => 'sometimes|array',
+            'excluded_winners.*.reward_id'  => 'nullable|string',
+            'excluded_winners.*.user_ids'   => 'nullable|array|max:20',
             'excluded_winners.*.user_ids.*' => 'integer|distinct|exists:users,id',
         ]);
         $data = $request->only(['name', 'is_active', 'is_admin_only', 'winner_count', 'group_id', 'order', 'ticket_cap', 'rewards_type', 'excluded_winners']);
@@ -299,12 +299,12 @@ class RaffleController extends Controller {
     public function getRaffleRewards($id = null) {
         $raffle = Raffle::find($id);
 
-        if ( !$raffle ) {
+        if (!$raffle) {
             abort(404);
         }
 
         return view('admin.raffle.create_edit_rewards', [
-            'raffle' => $raffle,
+            'raffle'  => $raffle,
             'rewards' => $raffle->rewards ?? [],
         ]);
     }
@@ -319,7 +319,7 @@ class RaffleController extends Controller {
      */
     public function postRaffleRewards(Request $request, RaffleService $service, $id = null) {
         $data = $request->all();
-        
+
         if ($service->editRaffleRewards(Raffle::find($id), $data, Auth::user())) {
             flash('Raffle rewards updated.')->success();
 

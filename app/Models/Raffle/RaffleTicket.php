@@ -12,7 +12,7 @@ class RaffleTicket extends Model {
      * @var array
      */
     protected $fillable = [
-        'user_id', 'raffle_id', 'position', 'created_at', 'alias', 'opted_out', 'winner_data'
+        'user_id', 'raffle_id', 'position', 'created_at', 'alias', 'opted_out', 'winner_data',
     ];
 
     /**
@@ -28,8 +28,8 @@ class RaffleTicket extends Model {
      * @var array
      */
     protected $casts = [
-        'created_at' => 'datetime',
-        'opted_out' => 'array',
+        'created_at'  => 'datetime',
+        'opted_out'   => 'array',
         'winner_data' => 'array',
     ];
 

@@ -5,14 +5,6 @@ namespace App\Services;
 use App\Models\Raffle\Raffle;
 use App\Models\Raffle\RaffleGroup;
 use App\Models\Raffle\RaffleRewards;
-use App\Models\User;
-use App\Models\Item\Item;
-use App\Models\Character\Character;
-use App\Models\Currency\Currency;
-use App\Models\Character\BreedingPermission;
-use App\Models\Claymores\Gear;
-use App\Models\Claymores\Weapon;
-use App\Models\Pet\Pet;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 
@@ -126,39 +118,6 @@ class RaffleService extends Service {
     }
 
     /**
-     * Validates and normalizes raffle and reward exclusions.
-     *
-     * @param array $entries
-     * @param Raffle $raffle
-     *
-     * @return array
-     */
-    private function normalizeExcludedWinners($entries, $raffle) {
-        $rewardIds = $raffle->rewards()->pluck('id')->map(function ($id) {
-            return (string) $id;
-        })->all();
-        $normalized = [];
-
-        foreach ((array) $entries as $entry) {
-            $rewardId = $entry['reward_id'] ?? null;
-            $userIds = collect($entry['user_ids'] ?? [])->filter()->unique()->take(20)->map(function ($id) {
-                return (int) $id;
-            })->values()->all();
-
-            if (!$rewardId || !$userIds || ($rewardId !== 'all' && !in_array((string) $rewardId, $rewardIds, true))) {
-                continue;
-            }
-
-            $normalized[] = [
-                'reward_id' => $rewardId === 'all' ? 'all' : (int) $rewardId,
-                'user_ids' => $userIds,
-            ];
-        }
-
-        return $normalized;
-    }
-
-    /**
      * Deletes a raffle group.
      *
      * @param mixed $group
@@ -181,19 +140,21 @@ class RaffleService extends Service {
     *********************************/
 
     /**
-     * 
+     * @param mixed $raffle
+     * @param mixed $data
+     * @param mixed $user
      */
     public function editRaffleRewards($raffle, $data, $user) {
         DB::beginTransaction();
 
         try {
-            if ( !$user->isStaff || !$user->hasPower('edit_raffles') ) {
+            if (!$user->isStaff || !$user->hasPower('edit_raffles')) {
                 throw new \Exception('Only staff or the owner of the raffle may edit.');
             }
-            if ( !$raffle ) {
+            if (!$raffle) {
                 throw new \Exception('Raffle not found.');
             }
-            
+
             $raffle->rewards()->delete();
 
             switch ($raffle->rewards_type) {
@@ -224,11 +185,12 @@ class RaffleService extends Service {
     }
 
     /**
-     * 
+     * @param mixed $raffle
+     * @param mixed $data
      */
     public function handleStaticRewards($raffle, $data) {
         $newData = [];
-        if ( $data['rewardable_type'] ) {
+        if ($data['rewardable_type']) {
             foreach ($data['rewardable_type'] as $i => $type) {
                 $newData[$i] = [
                     'raffle_id'         => $raffle->id,
@@ -245,7 +207,7 @@ class RaffleService extends Service {
 
     public function handleRandomRewards($raffle, $data) {
         $newData = [];
-        if ( $data['rewardable_type'] ) {
+        if ($data['rewardable_type']) {
             foreach ($data['rewardable_type'] as $i => $type) {
                 $newData[$i] = [
                     'raffle_id'         => $raffle->id,
@@ -263,9 +225,9 @@ class RaffleService extends Service {
 
     public function handleTieredRewards($raffle, $data) {
         $newData = [];
-        if ( $data['tiers'] ) {
+        if ($data['tiers']) {
             foreach ($data['tiers'] as $tierIndex => $tier) {
-                if ( isset($tier['rewards']) && is_array($tier['rewards']) ) {
+                if (isset($tier['rewards']) && is_array($tier['rewards'])) {
                     foreach ($tier['rewards'] as $rewardIndex => $reward) {
                         $newData[] = [
                             'raffle_id'         => $raffle->id,
@@ -281,8 +243,40 @@ class RaffleService extends Service {
                 }
             }
         }
-        
+
         return $newData;
     }
 
+    /**
+     * Validates and normalizes raffle and reward exclusions.
+     *
+     * @param array  $entries
+     * @param Raffle $raffle
+     *
+     * @return array
+     */
+    private function normalizeExcludedWinners($entries, $raffle) {
+        $rewardIds = $raffle->rewards()->pluck('id')->map(function ($id) {
+            return (string) $id;
+        })->all();
+        $normalized = [];
+
+        foreach ((array) $entries as $entry) {
+            $rewardId = $entry['reward_id'] ?? null;
+            $userIds = collect($entry['user_ids'] ?? [])->filter()->unique()->take(20)->map(function ($id) {
+                return (int) $id;
+            })->values()->all();
+
+            if (!$rewardId || !$userIds || ($rewardId !== 'all' && !in_array((string) $rewardId, $rewardIds, true))) {
+                continue;
+            }
+
+            $normalized[] = [
+                'reward_id' => $rewardId === 'all' ? 'all' : (int) $rewardId,
+                'user_ids'  => $userIds,
+            ];
+        }
+
+        return $normalized;
+    }
 }

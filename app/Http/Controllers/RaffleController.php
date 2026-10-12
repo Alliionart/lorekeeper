@@ -5,9 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Raffle\Raffle;
 use App\Models\Raffle\RaffleGroup;
 use App\Services\RaffleManager;
+use Illuminate\Http\Request as HttpRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Request;
-use Illuminate\Http\Request as HttpRequest;
 
 class RaffleController extends Controller {
     /*
@@ -64,10 +64,10 @@ class RaffleController extends Controller {
             : [];
 
         return view('raffles.ticket_index', [
-            'raffle'    => $raffle,
-            'tickets'   => $raffle->tickets()->with('user')->orderBy('id')->paginate(100),
-            'count'     => $count,
-            'userCount' => $userCount,
+            'raffle'       => $raffle,
+            'tickets'      => $raffle->tickets()->with('user')->orderBy('id')->paginate(100),
+            'count'        => $count,
+            'userCount'    => $userCount,
             'userOptedOut' => collect($userOptedOut)->map(function ($reward) {
                 return $reward['rewardable_type'].':'.$reward['rewardable_id'];
             })->all(),
@@ -78,8 +78,6 @@ class RaffleController extends Controller {
     /**
      * Saves a user's Tiered raffle prize opt-outs.
      *
-     * @param HttpRequest $request
-     * @param RaffleManager $service
      * @param int $id
      *
      * @return \Illuminate\Http\RedirectResponse
@@ -90,7 +88,7 @@ class RaffleController extends Controller {
         }
 
         $request->validate([
-            'opted_out' => 'sometimes|array',
+            'opted_out'   => 'sometimes|array',
             'opted_out.*' => 'string',
         ]);
 
