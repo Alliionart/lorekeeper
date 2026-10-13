@@ -1,13 +1,14 @@
 <?php
 $vals = [true, false, false];
-if (isset($lineageBlacklist))
-{
+if (isset($lineageBlacklist)) {
     $vals[0] = false;
     $vals[$lineageBlacklist->complete_removal ? 2 : 1] = true;
 }
 $opts = ['category', 'species', 'subtype', 'rarity'];
 foreach ($opts as $key => $value) {
-    if ($value == $type) unset($opts[$key]);
+    if ($value == $type) {
+        unset($opts[$key]);
+    }
 }
 $opts = array_values($opts);
 ?>
