@@ -9,7 +9,6 @@
 
     <h1>Breeding Settings</h1>
     <p>Edit the breeding rates and modifiers here.</p>
-    <p>RATES HERE: <a href="https://www.deviantart.com/world-of-reos/journal/Genetics-Info-615978178" target="_blank">Genetic Info</a></p>
 
     {!! Form::open(['url' => 'admin/breedings/settings/save']) !!}
 
