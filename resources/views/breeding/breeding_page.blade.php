@@ -9,8 +9,8 @@
     <h1>
         Breeding (#{{ $id }})
         <span class="float-right badge badge-{{ $breeding->status == 'Pending' || $breeding->status == 'Draft' ? 'secondary' : ($breeding->status == 'Approved' ? 'success' : 'danger') }}">{{ $breeding->status }}</span>
-        @if(Auth::check() && Auth::user()->isStaff && $breeding->status != 'Draft')
-            <a href="{{url('/admin/breedings/edit/' . $breeding->id)}}" class="float-right mr-2 btn btn-warning" style="font-size: 1rem">Admin View <i class="fas fa-crown"></i></a>
+        @if (Auth::check() && Auth::user()->isStaff && $breeding->status != 'Draft')
+            <a href="{{ url('/admin/breedings/edit/' . $breeding->id) }}" class="float-right mr-2 btn btn-warning" style="font-size: 1rem">Admin View <i class="fas fa-crown"></i></a>
         @endif
     </h1>
 
@@ -29,20 +29,19 @@
         </div>
     </div>
 
-    <hr class="mb-3"/>
+    <hr class="mb-3" />
 
     @include('breeding._details', ['breeding' => $breeding, 'show_fields' => false])
 
-    @if ( Auth::check() && Auth::user()->id === $breeding->user->id && $breeding->status === 'Pending' )
+    @if (Auth::check() && Auth::user()->id === $breeding->user->id && $breeding->status === 'Pending')
         <div class="text-right mt-3">
             <a href="#" class="btn btn-secondary mr-2" id="cancelButton">Cancel</a>
         </div>
-    @elseif ( Auth::check() && Auth::user()->id === $breeding->user->id && $breeding->status === 'Draft' )
+    @elseif (Auth::check() && Auth::user()->id === $breeding->user->id && $breeding->status === 'Draft')
         <div class="text-right mt-3">
-            <a href="{{ url('breeding/'. $breeding->id . '/edit') }}" class="btn btn-primary mr-2" id="editButton">Edit Draft</a>
+            <a href="{{ url('breeding/' . $breeding->id . '/edit') }}" class="btn btn-primary mr-2" id="editButton">Edit Draft</a>
         </div>
     @endif
-    
 @endsection
 
 @section('scripts')
@@ -67,17 +66,17 @@
                 e.preventDefault();
                 console.log('test!');
                 var pup_id = $(this).parent().find('input[name="pup_id"]').val();
-                loadModal("{{ url('breeding/' . $breeding->id) }}/"+ pup_id +"/release", 'Release Pup #' + (Number(pup_id) + 1));
+                loadModal("{{ url('breeding/' . $breeding->id) }}/" + pup_id + "/release", 'Release Pup #' + (Number(pup_id) + 1));
             });
             $('.surrenderPup').click(function(e) {
                 e.preventDefault();
                 var pup_id = $(this).parent().find('input[name="pup_id"]').val();
-                loadModal("{{ url('breeding/' . $breeding->id) }}/"+ pup_id +"/convert/surrender", 'Surrender Pup #' + (Number(pup_id) + 1));
+                loadModal("{{ url('breeding/' . $breeding->id) }}/" + pup_id + "/convert/surrender", 'Surrender Pup #' + (Number(pup_id) + 1));
             });
             $('.convertPup').click(function(e) {
                 e.preventDefault();
                 var pup_id = $(this).parent().find('input[name="pup_id"]').val();
-                loadModal("{{ url('breeding/' . $breeding->id) }}/"+ pup_id +"/convert/convert", 'Convert Pup #' + (Number(pup_id) + 1) + ' to Genotype');
+                loadModal("{{ url('breeding/' . $breeding->id) }}/" + pup_id + "/convert/convert", 'Convert Pup #' + (Number(pup_id) + 1) + ' to Genotype');
             });
             $cancelButton.on('click', function(e) {
                 e.preventDefault();

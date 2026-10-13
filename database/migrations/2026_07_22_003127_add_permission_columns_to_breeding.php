@@ -4,13 +4,11 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
-    public function up(): void
-    {
+    public function up(): void {
         Schema::table('breeding', function (Blueprint $table) {
             $table->integer('parent_1')->references('id')->on('characters')->after('status');
             $table->integer('parent_2')->references('id')->on('characters')->after('parent_1');
@@ -25,8 +23,7 @@ return new class extends Migration
     /**
      * Reverse the migrations.
      */
-    public function down(): void
-    {
+    public function down(): void {
         Schema::table('breeding', function (Blueprint $table) {
             $table->dropColumn('parent_1');
             $table->dropColumn('parent_2');

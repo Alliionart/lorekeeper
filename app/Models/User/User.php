@@ -2,6 +2,8 @@
 
 namespace App\Models\User;
 
+use App\Models\Breeding\Breeding;
+use App\Models\Breeding\BreedingLog;
 use App\Models\Character\Character;
 use App\Models\Character\CharacterBookmark;
 use App\Models\Character\CharacterImageCreator;
@@ -18,8 +20,6 @@ use App\Models\Rank\Rank;
 use App\Models\Rank\RankPower;
 use App\Models\Shop\ShopLog;
 use App\Models\Submission\Submission;
-use App\Models\Breeding\Breeding;
-use App\Models\Breeding\BreedingLog;
 use App\Traits\Commenter;
 use Carbon\Carbon;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -473,6 +473,7 @@ class User extends Authenticatable implements MustVerifyEmail {
             $query->where('user_id', $user->id)->orWhere('split_user_id', $user->id);
         });
         $current_month_breeds = $breeds->whereIn('status', ['Pending', 'Approved'])->whereMonth('created_at', Carbon::now()->month)->whereYear('created_at', Carbon::now()->year)->get();
+
         return [
             'full'          => $current_month_breeds->where('type', 'Full')->count(),
             'split'         => $current_month_breeds->where('type', 'Split')->count(),

@@ -4,6 +4,8 @@ namespace App\Services;
 
 use App\Facades\Notifications;
 use App\Facades\Settings;
+use App\Models\Character\BreedingPermission;
+use App\Models\Character\BreedingPermissionLog;
 use App\Models\Character\Character;
 use App\Models\Character\CharacterBookmark;
 use App\Models\Character\CharacterCategory;
@@ -14,8 +16,6 @@ use App\Models\Character\CharacterImage;
 use App\Models\Character\CharacterMarking;
 use App\Models\Character\CharacterTransfer;
 use App\Models\Marking\Marking;
-use App\Models\Character\BreedingPermission;
-use App\Models\Character\BreedingPermissionLog;
 use App\Models\Sales\SalesCharacter;
 use App\Models\Character\CharacterLineage;
 use App\Models\User\UserCharacterLog;
@@ -2335,87 +2335,6 @@ class CharacterManager extends Service {
     }
 
     /**
-     * Generates a list of features for displaying.
-     *
-     * @param \App\Models\Character\CharacterImage $image
-     *
-     * @return string
-     */
-    private function generateFeatureList($image) {
-        $result = '';
-        foreach ($image->features as $feature) {
-            $result .= '<div>'.($feature->feature->category ? '<strong>'.$feature->feature->category->displayName.':</strong> ' : '').$feature->feature->displayName.'</div>';
-        }
-
-        return $result;
-    }
-
-    /**
-     * Generates a list of image credits for displaying.
-     *
-     * @param \App\Models\Character\CharacterImage $image
-     *
-     * @return string
-     */
-    private function generateCredits($image) {
-        $result = ['designers' => '', 'artists' => ''];
-        foreach ($image->designers as $designer) {
-            $result['designers'] .= '<div>'.$designer->displayLink().'</div>';
-        }
-        foreach ($image->artists as $artist) {
-            $result['artists'] .= '<div>'.$artist->displayLink().'</div>';
-        }
-
-        return $result;
-    }
-
-    /**
-     * Handles character marking data.
-     *
-     * @param array $data
-     * @param mixed $character
-     *
-     * @return \App\Models\Character\Character              $character
-     * @return \App\Models\Character\CharacterMarkings|bool
-     */
-    private function handleCharacterMarkings($data, $character) {
-        try {
-            $markingData = Arr::only($data, [
-                'marking_id', 'is_dominant', 'side_id',
-            ]);
-
-            $all_data = [];
-
-            // Attach markings
-            foreach ($data['marking_id'] as $key => $markingId) {
-                if ($markingId) {
-                    $temp = Marking::where('id', $markingId)->first();
-                    if (!$temp) {
-                        continue;
-                    }
-
-                    $is_dominant = $data['is_dominant'][$key];
-
-                    $marking = CharacterMarking::create([
-                        'character_id'  => $character->id,
-                        'marking_id'    => $markingId,
-                        'code'          => ($is_dominant ? $temp->recessive : $temp->dominant),
-                        'order'         => $temp->order_in_genome,
-                        'is_dominant'   => $is_dominant,
-                        'data'          => $data['side_id'][$key] ?? null,
-                    ]);
-                }
-            }
-
-            return true;
-        } catch (\Exception $e) {
-            $this->setError('error', $e->getMessage());
-        }
-
-        return false;
-    }
-
-    /**
      * Transfers a breeding permission.
      *
      * @param Character          $character
@@ -2559,7 +2478,7 @@ class CharacterManager extends Service {
 
     /**
      * Creates given amount of breeding permissions.
-     * 
+     *
      * @param int       $quantity
      * @param Character $character
      * @param User      $user
@@ -2568,23 +2487,23 @@ class CharacterManager extends Service {
         DB::beginTransaction();
 
         try {
-            if ( ! $character ) {
+            if (!$character) {
                 throw new \Exception('Invalid character');
             }
-            if ($character->user_id != $user->id ) {
+            if ($character->user_id != $user->id) {
                 throw new \Exception('Only this character\'s owner may create new breeding permissions.');
             }
-            if ( $quantity > 50 ) {
+            if ($quantity > 50) {
                 throw new \Exception('You may only refresh 50 slots at a time.');
             }
-            if ( !$character->isBreedable ) {
+            if (!$character->isBreedable) {
                 throw new \Exception('This character is not breedable.');
             }
 
             $currencyManager = new CurrencyManager;
 
             if (!$currencyManager->creditCurrency($user, $character, 'Breeding Permission Grant', null, Settings::get('breeding_permission_currency'), $quantity)) {
-                $this->error('Failed to grant currency to ' . $character->slug . ': ' . implode(', ', $currencyManager->getErrors()['error'] ?? []));
+                $this->error('Failed to grant currency to '.$character->slug.': '.implode(', ', $currencyManager->getErrors()['error'] ?? []));
             }
 
             return $this->commitReturn(true);
@@ -2621,10 +2540,10 @@ class CharacterManager extends Service {
             if ($character->availableBreedingPermissions < $data['quantity']) {
                 throw new \Exception('You cannot create more breeding permissions than this character has available.');
             }
-            if ( $data['quantity'] > 5 ) {
+            if ($data['quantity'] > 5) {
                 throw new \Exception('You cannot create more than 5 breeding permissions at a time.');
             }
-            if ( !$character->isBreedable ) {
+            if (!$character->isBreedable) {
                 throw new \Exception('This character is not breedable.');
             }
 
@@ -2646,18 +2565,18 @@ class CharacterManager extends Service {
             }
 
             // Create a log for the permission
-            if (!$this->createBreedingPermissionLog($user->id, $data['recipient_id'], $permission->id, 'x'.$permission->quantity.' '.( $is_legacy ? 'Legacy' : '' ).' Breeding Permission(s) Granted', $data['type'].' Permission Created')) {
+            if (!$this->createBreedingPermissionLog($user->id, $data['recipient_id'], $permission->id, 'x'.$permission->quantity.' '.($is_legacy ? 'Legacy' : '').' Breeding Permission(s) Granted', $data['type'].' Permission Created')) {
                 throw new \Exception('Failed to create log.');
             }
 
             // Create a notification for the recipient
             Notifications::create('BREEDING_PERMISSION_GRANTED', $permission->recipient, [
-                'character_name' => $character->name,
-                'character_slug' => $character->slug,
-                'sender_url'     => $user->url,
-                'sender_name'    => $user->name,
-                'type'           => strtolower($permission->type),
-                'quantity'       => $permission->quantity,
+                'character_name'        => $character->name,
+                'character_slug'        => $character->slug,
+                'sender_url'            => $user->url,
+                'sender_name'           => $user->name,
+                'type'                  => strtolower($permission->type),
+                'quantity'              => $permission->quantity,
                 'character_displayName' => $character->displayname,
             ]);
 
@@ -2675,6 +2594,7 @@ class CharacterManager extends Service {
      * @param Character          $character
      * @param BreedingPermission $permission
      * @param User               $user
+     * @param mixed|null         $breeding
      *
      * @return bool
      */
@@ -2708,14 +2628,14 @@ class CharacterManager extends Service {
             foreach ([$character->user, $permission->recipient] as $notificationRecipient) {
                 if ($notificationRecipient->id != $user->id) {
                     Notifications::create('BREEDING_PERMISSION_USED', $notificationRecipient, [
-                        'character_name' => $character->name,
-                        'character_slug' => $character->slug,
-                        'sender_url'     => $user->url,
-                        'sender_name'    => $user->name,
-                        'type'           => strtolower($permission->type),
-                        'permission_id'  => $permission->id,
+                        'character_name'        => $character->name,
+                        'character_slug'        => $character->slug,
+                        'sender_url'            => $user->url,
+                        'sender_name'           => $user->name,
+                        'type'                  => strtolower($permission->type),
+                        'permission_id'         => $permission->id,
                         'character_displayName' => $character->displayname,
-                        'dynUrl'          => $breeding ? 'breeding/' . $breeding->id : 'breeding-permissions',
+                        'dynUrl'                => $breeding ? 'breeding/'.$breeding->id : 'breeding-permissions',
                     ]);
                 }
             }
@@ -2728,4 +2648,84 @@ class CharacterManager extends Service {
         return $this->rollbackReturn(false);
     }
 
+    /**
+     * Generates a list of features for displaying.
+     *
+     * @param \App\Models\Character\CharacterImage $image
+     *
+     * @return string
+     */
+    private function generateFeatureList($image) {
+        $result = '';
+        foreach ($image->features as $feature) {
+            $result .= '<div>'.($feature->feature->category ? '<strong>'.$feature->feature->category->displayName.':</strong> ' : '').$feature->feature->displayName.'</div>';
+        }
+
+        return $result;
+    }
+
+    /**
+     * Generates a list of image credits for displaying.
+     *
+     * @param \App\Models\Character\CharacterImage $image
+     *
+     * @return string
+     */
+    private function generateCredits($image) {
+        $result = ['designers' => '', 'artists' => ''];
+        foreach ($image->designers as $designer) {
+            $result['designers'] .= '<div>'.$designer->displayLink().'</div>';
+        }
+        foreach ($image->artists as $artist) {
+            $result['artists'] .= '<div>'.$artist->displayLink().'</div>';
+        }
+
+        return $result;
+    }
+
+    /**
+     * Handles character marking data.
+     *
+     * @param array $data
+     * @param mixed $character
+     *
+     * @return \App\Models\Character\Character              $character
+     * @return \App\Models\Character\CharacterMarkings|bool
+     */
+    private function handleCharacterMarkings($data, $character) {
+        try {
+            $markingData = Arr::only($data, [
+                'marking_id', 'is_dominant', 'side_id',
+            ]);
+
+            $all_data = [];
+
+            // Attach markings
+            foreach ($data['marking_id'] as $key => $markingId) {
+                if ($markingId) {
+                    $temp = Marking::where('id', $markingId)->first();
+                    if (!$temp) {
+                        continue;
+                    }
+
+                    $is_dominant = $data['is_dominant'][$key];
+
+                    $marking = CharacterMarking::create([
+                        'character_id'  => $character->id,
+                        'marking_id'    => $markingId,
+                        'code'          => ($is_dominant ? $temp->recessive : $temp->dominant),
+                        'order'         => $temp->order_in_genome,
+                        'is_dominant'   => $is_dominant,
+                        'data'          => $data['side_id'][$key] ?? null,
+                    ]);
+                }
+            }
+
+            return true;
+        } catch (\Exception $e) {
+            $this->setError('error', $e->getMessage());
+        }
+
+        return false;
+    }
 }

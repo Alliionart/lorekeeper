@@ -2,24 +2,20 @@
 
 namespace App\Models\Breeding;
 
-use App\Models\Model;
-use App\Models\User\User;
-use App\Models\Character\Character;
-use App\Models\Character\CharacterImage;
-use App\Models\Species\Species;
-use App\Models\Species\Subtype;
-use App\Models\Feature\Feature;
-use App\Models\Skill\Skill;
-use App\Models\Marking\Marking;
 use App\Models\Base\Base;
 use App\Models\Carrier\Carrier;
 use App\Models\Character\BreedingPermission;
+use App\Models\Character\Character;
+use App\Models\Character\CharacterImage;
+use App\Models\Feature\Feature;
 use App\Models\Item\Item;
-use App\Models\Item\ItemTag;
+use App\Models\Marking\Marking;
+use App\Models\Model;
+use App\Models\Skill\Skill;
+use App\Models\Species\Species;
+use App\Models\Species\Subtype;
+use App\Models\User\User;
 use App\Models\User\UserItem;
-use App\Services\BreedingService;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Settings;
 
 class Breeding extends Model {
@@ -42,25 +38,25 @@ class Breeding extends Model {
     protected $table = 'breeding';
 
     /**
-     * Whether the model contains timestamps to be saved and updated.
+     * Glint ID for checks.
      *
-     * @var string
-     */
-    public $timestamps = true;
-
-    /**
-     * Glint ID for checks
-     * 
      * @var int
      */
     protected $glint_id;
 
     /**
      * Item modifiers for checks.
-     * 
+     *
      * @var int
      */
     protected $item_mods;
+
+    /**
+     * Whether the model contains timestamps to be saved and updated.
+     *
+     * @var string
+     */
+    public $timestamps = true;
 
     /**
      * Validation rules for creation.
@@ -126,8 +122,10 @@ class Breeding extends Model {
 
     /**
      * Get the dynamic parents.
+     *
+     * @param mixed $i
      */
-    public function parent( $i = 1 ) {
+    public function parent($i = 1) {
         return $this->belongsTo(Character::class, 'parent_'.$i);
     }
 
@@ -141,8 +139,10 @@ class Breeding extends Model {
 
     /**
      * Get the user who owns the character.
+     *
+     * @param mixed $i
      */
-    public function permission( $i = 1 ) {
+    public function permission($i = 1) {
         return $this->belongsTo(BreedingPermission::class, 'permission_'.$i);
     }
 
@@ -184,7 +184,7 @@ class Breeding extends Model {
 
     /**
      * Scope a query where only pending breedings are shown.
-     * 
+     *
      * @param \Illuminate\Database\Eloquent\Builder $query
      *
      * @return \Illuminate\Database\Eloquent\Builder
@@ -237,37 +237,42 @@ class Breeding extends Model {
 
     public function getBreedingDataAttribute() {
         $breedingData = $this->attributes['breeding_data'] ?? null;
+
         return $breedingData ? json_decode($breedingData) : null;
     }
-    
+
     public function getCharacterDataAttribute() {
         $character_data = $this->attributes['character_data'] ?? null;
+
         return $character_data ? json_decode($character_data) : null;
     }
 
     public function getUserItemsAttribute() {
         $data = $this->getBreedingDataAttribute();
-        $user_items = isset($data->user->user_items) ? $data->user->user_items : null;
+        $user_items = $data->user->user_items ?? null;
         $items = [];
-        if ( $user_items && count((array) $user_items) ) {
-            foreach($user_items as $stack_id => $row) {
+        if ($user_items && count((array) $user_items)) {
+            foreach ($user_items as $stack_id => $row) {
                 $stack = UserItem::where('id', $stack_id)->where('user_id', $this->user_id)->first();
-                if ( isset($row->value) && $row->value ) {
+                if (isset($row->value) && $row->value) {
                     $row->value = $this->getItemModifierModelObj($stack, $row->value);
                 }
                 $items[$stack_id] = (object) [
                     'quantity'  => $row->quantity ?? 1,
                     'userItem'  => $stack,
-                    ...( isset($row->value) && $row->value ? ['value' => $row->value] : [] ),
+                    ...(isset($row->value) && $row->value ? ['value' => $row->value] : []),
                 ];
             }
+
             return $items;
         }
+
         return [];
     }
 
     public function getResultsAttribute() {
         $data = $this->attributes['results'] ?? null;
+
         return $data ? json_decode($data) : null;
     }
 
@@ -282,60 +287,36 @@ class Breeding extends Model {
     public function getParentsXAttribute() {
         $parent1 = $this->parent1;
         $parent2 = $this->parent2;
-        if ( !$parent1 || !$parent2 ) {
+        if (!$parent1 || !$parent2) {
             return null;
         }
-        return $parent1->displayName . ' x ' . $parent2->displayName;
-    }
 
-    /**********************************************************************************************
-
-        HELPER FUNCTIONS
-
-    **********************************************************************************************/
-
-    private function getItemModifierModelObj($stack, $value) {
-        if ( !$stack || !$value ) {
-            return false;
-        }
-        $item_id = $stack->item->id;
-        $modifier = $this->item_mods->items->{$item_id};
-        if ( $modifier ) {
-            switch ($modifier->type) {
-                case 'override_glint':
-                case 'base_override':
-                    return Base::find($value);
-                    break;
-                case 'subtype_override':
-                    return Subtype::find($value);
-                    break;
-            }
-        }
-        return false;
+        return $parent1->displayName.' x '.$parent2->displayName;
     }
 
     public function getLitterResults($id = null) {
         $litter = $this->getResultsAttribute();
 
-        if ( !$litter || !count((array) $litter) ) {
+        if (!$litter || !count((array) $litter)) {
             return [];
         }
 
-        if ( $id !== null && isset($litter[$id]) ) {
+        if ($id !== null && isset($litter[$id])) {
             return $litter[$id];
         }
 
         $renderedLitter = [];
-        foreach( $litter as $pup ) {
+        foreach ($litter as $pup) {
             $renderedLitter[] = $this->getPupData($pup);
         }
-        return $renderedLitter;
-    }    
 
-    public function getAvailablePupCount () {
+        return $renderedLitter;
+    }
+
+    public function getAvailablePupCount() {
         $litter = $this->getResultsAttribute();
         $statuses = [];
-        foreach ($litter  as $pup) {
+        foreach ($litter as $pup) {
             $statuses[] = $this->getPupData($pup)->status ?? null;
         }
         $countAvailablePups = count(array_filter($statuses, function ($status) {
@@ -357,9 +338,9 @@ class Breeding extends Model {
                 'tail'      => Feature::find($pup->traits->tail),
                 'fur'       => Feature::find($pup->traits->fur),
             ],
-            'status'        => isset($pup->status) ? $pup->status : null,
+            'status'        => $pup->status ?? null,
         ];
-        
+
         if ($is_chimera) {
             $bases = explode('|', $pup['base']);
             $base = [
@@ -390,7 +371,7 @@ class Breeding extends Model {
             $mutation = Feature::find($pup->mutations);
             $renderedPup['mutation'] = $mutation;
         }
-        if($pup->aspects) {
+        if ($pup->aspects) {
             $aspect = Feature::find($pup->aspects);
             $renderedPup['aspect'] = $aspect;
         }
@@ -404,101 +385,64 @@ class Breeding extends Model {
         return (object) $renderedPup;
     }
 
-    private function get_markings( array $markings ) {
-        $rendered = [];
-        $glint = false;
-        if ( $markings && count($markings) ) {
-            //Reorder first
-            $ordered_markings = collect($markings)
-                ->sortBy('name')
-                ->groupBy('order')
-                ->toArray();
-
-            foreach ( $ordered_markings as $order => $markings ) {
-                foreach($markings as $marking) {
-                    $m = Marking::find($marking->id);
-                    if ( $marking->id == $this->glint_id ) {
-                        $glint = true;
-                        if ( isset($marking->is_dom) && $marking->is_dom ) {
-                            $base = [
-                                0 => Base::find($marking->base[0]),
-                                1 => Base::find($marking->base[1]),
-                            ];
-                        } else {
-                            $base = Base::find($marking->base);
-                        }
-                    }
-                    $rendered[$order][] = [
-                        'code'      => $marking->code,
-                        'is_dom'    => $marking->code === $m->dominant ? true : false,
-                        'marking'   => $m,
-                        ...( isset($marking->base) && $marking->base ? ['base' => $base] : [] )
-                    ];
-                }
-            }
-            return $rendered;
-        }
-        return [];
-    }
-
     public function renderMarkingSide($markings, $base) {
         $genotype = $base->code.'+';
         $phenotype = '';
 
         $gMarkings = [];
         $pMarkings = [];
-        
-        if ( $markings && count($markings) ) {
-            
-            foreach ( $markings as $g => $group ) {
-                foreach($group as $m) {
+
+        if ($markings && count($markings)) {
+            foreach ($markings as $g => $group) {
+                foreach ($group as $m) {
                     $code = $m['code'];
                     $color = $m['marking']->rarity->color;
-                    if ( $m['marking']->id === $this->glint_id) {
-                        if ( isset($m['is_dom']) && $m['is_dom'] ) {
-                            $gbase_code = $m['base'] ? $m['base'][0]->code . '/' . $m['base'][1]->code : '??';
-                            $code = $code . '-' . $gbase_code;
-                            $gbase = $m['base'] ? $m['base'][0]->name . '/' . $m['base'][1]->name : 'Unknown/Unknown';
+                    if ($m['marking']->id === $this->glint_id) {
+                        if (isset($m['is_dom']) && $m['is_dom']) {
+                            $gbase_code = $m['base'] ? $m['base'][0]->code.'/'.$m['base'][1]->code : '??';
+                            $code = $code.'-'.$gbase_code;
+                            $gbase = $m['base'] ? $m['base'][0]->name.'/'.$m['base'][1]->name : 'Unknown/Unknown';
                         } else {
                             $gbase_code = $m['base'] ? $m['base']->code : '??';
-                            $code = $code . '-' . $gbase_code;
+                            $code = $code.'-'.$gbase_code;
                             $gbase = $m['base'] ? $m['base']->name : 'Unknown';
                         }
-                        
-                        $name = '<a href="'.$m['marking']->url.'" style="text-decoration-color:#'.$color.'">'.$gbase.' ' .$m['marking']->name.'</a>';
+
+                        $name = '<a href="'.$m['marking']->url.'" style="text-decoration-color:#'.$color.'">'.$gbase.' '.$m['marking']->name.'</a>';
                     } else {
                         $name = '<a href="'.$m['marking']->url.'" style="text-decoration-color:#'.$color.'">'.$m['marking']->name.'</a>';
                     }
-                    
+
                     $gMarkings[] = $code;
                     $pMarkings[$g][] = $name;
                 }
             }
-            $genotype = $genotype . join('/', $gMarkings);
+            $genotype = $genotype.implode('/', $gMarkings);
             ksort($pMarkings);
             $phenotype = '';
             $after_base = isset($pMarkings[1]);
             $base_added = false;
             $base = $base->name ?? $base;
-            foreach($pMarkings as $i => $value) {
-                if ( is_array($value) ) {
+            foreach ($pMarkings as $i => $value) {
+                if (is_array($value)) {
                     $value = implode(' ', $value);
                 }
-                if ( $i === 1 && !$base_added ) {
-                   $value = ' '.$base.($after_base ? ' with ' : '').$value;
-                   $base_added = true;
+                if ($i === 1 && !$base_added) {
+                    $value = ' '.$base.($after_base ? ' with ' : '').$value;
+                    $base_added = true;
                 }
-                if ( $i === 9 ) {
-                    $value  = 'and '.$value;
+                if ($i === 9) {
+                    $value = 'and '.$value;
                 }
                 $phenotype .= ' '.$value;
             }
-            if ( !$base_added ) {
+            if (!$base_added) {
                 $phenotype .= ' '.$base;
             }
         } else {
             $phenotype = $base->name;
         }
+
         return [
             'g' => $genotype,
             'p' => $phenotype,
@@ -508,29 +452,29 @@ class Breeding extends Model {
     public function updatePup($i, $pup) {
         $litter = $this->getResultsAttribute();
         $litter[$i] = $pup;
-        
+
         $this->update([
             'results' => json_encode($litter),
         ]);
     }
 
     public function getPupValue($pup, $exchange) {
-        switch($exchange) {
+        switch ($exchange) {
             case 'flat_krones':
                 $amount = 1000;
                 $currency_id = 1;
                 break;
             case 'flat_trinkets':
-                $amount  = 1;
+                $amount = 1;
                 $currency_id = 8;
                 break;
             case 'full_krones':
-                $amount  = null;
+                $amount = null;
                 $currency_id = 1;
                 break;
         }
 
-        if ( $amount > 0 ) {
+        if ($amount > 0) {
             return (object) [
                 'currency'  => $currency_id,
                 'quantity'  => $amount,
@@ -578,10 +522,10 @@ class Breeding extends Model {
             2 => $pup->traits->tail,
             3 => $pup->traits->fur,
         ];
-        if ( isset($pup->mutation) ) {
+        if (isset($pup->mutation)) {
             $features[] = $pup->mutation;
         }
-        if ( isset($pup->aspect) ) {
+        if (isset($pup->aspect)) {
             $features[] = $pup->aspect;
         }
 
@@ -640,11 +584,11 @@ class Breeding extends Model {
                     break;
             }
         }
-        
+
         //Flatten markings and format for valuation
         $flat_1 = $pup->is_chimera ? array_merge($pup->raw_markings[0], $pup->raw_markings[1]) : $pup->raw_markings;
         $cMarkings = array_merge(...$flat_1);
-        
+
         if (count($cMarkings) < 4) {
             throw new \Exception('Pup cannot have less than 4 markings.');
         }
@@ -713,7 +657,6 @@ class Breeding extends Model {
             }
         }
 
-
         return (object) [
             'currency'  => $currency_id,
             'quantity'  => $totalcost,
@@ -721,9 +664,10 @@ class Breeding extends Model {
     }
 
     /**
-     * 
+     * @param mixed $id
+     * @param mixed $i
      */
-    public function get_parent( $id, $i ) {
+    public function get_parent($id, $i) {
         $character = Character::find($id);
 
         if (!$character) {
@@ -754,11 +698,10 @@ class Breeding extends Model {
             'url'       => $character->getUrlAttribute(),
             'permission'=> $permission,
         ];
-
     }
 
     /**
-     * 
+     * @param mixed $character
      */
     public function getViableLineageIds($character) {
         if (!$character->lineage) {
@@ -783,16 +726,81 @@ class Breeding extends Model {
     }
 
     public function checkInbreeding() {
-        $lineage_1 = $this->getViableLineageIds( $this->parent1 );
-        $lineage_2 = $this->getViableLineageIds( $this->parent2 );
+        $lineage_1 = $this->getViableLineageIds($this->parent1);
+        $lineage_2 = $this->getViableLineageIds($this->parent2);
 
         $common = array_intersect($lineage_1, $lineage_2);
 
-        if ( ! empty($common) ) {
+        if (!empty($common)) {
             return $common;
         } else {
             return false;
         }
     }
-    
+
+    /**********************************************************************************************
+
+        HELPER FUNCTIONS
+
+    **********************************************************************************************/
+
+    private function getItemModifierModelObj($stack, $value) {
+        if (!$stack || !$value) {
+            return false;
+        }
+        $item_id = $stack->item->id;
+        $modifier = $this->item_mods->items->{$item_id};
+        if ($modifier) {
+            switch ($modifier->type) {
+                case 'override_glint':
+                case 'base_override':
+                    return Base::find($value);
+                    break;
+                case 'subtype_override':
+                    return Subtype::find($value);
+                    break;
+            }
+        }
+
+        return false;
+    }
+
+    private function get_markings(array $markings) {
+        $rendered = [];
+        $glint = false;
+        if ($markings && count($markings)) {
+            //Reorder first
+            $ordered_markings = collect($markings)
+                ->sortBy('name')
+                ->groupBy('order')
+                ->toArray();
+
+            foreach ($ordered_markings as $order => $markings) {
+                foreach ($markings as $marking) {
+                    $m = Marking::find($marking->id);
+                    if ($marking->id == $this->glint_id) {
+                        $glint = true;
+                        if (isset($marking->is_dom) && $marking->is_dom) {
+                            $base = [
+                                0 => Base::find($marking->base[0]),
+                                1 => Base::find($marking->base[1]),
+                            ];
+                        } else {
+                            $base = Base::find($marking->base);
+                        }
+                    }
+                    $rendered[$order][] = [
+                        'code'      => $marking->code,
+                        'is_dom'    => $marking->code === $m->dominant ? true : false,
+                        'marking'   => $m,
+                        ...(isset($marking->base) && $marking->base ? ['base' => $base] : []),
+                    ];
+                }
+            }
+
+            return $rendered;
+        }
+
+        return [];
+    }
 }

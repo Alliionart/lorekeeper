@@ -2,29 +2,26 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Base\Base;
 use App\Models\Breeding\Breeding;
 use App\Models\Character\BreedingPermission;
 use App\Models\Character\Character;
 use App\Models\Character\CharacterImage;
-use App\Models\Base\Base;
-use App\Models\Species\Species;
-use App\Models\Species\Subtype;
 use App\Models\Item\Item;
 use App\Models\Item\ItemTag;
 use App\Models\SitePage;
+use App\Models\Species\Subtype;
 use App\Models\User\User;
 use App\Models\User\UserItem;
 use App\Services\BreedingService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Carbon\Carbon;
 use Settings;
 
 class BreedingController extends Controller {
     public function getBreedingFormEntry() {
-
-        if ( ! Auth::check() && ! Auth::user() ) {
+        if (!Auth::check() && !Auth::user()) {
             abort(404);
         }
 
@@ -67,7 +64,9 @@ class BreedingController extends Controller {
                 ->groupBy('item_id')
                 ->having('available', '>', 0)
                 ->pluck('available', 'item_id')
-                ->map(function($v) { return (int) $v; })
+                ->map(function ($v) {
+                    return (int) $v;
+                })
                 ->toArray(),
             'mod_items'     => json_decode(Settings::get('breeding_modifiers')) ?? null,
             'counts'        => $user->breedCount,
@@ -76,8 +75,8 @@ class BreedingController extends Controller {
                 'full'          => (int) Settings::get('breeding_max_full_slots') ?? 0,
                 'split'         => (int) Settings::get('breeding_max_split_slots') ?? 0,
             ],
-            'bases'         => ['' => 'Select color'] + Base::where('is_visible', 1)->orderBy('name')->pluck('name', 'id')->toArray(),
-            'subtypes'      => Subtype::where('is_visible', 1)->pluck('name', 'id')->toArray(),
+            'bases'           => ['' => 'Select color'] + Base::where('is_visible', 1)->orderBy('name')->pluck('name', 'id')->toArray(),
+            'subtypes'        => Subtype::where('is_visible', 1)->pluck('name', 'id')->toArray(),
             'subtype_choices' => $subtype_choices,
         ]);
     }
@@ -90,6 +89,7 @@ class BreedingController extends Controller {
 
         if ($breeding = $service->createBreeding($data, Auth::user())) {
             flash('Breeding request created: '.$breeding->getDisplayNameAttribute())->success();
+
             return redirect()->to($breeding->getUrlAttribute());
         } else {
             foreach ($service->errors()->getMessages()['error'] as $error) {
@@ -157,7 +157,7 @@ class BreedingController extends Controller {
             $trait_display[$feature->feature->category->displayName] = $feature->feature->displayName;
         }
 
-        if ( $character->category->name === 'Starter' ) {
+        if ($character->category->name === 'Starter') {
             $is_starter = true;
         }
 
@@ -276,7 +276,6 @@ class BreedingController extends Controller {
             'breeding' => $breeding,
         ]);
     }
-    
 
     /**
      * Shows the new breeding split accept modal.
@@ -336,7 +335,7 @@ class BreedingController extends Controller {
      * Cancels the breeding request.
      *
      * @param App\Services\BreedingService $service
-     * @param string                        $id
+     * @param string                       $id
      *
      * @return \Illuminate\Http\RedirectResponse
      */
@@ -360,7 +359,7 @@ class BreedingController extends Controller {
      * Marks the split breeding approved by the split user.
      *
      * @param App\Services\BreedingService $service
-     * @param string                        $id
+     * @param string                       $id
      *
      * @return \Illuminate\Http\RedirectResponse
      */
@@ -384,7 +383,7 @@ class BreedingController extends Controller {
      * Marks the split breeding approved by the split user.
      *
      * @param App\Services\BreedingService $service
-     * @param string                        $id
+     * @param string                       $id
      *
      * @return \Illuminate\Http\RedirectResponse
      */
@@ -408,7 +407,7 @@ class BreedingController extends Controller {
      * Marks the split breeding confirmed by the split user.
      *
      * @param App\Services\BreedingService $service
-     * @param string                        $id
+     * @param string                       $id
      *
      * @return \Illuminate\Http\RedirectResponse
      */
@@ -429,7 +428,7 @@ class BreedingController extends Controller {
     }
 
     /**
-     * Shows the convert pup modal for both Surrender/Convert
+     * Shows the convert pup modal for both Surrender/Convert.
      *
      * @param string $id
      * @param string $pup
@@ -439,7 +438,7 @@ class BreedingController extends Controller {
      */
     public function getConvertPup($id, $pup, $type) {
         $breeding = Breeding::find($id);
-        if (!Auth::check() ) {
+        if (!Auth::check()) {
             abort(404);
         }
 
@@ -451,7 +450,7 @@ class BreedingController extends Controller {
     }
 
     /**
-     * Shows the modal for releasing a pup to the wild
+     * Shows the modal for releasing a pup to the wild.
      *
      * @param string $id
      * @param string $pup
@@ -460,7 +459,7 @@ class BreedingController extends Controller {
      */
     public function getReleasePup($id, $pup) {
         $breeding = Breeding::find($id);
-        if (!Auth::check() ) {
+        if (!Auth::check()) {
             abort(404);
         }
 
@@ -474,9 +473,9 @@ class BreedingController extends Controller {
      * Converts the pup to a character or sends it to the adoption center.
      *
      * @param App\Services\BreedingService $service
-     * @param string                        $id
-     * @param string                        $pup
-     * @param string                        $type
+     * @param string                       $id
+     * @param string                       $pup
+     * @param string                       $type
      *
      * @return \Illuminate\Http\RedirectResponse
      */
@@ -491,12 +490,12 @@ class BreedingController extends Controller {
         $surrender = $type === 'convert' ? false : true;
         $exchange = $request->input('exchange_type');
 
-        if ( $user_id && $breeding->split_user_id && !$surrender ) {
+        if ($user_id && $breeding->split_user_id && !$surrender) {
             $newOwner = $user_id['user_id'];
         }
 
         if ($character = $service->convertPup($breeding, Auth::user(), $pup, $newOwner, $exchange)) {
-            flash( $surrender ? 'Pup was successfully sent to the Adoption Center: '.$character->displayName : 'Pup was successfully converted to: '.$character->displayName )->success();
+            flash($surrender ? 'Pup was successfully sent to the Adoption Center: '.$character->displayName : 'Pup was successfully converted to: '.$character->displayName)->success();
         } else {
             foreach ($service->errors()->getMessages()['error'] as $error) {
                 flash($error)->error();
@@ -510,8 +509,8 @@ class BreedingController extends Controller {
      * Releases the pup.
      *
      * @param App\Services\BreedingService $service
-     * @param string                        $id
-     * @param string                        $pup
+     * @param string                       $id
+     * @param string                       $pup
      *
      * @return \Illuminate\Http\RedirectResponse
      */
@@ -534,8 +533,10 @@ class BreedingController extends Controller {
 
     /** ----------------------------------------
      * EDIT DRAFTED BREEDINGS
-     * ---------------------------------------- 
-    */
+     * ----------------------------------------.
+     *
+     * @param mixed $id
+     */
 
     /**
      * Shows the breeding form with pre-filled draft information.
@@ -545,8 +546,7 @@ class BreedingController extends Controller {
      * @return \Illuminate\Contracts\Support\Renderable
      */
     public function getEditBreeding($id) {
-
-        if ( ! Auth::check() && ! Auth::user() ) {
+        if (!Auth::check() && !Auth::user()) {
             abort(404);
         }
 
@@ -554,11 +554,11 @@ class BreedingController extends Controller {
         $permissions = BreedingPermission::where('recipient_id', $user->id)->where('is_used', 0)->where('quantity', '>', 0);
         $breeding = Breeding::find($id);
 
-        if ( !$breeding || $breeding->status !== 'Draft' ) {
+        if (!$breeding || $breeding->status !== 'Draft') {
             abort(404);
         }
 
-        if ( $breeding->user->id !== $user->id ) {
+        if ($breeding->user->id !== $user->id) {
             abort(404);
         }
 
@@ -596,7 +596,9 @@ class BreedingController extends Controller {
                 ->groupBy('item_id')
                 ->having('available', '>', 0)
                 ->pluck('available', 'item_id')
-                ->map(function($v) { return (int) $v; })
+                ->map(function ($v) {
+                    return (int) $v;
+                })
                 ->toArray(),
             'mod_items'     => json_decode(Settings::get('breeding_modifiers')) ?? null,
             'counts'        => $user->breedCount,
@@ -605,8 +607,8 @@ class BreedingController extends Controller {
                 'full'          => (int) Settings::get('breeding_max_full_slots') ?? 0,
                 'split'         => (int) Settings::get('breeding_max_split_slots') ?? 0,
             ],
-            'bases'         => ['' => 'Select color'] + Base::where('is_visible', 1)->orderBy('name')->pluck('name', 'id')->toArray(),
-            'subtypes'      => Subtype::where('is_visible', 1)->pluck('name', 'id')->toArray(),
+            'bases'           => ['' => 'Select color'] + Base::where('is_visible', 1)->orderBy('name')->pluck('name', 'id')->toArray(),
+            'subtypes'        => Subtype::where('is_visible', 1)->pluck('name', 'id')->toArray(),
             'subtype_choices' => $subtype_choices,
         ]);
     }
@@ -615,7 +617,7 @@ class BreedingController extends Controller {
      * Edits an existing breeding.
      *
      * @param App\Services\BreedingService $service
-     * @param string                        $id
+     * @param string                       $id
      *
      * @return \Illuminate\Http\RedirectResponse
      */
@@ -623,12 +625,13 @@ class BreedingController extends Controller {
         $data = $request->only(['parents', 'breeding_items', 'type', 'split_user']);
         $breeding = Breeding::find($id);
 
-        if ( !$breeding ) {
+        if (!$breeding) {
             abort(404);
         }
 
         if ($service->editBreeding($breeding, $data, Auth::user())) {
             flash('Breeding edited and resubmitted: '.$breeding->getDisplayNameAttribute())->success();
+
             return redirect()->to($breeding->getUrlAttribute());
         } else {
             foreach ($service->errors()->getMessages()['error'] as $error) {
@@ -638,5 +641,4 @@ class BreedingController extends Controller {
 
         return redirect()->back();
     }
-
 }

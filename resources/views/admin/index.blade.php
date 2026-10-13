@@ -54,9 +54,12 @@
             <div class="col-sm-6">
                 <div class="card mb-3">
                     <div class="card-body">
-                        <h5 class="card-title">Breeding Requests @if($breedingCount)<span class="badge badge-primary">{{ $breedingCount }}</span>@endif</h5>
+                        <h5 class="card-title">Breeding Requests @if ($breedingCount)
+                                <span class="badge badge-primary">{{ $breedingCount }}</span>
+                            @endif
+                        </h5>
                         <p class="card-text">
-                            @if($breedingCount)
+                            @if ($breedingCount)
                                 {{ $breedingCount }} breeding{{ $breedingCount == 1 ? '' : 's' }} awaiting processing.
                             @else
                                 The breeding queue is clear. Hooray!

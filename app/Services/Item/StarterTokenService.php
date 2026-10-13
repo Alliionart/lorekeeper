@@ -2,8 +2,8 @@
 
 namespace App\Services\Item;
 
-use App\Models\Character\CharacterCategory;
 use App\Models\Character\Character;
+use App\Models\Character\CharacterCategory;
 use App\Services\Service;
 use DB;
 
@@ -15,6 +15,7 @@ class StarterTokenService extends Service {
      */
     public function getEditData() {
         $categories = CharacterCategory::whereIn('name', ['Starter', 'NPC'])->pluck('id')->toArray();
+
         return [
             'characters' => Character::whereIn('character_category_id', $categories)->where('is_myo_slot', 0)->get()->pluck('fullName', 'id'),
         ];

@@ -33,10 +33,10 @@
                             {{ $name }}
                         </div>
                         <div class="col-md-4">
-                            {!! Form::number('litter_size['.$id.'][min]', $currentConfig->min ?? null, ['class' => 'form-control', 'placeholder' => 'Enter minimum litter size for this species', 'min' => 0, 'max' => 10]) !!}
+                            {!! Form::number('litter_size[' . $id . '][min]', $currentConfig->min ?? null, ['class' => 'form-control', 'placeholder' => 'Enter minimum litter size for this species', 'min' => 0, 'max' => 10]) !!}
                         </div>
                         <div class="col-md-4">
-                            {!! Form::number('litter_size['.$id.'][max]', $currentConfig->max ?? null, ['class' => 'form-control', 'placeholder' => 'Enter maximum litter size for this species', 'min' => 0, 'max' => 10]) !!}
+                            {!! Form::number('litter_size[' . $id . '][max]', $currentConfig->max ?? null, ['class' => 'form-control', 'placeholder' => 'Enter maximum litter size for this species', 'min' => 0, 'max' => 10]) !!}
                         </div>
                     </div>
                 @endforeach
@@ -75,21 +75,21 @@
                                 <div class="repeaterBody">
                                     @if ($currentSettings['species_rates'])
                                         @foreach ($currentSettings['species_rates'] as $i => $row)
-                                        <?php
+                                            <?php
                                             $row = (array) $row;
-                                        ?>
+                                            ?>
                                             <div class="row species-row mb-2" type="species" data="row-start">
                                                 <div class="col-md-3 form-group mb-0">
-                                                    {!! Form::select('species_rates['.$i.'][species_id][0]', $species, array_key_first($row), ['class' => 'form-control', 'id' => 'species']) !!}
+                                                    {!! Form::select('species_rates[' . $i . '][species_id][0]', $species, array_key_first($row), ['class' => 'form-control', 'id' => 'species']) !!}
                                                 </div>
                                                 <div class="col-md-2 form-group mb-0">
-                                                    {!! Form::number('species_rates['.$i.'][results][0]', array_first($row), ['class' => 'form-control', 'id' => 'species', 'min' => 0, 'max' => 100]) !!}
+                                                    {!! Form::number('species_rates[' . $i . '][results][0]', array_first($row), ['class' => 'form-control', 'id' => 'species', 'min' => 0, 'max' => 100]) !!}
                                                 </div>
                                                 <div class="col-md-3 form-group mb-0">
-                                                    {!! Form::select('species_rates['.$i.'][species_id][1]', $species, array_key_last($row), ['class' => 'form-control', 'id' => 'species']) !!}
+                                                    {!! Form::select('species_rates[' . $i . '][species_id][1]', $species, array_key_last($row), ['class' => 'form-control', 'id' => 'species']) !!}
                                                 </div>
                                                 <div class="col-md-2 form-group mb-0">
-                                                    {!! Form::number('species_rates['.$i.'][results][1]', array_last($row), ['class' => 'form-control', 'id' => 'species', 'min' => 0, 'max' => 100]) !!}
+                                                    {!! Form::number('species_rates[' . $i . '][results][1]', array_last($row), ['class' => 'form-control', 'id' => 'species', 'min' => 0, 'max' => 100]) !!}
                                                 </div>
                                                 <div class="col-md-2 d-flex align-items-center justify-content-end">
                                                     <a class="btn btn-danger remove-row">-</a>
@@ -139,9 +139,9 @@
                             <div id="subtypeRepeater" type="subtype">
                                 <div class="repeaterBody">
 
-                                    @include('admin.breedings.__subtype_settings_rows', ['data' => $currentSettings['subtype_rates'] ])
+                                    @include('admin.breedings.__subtype_settings_rows', ['data' => $currentSettings['subtype_rates']])
 
-                                    
+
                                 </div>
                                 <div class="text-right">
                                     <a class="btn btn-primary add-row">Add Row</a>
@@ -201,20 +201,20 @@
                                 </div>
                                 @foreach ($markingConfig as $row)
                                     <?php
-                                        $id = strtolower($rarity_name) . '__' . substr(array_key_first($row), 0, 3) . 'X' . (array_values($row)[0] ? substr(array_values($row)[0], 0, 3) : 'non');
-                                        $type = explode('__', $id)[1];
-                                        $currentConfig = isset($currentSettings['marking_rates']) && $currentSettings['marking_rates'] && property_exists($currentSettings['marking_rates'], $rarity_name) ? $currentSettings['marking_rates']->$rarity_name : null;
-                                        $current = $currentConfig->$type ?? null;
+                                    $id = strtolower($rarity_name) . '__' . substr(array_key_first($row), 0, 3) . 'X' . (array_values($row)[0] ? substr(array_values($row)[0], 0, 3) : 'non');
+                                    $type = explode('__', $id)[1];
+                                    $currentConfig = isset($currentSettings['marking_rates']) && $currentSettings['marking_rates'] && property_exists($currentSettings['marking_rates'], $rarity_name) ? $currentSettings['marking_rates']->$rarity_name : null;
+                                    $current = $currentConfig->$type ?? null;
                                     ?>
                                     <div class="row mb-2">
                                         <div class="col-md-4">
                                             {{ ucwords(array_key_first($row)) }} <i style="font-size:10px;" class="fas fa-times"></i> {{ ucwords(array_values($row)[0] ?? 'Non-Marked') }}
                                         </div>
                                         <div class="col-md-4">
-                                            {!! Form::text('marking_rate['.$rarity_name.']['.$type.'][rate]', $current->rate ?? null, ['class' => 'form-control', 'placeholder' => 'Enter rate to roll (%)']) !!}
+                                            {!! Form::text('marking_rate[' . $rarity_name . '][' . $type . '][rate]', $current->rate ?? null, ['class' => 'form-control', 'placeholder' => 'Enter rate to roll (%)']) !!}
                                         </div>
                                         <div class="col-md-4">
-                                            {!! Form::text('marking_rate['.$rarity_name.']['.$type.'][roll_dom]', $current->roll_dom ?? null, ['class' => 'form-control', 'placeholder' => 'Enter rate to roll DOMINANT (%)']) !!}
+                                            {!! Form::text('marking_rate[' . $rarity_name . '][' . $type . '][roll_dom]', $current->roll_dom ?? null, ['class' => 'form-control', 'placeholder' => 'Enter rate to roll DOMINANT (%)']) !!}
                                         </div>
                                     </div>
                                 @endforeach
@@ -244,30 +244,30 @@
                                 </div>
                                 <div class="repeaterBody">
                                     <div class="row mutation-row mb-2 delete" type="mutation" data="row-start">
-                                            <div class="col-md-4 form-group mb-0">
-                                                {!! Form::select('mutations[__INDEX__][category]', $featureCategories, null, ['class' => 'form-control', 'id' => 'mutation']) !!}
-                                            </div>
-                                            <div class="col-md-4 form-group mb-0">
-                                                {!! Form::select('mutations[__INDEX__][rarity]', $rarities, null, ['class' => 'form-control', 'id' => 'mutation']) !!}
-                                            </div>
-                                            <div class="col-md-2 form-group mb-0">
-                                                {!! Form::number('mutations[__INDEX__][rate]', null, ['class' => 'form-control', 'id' => 'mutation', 'min' => 0, 'step' => 'any', 'max' => 100]) !!}
-                                            </div>
-                                            <div class="col-md-2 d-flex align-items-center justify-content-end">
-                                                <a class="btn btn-danger remove-row">-</a>
-                                            </div>
+                                        <div class="col-md-4 form-group mb-0">
+                                            {!! Form::select('mutations[__INDEX__][category]', $featureCategories, null, ['class' => 'form-control', 'id' => 'mutation']) !!}
                                         </div>
+                                        <div class="col-md-4 form-group mb-0">
+                                            {!! Form::select('mutations[__INDEX__][rarity]', $rarities, null, ['class' => 'form-control', 'id' => 'mutation']) !!}
+                                        </div>
+                                        <div class="col-md-2 form-group mb-0">
+                                            {!! Form::number('mutations[__INDEX__][rate]', null, ['class' => 'form-control', 'id' => 'mutation', 'min' => 0, 'step' => 'any', 'max' => 100]) !!}
+                                        </div>
+                                        <div class="col-md-2 d-flex align-items-center justify-content-end">
+                                            <a class="btn btn-danger remove-row">-</a>
+                                        </div>
+                                    </div>
                                     @if ($currentSettings['mutation_rates'])
                                         @foreach ($currentSettings['mutation_rates'] as $i => $row)
                                             <div class="row mutation-row mb-2" type="mutation">
                                                 <div class="col-md-4 form-group mb-0">
-                                                    {!! Form::select('mutations['.$i.'][category]', $featureCategories, $row->category, ['class' => 'form-control', 'id' => 'mutation']) !!}
+                                                    {!! Form::select('mutations[' . $i . '][category]', $featureCategories, $row->category, ['class' => 'form-control', 'id' => 'mutation']) !!}
                                                 </div>
                                                 <div class="col-md-4 form-group mb-0">
-                                                    {!! Form::select('mutations['.$i.'][rarity]', $rarities, $row->rarity, ['class' => 'form-control', 'id' => 'mutation']) !!}
+                                                    {!! Form::select('mutations[' . $i . '][rarity]', $rarities, $row->rarity, ['class' => 'form-control', 'id' => 'mutation']) !!}
                                                 </div>
                                                 <div class="col-md-2 form-group mb-0">
-                                                    {!! Form::number('mutations['.$i.'][rate]', $row->rate, ['class' => 'form-control', 'id' => 'mutation', 'min' => 0, 'step' => 'any', 'max' => 100]) !!}
+                                                    {!! Form::number('mutations[' . $i . '][rate]', $row->rate, ['class' => 'form-control', 'id' => 'mutation', 'min' => 0, 'step' => 'any', 'max' => 100]) !!}
                                                 </div>
                                                 <div class="col-md-2 d-flex align-items-center justify-content-end">
                                                     <a class="btn btn-danger remove-row">-</a>
@@ -298,7 +298,7 @@
                             @if ($skillRarities)
                                 @foreach ($skillRarities as $id => $name)
                                     <?php
-                                        $percent = isset($currentSettings['skill_rates']) && $currentSettings['skill_rates'] && property_exists($currentSettings['skill_rates'], $id) ? $currentSettings['skill_rates']->$id : null;
+                                    $percent = isset($currentSettings['skill_rates']) && $currentSettings['skill_rates'] && property_exists($currentSettings['skill_rates'], $id) ? $currentSettings['skill_rates']->$id : null;
                                     ?>
                                     <div class="d-flex form-group mb-2">
                                         <div class="mr-2" style="min-width:200px;">{{ $name }} Skills (Drop rate (%))</div>
@@ -337,24 +337,24 @@
                                 {!! Form::select('mod[__INDEX__][item]', $items, null, ['class' => 'form-control', 'id' => 'mod']) !!}
                             </div>
                             <div class="col-md-2 form-group mb-0">
-                                {!! Form::text('mod[__INDEX__][rate]', null, ['class' => 'form-control', 'id' => 'mod',]) !!}
+                                {!! Form::text('mod[__INDEX__][rate]', null, ['class' => 'form-control', 'id' => 'mod']) !!}
                             </div>
                             <div class="col-md-2 d-flex align-items-center justify-content-end">
                                 <a class="btn btn-danger remove-row">-</a>
                             </div>
                         </div>
-                        @if ( $currentSettings['modifiers'] )
+                        @if ($currentSettings['modifiers'])
                             <?php $i = 0; ?>
                             @foreach ($currentSettings['modifiers']->items as $item_id => $row)
                                 <div class="row modifier-row mb-2" type="modifier">
                                     <div class="col-md-4 form-group mb-0">
-                                        {!! Form::select('mod['.$i.'][type]', $modifier_types, $row->type ?? null, ['class' => 'form-control', 'id' => 'modifier_type']) !!}
+                                        {!! Form::select('mod[' . $i . '][type]', $modifier_types, $row->type ?? null, ['class' => 'form-control', 'id' => 'modifier_type']) !!}
                                     </div>
                                     <div class="col-md-4 form-group mb-0">
-                                        {!! Form::select('mod['.$i.'][item]', $items, $item_id, ['class' => 'form-control', 'id' => 'modifier_item']) !!}
+                                        {!! Form::select('mod[' . $i . '][item]', $items, $item_id, ['class' => 'form-control', 'id' => 'modifier_item']) !!}
                                     </div>
                                     <div class="col-md-2 form-group mb-0">
-                                        {!! Form::text('mod['.$i.'][rate]', $row->rate ?? null, ['class' => 'form-control', 'id' => 'modifier_rate', 'placeholder' => 'Enter value']) !!}
+                                        {!! Form::text('mod[' . $i . '][rate]', $row->rate ?? null, ['class' => 'form-control', 'id' => 'modifier_rate', 'placeholder' => 'Enter value']) !!}
                                     </div>
                                     <div class="col-md-2 d-flex align-items-center justify-content-end">
                                         <a class="btn btn-danger remove-row">-</a>
@@ -383,9 +383,9 @@
                 <p>Note that these are automatically pulled from the set Inbreeding trait category. If you would like to change this, you can do so in the site settings. Stillborn does NOT need to be added, as it is automatic.</p>
 
                 @foreach ($inbreeding_traits as $id => $name)
-                <?php 
+                    <?php
                     $percent = isset($currentSettings['inbreeding']) && $currentSettings['inbreeding'] && property_exists($currentSettings['inbreeding'], $id) ? $currentSettings['inbreeding']->$id : null;
-                ?>
+                    ?>
                     <div class="d-flex form-group mb-2">
                         <div class="mr-2" style="min-width:200px;">{{ $name }} (Drop rate (%))</div>
                         {!! Form::number('inbreeding_trait[' . $id . ']', $percent ?? null, ['class' => 'form-control', 'id' => 'skill', 'min' => 0, 'step' => 'any', 'max' => 100]) !!}
@@ -517,7 +517,7 @@
                     }
                     $count++;
                 });
-                
+
 
                 console.log($percentages);
 
