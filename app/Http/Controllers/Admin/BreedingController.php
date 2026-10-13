@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Base\Base;
+use App\Models\Breeding\Breeding;
 use App\Models\Feature\Feature;
 use App\Models\Feature\FeatureCategory;
 use App\Models\Item\Item;
@@ -11,14 +12,12 @@ use App\Models\Marking\Marking;
 use App\Models\Rarity;
 use App\Models\Species\Species;
 use App\Models\Species\Subtype;
-use App\Services\BreedingService;
-use App\Models\Breeding\Breeding;
 use App\Models\User\User;
+use App\Services\BreedingService;
 use DB;
 use Illuminate\Http\Request;
 
 class BreedingController extends Controller {
-
     /**
      * Shows the breeding index page.
      *
@@ -32,10 +31,10 @@ class BreedingController extends Controller {
             ->where(function ($query) {
                 $query->whereNotIn('split_status', ['Pending', 'Rejected'])
                     ->orWhereNull('split_status');
-        });
+            });
         $data = $request->only(['user_ids', 'month', 'sort']);
         $breedsByMonth = $breedings->get()->sortBy('created_at')->mapWithKeys(function ($breeding) {
-            return [ $breeding->created_at->format('Y-m') => $breeding->created_at->format('M Y') ];
+            return [$breeding->created_at->format('Y-m') => $breeding->created_at->format('M Y')];
         })->toArray();
 
         if (isset($data['user_ids']) && $data['user_ids'] != 'none') {
@@ -83,7 +82,7 @@ class BreedingController extends Controller {
         if (!$breeding) {
             abort(404);
         }
-        
+
         return view('admin.breedings.edit_breeding', [
             'breeding'          => $breeding,
         ]);
@@ -160,15 +159,15 @@ class BreedingController extends Controller {
     public function postRollBreeding(Request $request, BreedingService $service, $id, $action) {
         $data = $request->only(['breeding_id', 'remove_stack', 'reroll']);
 
-        if ( isset($data['reroll']) && $data['reroll'] ) {
+        if (isset($data['reroll']) && $data['reroll']) {
             $data['reroll'] = true;
         }
 
         $breeding = Breeding::find($id);
 
-        if ( $action === 'approve' && $service->rollBreeding( $data, auth()->user() ) ) {
+        if ($action === 'approve' && $service->rollBreeding($data, auth()->user())) {
             flash('Breeding rolled successully!')->success();
-        } else if( $action === 'cancel' && $service->cancelBreeding( $breeding, auth()->user() ) ) {
+        } elseif ($action === 'cancel' && $service->cancelBreeding($breeding, auth()->user())) {
             flash('Breeding canceled successfully.')->success();
         } else {
             foreach ($service->errors()->getMessages()['error'] as $error) {
