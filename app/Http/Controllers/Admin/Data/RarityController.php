@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Admin\Data;
 
 use App\Http\Controllers\Controller;
+use App\Models\Character\CharacterLineageBlacklist;
 use App\Models\Rarity;
 use App\Services\RarityService;
-use App\Models\Character\CharacterLineageBlacklist;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -38,7 +38,7 @@ class RarityController extends Controller {
     public function getCreateRarity() {
         return view('admin.rarities.create_edit_rarity', [
             'lineageBlacklist' => null,
-            'rarity' => new Rarity
+            'rarity'           => new Rarity,
         ]);
     }
 
@@ -57,7 +57,7 @@ class RarityController extends Controller {
 
         return view('admin.rarities.create_edit_rarity', [
             'lineageBlacklist' => CharacterLineageBlacklist::where('type', 'rarity')->where('type_id', $id)->get()->first(),
-            'rarity' => $rarity
+            'rarity'           => $rarity,
         ]);
     }
 
