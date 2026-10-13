@@ -47,7 +47,7 @@
                 <li class="nav-item">
                     <a class="nav-link" id="notesTab" data-toggle="tab" href="#notes" role="tab">Description</a>
                 </li>
-                @if($character->getLineageBlacklistLevel() < 2)
+                @if ($character->getLineageBlacklistLevel() < 2)
                     <li class="nav-item">
                         <a class="nav-link" id="lineageTab" data-toggle="tab" href="#lineage" role="tab">Lineage</a>
                     </li>
@@ -66,7 +66,7 @@
             <div class="tab-pane fade" id="notes">
                 @include('character._tab_notes', ['character' => $character])
             </div>
-            @if($character->getLineageBlacklistLevel() < 2)
+            @if ($character->getLineageBlacklistLevel() < 2)
                 <div class="tab-pane fade" id="lineage">
                     @include('character._tab_lineage', ['character' => $character])
                 </div>
