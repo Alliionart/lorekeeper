@@ -18,7 +18,6 @@ use App\Models\Submission\SubmissionCharacter;
 use App\Models\Trade;
 use App\Models\User\User;
 use App\Models\User\UserCharacterLog;
-use App\Models\Carrier\MarkingCarrier;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Settings;

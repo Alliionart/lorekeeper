@@ -506,8 +506,9 @@ class BreedingController extends Controller {
             $newOwner = $user_id['user_id'];
         }
 
-        if ( $surrender && config('lorekeeper.breeding.surrender_extension_exists')) {
+        if ($surrender && config('lorekeeper.breeding.surrender_extension_exists')) {
             flash('Surrender extension is not available.')->error();
+
             return redirect()->back();
         }
 
