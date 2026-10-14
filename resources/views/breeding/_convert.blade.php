@@ -20,7 +20,7 @@
         {!! Form::submit('Convert', ['class' => 'btn btn-success']) !!}
     </div>
     {!! Form::close() !!}
-@else
+@elseif (config('lorekeeper.breeding.surrender_extension_exists'))
     {!! Form::open(['url' => 'breeding/' . $breeding->id . '/' . $pup . '/convert/surrender']) !!}
     <p>This will convert the #{{ $pup + 1 }} pup of this litter to a genotype send to the Adoption Center.</p>
     <div class="form-group">
@@ -39,4 +39,6 @@
         {!! Form::submit('Send to Adoption Center', ['class' => 'btn btn-primary']) !!}
     </div>
     {!! Form::close() !!}
+@else
+    <p>This pup cannot be converted to a genotype.</p>
 @endif

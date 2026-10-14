@@ -645,7 +645,7 @@ class CharacterController extends Controller {
 
         $request->validate(BreedingPermission::$createRules);
 
-        if ($service->createBreedingPermission($request->only(['recipient_id', 'type', 'description', 'quantity', 'is_legacy']), $this->character, Auth::user())) {
+        if ($service->createBreedingPermission($request->only(['recipient_id', 'type', 'description', 'quantity']), $this->character, Auth::user())) {
             flash('Breeding permission(s) created successfully.')->success();
         } else {
             foreach ($service->errors()->getMessages()['error'] as $error) {

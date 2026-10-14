@@ -15,9 +15,9 @@ return new class extends Migration {
             $table->string('user_id', 50)->nullable();
             $table->integer('staff_id')->nullable();
             $table->string('status', 20)->default('pending');
-            $table->string('character_data', 100);
-            $table->string('breeding_data', 1024);
-            $table->string('results', 1024)->nullable();
+            $table->longtext('character_data');
+            $table->longtext('breeding_data');
+            $table->longtext('results')->nullable();
             $table->timestamps();
         });
     }

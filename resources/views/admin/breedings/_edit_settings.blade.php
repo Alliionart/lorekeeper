@@ -283,31 +283,6 @@
                         </div>
                     </div>
                 </div>
-                <div class="card">
-                    <div class="card-header" id="headingSkills">
-                        <h2 class="mb-0">
-                            <button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#collapseSkills" aria-expanded="false" aria-controls="collapseSkills">
-                                <h5 class="mb-0 text-secondary text-decoration-none">Skills</h5>
-                                <p class="mb-0 text-secondary text-decoration-none">Fil out the drop rate percentage for each skill rarity.</p>
-                            </button>
-                        </h2>
-                    </div>
-                    <div id="collapseSkills" class="collapse" aria-labelledby="headingSkills" data-parent="#breedingRatesAccordion">
-                        <div class="card-body">
-                            @if ($skillRarities)
-                                @foreach ($skillRarities as $id => $name)
-                                    <?php
-                                    $percent = isset($currentSettings['skill_rates']) && $currentSettings['skill_rates'] && property_exists($currentSettings['skill_rates'], $id) ? $currentSettings['skill_rates']->$id : null;
-                                    ?>
-                                    <div class="d-flex form-group mb-2">
-                                        <div class="mr-2" style="min-width:200px;">{{ $name }} Skills (Drop rate (%))</div>
-                                        {!! Form::number('skill_rates[' . $id . ']', $percent ?? null, ['class' => 'form-control', 'id' => 'skill', 'min' => 0, 'step' => 'any', 'max' => 100]) !!}
-                                    </div>
-                                @endforeach
-                            @endif
-                        </div>
-                    </div>
-                </div>
             </div>
             <!-- End Accordion -->
         </div>

@@ -17,4 +17,8 @@ return [
     'tail_category_id'      => 3,
     'fur_category_id'       => 7,
 
+    // Check if surrenders exist, extension not required, but if you have it, this will allow for the surrender system to be used in breeding.
+    // Sellable Characters extension
+    'surrender_extension_exists'    => class_exists(\App\Models\Adoption\Surrender::class),
+
 ];

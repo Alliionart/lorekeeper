@@ -2260,8 +2260,6 @@ class CharacterManager extends Service {
                 throw new \Exception('This character is not breedable.');
             }
 
-            $is_legacy = isset($data['is_legacy']) ? true : false;
-
             // Create the permission itself
             $permission = BreedingPermission::create([
                 'character_id'  => $character->id,
@@ -2270,7 +2268,6 @@ class CharacterManager extends Service {
                 'quantity'      => $data['quantity'],
                 'full_quantity' => $data['quantity'],
                 'description'   => $data['description'],
-                'is_legacy'     => $is_legacy,
             ]);
 
             if (!$permission) {
@@ -2278,7 +2275,7 @@ class CharacterManager extends Service {
             }
 
             // Create a log for the permission
-            if (!$this->createBreedingPermissionLog($user->id, $data['recipient_id'], $permission->id, 'x'.$permission->quantity.' '.($is_legacy ? 'Legacy' : '').' Breeding Permission(s) Granted', $data['type'].' Permission Created')) {
+            if (!$this->createBreedingPermissionLog($user->id, $data['recipient_id'], $permission->id, 'x'.$permission->quantity.' Breeding Permission(s) Granted', $data['type'].' Permission Created')) {
                 throw new \Exception('Failed to create log.');
             }
 
@@ -2367,7 +2364,7 @@ class CharacterManager extends Service {
      * @param array $data
      * @param bool  $isMyo
      *
-     * @return \App\Models\Character\Character|bool
+     * @return bool|Character
      */
     private function handleCharacter($data, $isMyo = false) {
         try {
@@ -2380,14 +2377,15 @@ class CharacterManager extends Service {
                 $data['rarity_id'] = isset($data['rarity_id']) && $data['rarity_id'] ? $data['rarity_id'] : null;
             }
 
-            $characterData = array_only($data, [
+            $characterData = Arr::only($data, [
                 'character_category_id', 'rarity_id', 'user_id',
                 'number', 'slug', 'description',
                 'sale_value', 'transferrable_at', 'is_visible',
+                'base', 'secondary_base', 'is_chimera',
             ]);
 
             $characterData['name'] = ($isMyo && isset($data['name'])) ? $data['name'] : null;
-            $characterData['owner_alias'] = isset($characterData['user_id']) ? null : $data['owner_alias'];
+            $characterData['owner_url'] = isset($characterData['user_id']) ? null : $data['owner_url'];
             $characterData['is_sellable'] = isset($data['is_sellable']);
             $characterData['is_tradeable'] = isset($data['is_tradeable']);
             $characterData['is_giftable'] = isset($data['is_giftable']);
@@ -2397,6 +2395,7 @@ class CharacterManager extends Service {
             $characterData['is_gift_writing_allowed'] = 0;
             $characterData['is_trading'] = 0;
             $characterData['parsed_description'] = parse($data['description']);
+            $characterData['base'] = (isset($data['is_chimera']) ? $data['base'].'|'.$data['secondary_base'] : $data['base']);
             if ($isMyo) {
                 $characterData['is_myo_slot'] = 1;
             }
@@ -2421,8 +2420,8 @@ class CharacterManager extends Service {
      * @param bool  $isMyo
      * @param mixed $character
      *
-     * @return \App\Models\Character\Character           $character
-     * @return \App\Models\Character\CharacterImage|bool
+     * @return Character           $character
+     * @return bool|CharacterImage
      */
     private function handleCharacterImage($data, $character, $isMyo = false) {
         try {
@@ -2433,14 +2432,15 @@ class CharacterManager extends Service {
 
                 // Use default images for MYO slots without an image provided
                 if (!isset($data['image'])) {
-                    $data['image'] = asset('images/myo.png');
-                    $data['thumbnail'] = asset('images/myo-th.png');
-                    $data['extension'] = 'png';
+                    $data['image'] = public_path('images/myo.png');
+                    $data['thumbnail'] = public_path('images/myo-th.png');
+                    $data['extension'] = config('lorekeeper.settings.masterlist_image_format') ?? 'png';
+                    $data['fullsize_extension'] = config('lorekeeper.settings.masterlist_fullsizes_format') ?? $data['extension'];
                     $data['default_image'] = true;
                     unset($data['use_cropper']);
                 }
             }
-            $imageData = array_only($data, [
+            $imageData = Arr::only($data, [
                 'species_id', 'subtype_id', 'rarity_id', 'use_cropper',
                 'x0', 'x1', 'y0', 'y1',
             ]);
@@ -2452,13 +2452,31 @@ class CharacterManager extends Service {
             $imageData['sort'] = 0;
             $imageData['is_valid'] = isset($data['is_valid']);
             $imageData['is_visible'] = isset($data['is_visible']);
-            $imageData['extension'] = (Config::get('lorekeeper.settings.masterlist_image_format') ? Config::get('lorekeeper.settings.masterlist_image_format') : ($data['extension'] ?? $data['image']->getClientOriginalExtension()));
+            $imageData['extension'] = (config('lorekeeper.settings.masterlist_image_format') ?? ($data['extension'] ?? $data['image']->getClientOriginalExtension()));
+            $imageData['fullsize_extension'] = (config('lorekeeper.settings.masterlist_fullsizes_format') ?? ($data['fullsize_extension'] ?? $data['image']->getClientOriginalExtension()));
             $imageData['character_id'] = $character->id;
 
             $image = CharacterImage::create($imageData);
 
+            // Check if entered url(s) have aliases associated with any on-site users
+            $designers = array_filter($data['designer_url']); // filter null values
+            foreach ($designers as $key=> $url) {
+                $recipient = checkAlias($url, false);
+                if (is_object($recipient)) {
+                    $data['designer_id'][$key] = $recipient->id;
+                    $designers[$key] = null;
+                }
+            }
+            $artists = array_filter($data['artist_url']);  // filter null values
+            foreach ($artists as $key=> $url) {
+                $recipient = checkAlias($url, false);
+                if (is_object($recipient)) {
+                    $data['artist_id'][$key] = $recipient->id;
+                    $artists[$key] = null;
+                }
+            }
             // Check that users with the specified id(s) exist on site
-            foreach ($data['designer_alias'] as $id) {
+            foreach ($data['designer_id'] as $id) {
                 if (isset($id) && $id) {
                     $user = User::find($id);
                     if (!$user) {
@@ -2466,7 +2484,7 @@ class CharacterManager extends Service {
                     }
                 }
             }
-            foreach ($data['artist_alias'] as $id) {
+            foreach ($data['artist_id'] as $id) {
                 if (isset($id) && $id) {
                     $user = $user = User::find($id);
                     if (!$user) {
@@ -2476,7 +2494,7 @@ class CharacterManager extends Service {
             }
 
             // Attach artists/designers
-            foreach ($data['designer_alias'] as $key => $id) {
+            foreach ($data['designer_id'] as $key => $id) {
                 if ($id || $data['designer_url'][$key]) {
                     DB::table('character_image_creators')->insert([
                         'character_image_id' => $image->id,
@@ -2486,7 +2504,7 @@ class CharacterManager extends Service {
                     ]);
                 }
             }
-            foreach ($data['artist_alias'] as $key => $id) {
+            foreach ($data['artist_id'] as $key => $id) {
                 if ($id || $data['artist_url'][$key]) {
                     DB::table('character_image_creators')->insert([
                         'character_image_id' => $image->id,
@@ -2502,7 +2520,7 @@ class CharacterManager extends Service {
 
             // Save thumbnail first before processing full image
             if (isset($data['use_cropper'])) {
-                $this->cropThumbnail(array_only($data, ['x0', 'x1', 'y0', 'y1']), $image, $isMyo);
+                $this->cropThumbnail(Arr::only($data, ['x0', 'x1', 'y0', 'y1']), $image, $isMyo);
             } else {
                 $this->handleImage($data['thumbnail'], $image->imageDirectory, $image->thumbnailFileName, null, isset($data['default_image']));
             }

@@ -1,5 +1,5 @@
 @if ($breeding->status !== 'Pending' && $breeding->status !== 'Draft')
-    <p>This breeding has been processed by {!! $breeding->staff->displayName !!}.</p>
+    <p>This breeding has been processed by {!! $breeding->staff->displayName ?? 'Unknown Staff Member' !!}.</p>
 @endif
 @if ($breeding->split_user_id && $breeding->split_status === 'Pending' && (Auth::user()->id == $breeding->split_user_id || Auth::user()->id == $breeding->user_id))
     <div class="card mb-3 border border-warning">
@@ -234,17 +234,18 @@
         @endforeach
     </div>
     <div class="row mt-4 pt-2">
-        <hr />
         <div class="col-md-4">
             <div class="alert alert-danger">
                 <strong>Releasing a Pup</strong> Means you will release it to the wild for a flat 1,000 krones. A pup cannot be recovered after this action is taken.
             </div>
         </div>
-        <div class="col-md-4">
-            <div class="alert alert-primary">
-                <strong>Surrender a Pup</strong> Means you will surrender this pup to the adoption center. Only pups with four or more markings may be surrendered. You will receive your choice of either 1 Trinket or the full Krone value.
+        @if (config('lorekeeper.breeding.surrender_extension_exists'))
+            <div class="col-md-4">
+                <div class="alert alert-primary">
+                    <strong>Surrender a Pup</strong> Means you will surrender this pup to the adoption center. Only pups with four or more markings may be surrendered. You will receive your choice of either 1 Trinket or the full Krone value.
+                </div>
             </div>
-        </div>
+        @endif
         <div class="col-md-4">
             <div class="alert alert-success">
                 <strong>Convert a Pup</strong> The following pup will be converted into a Genotype to be ready to submit to Design Approval. Please only use this option once you are ready!

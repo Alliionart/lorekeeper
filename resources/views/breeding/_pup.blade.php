@@ -27,14 +27,8 @@
         @if (isset($pup->carriers) && $pup->carriers && count($pup->carriers))
             <p class="mb-0"><strong>Carriers: </strong>{{ implode(', ', $pup->carriers->pluck('name')->toArray()) }}</p>
         @endif
-        @if (isset($pup->skills) && $pup->skills && count($pup->skills))
-            <p class="mb-0"><strong>Skills: </strong>{{ implode(', ', $pup->skills->pluck('name')->toArray()) }}</p>
-        @endif
         @if (isset($pup->mutation) && $pup->mutation)
             [ {{ strtoupper($pup->mutation->name) }} ]
-        @endif
-        @if (isset($pup->aspect) && $pup->aspect)
-            [ {{ strtoupper($pup->aspect->name) }} ]
         @endif
         @if (isset($pup->inbred) && $pup->inbred)
             [ {{ strtoupper($pup->inbred->name) }} ]
@@ -59,7 +53,9 @@
             @else
                 <input type="hidden" name="pup_id" value="{{ $i }}" />
                 <a href="#" class="btn mt-0 mr-1 btn-block btn-outline-danger releasePup">Release</a>
-                <a href="#" class="btn mt-0 btn-block btn-outline-primary surrenderPup">Surrender</a>
+                @if (config('lorekeeper.breeding.surrender_extension_exists'))
+                    <a href="#" class="btn mt-0 btn-block btn-outline-primary surrenderPup">Surrender</a>
+                @endif
                 <a href="#" class="btn mt-0 ml-1 btn-block btn-success convertPup">Convert</a>
             @endif
         </div>

@@ -11,7 +11,6 @@ use App\Models\Feature\Feature;
 use App\Models\Item\Item;
 use App\Models\Marking\Marking;
 use App\Models\Model;
-use App\Models\Skill\Skill;
 use App\Models\Species\Species;
 use App\Models\Species\Subtype;
 use App\Models\User\User;
@@ -36,13 +35,6 @@ class Breeding extends Model {
      * @var string
      */
     protected $table = 'breeding';
-
-    /**
-     * Glint ID for checks.
-     *
-     * @var int
-     */
-    protected $glint_id;
 
     /**
      * Item modifiers for checks.
@@ -89,7 +81,6 @@ class Breeding extends Model {
 
     public function __construct(array $attributes = []) {
         parent::__construct($attributes);
-        $this->glint_id = (int) Settings::get('glint_id');
         $this->item_mods = json_decode(Settings::get('breeding_modifiers'));
     }
 
@@ -363,22 +354,15 @@ class Breeding extends Model {
             $renderedPup['markings'] = $this->renderMarkingSide($side, $base);
         }
         $renderedPup['base'] = $base;
-        if ($pup->inbreeding) {
+        if (isset($pup->inbreeding) && $pup->inbreeding) {
             $inbred_trait = Feature::find($pup->inbreeding);
             $renderedPup['inbred'] = $inbred_trait;
         }
-        if ($pup->mutations) {
+        if (isset($pup->mutations) && $pup->mutations) {
             $mutation = Feature::find($pup->mutations);
             $renderedPup['mutation'] = $mutation;
         }
-        if ($pup->aspects) {
-            $aspect = Feature::find($pup->aspects);
-            $renderedPup['aspect'] = $aspect;
-        }
-        if ($pup->skills && count((array) $pup->skills)) {
-            $renderedPup['skills'] = Skill::whereIn('id', (array) $pup->skills)->get();
-        }
-        if ($pup->carriers && $pup->carriers->active && count((array) $pup->carriers->active)) {
+        if (isset($pup->carriers) && isset($pup->carriers->active) && count((array) $pup->carriers->active)) {
             $renderedPup['carriers'] = Carrier::whereIn('id', (array) $pup->carriers->active)->get();
         }
 
@@ -397,21 +381,7 @@ class Breeding extends Model {
                 foreach ($group as $m) {
                     $code = $m['code'];
                     $color = $m['marking']->rarity->color;
-                    if ($m['marking']->id === $this->glint_id) {
-                        if (isset($m['is_dom']) && $m['is_dom']) {
-                            $gbase_code = $m['base'] ? $m['base'][0]->code.'/'.$m['base'][1]->code : '??';
-                            $code = $code.'-'.$gbase_code;
-                            $gbase = $m['base'] ? $m['base'][0]->name.'/'.$m['base'][1]->name : 'Unknown/Unknown';
-                        } else {
-                            $gbase_code = $m['base'] ? $m['base']->code : '??';
-                            $code = $code.'-'.$gbase_code;
-                            $gbase = $m['base'] ? $m['base']->name : 'Unknown';
-                        }
-
-                        $name = '<a href="'.$m['marking']->url.'" style="text-decoration-color:#'.$color.'">'.$gbase.' '.$m['marking']->name.'</a>';
-                    } else {
-                        $name = '<a href="'.$m['marking']->url.'" style="text-decoration-color:#'.$color.'">'.$m['marking']->name.'</a>';
-                    }
+                    $name = '<a href="'.$m['marking']->url.'" style="text-decoration-color:#'.$color.'">'.$m['marking']->name.'</a>';
 
                     $gMarkings[] = $code;
                     $pMarkings[$g][] = $name;
@@ -525,9 +495,6 @@ class Breeding extends Model {
         if (isset($pup->mutation)) {
             $features[] = $pup->mutation;
         }
-        if (isset($pup->aspect)) {
-            $features[] = $pup->aspect;
-        }
 
         // Calculate worth based on feature rarities
         foreach ($features as $trait) {
@@ -620,38 +587,6 @@ class Breeding extends Model {
                     $oldCost = $breakdown['markings'][$rarity->name]['cost'];
                     $breakdown['markings'][$rarity->name]['count'] = $count + 1;
                     $breakdown['markings'][$rarity->name]['cost'] = $oldCost + $cost;
-                    $totalcost += $cost;
-                }
-            }
-        }
-
-        // Calculate worth based on skills
-        if (isset($pup->skills) && $pup->skills) {
-            foreach ($pup->skills as $skill) {
-                $rarity = $skill->rarity;
-                switch ($rarity->name) {
-                    case 'Common':
-                        $cost = 100;
-                        break;
-                    case 'Uncommon':
-                        $cost = 500;
-                        break;
-                    case 'Rare':
-                        $cost = 1000;
-                        break;
-                }
-                // Check if it exists, if not create it, if so then add count
-                if (!array_key_exists('skills', $breakdown) || !array_key_exists($rarity->name, $breakdown['skills'])) {
-                    $breakdown['skills'][$rarity->name] = [
-                        'count' => 1,
-                        'cost'  => $cost,
-                    ];
-                    $totalcost += $cost;
-                } else {
-                    $count = $breakdown['skills'][$rarity->name]['count'];
-                    $oldCost = $breakdown['skills'][$rarity->name]['cost'];
-                    $breakdown['skills'][$rarity->name]['count'] = $count + 1;
-                    $breakdown['skills'][$rarity->name]['cost'] = $oldCost + $cost;
                     $totalcost += $cost;
                 }
             }
@@ -752,7 +687,6 @@ class Breeding extends Model {
         $modifier = $this->item_mods->items->{$item_id};
         if ($modifier) {
             switch ($modifier->type) {
-                case 'override_glint':
                 case 'base_override':
                     return Base::find($value);
                     break;
@@ -767,7 +701,6 @@ class Breeding extends Model {
 
     private function get_markings(array $markings) {
         $rendered = [];
-        $glint = false;
         if ($markings && count($markings)) {
             //Reorder first
             $ordered_markings = collect($markings)
@@ -778,17 +711,6 @@ class Breeding extends Model {
             foreach ($ordered_markings as $order => $markings) {
                 foreach ($markings as $marking) {
                     $m = Marking::find($marking->id);
-                    if ($marking->id == $this->glint_id) {
-                        $glint = true;
-                        if (isset($marking->is_dom) && $marking->is_dom) {
-                            $base = [
-                                0 => Base::find($marking->base[0]),
-                                1 => Base::find($marking->base[1]),
-                            ];
-                        } else {
-                            $base = Base::find($marking->base);
-                        }
-                    }
                     $rendered[$order][] = [
                         'code'      => $marking->code,
                         'is_dom'    => $marking->code === $m->dominant ? true : false,

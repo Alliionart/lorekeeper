@@ -19,9 +19,6 @@
                             @endif
                         </div>
                     @endif
-                    @if ($permission->is_legacy)
-                        <span class="badge badge-info">Legacy</span>
-                    @endif
                     Breeding Permission #{{ $permission->id }}
                     @if ($permission->is_used)
                         (Used)

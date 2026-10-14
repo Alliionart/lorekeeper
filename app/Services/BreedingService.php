@@ -67,11 +67,6 @@ class BreedingService extends Service {
                 $split = true;
                 if (isset($data['split_user_id'])) {
                     $split_user = User::find($data['split_user_id']);
-                } else {
-                    // Check for greeds token
-                    if ($this->hasGreeds($data['items'])) {
-                        $data['split_status'] = 'Converted';
-                    }
                 }
             }
 
@@ -94,17 +89,12 @@ class BreedingService extends Service {
             }
 
             if ($parent_1->sex === $parent_2->sex && !in_array($item_id, $item_ids)) {
-                throw new \Exception('Both parents are the same gender! You must provide an Essence Vessel to breed same gendered parents.');
+                throw new \Exception('Both parents are the same gender! You must provide a special item to breed them!');
             }
 
             $item_id = collect($items)->search(function ($item) {
                 return is_object($item) ? $item->type === 'subtype_override' : $item['type'] === 'subtype_override';
             });
-
-            // Check petities & species
-            if ($parent_1->species_id !== $parent_2->species_id && !in_array($item_id, $item_ids)) {
-                throw new \Exception('Parents are different species! You cannot use Physique Petities unless the parents are the same species.');
-            }
 
             $breeding = Breeding::create([
                 'user_id'           => $user->id,
@@ -197,11 +187,6 @@ class BreedingService extends Service {
                 $split = true;
                 if (isset($data['split_user_id'])) {
                     $split_user = User::find($data['split_user_id']);
-                } else {
-                    // Check for greeds token
-                    if ($this->hasGreeds($data['items'])) {
-                        $data['split_status'] = 'Converted';
-                    }
                 }
             }
 
@@ -226,11 +211,6 @@ class BreedingService extends Service {
             $item_id = collect($items)->search(function ($item) {
                 return is_object($item) ? $item->type === 'subtype_override' : $item['type'] === 'subtype_override';
             });
-
-            // Check petities & species
-            if ($parent_1->species_id !== $parent_2->species_id && !in_array($item_id, $item_ids)) {
-                throw new \Exception('Parents are different species! You cannot use Physique Petities unless the parents are the same species.');
-            }
 
             $breeding->update([
                 'status'            => 'Pending',
@@ -372,6 +352,10 @@ class BreedingService extends Service {
 
             $breeding = Breeding::find($data['breeding_id']);
 
+            if (!$breeding) {
+                throw new \Exception('Breeding could not be found!');
+            }
+
             if ($staff->id === $breeding->user_id || $staff->id === $breeding->split_user_id) {
                 throw new \Exception('You cannot roll your own breedings!');
             }
@@ -461,11 +445,43 @@ class BreedingService extends Service {
         return $this->rollbackReturn(false);
     }
 
+    /**
+     * Rjects the breeding.
+     * 
+     * @param App\Model\Breeding\Breeding $breeding
+     * @param App\Models\User\User         $user
+     */
+    public function rejectBreeding($breeding, $user) {
+        DB::beginTransaction();
+
+        try {
+            if ($breeding->user_id !== $user->id && !$user->isStaff) {
+                throw new \Exception('Only the creator of this breeding may cancel it.');
+            }
+
+            $breeding->update([
+                'status'  => 'Rejected',
+            ]);
+
+            return $this->commitReturn(true);
+        } catch (\Exception $e) {
+            $this->setError('error', $e->getLine().': '.$e->getMessage());
+        }
+
+        return $this->rollbackReturn(false);
+    }
+
+    /**
+     * Cancels the breeding and sends it back to drafts.
+     * 
+     * @param App\Model\Breeding\Breeding $breeding
+     * @param App\Models\User\User         $user
+     */
     public function cancelBreeding($breeding, $user) {
         DB::beginTransaction();
 
         try {
-            if ($breeding->user_id != $user->id || !$user->isStaff) {
+            if ($breeding->user_id !== $user->id && !$user->isStaff) {
                 throw new \Exception('Only the creator of this breeding may cancel it.');
             }
 
@@ -690,7 +706,6 @@ class BreedingService extends Service {
                 'user_id'                       => $new_owner ?? $adopts_user,
                 'owner_url'                     => null,
                 'name'                          => 'Breeding '.($surrender ? 'Surrender' : 'Request').' #'.$breeding->id.' - '.$breeding->parent1->name.' x '.$breeding->parent2->name.' - #'.($pupId + 1),
-                'skills'                        => isset($pup->skills) ? $pup->skills->pluck('id')->toArray() : [],
                 'description'                   => 'Converted from: '.$breeding->displayName,
                 'is_visible'                    => 1,
                 'sale_value'                    => null,
@@ -751,10 +766,6 @@ class BreedingService extends Service {
                 2 => null,
                 3 => null,
             ];
-            if (isset($pup->aspect)) {
-                $data['feature_id'][] = $pup->aspect->id;
-                $data['feature_data'][] = null;
-            }
             if (isset($pup->mutation)) {
                 $data['feature_id'][] = $pup->mutation->id;
                 $data['feature_data'][] = null;
@@ -912,7 +923,6 @@ class BreedingService extends Service {
             $marking_rates = [];
             $mutation_rates = [];
             $modifiers = [];
-            $skills_rates = [];
             $inbreeding_rates = [];
 
             if ($data['species_rates']) {
@@ -1026,19 +1036,6 @@ class BreedingService extends Service {
                 }
                 if ($mutation_rates && count($mutation_rates) > 0) {
                     $this->saveBreedingSetting('breeding_mutation_rates', $mutation_rates);
-                }
-            }
-
-            if ($data['skill_rates']) {
-                foreach ($data['skill_rates'] as $rarity_id => $rate) {
-                    if ($rate) {
-                        $skills_rates[$rarity_id] = $rate;
-                    }
-                }
-
-                if ($skills_rates && count($skills_rates) > 0) {
-                    // Save the info in the DB
-                    $this->saveBreedingSetting('breeding_skills_rates', $skills_rates);
                 }
             }
 
@@ -1255,17 +1252,9 @@ class BreedingService extends Service {
         }
     }
 
-    private function hasGreeds($items) {
-        foreach ($items['user']['user_items'] as $stack_id => $qty) {
-            $stack = UserItem::where('id', $stack_id)->first();
-            if ($stack->item->name === 'Greed\'s Token') {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
+    /**
+     * Checks if the current breeding queue is open.
+     */
     private function checkBreedingOpen() {
         $queue_status = Settings::get('breeding_queue_status') ?? 0;
 
@@ -1278,8 +1267,12 @@ class BreedingService extends Service {
         }
     }
 
+    /**
+     * Check if the two parents can be bred together.
+     */
     private function checkParentsBreedable($parent_1, $parent_2) {
-        if ($parent_1->isBreedable && $parent_2->isBreedable) {
+        //Set your conditions in here
+        if ( 1 === 1 ) {
             return true;
         }
 
@@ -1341,7 +1334,6 @@ class BreedingService extends Service {
     }
 
     private function formatMarkingsForCreation($markings, $side = null) {
-        $glint_id = Settings::get('glint_id');
         $m = [
             'marking_id'        => [],
             'is_dominant'       => [],
@@ -1349,23 +1341,11 @@ class BreedingService extends Service {
             'marking_color_0'   => [],
             'marking_color_1'   => [],
         ];
-        //dd($markings);
         foreach ($markings as $group) {
             foreach ($group as $marking) {
-                $is_glint = $marking['marking']->id == $glint_id;
-                if ($is_glint) {
-                    if ($marking['is_dom']) {
-                        $base_1 = $marking['base'][0]->id;
-                        $base_2 = $marking['base'][1]->id;
-                    } else {
-                        $base_1 = $marking['base']->id;
-                    }
-                }
                 $m['marking_id'][] = $marking['marking']->id;
                 $m['is_dominant'][] = $marking['is_dom'];
                 $m['side_id'][] = $side;
-                $m['marking_color_0'][] = $is_glint ? $base_1 : null;
-                $m['marking_color_1'][] = $is_glint && isset($base_2) ? $base_2 : null;
             }
         }
 

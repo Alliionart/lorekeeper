@@ -43,6 +43,7 @@
     <div class="text-right mt-3 pt-2">
         <hr />
         <a href="#" class="btn btn-secondary mr-2" id="cancelButton">Cancel</a>
+        <a href="#" class="btn btn-danger mr-2" id="rejectButton">Reject</a>
         <a href="#" class="btn btn-success" id="approvalButton">{{ $breeding->status === 'Approved' ? 'Re-' : '' }}Roll Breeding</a>
     </div>
     {!! Form::close() !!}
@@ -76,6 +77,18 @@
                     </div>
                 </div>
             </div>
+            <div class="modal-content hide" id="rejectContent">
+                <div class="modal-header">
+                    <span class="modal-title h5 mb-0">Confirm Rejection</span>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <p>This will reject the breeding.</p>
+                    <div class="text-right">
+                        <a href="#" id="rejectSubmit" class="btn btn-danger">Reject Breeding</a>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 @endsection
@@ -97,10 +110,15 @@
                 var $cancelContent = $('#cancelContent');
                 var $cancelSubmit = $('#cancelSubmit');
 
+                var $rejectButton = $('#rejectButton');
+                var $rejectContent = $('#rejectContent');
+                var $rejectSubmit = $('#rejectSubmit');
+
                 $approvalButton.on('click', function(e) {
                     e.preventDefault();
                     $approvalContent.removeClass('hide');
                     $cancelContent.addClass('hide');
+                    $rejectContent.addClass('hide');
                     $confirmationModal.modal('show');
                 });
 
@@ -108,6 +126,15 @@
                     e.preventDefault();
                     $cancelContent.removeClass('hide');
                     $approvalContent.addClass('hide');
+                    $rejectContent.addClass('hide');
+                    $confirmationModal.modal('show');
+                });
+
+                $rejectButton.on('click', function(e) {
+                    e.preventDefault();
+                    $rejectContent.removeClass('hide');
+                    $approvalContent.addClass('hide');
+                    $cancelContent.addClass('hide');
                     $confirmationModal.modal('show');
                 });
 
@@ -120,6 +147,12 @@
                 $cancelSubmit.on('click', function(e) {
                     e.preventDefault();
                     $trackerForm.attr('action', '{{ url()->current() }}/cancel');
+                    $trackerForm.submit();
+                });
+
+                $rejectSubmit.on('click', function(e) {
+                    e.preventDefault();
+                    $trackerForm.attr('action', '{{ url()->current() }}/reject');
                     $trackerForm.submit();
                 });
 

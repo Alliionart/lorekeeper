@@ -120,6 +120,13 @@ Route::group(['prefix' => 'character', 'namespace' => 'Characters'], function ()
 
     Route::post('{slug}/approval', 'CharacterController@postCharacterApproval');
     Route::get('{slug}/approval', 'CharacterController@getCharacterApproval');
+
+    Route::get('{slug}/breeding-permissions/new', 'CharacterController@getNewBreedingPermission');
+    Route::post('{slug}/breeding-permissions/new', 'CharacterController@postNewBreedingPermission');
+    Route::get('{slug}/breeding-permissions/{id}/transfer', 'CharacterController@getTransferBreedingPermission');
+    Route::post('{slug}/breeding-permissions/{id}/transfer', 'CharacterController@postTransferBreedingPermission');
+    Route::get('{slug}/breeding-permissions/refresh', 'CharacterController@getRefreshBreedingPermissions');
+    //Route::post('{slug}/breeding-permissions/refresh', 'CharacterController@postRefreshBreedingPermissions'); Used for allowing players to infinitely grant breeding currency to their own characters. Remove if you don't need this.
 });
 Route::group(['prefix' => 'myo', 'namespace' => 'Characters'], function () {
     Route::get('{id}/profile/edit', 'MyoController@getEditCharacterProfile');
@@ -211,12 +218,6 @@ Route::group(['prefix' => 'designs', 'namespace' => 'Characters'], function () {
     Route::get('{id}/delete', 'DesignController@getDelete');
     Route::post('{id}/delete', 'DesignController@postDelete');
 
-    Route::get('{slug}/breeding-permissions/new', 'CharacterController@getNewBreedingPermission');
-    Route::post('{slug}/breeding-permissions/new', 'CharacterController@postNewBreedingPermission');
-    Route::get('{slug}/breeding-permissions/{id}/transfer', 'CharacterController@getTransferBreedingPermission');
-    Route::post('{slug}/breeding-permissions/{id}/transfer', 'CharacterController@postTransferBreedingPermission');
-    Route::get('{slug}/breeding-permissions/refresh', 'CharacterController@getRefreshBreedingPermissions');
-    //Route::post('{slug}/breeding-permissions/refresh', 'CharacterController@postRefreshBreedingPermissions'); Used for allowing players to infinitely grant breeding currency to their own characters. Remove if you don't need this.
 });
 
 /**************************************************************************************************

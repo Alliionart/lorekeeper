@@ -10,6 +10,7 @@ use App\Models\Character\CharacterCategory;
 use App\Models\Character\CharacterLineageBlacklist;
 use App\Models\Character\CharacterMarking;
 use App\Models\Character\CharacterTransfer;
+use App\Models\Character\BreedingPermission;
 use App\Models\Feature\Feature;
 use App\Models\Marking\Marking;
 use App\Models\Rarity;
@@ -217,21 +218,6 @@ class CharacterController extends Controller {
             abort(404);
         }
 
-        $glint_bases = [];
-        $temp = CharacterMarking::where('character_id', $this->character->id)
-            ->whereIn('code', ['GG', 'Gl'])
-            ->value('base_id');
-        if ($temp) {
-            $has_glint = true;
-            if (str_contains($temp, '|')) {
-                $glint_bases = Base::whereIn('id', explode('|', $temp))->pluck('name', 'id')->toArray();
-            } else {
-                $glint_bases = Base::where('id', $temp)->pluck('name', 'id')->toArray();
-            }
-        } else {
-            $has_glint = false;
-        }
-
         return view('character.admin._edit_stats_modal', [
             'character'         => $this->character,
             'categories'        => CharacterCategory::orderBy('sort')->pluck('name', 'id')->toArray(),
@@ -242,8 +228,6 @@ class CharacterController extends Controller {
             'bases'             => ['' => 'Select Base(s)'] + Base::orderBy('name', 'DESC')->pluck('name', 'id')->toArray(),
             'is_chimera'        => (str_contains($this->character->base, '|') ? 1 : 0),
             'characterMarkings' => CharacterMarking::where('character_id', $this->character->id)->get(),
-            'has_glint'         => $has_glint,
-            'glint_bases'       => $glint_bases,
         ]);
     }
 
@@ -260,21 +244,6 @@ class CharacterController extends Controller {
             abort(404);
         }
 
-        $glint_bases = [];
-        $temp = CharacterMarking::where('character_id', $this->character->id)
-            ->whereIn('code', ['GG', 'Gl'])
-            ->value('base_id');
-        if ($temp) {
-            $has_glint = true;
-            if (str_contains($temp, '|')) {
-                $glint_bases = Base::whereIn('id', explode('|', $temp))->pluck('name', 'id')->toArray();
-            } else {
-                $glint_bases = Base::where('id', $temp)->pluck('name', 'id')->toArray();
-            }
-        } else {
-            $has_glint = false;
-        }
-
         return view('character.admin._edit_stats_modal', [
             'character'         => $this->character,
             'userOptions'       => User::query()->orderBy('name')->pluck('name', 'id')->toArray(),
@@ -283,8 +252,6 @@ class CharacterController extends Controller {
             'bases'             => ['' => 'Select Base(s)'] + Base::orderBy('name', 'DESC')->pluck('name', 'id')->toArray(),
             'is_chimera'        => (str_contains($this->character->base, '|') ? 1 : 0),
             'characterMarkings' => CharacterMarking::where('character_id', $this->character->id)->get(),
-            'has_glint'         => $has_glint,
-            'glint_bases'       => $glint_bases,
         ]);
     }
 
@@ -857,4 +824,47 @@ class CharacterController extends Controller {
             'slots' => Character::myo(1)->orderBy('id', 'DESC')->paginate(30),
         ]);
     }
+
+    /**
+     * Shows the use breeding permission modal.
+     *
+     * @param  string  $slug
+     * @param  int     $id
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function getUseBreedingPermission($slug, $id)
+    {
+        $this->character = Character::where('slug', $slug)->first();
+        if(!$this->character) abort(404);
+
+        return view('admin.characters._use_breeding_permission', [
+            'character' => $this->character,
+            'breedingPermission' => BreedingPermission::find($id)
+        ]);
+    }
+
+    /**
+     * Marks a breeding permission as used.
+     *
+     * @param  \Illuminate\Http\Request       $request
+     * @param  App\Services\CharacterManager  $service
+     * @param  string                         $slug
+     * @param  int                            $id
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function postUseBreedingPermission(Request $request, CharacterManager $service, $slug, $id)
+    {
+        $this->character = Character::where('slug', $slug)->first();
+        if(!$this->character) abort(404);
+
+        if ($service->useBreedingPermission($this->character, BreedingPermission::find($id), Auth::user())) {
+            flash('Breeding permission marked used successfully.')->success();
+            return redirect()->back();
+        }
+        else {
+            foreach($service->errors()->getMessages()['error'] as $error) flash($error)->error();
+        }
+        return redirect()->back();
+    }
+
 }

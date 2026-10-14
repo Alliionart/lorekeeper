@@ -216,7 +216,7 @@
                                             @if ($existing_stack_id)
                                                 {!! Form::hidden('breeding_items[' . $item->id . '][stack_id]', $existing_stack_id, ['class' => 'stack-id']) !!}
                                             @endif
-                                            @if ($existing_stack_id && in_array($type, ['subtype_override', 'base_override', 'override_glint'], true))
+                                            @if ($existing_stack_id && in_array($type, ['subtype_override', 'base_override'], true))
                                                 <div class="form-group mt-2">
                                                     @switch($type)
                                                         @case('subtype_override')
@@ -229,10 +229,6 @@
                                                             {!! Form::select('breeding_items[' . $item->id . '][value]', $bases, $existing_value, ['class' => 'form-control']) !!}
                                                         @break
 
-                                                        @case('override_glint')
-                                                            {!! Form::label('Glint Color') !!} {!! add_help('Select your desired base from the parents.') !!}
-                                                            {!! Form::select('breeding_items[' . $item->id . '][value]', $bases, $existing_value, ['class' => 'form-control']) !!}
-                                                        @break
                                                     @endswitch
                                                 </div>
                                             @endif
@@ -276,10 +272,6 @@
             <div class="form-group mt-2" id="base_override">
                 {!! Form::label('Base Color') !!} {!! add_help('Select your desired base from the parents.') !!}
                 {!! Form::select('breeding_items[__ID__][value]', $bases, null, ['class' => 'form-control', 'id' => 'base_override_field']) !!}
-            </div>
-            <div class="form-group mt-2" id="override_glint">
-                {!! Form::label('Glint Color') !!} {!! add_help('Select your desired base from the parents.') !!}
-                {!! Form::select('breeding_items[__ID__][value]', $bases, null, ['class' => 'form-control', 'id' => 'override_glint_field']) !!}
             </div>
         </div>
 

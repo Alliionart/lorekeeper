@@ -268,7 +268,8 @@ class BreedingController extends Controller {
      */
     public function getCancelBreeding($id) {
         $breeding = Breeding::find($id);
-        if (!Auth::check()) {
+
+        if (!$breeding || !Auth::check()) {
             abort(404);
         }
 
@@ -286,7 +287,7 @@ class BreedingController extends Controller {
      */
     public function getApproveSplit($id) {
         $breeding = Breeding::find($id);
-        if (!Auth::check() || Auth::user()->id !== $breeding->split_user_id) {
+        if (!$breeding || !Auth::check() || Auth::user()->id !== $breeding->split_user_id) {
             abort(404);
         }
 
@@ -304,7 +305,7 @@ class BreedingController extends Controller {
      */
     public function getRejectSplit($id) {
         $breeding = Breeding::find($id);
-        if (!Auth::check() || Auth::user()->id !== $breeding->split_user_id) {
+        if (!$breeding || !Auth::check() || Auth::user()->id !== $breeding->split_user_id) {
             abort(404);
         }
 
@@ -322,7 +323,7 @@ class BreedingController extends Controller {
      */
     public function getConfirmSplit($id) {
         $breeding = Breeding::find($id);
-        if (!Auth::check() || Auth::user()->id !== $breeding->split_user_id) {
+        if (!$breeding || !Auth::check() || Auth::user()->id !== $breeding->split_user_id) {
             abort(404);
         }
 
@@ -340,10 +341,12 @@ class BreedingController extends Controller {
      * @return \Illuminate\Http\RedirectResponse
      */
     public function postCancelBreeding(Request $request, BreedingService $service, $id) {
-        if (!Auth::check()) {
+        $breeding = Breeding::find($id);
+
+        if (!$breeding || !Auth::check()) {
             abort(404);
         }
-        $breeding = Breeding::find($id);
+
         if ($service->cancelBreeding($breeding, Auth::user())) {
             flash('Breeding was canceled. You can find it under your breeding drafts.')->error();
         } else {
@@ -364,10 +367,12 @@ class BreedingController extends Controller {
      * @return \Illuminate\Http\RedirectResponse
      */
     public function postApproveSplit(Request $request, BreedingService $service, $id) {
-        if (!Auth::check()) {
+        $breeding = Breeding::find($id);
+
+        if (!$breeding || !Auth::check()) {
             abort(404);
         }
-        $breeding = Breeding::find($id);
+
         if ($service->approveSplit($breeding, Auth::user())) {
             flash('Split breeding approved successfully.')->success();
         } else {
@@ -388,10 +393,12 @@ class BreedingController extends Controller {
      * @return \Illuminate\Http\RedirectResponse
      */
     public function postRejectSplit(Request $request, BreedingService $service, $id) {
-        if (!Auth::check()) {
+        $breeding = Breeding::find($id);
+
+        if (!$breeding || !Auth::check()) {
             abort(404);
         }
-        $breeding = Breeding::find($id);
+
         if ($service->rejectSplit($breeding, Auth::user())) {
             flash('Split breeding was rejected.')->error();
         } else {
@@ -412,10 +419,12 @@ class BreedingController extends Controller {
      * @return \Illuminate\Http\RedirectResponse
      */
     public function postConfirmSplit(Request $request, BreedingService $service, $id) {
-        if (!Auth::check()) {
+        $breeding = Breeding::find($id);
+
+        if (!$breeding || !Auth::check()) {
             abort(404);
         }
-        $breeding = Breeding::find($id);
+
         if ($service->confirmSplit($breeding, Auth::user())) {
             flash('Split breeding was confirmed.')->success();
         } else {
@@ -438,7 +447,8 @@ class BreedingController extends Controller {
      */
     public function getConvertPup($id, $pup, $type) {
         $breeding = Breeding::find($id);
-        if (!Auth::check()) {
+
+        if (!$breeding || !Auth::check()) {
             abort(404);
         }
 
@@ -459,7 +469,8 @@ class BreedingController extends Controller {
      */
     public function getReleasePup($id, $pup) {
         $breeding = Breeding::find($id);
-        if (!Auth::check()) {
+
+        if (!$breeding || !Auth::check()) {
             abort(404);
         }
 
@@ -480,18 +491,24 @@ class BreedingController extends Controller {
      * @return \Illuminate\Http\RedirectResponse
      */
     public function postConvertPup(Request $request, BreedingService $service, $id, $pup, $type) {
-        if (!Auth::check()) {
+        $user_id = $request->only(['user_id']);
+        $breeding = Breeding::find($id);
+
+        if (!$breeding || !Auth::check()) {
             abort(404);
         }
-        $user_id = $request->only(['user_id']);
 
-        $breeding = Breeding::find($id);
         $newOwner = $type === 'convert' ? $breeding->user_id : false;
         $surrender = $type === 'convert' ? false : true;
         $exchange = $request->input('exchange_type');
 
         if ($user_id && $breeding->split_user_id && !$surrender) {
             $newOwner = $user_id['user_id'];
+        }
+
+        if ( $surrender && config('lorekeeper.breeding.surrender_extension_exists')) {
+            flash('Surrender extension is not available.')->error();
+            return redirect()->back();
         }
 
         if ($character = $service->convertPup($breeding, Auth::user(), $pup, $newOwner, $exchange)) {
@@ -515,10 +532,11 @@ class BreedingController extends Controller {
      * @return \Illuminate\Http\RedirectResponse
      */
     public function postReleasePup(Request $request, BreedingService $service, $id, $pup) {
-        if (!Auth::check()) {
+        $breeding = Breeding::find($id);
+
+        if (!$breeding || !Auth::check()) {
             abort(404);
         }
-        $breeding = Breeding::find($id);
 
         if ($service->releasePup($breeding, Auth::user(), $pup)) {
             flash('Pup was successfully released.')->success();
@@ -625,7 +643,7 @@ class BreedingController extends Controller {
         $data = $request->only(['parents', 'breeding_items', 'type', 'split_user']);
         $breeding = Breeding::find($id);
 
-        if (!$breeding) {
+        if (!$breeding || !Auth::check()) {
             abort(404);
         }
 

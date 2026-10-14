@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin\Data;
 
 use App\Http\Controllers\Controller;
 use App\Models\Character\CharacterCategory;
+use App\Models\Character\CharacterLineageBlacklist;
 use App\Models\Character\Sublist;
 use App\Services\CharacterCategoryService;
 use Illuminate\Http\Request;
@@ -55,6 +56,8 @@ class CharacterCategoryController extends Controller {
         if (!$category) {
             abort(404);
         }
+
+        $lineageBlacklist = CharacterLineageBlacklist::where('type', 'category')->where('type_id', $category->id)->get()->first();
 
         return view('admin.characters.create_edit_character_category', [
             'lineageBlacklist' => $lineageBlacklist,

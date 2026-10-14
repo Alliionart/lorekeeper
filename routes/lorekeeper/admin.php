@@ -391,6 +391,9 @@ Route::group(['prefix' => 'character', 'namespace' => 'Characters', 'middleware'
 
     Route::post('{slug}/transfer', 'CharacterController@postTransfer');
 
+    Route::get('{slug}/breeding-permissions/{id}/use', 'CharacterController@getUseBreedingPermission')->where(['id' => '[0-9]+']);
+    Route::post('{slug}/breeding-permissions/{id}/use', 'CharacterController@postUseBreedingPermission')->where(['id' => '[0-9]+']);
+
     // LINEAGE
     Route::get('{slug}/lineage', 'CharacterLineageController@getEditCharacterLineage');
     Route::post('{slug}/lineage', 'CharacterLineageController@postEditCharacterLineage');

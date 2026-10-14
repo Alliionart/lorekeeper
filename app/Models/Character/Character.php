@@ -18,6 +18,7 @@ use App\Models\Submission\SubmissionCharacter;
 use App\Models\Trade;
 use App\Models\User\User;
 use App\Models\User\UserCharacterLog;
+use App\Models\Carrier\MarkingCarrier;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Settings;
@@ -212,6 +213,20 @@ class Character extends Model {
      */
     public function lineage() {
         return $this->hasOne('App\Models\Character\CharacterLineage', 'character_id');
+    }
+
+    /**
+     * Get the character's carriers.
+     */
+    public function carriers() {
+        return $this->hasMany(CharacterMarkingCarrier::class, 'character_id');
+    }
+
+    /**
+     * Get the character's markings.
+     */
+    public function markings() {
+        return $this->hasMany(CharacterMarking::class, 'character_id');
     }
 
     /**********************************************************************************************
@@ -416,7 +431,7 @@ class Character extends Model {
      * @return int
      */
     public function getAvailableBreedingPermissionsAttribute() {
-        return $this->maxBreedingPermissions - $this->breedingPermissions()->where('is_legacy', 0)->sum('full_quantity');
+        return $this->maxBreedingPermissions - $this->breedingPermissions()->sum('full_quantity');
     }
 
     /**********************************************************************************************

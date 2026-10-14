@@ -98,7 +98,6 @@ class BreedingController extends Controller {
             'rarities'           => ['Select Rarity'] + Rarity::all()->pluck('name', 'id')->toArray(),
             'bases'              => ['Select Base'] + Base::all()->pluck('name', 'id')->toArray(),
             'items'              => ['Select Item'] + Item::where('item_category_id', DB::table('site_settings')->where('key', 'breeding_item_category_id')->value('value'))->pluck('name', 'id')->toArray(),
-            'skillRarities'      => Rarity::wherein('id', DB::table('skills')->distinct()->pluck('rarity_id')->toArray())->pluck('name', 'id')->toArray(),
             'inbreeding_traits'  => [0 => 'Stillborn'] + Feature::where('feature_category_id', DB::table('site_settings')->where('key', 'breeding_inbreeding_trait_category_id')->value('value'))->pluck('name', 'id')->toArray(),
             'markingConfig'      => [
                 ['recessive' => null],
@@ -124,7 +123,6 @@ class BreedingController extends Controller {
                 'mutation_rates'    => $this->getBreedingSetting('breeding_mutation_rates'),
                 'subtype_rates'     => $this->getBreedingSetting('breeding_subtype_rates'),
                 'trait_rates'       => $this->getBreedingSetting('breeding_trait_rates'),
-                'skill_rates'       => $this->getBreedingSetting('breeding_skills_rates'),
                 'modifiers'         => $this->getBreedingSetting('breeding_modifiers'),
                 'inbreeding'        => $this->getBreedingSetting('breeding_inbreeding_trait_rates'),
             ],
@@ -165,10 +163,16 @@ class BreedingController extends Controller {
 
         $breeding = Breeding::find($id);
 
+        if (!$breeding) {
+            abort(404);
+        }
+
         if ($action === 'approve' && $service->rollBreeding($data, auth()->user())) {
             flash('Breeding rolled successully!')->success();
         } elseif ($action === 'cancel' && $service->cancelBreeding($breeding, auth()->user())) {
             flash('Breeding canceled successfully.')->success();
+        } elseif ($action === 'reject' && $service->rejectBreeding($breeding, auth()->user())) {
+            flash('Breeding rejected successfully.')->success();
         } else {
             foreach ($service->errors()->getMessages()['error'] as $error) {
                 flash($error)->error();

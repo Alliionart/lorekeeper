@@ -23,12 +23,6 @@
                 {!! Form::number('quantity', $breedingPermission->quantity ?? 1, ['class' => 'form-control', 'value' => 1, 'min' => 1, 'max' => 10]) !!}
             </div>
         </div>
-        <div class="col-md-6 align-content-end">
-            <div class="form-group">
-                {!! Form::checkbox('is_legacy', 1, 0, ['class' => 'form-check-input', 'data-toggle' => 'toggle']) !!}
-                {!! Form::label('is_legacy', 'Is Legacy Slot', ['class' => 'form-check-label ml-3']) !!} {!! add_help('If on, this will not count towards a character\'s max breeding permissions.') !!}
-            </div>
-        </div>
     </div>
 
     <div class="form-group">
