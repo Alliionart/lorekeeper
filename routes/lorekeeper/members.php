@@ -217,7 +217,6 @@ Route::group(['prefix' => 'designs', 'namespace' => 'Characters'], function () {
 
     Route::get('{id}/delete', 'DesignController@getDelete');
     Route::post('{id}/delete', 'DesignController@postDelete');
-
 });
 
 /**************************************************************************************************

@@ -447,9 +447,9 @@ class BreedingService extends Service {
 
     /**
      * Rjects the breeding.
-     * 
+     *
      * @param App\Model\Breeding\Breeding $breeding
-     * @param App\Models\User\User         $user
+     * @param App\Models\User\User        $user
      */
     public function rejectBreeding($breeding, $user) {
         DB::beginTransaction();
@@ -473,9 +473,9 @@ class BreedingService extends Service {
 
     /**
      * Cancels the breeding and sends it back to drafts.
-     * 
+     *
      * @param App\Model\Breeding\Breeding $breeding
-     * @param App\Models\User\User         $user
+     * @param App\Models\User\User        $user
      */
     public function cancelBreeding($breeding, $user) {
         DB::beginTransaction();
@@ -1269,10 +1269,13 @@ class BreedingService extends Service {
 
     /**
      * Check if the two parents can be bred together.
+     *
+     * @param mixed $parent_1
+     * @param mixed $parent_2
      */
     private function checkParentsBreedable($parent_1, $parent_2) {
         //Set your conditions in here
-        if ( 1 === 1 ) {
+        if (1 === 1) {
             return true;
         }
 
