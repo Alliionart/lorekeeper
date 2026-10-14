@@ -115,6 +115,10 @@
                         <span class="h6 p-1 rounded bg-secondary text-white">Disbanded</span>
                     @endif
                     <span class="h6 p-1 rounded border ml-2 {{ $guild->open_new_users ? 'border-success text-success' : 'border-danger text-danger' }}">{{ $guild->open_new_users ? 'Open Applications' : 'Closed Applications' }}</span>
+                    @if ($guild->open_new_users)
+                        <br>
+                        <a id="apply-to-join" href="#" class="btn btn-primary mt-3">Apply to Join</a>
+                    @endif
                 </div>
             </div>
         </div>
@@ -213,6 +217,11 @@
             $('#leave-guild').on('click', function(e) {
                 e.preventDefault();
                 $('#leaveGuildModal').modal('show');
+            });
+
+            $('#apply-to-join').on('click', function(e) {
+                e.preventDefault();
+                loadModal("{{ url($guild->viewUrl) }}/apply", 'Apply to Join');
             });
         });
     </script>

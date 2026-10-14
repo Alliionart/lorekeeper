@@ -50,3 +50,17 @@
 
     <div class="text-center mt-4 small text-muted">{{ $guilds->total() }} result{{ $guilds->total() == 1 ? '' : 's' }} found.</div>
 @endsection
+@section('scripts')
+    @parent
+<script>
+    $(document).ready(function() {
+        $('.applyButton').on('click', function(e) {
+            e.preventDefault();
+            var guildId = $(this).data('guild-id');
+            var targetModal = $(this).data('target');
+
+            loadModal("{{ url( __('guilds.guilds') . '/') }}/" + guildId + "/apply", 'Submit Application');
+        });
+    });
+</script>
+@endsection

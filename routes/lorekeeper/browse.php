@@ -199,6 +199,9 @@ Route::group(['prefix' => __('guilds.guilds'), 'namespace' => 'Guilds'], functio
     Route::group(['prefix' => '{id}'], function () {
         Route::get('/', 'GuildController@getGuild');
 
+        Route::get('apply', 'GuildController@getGuildApplyModal');
+        Route::post('apply', 'GuildController@postGuildApplyModal');
+
         Route::get('edit', 'GuildController@getGuildEdit');
         Route::post('edit', 'GuildController@postGuildEdit');
         Route::post('edit/staff', 'GuildController@postGuildStaffEdit');
@@ -243,6 +246,11 @@ Route::group(['prefix' => __('guilds.guilds'), 'namespace' => 'Guilds'], functio
             Route::post('add', 'GuildController@postGuildAddCharacters');
             Route::get('remove', 'GuildController@getGuildRemoveCharactersModal');
             Route::post('remove', 'GuildController@postGuildRemoveCharacters');
+        });
+
+        Route::group(['prefix' => 'applications'], function () {
+            Route::get('{status?}', 'GuildController@getGuildApplications')->where('status', 'pending|accepted|rejected');
+            Route::post('{action}', 'GuildController@postGuildApplications')->where('action', 'accept|reject');
         });
 
         Route::group(['prefix' => 'inventory'], function () {

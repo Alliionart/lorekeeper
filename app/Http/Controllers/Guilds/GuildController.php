@@ -524,6 +524,114 @@ class GuildController extends Controller {
     }
 
     /** --------------------------------------------------------------
+     * GUILD APPLICATIONS
+     *
+     * @param mixed $id
+     * -------------------------------------------------------------- */
+
+    /**
+     * Shows the guild applications page.
+     */
+    public function getGuildApplications($id, $status = 'pending') {
+        $guild = Guild::where('id', $id)->first();
+
+        if (!$guild || !$guild->getPermission()) {
+            abort(404);
+        }
+
+        $applicationStatuses = [
+            'pending'  => 'Pending',
+            'accepted' => 'accepted',
+            'rejected' => 'rejected',
+        ];
+        if (!isset($applicationStatuses[$status])) {
+            abort(404);
+        }
+
+        $applications = $guild->applications()
+            ->where('status', $applicationStatuses[$status])
+            ->with('user')
+            ->orderBy('created_at', 'DESC')
+            ->get();
+
+        return view('guilds.applications', [
+            'guild'        => $guild,
+            'applications' => $applications,
+            'status'       => $status,
+        ]);
+    }
+
+    /**
+     * Handles guild applications.
+     * 
+     * @param App\Services\GuildManager $service
+     * @param int|null                  $id
+     * @param string                    $action
+     */
+    public function postGuildApplications(Request $request, GuildManager $service, $id, $action = 'reject') {
+        $guild = Guild::where('id', $id)->first();
+
+        if (!$guild) {
+            abort(404);
+        }
+
+        $data = $request->only(['application_ids', 'guild_comment']);
+
+        if ($service->handleApplications($guild, $data, Auth::user(), $action)) {
+            flash('Applications were ' . $action . 'ed.')->success();
+        } else {
+            foreach ($service->errors()->getMessages()['error'] as $error) {
+                flash($error)->error();
+            }
+        }
+
+        return redirect()->back();
+    }
+
+    /**
+     * Shows the modal to apply to a guild.
+     */
+    public function getGuildApplyModal($id) {
+        $guild = Guild::where('id', $id)->first();
+
+        if (!$guild || !$guild->open_new_users) {
+            abort(404);
+        }
+
+        return view('guilds._apply_modal', [
+            'guild' => $guild,
+        ]);
+    }
+
+    /**
+     * Handles guild applications.
+     * 
+     * @param App\Services\GuildManager $service
+     * @param int|null                  $id
+     */
+    public function postGuildApplyModal(Request $request, GuildManager $service, $id) {
+        $guild = Guild::where('id', $id)->first();
+
+        if (!$guild || !$guild->open_new_users) {
+            abort(404);
+        }
+
+        $data = $request->only([
+            'application_message',
+        ]);
+
+        if ($service->applyToGuild($guild, $data, Auth::user())) {
+            flash('Application submitted successfully.')->success();
+        } else {
+            foreach ($service->errors()->getMessages()['error'] as $error) {
+                flash($error)->error();
+            }
+        }
+
+        return redirect()->back();
+    }
+
+    /** --------------------------------------------------------------
      * GUILD MEMBERS & CHARACTERS.
      *
      * @param mixed $id

@@ -6,6 +6,7 @@ use App\Models\Character\Character;
 use App\Models\Guild\Guild;
 use App\Models\Guild\GuildCharacter;
 use App\Models\Guild\GuildInvitation;
+use App\Models\Guild\GuildApplication;
 use App\Models\Guild\GuildItem;
 use App\Models\Guild\GuildMember;
 use App\Models\Guild\GuildRank;
@@ -15,6 +16,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Notifications;
+use Settings;
 
 class GuildManager extends Service {
     /*
@@ -364,6 +366,122 @@ class GuildManager extends Service {
 
         return $this->rollbackReturn(false);
     }
+
+    /**
+     * Creates a new application for a guild.
+     *
+     * @param \App\Models\Guild\Guild $guild
+     * @param array                   $data
+     * @param \App\Models\User\User   $user
+     *
+     * @return bool
+     */
+    public function applyToGuild($guild, $data, $user) {
+        $in_guild = GuildMember::where([
+            ['guild_id', $guild->id],
+            ['user_id', $user->id],
+        ])->exists();
+
+        DB::beginTransaction();
+
+        try {
+            if ($in_guild) {
+                throw new \Exception('You are already in the guild!');
+            }
+            
+            $alreadyApplied = GuildApplication::where([
+                ['guild_id', $guild->id],
+                ['user_id', $user->id],
+            ])->exists();
+
+            if ($alreadyApplied) {
+                throw new \Exception('You have already applied to this guild!');
+            }
+
+            $app = GuildApplication::create([
+                'guild_id'      => $guild->id,
+                'user_id'       => $user->id,
+                'comment'       => parse($data['application_message']) ?? null,
+                'status'        => 'pending',
+            ]);
+
+            return $this->commitReturn(true);
+        } catch (\Exception $e) {
+            $this->setError('error', $e->getMessage());
+        }
+
+        return $this->rollbackReturn(false);
+    }
+
+    /**
+     * Handles applications in bulk.
+     *
+     * @param \App\Models\Guild\Guild $guild
+     * @param array                   $data
+     * @param \App\Models\User\User   $user
+     * @param string                  $action
+     *
+     * @return bool
+     */
+    public function handleApplications($guild, $data, $user, $action) {
+        DB::beginTransaction();
+
+        try {
+            if (!$guild || !$user || !in_array($action, ['accept', 'reject'], true)) {
+                throw new \Exception('Invalid request.');
+            }
+            if ((int) $user->id !== (int) $guild->owner_id && !$user->isStaff) {
+                throw new \Exception('Only the Guild Owner or staff may manage applications.');
+            }
+            if (!isset($data['application_ids']) || !is_array($data['application_ids']) || count($data['application_ids']) < 1) {
+                throw new \Exception('Select at least one application.');
+            }
+
+            if ($action === 'accept') {
+                foreach( $data['application_ids'] as $app_id) {
+                    $app = GuildApplication::where('guild_id', $guild->id)->where('id', $app_id)->first();
+
+                    if (!$app) {
+                        throw new \Exception('One or more selected applications do not belong to this guild.');
+                    }
+
+                    $updates = ['status' => 'accepted', 'updated_at' => Carbon::now()];
+                    if (isset($data['guild_comment']) && array_key_exists($app->id, $data['guild_comment'])) {
+                        $updates['guild_comment'] = $data['guild_comment'][$app->id];
+                    }
+                    $app->update($updates);
+
+                    GuildMember::create([
+                        'guild_id'      => $guild->id,
+                        'user_id'       => $app->user_id,
+                        'permissions'   => 0,
+                        'joined_at'     => Carbon::now(),
+                    ]);
+                }
+            } else if ($action === 'reject') {
+                foreach( $data['application_ids'] as $app_id) {
+                    $app = GuildApplication::where('guild_id', $guild->id)->where('id', $app_id)->first();
+
+                    if (!$app) {
+                        throw new \Exception('One or more selected applications do not belong to this guild.');
+                    }
+
+                    $updates = ['status' => 'rejected', 'updated_at' => Carbon::now()];
+                    if (isset($data['guild_comment']) && array_key_exists($app->id, $data['guild_comment'])) {
+                        $updates['guild_comment'] = $data['guild_comment'][$app->id];
+                    }
+                    $app->update($updates);
+                }
+            }
+
+            return $this->commitReturn($action == 'expired' ?: true);
+        } catch (\Exception $e) {
+            $this->setError('error', $e->getMessage());
+        }
+
+        return $this->rollbackReturn(false);
+    }
+
 
     /**
      * Handles an invitation based on the action supplied.
@@ -1056,10 +1174,10 @@ class GuildManager extends Service {
             $data['status'] = $guild ? $guild->status : $data['status'] ?? 'inactive';
         }
         if (!isset($data['max_users'])) {
-            $data['max_users'] = $guild ? $guild->max_users : Setting::get('guild_max_users');
+            $data['max_users'] = $guild ? $guild->max_users : Settings::get('guild_max_users');
         }
         if (!isset($data['max_characters'])) {
-            $data['max_characters'] = $guild ? $guild->max_characters : Setting::get('guild_max_characters');
+            $data['max_characters'] = $guild ? $guild->max_characters : Settings::get('guild_max_characters');
         }
         if (!isset($data['open_inventory'])) {
             $data['open_inventory'] = 0;

@@ -123,6 +123,13 @@ class Guild extends Model {
         return $this->hasMany(GuildRank::class, 'guild_id');
     }
 
+    /**
+     * Get the applications in the guild.
+     */
+    public function applications() {
+        return $this->hasMany(GuildApplication::class, 'guild_id');
+    }
+
     /**********************************************************************************************
 
         SCOPES
