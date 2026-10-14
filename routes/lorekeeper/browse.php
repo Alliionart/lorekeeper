@@ -241,6 +241,7 @@ Route::group(['prefix' => __('guilds.guilds'), 'namespace' => 'Guilds'], functio
             Route::get('/', 'GuildController@getGuildCharacters');
             Route::get('add', 'GuildController@getGuildAddCharactersModal');
             Route::post('add', 'GuildController@postGuildAddCharacters');
+            Route::get('remove', 'GuildController@getGuildRemoveCharactersModal');
             Route::post('remove', 'GuildController@postGuildRemoveCharacters');
         });
 
@@ -253,6 +254,8 @@ Route::group(['prefix' => __('guilds.guilds'), 'namespace' => 'Guilds'], functio
         Route::get('armory', 'GuildController@getGuildArmory');
 
         Route::post('disband', 'GuildController@postDisbandGuild');
+        Route::post('delete', 'GuildController@postDeleteGuild');
+        Route::post('leave', 'GuildController@postLeaveGuild');
         Route::post('invite/{action}', 'GuildController@postGuildInvitationAction')->where('action', 'accept|reject');
     });
 });

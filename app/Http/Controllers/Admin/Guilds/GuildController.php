@@ -117,7 +117,7 @@ class GuildController extends Controller {
 
         return view('admin.guilds.guild', [
             'guild'       => $guild,
-            'userOptions' => User::query()->orderBy('name')->pluck('name', 'id')->toArray(),
+            'userOptions' => User::visible()->orderBy('name')->pluck('name', 'id')->toArray(),
         ]);
     }
 
@@ -129,7 +129,7 @@ class GuildController extends Controller {
     public function getCreateGuild() {
         return view('admin.guilds.guild', [
             'guild' => new Guild(),
-            'users' => User::orderBy('id')->pluck('name', 'id'),
+            'userOptions' => User::visible()->orderBy('name')->pluck('name', 'id')->toArray(),
         ]);
     }
 
@@ -145,8 +145,8 @@ class GuildController extends Controller {
         $data = $request->only([
             'name', 'description', 'location',
             'location', 'max_users', 'max_characters',
-            'open_new_users',
-            'logo', 'remove_logo',
+            'open_new_users', 'status',
+            'logo', 'remove_logo', 'owner_id',
         ]);
 
         if ($id && $service->updateGuild(Guild::find($id), $data, Auth::user())) {

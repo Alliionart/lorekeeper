@@ -42,15 +42,26 @@ class GuildManager extends Service {
 
             $image = null;
             if (isset($data['image']) && $data['image']) {
-                $data['has_image'] = 1;
+                $data['has_logo'] = 1;
                 $data['hash'] = randomString(10);
                 $image = $data['image'];
                 unset($data['image']);
             } else {
-                $data['has_image'] = 0;
+                $data['has_logo'] = 0;
             }
 
-            $guild = Guild::create(Arr::only($data, ['name', 'summary', 'description', 'parsed_description']));
+            $guild = Guild::create(Arr::only($data, [
+                'name', 'description', 'parsed_description', 'location',
+                'max_users', 'max_characters',
+                'open_new_users', 'status',
+                'has_logo', 'hash',
+                'owner_id',
+            ]));
+
+            if ($guild) {
+                $this->logAdminAction($user, 'Created Guild', 'Created Guild '.$guild->id);
+                $this->updateGuildStaff($guild, $data, $user);
+            }
 
             if ($image) {
                 $this->handleImage($image, $guild->imagePath, $guild->logoFileName);
@@ -75,38 +86,55 @@ class GuildManager extends Service {
      *
      * @return \App\Models\Guild\Guild|bool
      */
-    public function updateGuildStaff($guild, $data, $user) {
+    public function updateGuildStaff($guild, $data, $user, $previousOwnerId = null) {
         DB::beginTransaction();
 
         try {
             if (!$guild) {
                 throw new \Exception('Invalid guild.');
             }
-            if ($user->id !== $guild->owner_id) {
+            $previousOwnerId = $previousOwnerId ?? $guild->owner_id;
+            if ((int) $user->id !== (int) $previousOwnerId && !$user->isStaff) {
                 throw new \Exception('Only the guild owner may edit staff!');
             }
 
-            if ((int) $data['owner_id'] !== (int) $guild->owner_id) {
-                $guild->update([
-                    'owner_id'  => $data['owner_id'],
+            $ownerId = $data['owner_id'] ?? $guild->owner_id;
+            $ownerChanged = (int) $ownerId !== (int) $previousOwnerId;
+            $ownerMembership = GuildMember::where([
+                ['guild_id', $guild->id],
+                ['user_id', $ownerId],
+            ]);
+
+            if (!$ownerMembership->exists()) {
+                GuildMember::create([
+                    'guild_id'      => $guild->id,
+                    'user_id'       => $ownerId,
+                    'permissions'   => 2,
+                    'joined_at'     => Carbon::now(),
+                ]);
+            } elseif ($ownerChanged) {
+                $ownerMembership->update([
+                    'permissions'   => 2,
                 ]);
             }
 
-            $mods = $guild->mods()->get();
-            $newMods = $data['mods'];
+            if (isset($data['mods']) && is_array($data['mods'])) {
+                $mods = $guild->mods()->get();
+                $newMods = $data['mods'];
 
-            $removeMods = array_diff($mods->pluck('user_id')->toArray(), $newMods);
-            $newMods = array_diff($newMods, $mods->pluck('user_id')->toArray());
+                $removeMods = array_diff($mods->pluck('user_id')->toArray(), $newMods);
+                $newMods = array_diff($newMods, $mods->pluck('user_id')->toArray());
 
-            if (!empty($removeMods)) {
-                $guild->mods()
-                    ->whereIn('user_id', $removeMods)
-                    ->update(['permissions' => 0]);
-            }
-            if (!empty($newMods)) {
-                $guild->mods()
-                    ->whereIn('user_id', $newMods)
-                    ->update(['permissions' => 1]);
+                if (!empty($removeMods)) {
+                    $guild->mods()
+                        ->whereIn('user_id', $removeMods)
+                        ->update(['permissions' => 0]);
+                }
+                if (!empty($newMods)) {
+                    $guild->mods()
+                        ->whereIn('user_id', $newMods)
+                        ->update(['permissions' => 1]);
+                }
             }
 
             return $this->commitReturn(true);
@@ -128,8 +156,6 @@ class GuildManager extends Service {
      */
     public function updateGuild($guild, $data, $user) {
         DB::beginTransaction();
-
-        \Log::info(public_path('images/data/guilds/'));
 
         try {
             // More specific validation
@@ -153,7 +179,13 @@ class GuildManager extends Service {
 
             $data = $this->populateData($data, $guild);
 
+            $previousOwnerId = $guild->owner_id;
             $guild->update($data);
+
+            $this->logAdminAction($user, 'Updated Guild', 'Updated Guild '.$guild->id);
+            if (!$this->updateGuildStaff($guild, $data, $user, $previousOwnerId)) {
+                throw new \Exception('Failed to update guild staff.');
+            }
 
             if ($guild && $logo) {
                 $this->handleImage($logo, $guild->imagePath, $guild->logoFileName);
@@ -182,16 +214,15 @@ class GuildManager extends Service {
         DB::beginTransaction();
 
         try {
-            if ($user->id !== $guild->owner_id || !$user->isStaff) {
+            if (!$guild) {
+                throw new \Exception('Invalid guild.');
+            }
+            if ((int) $user->id !== (int) $guild->owner_id && !$user->isStaff) {
                 throw new \Exception('Only the Guild Owner or staff may disband the guild.');
             }
-            if ($guild->members) {
-                //Delete the members rows from the guild_users table here
-            }
-            if ($guild->characters) {
-                //Delete the members rows from the guild_characters table here
-            }
-            //Delete other relational data besides bank/inv
+
+            $guild->members()->delete();
+            $guild->characters()->delete();
 
             $guild->update([
                 'is_disbanded'  => true,
@@ -218,16 +249,15 @@ class GuildManager extends Service {
         DB::beginTransaction();
 
         try {
+            if (!$guild) {
+                throw new \Exception('Invalid guild.');
+            }
             if (!$user->isStaff) {
                 throw new \Exception('Only staff may delete the guild.');
             }
-            if ($guild->members) {
-                //Delete the members rows from the guild_users table here
-            }
-            if ($guild->characters) {
-                //Delete the members rows from the guild_characters table here
-            }
-            //Delete other relational data besides bank/inv
+
+            $guild->members()->delete();
+            $guild->characters()->delete();
             if (!$this->logAdminAction($user, 'Deleted Guild', 'Deleted Guild '.$guild->id)) {
                 throw new \Exception('Failed to log admin action.');
             }
@@ -269,34 +299,61 @@ class GuildManager extends Service {
         DB::beginTransaction();
 
         try {
-            if (!isset($data['action']) || !$data['action']) {
-                throw new \Exception('You must provide an action!');
+            if (!$guild || !in_array($manage, ['users', 'characters'], true)) {
+                throw new \Exception('Invalid guild or member type.');
+            }
+            if (!$user->isStaff && !$guild->getGuildEditPermissions($user)) {
+                throw new \Exception('You do not have permission to manage this guild.');
+            }
+            if (!isset($data['action']) || !in_array($data['action'], ['remove', 'update_rank'], true)) {
+                throw new \Exception('You must provide a valid action.');
             }
 
-            if ($manage == 'users') {
-                switch ($data['action']) {
-                    case 'update_rank':
-                        $rank = $data['user_rank'] ?? false;
-                        if (!$rank) {
-                            throw new \Exception('You must provide a rank to update!');
-                        }
-                        break;
-                    case 'remove':
-                        $this->removeMembers($guild, $data['user_ids'], $user);
-                        break;
+            $idField = $manage === 'users' ? 'user_ids' : 'character_ids';
+            $ids = $data[$idField] ?? [];
+            if (!is_array($ids) || count($ids) < 1) {
+                throw new \Exception('Select at least one '.($manage === 'users' ? 'member' : 'character').'.');
+            }
+            $ids = array_values(array_unique($ids));
+
+            if ($data['action'] === 'update_rank') {
+                $rankField = $manage === 'users' ? 'user_rank' : 'character_rank';
+                $rank = GuildRank::where('guild_id', $guild->id)
+                    ->where('for_user', $manage === 'users' ? 1 : 0)
+                    ->where('for_character', $manage === 'characters' ? 1 : 0)
+                    ->where('id', $data[$rankField] ?? null)
+                    ->first();
+
+                if (!$rank) {
+                    throw new \Exception('Select a valid rank.');
                 }
+
+                if ($manage === 'users') {
+                    $records = GuildMember::where('guild_id', $guild->id)->whereIn('user_id', $ids);
+                } else {
+                    $records = GuildCharacter::where('guild_id', $guild->id)->whereIn('character_id', $ids);
+                }
+
+                if ($records->count() !== count($ids)) {
+                    throw new \Exception('One or more selected entries do not belong to this guild.');
+                }
+                $records->update(['rank_id' => $rank->id]);
+            } elseif ($manage === 'users') {
+                if (in_array((string) $guild->owner_id, array_map('strval', $ids), true)) {
+                    throw new \Exception('The guild owner cannot be removed.');
+                }
+
+                $records = GuildMember::where('guild_id', $guild->id)->whereIn('user_id', $ids);
+                if ($records->count() !== count($ids)) {
+                    throw new \Exception('One or more selected members do not belong to this guild.');
+                }
+                $records->delete();
             } else {
-                switch ($data['action']) {
-                    case 'update_rank':
-                        $rank = $data['character_rank'] ?? false;
-                        if (!$rank) {
-                            throw new \Exception('You must provide a rank to update!');
-                        }
-                        break;
-                    case 'remove':
-                        $this->removeCharacters($guild, $data['character_ids'], $user);
-                        break;
+                $records = GuildCharacter::where('guild_id', $guild->id)->whereIn('character_id', $ids);
+                if ($records->count() !== count($ids)) {
+                    throw new \Exception('One or more selected characters do not belong to this guild.');
                 }
+                $records->delete();
             }
 
             return $this->commitReturn(true);
@@ -370,10 +427,13 @@ class GuildManager extends Service {
         DB::beginTransaction();
 
         try {
-            if ($user->id !== $guild->owner_id || !$user->isStaff) {
+            if (!$guild) {
+                throw new \Exception('Invalid guild.');
+            }
+            if ((int) $user->id !== (int) $guild->owner_id && !$user->isStaff) {
                 throw new \Exception('Only the Guild Owner or staff may edit members.');
             }
-            if (!$data || !is_array($data) || count($data) < 1) {
+            if (!isset($data['users']) || !is_array($data['users']) || count($data['users']) < 1) {
                 throw new \Exception('Members list is invalid.');
             }
 
@@ -386,7 +446,7 @@ class GuildManager extends Service {
                     throw new \Exception('At least one user is invalid.');
                 }
 
-                if ($u_id === $guild->owner_id) {
+                if ((int) $u_id === (int) $guild->owner_id) {
                     throw new \Exception('The owner cannot be removed from the guild.');
                 }
 
@@ -395,11 +455,30 @@ class GuildManager extends Service {
                     ['user_id', $u->id],
                 ])->exists();
 
-                if ($in_guild || !$user->settings->allow_guild_invitations) {
+                if ($in_guild) {
                     continue;
                 }
 
-                // Always create an invite first
+                $invitationQuery = GuildInvitation::where('guild_id', $guild->id)->where('user_id', $u->id);
+                $hasPendingInvitation = (clone $invitationQuery)
+                    ->where(function ($query) {
+                        $query->whereNull('expires_at')->orWhere('expires_at', '>', Carbon::now());
+                    })
+                    ->exists();
+
+                if ($hasPendingInvitation) {
+                    throw new \Exception($u->name.' already has a pending guild invitation.');
+                }
+
+                if (!$user->settings->allow_guild_invitations) {
+                    continue;
+                }
+
+                $invitationQuery
+                    ->whereNotNull('expires_at')
+                    ->where('expires_at', '<=', Carbon::now())
+                    ->delete();
+
                 $invitation = GuildInvitation::create([
                     'guild_id'      => $guild->id,
                     'user_id'       => $u->id,
@@ -441,47 +520,65 @@ class GuildManager extends Service {
         DB::beginTransaction();
 
         try {
-            if ($user->id !== $guild->owner_id || !$user->isStaff) {
+            if (!$guild || (!$user->isStaff && !$guild->getGuildEditPermissions($user))) {
                 throw new \Exception('Only the Guild Owner or staff may edit members.');
             }
-            if (!$data || !is_array($data) || count($data) < 1) {
+            if (!isset($data['users']) || !is_array($data['users']) || count($data['users']) < 1) {
                 throw new \Exception('Members list is invalid.');
             }
 
-            $removedMembers = [];
-
-            foreach ($data['users'] as $u_id) {
-                $u = User::find($u_id);
-
-                if (!$u) {
-                    throw new \Exception('At least one user is invalid.');
-                }
-                if ($u_id == $guild->owner_id) {
-                    throw new \Exception('Guild owner cannot be removed from the guild.');
-                }
-
-                dd('got past owner removal');
-
-                $in_guild = GuildMember::where([
-                    ['guild_id', $guild->id],
-                    ['user_id', $u->id],
-                ])->exists();
-
-                if (!$in_guild) {
-                    continue;
-                }
-
-                $member = GuildMember::where([
-                    ['user_id', $u->id],
-                    ['guild_id', $guild->id],
-                ])->delete();
-
-                if ($member) {
-                    $removedMembers[] = $u->displayName;
-                }
+            $userIds = array_values(array_unique($data['users']));
+            if (in_array((string) $guild->owner_id, array_map('strval', $userIds), true)) {
+                throw new \Exception('Guild owner cannot be removed from the guild.');
             }
 
-            return $this->commitReturn($removedMembers);
+            $members = GuildMember::where('guild_id', $guild->id)->whereIn('user_id', $userIds);
+            if ($members->count() !== count($userIds)) {
+                throw new \Exception('One or more selected members do not belong to this guild.');
+            }
+            $members->delete();
+
+            return $this->commitReturn(true);
+        } catch (\Exception $e) {
+            $this->setError('error', $e->getMessage());
+        }
+
+        return $this->rollbackReturn(false);
+    }
+
+    /**
+     * Removes a user from a guild and detaches their characters.
+     *
+     * @param \App\Models\Guild\Guild $guild
+     * @param \App\Models\User\User   $user
+     *
+     * @return bool
+     */
+    public function leaveGuild($guild, $user) {
+        DB::beginTransaction();
+
+        try {
+            if (!$guild) {
+                throw new \Exception('Invalid guild.');
+            }
+            if ((int) $user->id === (int) $guild->owner_id) {
+                throw new \Exception('The guild owner must transfer ownership before leaving.');
+            }
+
+            $membership = GuildMember::where([
+                ['guild_id', $guild->id],
+                ['user_id', $user->id],
+            ])->first();
+
+            if (!$membership) {
+                throw new \Exception('You are not a member of this guild.');
+            }
+
+            $characterIds = Character::where('user_id', $user->id)->pluck('id');
+            $guild->characters()->whereIn('character_id', $characterIds)->delete();
+            $membership->delete();
+
+            return $this->commitReturn(true);
         } catch (\Exception $e) {
             $this->setError('error', $e->getMessage());
         }
@@ -502,6 +599,9 @@ class GuildManager extends Service {
         DB::beginTransaction();
 
         try {
+            if (!$guild || (!$user->isStaff && !$guild->getGuildEditPermissions($user))) {
+                throw new \Exception('You do not have permission to edit this guild.');
+            }
             if (!$data || !is_array($data['characters']) || count($data['characters']) < 1) {
                 throw new \Exception('Characters list is invalid.');
             }
@@ -514,8 +614,11 @@ class GuildManager extends Service {
                 if (!$c || $c->is_myo_slot) {
                     throw new \Exception('At least one character is invalid.');
                 }
-                if ($c->user_id !== $user->id || !$user->isStaff) {
-                    throw new \Exception('Only the owner or site admins may add the character to the guild.');
+                if (!$user->isStaff && !GuildMember::where([
+                    ['guild_id', $guild->id],
+                    ['user_id', $c->user_id],
+                ])->exists()) {
+                    throw new \Exception('Only characters belonging to guild members may be added.');
                 }
 
                 $in_guild = GuildCharacter::where([
@@ -559,6 +662,9 @@ class GuildManager extends Service {
         DB::beginTransaction();
 
         try {
+            if (!$guild || (!$user->isStaff && !$guild->getGuildEditPermissions($user))) {
+                throw new \Exception('You do not have permission to edit this guild.');
+            }
             if (!$data || !is_array($data['characters']) || count($data['characters']) < 1) {
                 throw new \Exception('Characters list is invalid.');
             }
@@ -571,10 +677,6 @@ class GuildManager extends Service {
                 if (!$c || $c->is_myo_slot) {
                     throw new \Exception('At least one character is invalid.');
                 }
-                if ($c->user_id !== $user->id || !$user->isStaff) {
-                    throw new \Exception('Only the owner or site admins may remove the character from the guild.');
-                }
-
                 $in_guild = GuildCharacter::where([
                     ['guild_id', $guild->id],
                     ['character_id', $c->id],
@@ -654,8 +756,8 @@ class GuildManager extends Service {
                             'is_character_rank'     => 0,
                             'description'           => $rank['description'],
                             'has_image'             => $icon ? true : false,
-                            'for_character'         => true,
-                            'for_user'              => false,
+                            'for_character'         => false,
+                            'for_user'              => true,
                         ]);
                     } else {
                         $currentRank->update([
@@ -946,7 +1048,18 @@ class GuildManager extends Service {
         if (isset($data['description']) && $data['description']) {
             $data['parsed_description'] = parse($data['description']);
         }
-
+        if (!isset($data['owner_id'])) {
+            $data['owner_id'] = $guild ? $guild->owner_id : $data['owner_id'] ?? null;
+        }
+        if (!isset($data['status'])) {
+            $data['status'] = $guild ? $guild->status : $data['status'] ?? 'inactive';
+        }
+        if (!isset($data['max_users'])) {
+            $data['max_users'] = $guild ? $guild->max_users : Setting::get('guild_max_users');
+        }
+        if (!isset($data['max_characters'])) {
+            $data['max_characters'] = $guild ? $guild->max_characters : Setting::get('guild_max_characters');
+        }
         if (!isset($data['open_inventory'])) {
             $data['open_inventory'] = 0;
         }

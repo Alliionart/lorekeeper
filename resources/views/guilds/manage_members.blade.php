@@ -46,7 +46,7 @@
                                 'update_rank' => 'Update Rank',
                             ],
                             null,
-                            ['class' => 'form-control', 'placeholder' => 'Select bulk action...'],
+                            ['class' => 'form-control bulk-action', 'id' => 'user-action', 'placeholder' => 'Select bulk action...'],
                         ) !!}
                     </div>
                 </div>
@@ -107,7 +107,7 @@
                                 'update_rank' => 'Update Rank',
                             ],
                             null,
-                            ['class' => 'form-control', 'placeholder' => 'Select bulk action...'],
+                            ['class' => 'form-control bulk-action', 'id' => 'character-action', 'placeholder' => 'Select bulk action...'],
                         ) !!}
                     </div>
                 </div>
@@ -159,7 +159,7 @@
     <script>
         $(document).ready(function() {
 
-            $('#action').change(function() {
+            $('.bulk-action').on('change', function() {
                 var action = $(this).val();
                 var $container = $(this).closest('.action-bar');
 

@@ -20,6 +20,7 @@
                 @endif
             </div>
         </div>
+        <?php $i++; ?>
         @if (isset($limit) && $i === $limit - 1)
         @break
     @endif

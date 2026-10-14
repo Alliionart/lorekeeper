@@ -8,6 +8,7 @@ use App\Models\Character\Character;
 use App\Models\Currency\Currency;
 use App\Models\Guild\Guild;
 use App\Models\Guild\GuildCurrency;
+use App\Models\Guild\GuildInvitation;
 use App\Models\Guild\GuildItem;
 use App\Models\Guild\GuildMember;
 use App\Models\Guild\GuildShop;
@@ -282,8 +283,6 @@ class GuildController extends Controller {
             'categories'    => $categories->keyBy('id'),
             'items'         => $items,
             'currencies'    => Currency::whereIn('id', GuildShopStock::where('guild_shop_id', $shop->id)->pluck('currency_id')->toArray())->get()->keyBy('id'),
-            //TODO: add shop variables and data
-            //TODO: make shop not viewable if the shop is not active
         ]);
     }
 
@@ -545,7 +544,14 @@ class GuildController extends Controller {
         }
 
         $in_guild = $guild->members->pluck('user_id')->toArray();
-        $applicable_users = User::visible()->whereNotIn('id', $in_guild)->orderBy('name')->get()->pluck('verified_name', 'id')->toArray();
+        $pending_invites = GuildInvitation::where('guild_id', $guild->id)
+            ->where(function ($query) {
+                $query->whereNull('expires_at')->orWhere('expires_at', '>', now());
+            })
+            ->pluck('user_id')
+            ->toArray();
+        $excluded_users = array_unique(array_merge($in_guild, $pending_invites));
+        $applicable_users = User::visible()->whereNotIn('id', $excluded_users)->orderBy('name')->get()->pluck('verified_name', 'id')->toArray();
 
         return view('guilds._invite_users_modal', [
             'guild'     => $guild,
@@ -563,7 +569,7 @@ class GuildController extends Controller {
     public function getGuildAddCharactersModal($id) {
         $guild = Guild::where('id', $id)->first();
 
-        if (!$guild->getPermission()) {
+        if (!$guild || !$guild->getPermission()) {
             abort(404);
         }
 
@@ -572,6 +578,30 @@ class GuildController extends Controller {
         $characters = Character::visible()->whereNotIn('id', $in_guild)->whereIn('user_id', $user_ids)->where('is_myo_slot', 0)->orderBy('name')->get()->pluck('fullName', 'id')->toArray();
 
         return view('guilds._add_characters_modal', [
+            'guild'         => $guild,
+            'characters'    => $characters,
+        ]);
+    }
+
+    /**
+     * Shows the modal to remove characters from the guild.
+     *
+     * @param mixed $id
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function getGuildRemoveCharactersModal($id) {
+        $guild = Guild::where('id', $id)->first();
+
+        if (!$guild || !$guild->getPermission()) {
+            abort(404);
+        }
+
+        $characters = $guild->characters->mapWithKeys(function ($guildCharacter) {
+            return [$guildCharacter->character_id => $guildCharacter->character->fullName];
+        })->toArray();
+
+        return view('guilds._remove_characters_modal', [
             'guild'         => $guild,
             'characters'    => $characters,
         ]);
@@ -608,7 +638,7 @@ class GuildController extends Controller {
      */
     public function postEditManageMembers(Request $request, GuildManager $service, $id) {
         $guild = Guild::find($id);
-        $manage_type = $request->only('manage-type')['manage-type'];
+        $manage_type = $request->input('manage-type');
         $data = $request->only(['action', 'user_rank', 'character_rank', 'user_ids', 'character_ids']);
 
         if ($invited = $service->manageMembers($guild, $manage_type, $data, Auth::user())) {
@@ -968,6 +998,52 @@ class GuildController extends Controller {
 
         if ($service->disbandGuild($guild, Auth::user())) {
             flash('Guild was successfully disbanded and members, characters and all removed.')->success();
+        } else {
+            foreach ($service->errors()->getMessages()['error'] as $error) {
+                flash($error)->error();
+            }
+        }
+
+        return redirect()->back();
+    }
+
+    /**
+     * Deletes a guild.
+     *
+     * @param int                       $id
+     * @param App\Services\GuildManager $service
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function postDeleteGuild($id, GuildManager $service) {
+        $guild = Guild::find($id);
+
+        if ($service->deleteGuild($guild, Auth::user())) {
+            flash('Guild deleted successfully.')->success();
+
+            return redirect()->to(__('guilds.guilds'));
+        }
+
+        foreach ($service->errors()->getMessages()['error'] as $error) {
+            flash($error)->error();
+        }
+
+        return redirect()->back();
+    }
+
+    /**
+     * Allows a member to leave a guild.
+     *
+     * @param int                       $id
+     * @param App\Services\GuildManager $service
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function postLeaveGuild($id, GuildManager $service) {
+        $guild = Guild::find($id);
+
+        if ($service->leaveGuild($guild, Auth::user())) {
+            flash('You have left the guild.')->success();
         } else {
             foreach ($service->errors()->getMessages()['error'] as $error) {
                 flash($error)->error();

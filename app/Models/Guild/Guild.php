@@ -53,6 +53,7 @@ class Guild extends Model {
         'description' => 'nullable',
         'logo'        => 'nullable|image|mimes:png,gif|max:200',
         'banner'      => 'nullable|image|mimes:png,gif|max:800',
+        'owner_id'    => 'required|exists:users,id',
     ];
 
     /**
@@ -64,6 +65,7 @@ class Guild extends Model {
         'description' => 'nullable',
         'logo'        => 'nullable|image|mimes:png,gif|max:200',
         'banner'      => 'nullable|image|mimes:png,gif|max:800',
+        'owner_id'    => 'nullable|exists:users,id',
     ];
 
     /**********************************************************************************************
@@ -399,6 +401,18 @@ class Guild extends Model {
      */
     public function getInviteRejectAttribute() {
         return url(__('guilds.guilds').'/'.$this->id.'/invite/reject');
+    }
+
+    /**
+     * Check if a user or currently logged in user is a member of the guild.
+     * 
+     * @return bool
+     */
+    public function getUserInGuildAttribute($user = null) {
+        if (!$user) {
+            $user = Auth::user();
+        }
+        return $this->members()->where('user_id', $user->id)->exists();
     }
 
     /**********************************************************************************************

@@ -40,7 +40,7 @@
         {!! $guilds->render() !!}
         @foreach ($guilds->chunk(1) as $chunk)
             @foreach ($chunk as $guild)
-                <div class="col-md-12">
+                <div class="col-md-12 my-2">
                     @include('guilds._guild_box', ['guild' => $guild])
                 </div>
             @endforeach
