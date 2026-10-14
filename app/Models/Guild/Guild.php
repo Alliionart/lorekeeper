@@ -405,13 +405,16 @@ class Guild extends Model {
 
     /**
      * Check if a user or currently logged in user is a member of the guild.
-     * 
+     *
+     * @param mixed|null $user
+     *
      * @return bool
      */
     public function getUserInGuildAttribute($user = null) {
         if (!$user) {
             $user = Auth::user();
         }
+
         return $this->members()->where('user_id', $user->id)->exists();
     }
 

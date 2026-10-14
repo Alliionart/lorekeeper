@@ -128,7 +128,7 @@ class GuildController extends Controller {
      */
     public function getCreateGuild() {
         return view('admin.guilds.guild', [
-            'guild' => new Guild(),
+            'guild'       => new Guild(),
             'userOptions' => User::visible()->orderBy('name')->pluck('name', 'id')->toArray(),
         ]);
     }

@@ -83,6 +83,7 @@ class GuildManager extends Service {
      * @param \App\Models\Guild\Guild $guild
      * @param array                   $data
      * @param \App\Models\User\User   $user
+     * @param mixed|null              $previousOwnerId
      *
      * @return \App\Models\Guild\Guild|bool
      */
@@ -93,7 +94,7 @@ class GuildManager extends Service {
             if (!$guild) {
                 throw new \Exception('Invalid guild.');
             }
-            $previousOwnerId = $previousOwnerId ?? $guild->owner_id;
+            $previousOwnerId ??= $guild->owner_id;
             if ((int) $user->id !== (int) $previousOwnerId && !$user->isStaff) {
                 throw new \Exception('Only the guild owner may edit staff!');
             }
