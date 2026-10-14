@@ -15,7 +15,7 @@
         @if ($guild->is_disbanded)
             <span class="badge badge-danger text-uppercase" style="position:absolute;top:20px;left:20px;font-size:18px;">Disbanded</span>
         @endif
-        
+
         <div class="jumbo-inner py-3 px-5 d-flex align-items-center justify-content-between" style="transform:translateY(45px)">
             <div class="d-flex align-items-center">
                 @if ($guild->has_logo)
@@ -25,11 +25,16 @@
             </div>
 
             <?php
-                $user = Auth::user();
-                $inGuild = $user ? $guild->members()->where('user_id', $user->id)->exists() : false;
-                $isStaff = $user && $user->isStaff;
-                $isOwner = $user && (int) $guild->owner_id === (int) $user->id;
-                $canManage = $isStaff || ($user && $guild->getGuildEditPermissions($user));
+            $user = Auth::user();
+            $inGuild = $user
+                ? $guild
+                    ->members()
+                    ->where('user_id', $user->id)
+                    ->exists()
+                : false;
+            $isStaff = $user && $user->isStaff;
+            $isOwner = $user && (int) $guild->owner_id === (int) $user->id;
+            $canManage = $isStaff || ($user && $guild->getGuildEditPermissions($user));
             ?>
 
             @if ($inGuild || $isStaff)
