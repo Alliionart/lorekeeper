@@ -100,10 +100,6 @@ return [
                 'url'  => 'admin/claims',
             ],
             [
-                'name' => 'Queue Submissions',
-                'url'  => 'admin/queue-submissions',
-            ],
-            [
                 'name' => 'Guild Requests',
                 'url'  => '/admin/guilds/queue',
             ],
@@ -201,10 +197,6 @@ return [
             [
                 'name' => 'Items',
                 'url'  => 'admin/data/items',
-            ],
-            [
-                'name' => 'Queues',
-                'url'  => 'admin/data/queues',
             ],
             [
                 'name' => 'Guilds',

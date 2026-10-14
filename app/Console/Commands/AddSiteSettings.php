@@ -83,8 +83,6 @@ class AddSiteSettings extends Command {
 
         $this->addSiteSetting('comment_dislikes_enabled', 0, '0: Dislikes disabled, 1: Dislikes enabled.');
 
-        $this->addSiteSetting('is_queue_open', 1, '0: New queue submissions cannot be made (mods can work on the queue still), 1: Queue is submittable.');
-
         $this->addSiteSetting('guilds_max_players', 25, 'Enter a the maximum amount of players a guild may have.');
 
         $this->addSiteSetting('guilds_max_characters', 250, 'Enter a the maximum amount of characters a guild may have.');
