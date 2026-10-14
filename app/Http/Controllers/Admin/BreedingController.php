@@ -114,7 +114,6 @@ class BreedingController extends Controller {
                 'sex_override'     => 'Same Gender may Mate (Male|Female)',             // Allows parents to be same gender
                 'base_override'    => 'Guarantee Base (Base ID)',                       // Overrides the base of the offspring to a specific base
                 'convert_split'    => 'Convert Split Slot',                             // Overrides the base of the offspring to a specific base
-                'override_glint'   => 'Override Glint',                                 // Overrides the glint of the offspring to a chosen color if passed
             ],
             'currentSettings'   => [
                 'species_rates'     => $this->getBreedingSetting('breeding_species_rates'),

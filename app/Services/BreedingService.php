@@ -455,8 +455,8 @@ class BreedingService extends Service {
         DB::beginTransaction();
 
         try {
-            if ($breeding->user_id !== $user->id && !$user->isStaff) {
-                throw new \Exception('Only the creator of this breeding may cancel it.');
+            if (!$user->isStaff) {
+                throw new \Exception('Only staff members may reject this breeding.');
             }
 
             $breeding->update([
@@ -481,7 +481,7 @@ class BreedingService extends Service {
         DB::beginTransaction();
 
         try {
-            if ($breeding->user_id !== $user->id && !$user->isStaff) {
+            if ((int) $breeding->user_id !== (int) $user->id && !$user->isStaff) {
                 throw new \Exception('Only the creator of this breeding may cancel it.');
             }
 

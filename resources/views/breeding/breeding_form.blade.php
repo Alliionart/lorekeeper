@@ -172,75 +172,77 @@
 
         <hr />
 
-        <div class="card">
-            <div class="card-header">
-                <h4>Breeding Modifiers</h4>
-            </div>
-            <?php
-            $item_ids = array_keys((array) $mod_items->items) ?? null;
-            $current_items = $breeding && $breedingData && isset($breedingData->user->user_items) ? $breedingData->user->user_items : null;
-            ?>
-            <div class="card-body modifiers">
-                <p>Select any modifiers for your breeding. Some may require item usage.</p>
-                @if ($breeding_items->count() > 0)
-                    <div class="row">
-                        @foreach ($breeding_items as $item)
-                            @if (in_array($item->id, $item_ids))
-                                <?php
-                                $item_count = isset($user_items[$item->id]) ? $user_items[$item->id] : 0;
-                                $type = $mod_items->items->{$item->id}->type;
-                                $existing_stack_id = null;
-                                $existing_value = null;
-                                if ($current_items) {
-                                    foreach ($current_items as $stack_id => $current_item) {
-                                        $current_item_id = is_array($current_item) ? $current_item['item_id'] ?? null : $current_item->item_id ?? null;
-                                        $current_item_value = is_array($current_item) ? $current_item['value'] ?? null : $current_item->value ?? null;
-                                
-                                        if ((int) ($current_item_id ?? 0) === (int) $item->id) {
-                                            $existing_stack_id = $stack_id;
-                                            $existing_value = $current_item_value;
-                                            break;
+        @if (isset($breeding_items) && isset($item_ids) && $item_ids)
+            <div class="card">
+                <div class="card-header">
+                    <h4>Breeding Modifiers</h4>
+                </div>
+                <?php
+                $item_ids = isset($mod_items->items) ? array_keys((array) $mod_items->items) : null;
+                $current_items = $breeding && $breedingData && isset($breedingData->user->user_items) ? $breedingData->user->user_items : null;
+                ?>
+                <div class="card-body modifiers">
+                    <p>Select any modifiers for your breeding. Some may require item usage.</p>
+                    @if ($breeding_items->count() > 0)
+                        <div class="row">
+                            @foreach ($breeding_items as $item)
+                                @if (in_array($item->id, $item_ids))
+                                    <?php
+                                    $item_count = isset($user_items[$item->id]) ? $user_items[$item->id] : 0;
+                                    $type = isset($mod_items->items->{$item->id}) ? $mod_items->items->{$item->id}->type : null;
+                                    $existing_stack_id = null;
+                                    $existing_value = null;
+                                    if ($current_items) {
+                                        foreach ($current_items as $stack_id => $current_item) {
+                                            $current_item_id = is_array($current_item) ? $current_item['item_id'] ?? null : $current_item->item_id ?? null;
+                                            $current_item_value = is_array($current_item) ? $current_item['value'] ?? null : $current_item->value ?? null;
+                                    
+                                            if ((int) ($current_item_id ?? 0) === (int) $item->id) {
+                                                $existing_stack_id = $stack_id;
+                                                $existing_value = $current_item_value;
+                                                break;
+                                            }
                                         }
                                     }
-                                }
-                                ?>
-                                <div class="col-md-4">
-                                    <div class="card item-card mb-2{{ $item_count == 0 ? ' text-muted border border-danger' : '' }}" data-item="{{ $item->id }}" id="{{ $type }}">
-                                        <label class="card-header d-flex align-items-center justify-content-between h5" for="{{ 'breeding_items[' . $item->id . ']' }}">
-                                            <span>{{ Form::checkbox('breeding_items[' . $item->id . '][item_id]', $item->id, (bool) $existing_stack_id, ['class' => 'mr-1', 'disabled' => $item_count == 0 && !$existing_stack_id, 'id' => 'breeding_items[' . $item->id . ']']) }}
-                                                {{ $item->name }}</span>
-                                            <span class="badge badge-{{ $item_count > 0 ? 'primary' : 'secondary' }} ml-2">x{{ $item_count }} Owned</span>
-                                        </label>
-                                        <div class="card-body">
-                                            {!! substr(strip_tags($item->description), 0, 200) !!}
-                                            @if ($existing_stack_id)
-                                                {!! Form::hidden('breeding_items[' . $item->id . '][stack_id]', $existing_stack_id, ['class' => 'stack-id']) !!}
-                                            @endif
-                                            @if ($existing_stack_id && in_array($type, ['subtype_override', 'base_override'], true))
-                                                <div class="form-group mt-2">
-                                                    @switch($type)
-                                                        @case('subtype_override')
-                                                            {!! Form::label('Subtype') !!} {!! add_help('Select your desired subtype based off the parents.') !!}
-                                                            {!! Form::select('breeding_items[' . $item->id . '][value]', $subtypes, $existing_value, ['class' => 'form-control']) !!}
-                                                        @break
+                                    ?>
+                                    <div class="col-md-4">
+                                        <div class="card item-card mb-2{{ $item_count == 0 ? ' text-muted border border-danger' : '' }}" data-item="{{ $item->id }}" id="{{ $type }}">
+                                            <label class="card-header d-flex align-items-center justify-content-between h5" for="{{ 'breeding_items[' . $item->id . ']' }}">
+                                                <span>{{ Form::checkbox('breeding_items[' . $item->id . '][item_id]', $item->id, (bool) $existing_stack_id, ['class' => 'mr-1', 'disabled' => $item_count == 0 && !$existing_stack_id, 'id' => 'breeding_items[' . $item->id . ']']) }}
+                                                    {{ $item->name }}</span>
+                                                <span class="badge badge-{{ $item_count > 0 ? 'primary' : 'secondary' }} ml-2">x{{ $item_count }} Owned</span>
+                                            </label>
+                                            <div class="card-body">
+                                                {!! substr(strip_tags($item->description), 0, 200) !!}
+                                                @if ($existing_stack_id)
+                                                    {!! Form::hidden('breeding_items[' . $item->id . '][stack_id]', $existing_stack_id, ['class' => 'stack-id']) !!}
+                                                @endif
+                                                @if ($existing_stack_id && in_array($type, ['subtype_override', 'base_override'], true))
+                                                    <div class="form-group mt-2">
+                                                        @switch($type)
+                                                            @case('subtype_override')
+                                                                {!! Form::label('Subtype') !!} {!! add_help('Select your desired subtype based off the parents.') !!}
+                                                                {!! Form::select('breeding_items[' . $item->id . '][value]', $subtypes, $existing_value, ['class' => 'form-control']) !!}
+                                                            @break
 
-                                                        @case('base_override')
-                                                            {!! Form::label('Base Color') !!} {!! add_help('Select your desired base from the parents.') !!}
-                                                            {!! Form::select('breeding_items[' . $item->id . '][value]', $bases, $existing_value, ['class' => 'form-control']) !!}
-                                                        @break
+                                                            @case('base_override')
+                                                                {!! Form::label('Base Color') !!} {!! add_help('Select your desired base from the parents.') !!}
+                                                                {!! Form::select('breeding_items[' . $item->id . '][value]', $bases, $existing_value, ['class' => 'form-control']) !!}
+                                                            @break
 
-                                                    @endswitch
-                                                </div>
-                                            @endif
+                                                        @endswitch
+                                                    </div>
+                                                @endif
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            @endif
-                        @endforeach
-                    </div>
-                @endif
+                                @endif
+                            @endforeach
+                        </div>
+                    @endif
+                </div>
             </div>
-        </div>
+        @endif
 
         @if ($fullRemaining > 0 || $splitRemaining > 0)
             @if ($queue_status == 2 || ($queue_status == 1 && Auth::check() && Auth::user()->isStaff))
