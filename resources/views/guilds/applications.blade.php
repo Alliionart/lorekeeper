@@ -30,86 +30,86 @@
         </li>
     </ul>
 
-    @if(!$guild->open_new_users)
+    @if (!$guild->open_new_users)
         <div class="alert alert-warning my-3">
             <p>This {{ __('guilds.guild') }} is not currently accepting new applications. You may still manage existing applications below.</p>
         </div>
     @endif
 
     {!! Form::open(['url' => '/' . __('guilds.guilds') . '/' . $guild->id . '/applications/', 'id' => 'guildAppForm']) !!}
-        @if ($applications->isNotEmpty())
-            <table class="table">
-                <thead>
+    @if ($applications->isNotEmpty())
+        <table class="table">
+            <thead>
+                <tr>
+                    @if ($status === 'pending')
+                        <th scope="col" width="10%">Select</th>
+                    @endif
+                    <th scope="col">User</th>
+                    <th scope="col">Date Applied</th>
+                    @if ($status === 'pending')
+                        <th scope="col">Comment</th>
+                        <th scope="col">Response</th>
+                    @elseif ($status === 'accepted')
+                        <th scope="col">Date Accepted</th>
+                    @else
+                        <th scope="col">Response</th>
+                    @endif
+                </tr>
+            </thead>
+            <tbody>
+                @foreach ($applications as $application)
                     <tr>
                         @if ($status === 'pending')
-                            <th scope="col" width="10%">Select</th>
+                            <th scope="row">{!! Form::checkbox('application_ids[]', $application->id) !!}</th>
                         @endif
-                        <th scope="col">User</th>
-                        <th scope="col">Date Applied</th>
+                        <td>{!! $application->user->displayName !!}</td>
+                        <td>{!! pretty_date($application->created_at) !!}</td>
                         @if ($status === 'pending')
-                            <th scope="col">Comment</th>
-                            <th scope="col">Response</th>
+                            <td>{{ $application->comment }}</td>
+                            <td>
+                                {!! Form::hidden('guild_comment[' . $application->id . ']') !!}
+                                <a href="#" class="btn btn-sm gc-btn btn-primary">Add Comment</a>
+                            </td>
                         @elseif ($status === 'accepted')
-                            <th scope="col">Date Accepted</th>
+                            <td>{!! pretty_date($application->updated_at) !!}</td>
                         @else
-                            <th scope="col">Response</th>
+                            <td>{{ $application->guild_comment }}</td>
                         @endif
                     </tr>
-                </thead>
-                <tbody>
-                    @foreach ($applications as $application)
-                        <tr>
-                            @if ($status === 'pending')
-                                <th scope="row">{!! Form::checkbox('application_ids[]', $application->id) !!}</th>
-                            @endif
-                            <td>{!! $application->user->displayName !!}</td>
-                            <td>{!! pretty_date($application->created_at) !!}</td>
-                            @if ($status === 'pending')
-                                <td>{{ $application->comment }}</td>
-                                <td>
-                                    {!! Form::hidden('guild_comment[' . $application->id . ']') !!}
-                                    <a href="#" class="btn btn-sm gc-btn btn-primary">Add Comment</a>
-                                </td>
-                            @elseif ($status === 'accepted')
-                                <td>{!! pretty_date($application->updated_at) !!}</td>
-                            @else
-                                <td>{{ $application->guild_comment }}</td>
-                            @endif
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        @else
-            <p>No current guild applications.</p>
-        @endif
+                @endforeach
+            </tbody>
+        </table>
+    @else
+        <p>No current guild applications.</p>
+    @endif
 
-        @if ($status === 'pending')
-            <div class="text-right mt-4">
-                <button type="submit" class="btn btn-success" formaction="{{ $guild->viewUrl }}/applications/accept">Approve Selected</button>
-                <button type="submit" class="btn btn-danger" formaction="{{ $guild->viewUrl }}/applications/reject">Reject Selected</button>
-            </div>
-        @endif
+    @if ($status === 'pending')
+        <div class="text-right mt-4">
+            <button type="submit" class="btn btn-success" formaction="{{ $guild->viewUrl }}/applications/accept">Approve Selected</button>
+            <button type="submit" class="btn btn-danger" formaction="{{ $guild->viewUrl }}/applications/reject">Reject Selected</button>
+        </div>
+    @endif
     {!! Form::close() !!}
 
-<div class="modal fade" id="commentModal" tabindex="-1" role="dialog" aria-labelledby="commentModalTitle" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title mb-0" id="commentModalTitle">Add Comment</h5>
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
-            </div>
-            <div class="modal-body">
-                <p>Comment to add to the selected application:</p>
-                <div class="form-group">
-                    {!! Form::textarea('temp_comment', null, ['class' => 'form-control', 'id' => 'guildCommentInput', 'rows' => 3]) !!}
+    <div class="modal fade" id="commentModal" tabindex="-1" role="dialog" aria-labelledby="commentModalTitle" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title mb-0" id="commentModalTitle">Add Comment</h5>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
-                <div class="text-right">
-                    <button type="button" id="commentSubmit" class="btn btn-primary">Submit Comment</button>
+                <div class="modal-body">
+                    <p>Comment to add to the selected application:</p>
+                    <div class="form-group">
+                        {!! Form::textarea('temp_comment', null, ['class' => 'form-control', 'id' => 'guildCommentInput', 'rows' => 3]) !!}
+                    </div>
+                    <div class="text-right">
+                        <button type="button" id="commentSubmit" class="btn btn-primary">Submit Comment</button>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 @endsection
 
 @section('scripts')

@@ -52,15 +52,15 @@
 @endsection
 @section('scripts')
     @parent
-<script>
-    $(document).ready(function() {
-        $('.applyButton').on('click', function(e) {
-            e.preventDefault();
-            var guildId = $(this).data('guild-id');
-            var targetModal = $(this).data('target');
+    <script>
+        $(document).ready(function() {
+            $('.applyButton').on('click', function(e) {
+                e.preventDefault();
+                var guildId = $(this).data('guild-id');
+                var targetModal = $(this).data('target');
 
-            loadModal("{{ url( __('guilds.guilds') . '/') }}/" + guildId + "/apply", 'Submit Application');
+                loadModal("{{ url(__('guilds.guilds') . '/') }}/" + guildId + "/apply", 'Submit Application');
+            });
         });
-    });
-</script>
+    </script>
 @endsection
