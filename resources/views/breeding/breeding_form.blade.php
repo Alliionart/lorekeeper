@@ -225,15 +225,15 @@
                                                                 {!! Form::select('breeding_items[' . $item->id . '][value]', $subtypes, $existing_value, ['class' => 'form-control']) !!}
                                                             @break
 
-                                                        @case('base_override')
-                                                            {!! Form::label('Base Color') !!} {!! add_help('Select your desired base from the parents.') !!}
-                                                            {!! Form::select('breeding_items[' . $item->id . '][value]', $bases, $existing_value, ['class' => 'form-control']) !!}
-                                                        @break
-                                                    @endswitch
-                                                </div>
-                                            @endif
+                                                            @case('base_override')
+                                                                {!! Form::label('Base Color') !!} {!! add_help('Select your desired base from the parents.') !!}
+                                                                {!! Form::select('breeding_items[' . $item->id . '][value]', $bases, $existing_value, ['class' => 'form-control']) !!}
+                                                            @break
+                                                        @endswitch
+                                                    </div>
+                                                @endif
+                                            </div>
                                         </div>
-                                    </div>
                                 @endif
                             @endforeach
                         </div>
