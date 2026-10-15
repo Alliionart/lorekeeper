@@ -44,18 +44,18 @@
                     <div class="col-md-10 col-8">{!! $request->description !!}</div>
                 </div>
                 @if ($request->has_logo)
-                <div class="row">
-                    <div class="col-md-2 col-4">
-                        <h5>Guild Logo</h5>
-                    </div>
-                    <div class="col-md-10 col-8">
-                        {!! $request->logoUrl !!}
-                        <div class="form-check">
-                            {!! Form::checkbox('remove_logo', 1, false, ['class' => 'form-check-input']) !!}
-                            {!! Form::label('remove_logo', 'Remove current logo', ['class' => 'form-check-label', 'accept' => 'image/*']) !!}
+                    <div class="row">
+                        <div class="col-md-2 col-4">
+                            <h5>Guild Logo</h5>
+                        </div>
+                        <div class="col-md-10 col-8">
+                            {!! $request->logoUrl !!}
+                            <div class="form-check">
+                                {!! Form::checkbox('remove_logo', 1, false, ['class' => 'form-check-input']) !!}
+                                {!! Form::label('remove_logo', 'Remove current logo', ['class' => 'form-check-label', 'accept' => 'image/*']) !!}
+                            </div>
                         </div>
                     </div>
-                </div>
                 @endif
             </div>
         </div>
@@ -102,14 +102,13 @@
             </div>
         </div>
     </div>
-
 @endsection
 
 @section('scripts')
     @parent
     <script>
         $(document).ready(function() {
-            
+
             var $confirmationModal = $('#confirmationModal');
             var $submissionForm = $('#requestForm');
 
