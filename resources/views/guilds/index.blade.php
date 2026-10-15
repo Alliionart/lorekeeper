@@ -9,7 +9,8 @@
 
     <h1>{{ ucwords(__('guilds.guilds')) }}</h1>
 
-    <p>This is a list of all {{ ucwords(__('guilds.guilds')) }} on the site, including disbanded guilds. If you want to form a {{ ucwords(__('guilds.guild')) }}, you can form a new <a href="{{ url('guilds/new') }}">{{ ucwords(__('guilds.guild')) }} here</a>.</p>
+    <p>This is a list of all {{ ucwords(__('guilds.guilds')) }} on the site, including disbanded guilds. If you want to form a {{ ucwords(__('guilds.guild')) }}, you can form a new <a href="{{ url('guilds/new') }}">{{ ucwords(__('guilds.guild')) }}
+            here</a>.</p>
 
     <div>
         {!! Form::open(['method' => 'GET', 'class' => 'form-inline justify-content-end']) !!}
