@@ -11,10 +11,12 @@ use App\Models\Guild\GuildItem;
 use App\Models\Guild\GuildMember;
 use App\Models\Guild\GuildRank;
 use App\Models\Guild\GuildShop;
+use App\Models\Guild\GuildUpdate;
 use App\Models\User\User;
 use Carbon\Carbon;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
 use Notifications;
 use Settings;
 
@@ -29,7 +31,7 @@ class GuildManager extends Service {
     */
 
     /**
-     * Creates a new prompt.
+     * Creates a new guild.
      *
      * @param array                 $data
      * @param \App\Models\User\User $user
@@ -72,6 +74,51 @@ class GuildManager extends Service {
             //TODO: Notifications create call
 
             return $this->commitReturn($guild);
+        } catch (\Exception $e) {
+            $this->setError('error', $e->getMessage());
+        }
+
+        return $this->rollbackReturn(false);
+    }
+
+    /**
+     * Queues a new guild for creation.
+     *
+     * @param array                 $data
+     * @param \App\Models\User\User $user
+     *
+     * @return \App\Models\Guild\Guild|bool
+     */
+    public function queueGuildCreation($data, $user) {
+        DB::beginTransaction();
+
+        try {
+            $image = null;
+            if (isset($data['logo']) && $data['logo']) {
+                $data['has_logo'] = 1;
+                $image = $data['logo'];
+                unset($data['logo']);
+            } else {
+                $data['has_logo'] = 0;
+            }
+
+            $update = GuildUpdate::create([
+                'user_id'       => $user->id,
+                'staff_id'      => null,
+                'is_update'     => 0,
+                'status'        => 'pending',
+                'name'          => parse($data['name']) ?? null,
+                'description'   => parse($data['description']) ?? null,
+                'has_logo'      => $data['has_logo'],
+            ]);
+
+            if ($image) {
+                if (!$this->handleImage($image, $update->imagePath, $update->logoFileName)) {
+                    throw new \Exception('Failed to save the guild logo.');
+                }
+            }
+
+            return $this->commitReturn($update);
         } catch (\Exception $e) {
             $this->setError('error', $e->getMessage());
         }
@@ -268,6 +315,124 @@ class GuildManager extends Service {
             // Delete guild
             // This is a soft delete
             $guild->delete();
+
+            return $this->commitReturn(true);
+        } catch (\Exception $e) {
+            $this->setError('error', $e->getMessage());
+        }
+
+        return $this->rollbackReturn(false);
+    }
+
+    /**
+     * Approves a guild request.
+     *
+     * @param \App\Models\User\User $user
+     * @param mixed                 $guild
+     *
+     * @return bool
+     */
+    public function approveRequest($request, $data, $staff) {
+        DB::beginTransaction();
+
+        try {
+            if (!$request) {
+                throw new \Exception('Invalid guild request.');
+            }
+            if (!$staff->isStaff) {
+                throw new \Exception('Only staff may approve guild requests.');
+            }
+
+            if ($request->is_update) {
+                $guild = $request->guild;
+                if (!$guild) {
+                    throw new \Exception('Invalid guild.');
+                }
+                $guild->update([
+                    'name'          => $request->name,
+                    'description'   => $request->description,
+                    'parsed_description' => parse($request->description),
+                    'has_logo'      => $request->has_logo,
+                ]);
+            } else {
+                $guild = Guild::create([
+                    'name'          => $request->name,
+                    'description'   => $request->description,
+                    'parsed_description' => parse($request->description),
+                    'owner_id'      => $request->user_id,
+                    'status'        => 'active',
+                    'has_logo'      => $request->has_logo,
+                ]);
+            }
+
+            if ($request->has_logo) {
+                $source = $request->imagePath.'/'.$request->logoFileName;
+                if (!File::exists($source)) {
+                    throw new \Exception('The requested guild logo could not be found.');
+                }
+
+                File::ensureDirectoryExists($guild->imagePath);
+                $destination = $guild->imagePath.'/'.$guild->logoFileName;
+                if (File::exists($destination)) {
+                    File::delete($destination);
+                }
+                if (!File::move($source, $destination)) {
+                    throw new \Exception('Failed to move the guild logo.');
+                }
+            }
+
+            $request->update([
+                'staff_id'      => $staff->id,
+                'status'        => 'approved',
+                'updated_at'    => Carbon::now(),
+            ]);
+
+            if (!$this->logAdminAction($staff, 'Approved Guild Request', 'Approved Guild Request '.$request->id)) {
+                throw new \Exception('Failed to log admin action.');
+            }
+
+            return $this->commitReturn(true);
+        } catch (\Exception $e) {
+            $this->setError('error', $e->getMessage());
+        }
+
+        return $this->rollbackReturn(false);
+    }
+
+    /**
+     * Rejects a guild request.
+     *
+     * @param \App\Models\User\User $user
+     * @param mixed                 $guild
+     *
+     * @return bool
+     */
+    public function rejectRequest($request, $data, $staff) {
+        DB::beginTransaction();
+
+        try {
+            if (!$request) {
+                throw new \Exception('Invalid guild request.');
+            }
+            if (!$staff->isStaff) {
+                throw new \Exception('Only staff may reject guild requests.');
+            }
+
+            $logoPath = $request->imagePath.'/'.$request->logoFileName;
+            if (File::exists($logoPath) && !File::delete($logoPath)) {
+                throw new \Exception('Failed to delete the guild request logo.');
+            }
+
+            $request->update([
+                'staff_id'      => $staff->id,
+                'status'        => 'rejected',
+                'has_logo'      => false,
+                'updated_at'    => Carbon::now(),
+            ]);
+
+            if (!$this->logAdminAction($staff, 'Rejected Guild Request', 'Rejected Guild Request '.$request->id)) {
+                throw new \Exception('Failed to log admin action.');
+            }
 
             return $this->commitReturn(true);
         } catch (\Exception $e) {

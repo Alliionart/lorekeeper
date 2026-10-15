@@ -170,6 +170,20 @@ return new class extends Migration {
             $table->boolean('has_image')->default(0);
             $table->string('hash', 10)->nullable();
         });
+
+        Schema::create('guild_updates', function (Blueprint $table) {
+            $table->id();
+            $table->integer('user_id');
+            $table->integer('staff_id')->nullable();
+            $table->boolean('is_update')->default(1);
+            $table->string('status', 10)->default('pending');
+            $table->string('name', 91);
+            $table->text('description')->nullable();
+            $table->boolean('has_logo')->default(0);
+            $table->text('staff_comment')->nullable();
+            $table->integer('guild_id')->nullable();
+            $table->timestamps();
+        });
     }
 
     /**
@@ -189,5 +203,6 @@ return new class extends Migration {
         Schema::dropIfExists('guild_shop_log');
         Schema::dropIfExists('guild_shop_stock');
         Schema::dropIfExists('guild_ranks');
+        Schema::dropIfExists('guild_updates');
     }
 };

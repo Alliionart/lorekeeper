@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin\Guilds;
 
 use App\Http\Controllers\Controller;
 use App\Models\Guild\Guild;
+use App\Models\Guild\GuildUpdate;
 use App\Models\User\User;
 use App\Services\GuildManager;
 use Auth;
@@ -69,18 +70,17 @@ class GuildController extends Controller {
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getGuildQueue(Request $request) {
-        //$query = GuildRequest::query();
+    public function getGuildQueue(Request $request, $action = 'pending') {
+        $query = GuildUpdate::where('status', $action);
         $data = $request->only(['sort', 'type']);
-        $gq_catgory = Settings::get('guild_queue_request_category') ?? null;
 
         switch ($data['sort'] ?? null) {
             default:
             case 'newest':
-                //$query->orderBy('created_at', 'DESC');
+                $query->orderBy('created_at', 'DESC');
                 break;
             case 'oldest':
-                //$query->orderBy('created_at', 'ASC');
+                $query->orderBy('created_at', 'ASC');
                 break;
         }
 
@@ -88,16 +88,35 @@ class GuildController extends Controller {
             default:
             case 'all':
                 break;
-            case 'creation':
-                //$query->where('queue_category_id', $gq_catgory)->where('queue_type', 'new_guild');
+            case 'new':
+                $query->where('is_update', 0);
                 break;
             case 'update':
-                //$query->where('queue_category_id', $gq_catgory)->where('queue_type', 'update_guild');
+                $query->where('is_update', 1);
                 break;
         }
 
         return view('admin.guilds.queue', [
-            //'requests'    => $query->paginate(30)->appends($request->query()),
+            'requests'    => $query->paginate(30)->appends($request->query()),
+        ]);
+    }
+
+    /**
+     * Edit page an individual guild.
+     *
+     * @param mixed $id
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function getGuildRequest(Request $request, $id) {
+        $request = GuildUpdate::where('id', $id)->first();
+
+        if (!$request) {
+            abort(404);
+        }
+
+        return view('admin.guilds.request', [
+            'request' => $request,
         ]);
     }
 
@@ -155,6 +174,40 @@ class GuildController extends Controller {
             flash('Guild created successfully.')->success();
 
             return redirect()->to('admin/guilds/edit/'.$guild->id);
+        } else {
+            foreach ($service->errors()->getMessages()['error'] as $error) {
+                flash($error)->error();
+            }
+        }
+
+        return redirect()->back();
+    }
+
+    /**
+     * Pushes the guild request to the service for approval or rejection.
+     *
+     * @param mixed $id
+     * @param mixed $action
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function postGuildRequest(Request $request, GuildManager $service, $id = null, $action = null) {
+        $data = $request->only([
+            'staff_comment', 'remove_logo',
+        ]);
+
+        $request = GuildUpdate::where('id', $id)->first();
+
+        if (!$request || !in_array($action, ['approve', 'reject'])) {
+            abort(404);
+        }
+
+        if ($action == 'approve' && $service->approveRequest($request, $data, Auth::user())) {
+            flash('Guild approved successfully.')->success();
+        } elseif ($action == 'reject' && $service->rejectRequest($request, $data, Auth::user())) {
+            flash('Guild rejected successfully.')->success();
+
+            return redirect()->to('admin/guilds/queue/'.$request->id);
         } else {
             foreach ($service->errors()->getMessages()['error'] as $error) {
                 flash($error)->error();

@@ -28,7 +28,7 @@
                 'type',
                 [
                     'all' => 'All',
-                    'creation' => 'New Guild Requests',
+                    'new' => 'New Guild Requests',
                     'update' => 'Update Requests',
                 ],
                 Request::get('type') ?: 'all',
@@ -59,11 +59,14 @@
                 <div class="mb-4 logs-table">
                     <div class="logs-table-header">
                         <div class="row">
-                            <div class="col-12 col-md-2">
-                                <div class="logs-table-cell">Queue</div>
+                            <div class="col-12 col-md-1">
+                                <div class="logs-table-cell">Type</div>
                             </div>
                             <div class="col-6 col-md-2">
                                 <div class="logs-table-cell">User</div>
+                            </div>
+                            <div class="col-6 col-md-3">
+                                <div class="logs-table-cell">Guild Name</div>
                             </div>
                             <div class="col-6 col-md-3">
                                 <div class="logs-table-cell">Submitted</div>
@@ -77,18 +80,21 @@
                         @foreach ($requests as $request)
                             <div class="logs-table-row">
                                 <div class="row flex-wrap">
-                                    <div class="col-12 col-md-2">
-                                        <div class="logs-table-cell">{!! $request->queue->displayName !!}</div>
+                                    <div class="col-12 col-md-1">
+                                        <div class="logs-table-cell">{!! $request->is_update ? 'Update' : 'New' !!}</div>
                                     </div>
                                     <div class="col-6 col-md-2">
                                         <div class="logs-table-cell">{!! $request->user->displayName !!}</div>
+                                    </div>
+                                    <div class="col-6 col-md-3">
+                                        <div class="logs-table-cell">{!! $request->name !!}</div>
                                     </div>
                                     <div class="col-6 col-md-3">
                                         <div class="logs-table-cell">{!! pretty_date($request->created_at) !!}</div>
                                     </div>
                                     <div class="col-3 col-md-1">
                                         <div class="logs-table-cell">
-                                            <span class="btn btn-{{ $request->status == 'Pending' ? 'secondary' : ($request->status == 'Approved' ? 'success' : 'danger') }} btn-sm py-0 px-1">{{ $request->status }}</span>
+                                            <span class="btn btn-{{ $request->status == 'pending' ? 'secondary' : ($request->status == 'approved' ? 'success' : 'danger') }} btn-sm py-0 px-1">{{ ucfirst($request->status) }}</span>
                                         </div>
                                     </div>
                                     <div class="col-3 col-md-1">

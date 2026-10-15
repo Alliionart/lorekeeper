@@ -180,6 +180,9 @@ Route::group(['prefix' => 'reports', 'namespace' => 'Users'], function () {
 Route::group(['prefix' => __('guilds.guilds'), 'namespace' => 'Guilds'], function () {
     Route::get('/', 'GuildController@getGuildIndex');
 
+    Route::get('new', 'GuildController@getGuildCreate');
+    Route::post('new', 'GuildController@postGuildCreate');
+
     Route::group(['prefix' => '{id}'], function () {
         Route::get('/', 'GuildController@getGuild');
 

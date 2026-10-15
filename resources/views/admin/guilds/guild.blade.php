@@ -38,7 +38,7 @@
         @if ($guild->has_logo)
             <div class="form-check">
                 {!! Form::checkbox('remove_logo', 1, false, ['class' => 'form-check-input']) !!}
-                {!! Form::label('remove_logo', 'Remove current logo', ['class' => 'form-check-label']) !!}
+                {!! Form::label('remove_logo', 'Remove current logo', ['class' => 'form-check-label', 'accept' => 'image/*']) !!}
             </div>
         @endif
     </div>

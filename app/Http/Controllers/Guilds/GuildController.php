@@ -190,6 +190,45 @@ class GuildController extends Controller {
     }
 
     /**
+     * Shows the request page to create a guild.
+     *
+     * @param mixed $id
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function getGuildCreate() {
+        return view('guilds.create', [
+            'global_max_players'    => Settings::get('guilds_max_players'),
+            'global_max_characters' => Settings::get('guilds_max_characters'),
+        ]);
+    }
+
+    /**
+     * Edits the guild staff.
+     *
+     * @param App\Services\GuildManager $service
+     * @param int|null                  $id
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function postGuildCreate(Request $request, GuildManager $service, $id = null) {
+        $request->validate(Guild::$requestRules);
+        $data = $request->only([
+            'name', 'description', 'logo'
+        ]);
+
+        if ($service->queueGuildCreation($data, Auth::user())) {
+            flash('Guild creation requested successfully. Please wait for staff to approve your request.')->success();
+        } else {
+            foreach ($service->errors()->getMessages()['error'] as $error) {
+                flash($error)->error();
+            }
+        }
+
+        return redirect()->to('guilds');
+    }
+
+    /**
      * Shows the edit page for an individual guild.
      *
      * @param mixed $id

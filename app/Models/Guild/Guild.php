@@ -50,10 +50,23 @@ class Guild extends Model {
      * @var array
      */
     public static $createRules = [
+        'name'        => 'required|unique:guilds,name',
         'description' => 'nullable',
-        'logo'        => 'nullable|image|mimes:png,gif|max:200',
-        'banner'      => 'nullable|image|mimes:png,gif|max:800',
+        'image'       => 'nullable|image|mimes:png,gif|max:200|dimensions:width=200,height=200',
+        'logo'        => 'nullable|image|mimes:png,gif|max:200|dimensions:width=200,height=200',
+        'banner'      => 'nullable|image|mimes:png,gif|max:800|dimensions:max_width=800,max_height=400',
         'owner_id'    => 'required|exists:users,id',
+    ];
+
+    /**
+     * Validation rules for a guild creation request.
+     *
+     * @var array
+     */
+    public static $requestRules = [
+        'name'        => 'required|between:3,100|unique:guilds,name',
+        'description' => 'nullable',
+        'logo'        => 'nullable|image|mimes:png,gif|max:200|dimensions:width=200,height=200',
     ];
 
     /**
@@ -62,9 +75,11 @@ class Guild extends Model {
      * @var array
      */
     public static $updateRules = [
+        'name'        => 'required|unique:guilds,name',
         'description' => 'nullable',
-        'logo'        => 'nullable|image|mimes:png,gif|max:200',
-        'banner'      => 'nullable|image|mimes:png,gif|max:800',
+        'image'       => 'nullable|image|mimes:png,gif|max:200|dimensions:width=200,height=200',
+        'logo'        => 'nullable|image|mimes:png,gif|max:200|dimensions:width=200,height=200',
+        'banner'      => 'nullable|image|mimes:png,gif|max:800|dimensions:max_width=800,max_height=400',
         'owner_id'    => 'nullable|exists:users,id',
     ];
 
