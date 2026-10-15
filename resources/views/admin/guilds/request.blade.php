@@ -55,7 +55,6 @@
                             {!! Form::label('remove_logo', 'Remove current logo', ['class' => 'form-check-label', 'id' => 'remove_logo', 'accept' => 'image/*']) !!}
                         </div>
                     </div>
-                </div>
                 @endif
             </div>
         </div>
@@ -102,14 +101,13 @@
             </div>
         </div>
     </div>
-
 @endsection
 
 @section('scripts')
     @parent
     <script>
         $(document).ready(function() {
-            
+
             var $confirmationModal = $('#confirmationModal');
             var $submissionForm = $('#requestForm');
 
