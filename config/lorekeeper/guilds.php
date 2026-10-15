@@ -19,7 +19,9 @@ return [
     'enable_shops'  => 1, //Enables guilds to have a shop!
 
     'enable_daycare'  => 0, //Enables guilds to have a pet daycare! NOTE: Please only use if you have newt's Pet extension active, otherwise this will cause errors!
+        // FUTURE RELEASE
 
     'enable_armory'  => 0, //Enables guilds to have an armor! NOTE: Please only use if you have newt's Claymores & Companions extension active, otherwise this will cause errors!
+        // FUTURE RELEASE
 
 ];

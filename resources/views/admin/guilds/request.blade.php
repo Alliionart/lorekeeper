@@ -49,10 +49,10 @@
                         <h5>Guild Logo</h5>
                     </div>
                     <div class="col-md-10 col-8">
-                        {!! $request->logoUrl !!}
+                        <img src="{{ $request->logoUrl }}" class="img-fluid img-thumbnail mb-2" />
                         <div class="form-check">
                             {!! Form::checkbox('remove_logo', 1, false, ['class' => 'form-check-input']) !!}
-                            {!! Form::label('remove_logo', 'Remove current logo', ['class' => 'form-check-label', 'accept' => 'image/*']) !!}
+                            {!! Form::label('remove_logo', 'Remove current logo', ['class' => 'form-check-label', 'id' => 'remove_logo', 'accept' => 'image/*']) !!}
                         </div>
                     </div>
                 </div>

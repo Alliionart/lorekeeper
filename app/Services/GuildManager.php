@@ -563,11 +563,20 @@ class GuildManager extends Service {
                 throw new \Exception('You have already applied to this guild!');
             }
 
+            if ($guild->max_users > 0 && $guild->members()->count() >= $guild->max_users) {
+                throw new \Exception('This guild has reached its maximum number of members.');
+            }
+
+            if ($guild->automatic_app_approval) {
+                $status = 'accepted';
+                $this->addMembers($guild, ['users' => [$user->id]], $user);
+            }
+
             $app = GuildApplication::create([
                 'guild_id'      => $guild->id,
                 'user_id'       => $user->id,
                 'comment'       => parse($data['application_message']) ?? null,
-                'status'        => 'pending',
+                'status'        => $status ?? 'pending',
             ]);
 
             return $this->commitReturn(true);
