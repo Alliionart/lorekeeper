@@ -187,26 +187,28 @@ class CurrencyManager extends Service {
             }
             if ($data['quantity'] < 0) {
                 $this->debitCurrency($guild, $staff, 'Staff Removal', $data['data'], $currency, -$data['quantity']);
-                if (isset($guild->user)) {
-                    Notifications::create('GUILD_CURRENCY_REMOVAL', $guild->user, [
+                $owner = $guild->owner;
+                if ($owner) {
+                    Notifications::create('GUILD_CURRENCY_REMOVAL', $owner, [
                         'currency_name'     => $currency->owner(),
                         'currency_quantity' => -$data['quantity'],
                         'sender_url'        => $staff->url,
                         'sender_name'       => $staff->name,
                         'guild_name'        => $guild->name,
-                        'guild_id'          => $guild->id,
+                        'guild_bank_url'    => $guild->viewUrl.'/bank',
                     ]);
                 }
             } else {
                 $this->creditCurrency($staff, $guild, 'Staff Grant', $data['data'], $currency, $data['quantity']);
-                if (isset($guild->user)) {
-                    Notifications::create('GUILD_CURRENCY_GRANT', $guild->owner(), [
+                $owner = $guild->owner;
+                if ($owner) {
+                    Notifications::create('GUILD_CURRENCY_GRANT', $owner, [
                         'currency_name'     => $currency->name,
                         'currency_quantity' => $data['quantity'],
                         'sender_url'        => $staff->url,
                         'sender_name'       => $staff->name,
                         'guild_name'        => $guild->name,
-                        'guild_id'          => $guild->id,
+                        'guild_bank_url'    => $guild->viewUrl.'/bank',
                     ]);
                 }
             }

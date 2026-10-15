@@ -441,29 +441,29 @@ return [
     // GUILD_JOIN_REQUEST_ACCEPTED
     1703   => [
         'name'    => 'Guild Join Request Accepted',
-        'message' => '<a href="{guild_mod_url}">{guild_mod} has accepted your request to join {guild_name}. (<a href="{url}">Visit Guild</a>)',
-        'url'     => 'guild/{guild_id}',
+        'message' => '<a href="{guild_mod_url}">{guild_mod}</a> has accepted your request to join {guild_name}. (<a href="{guild_url}">Visit Guild</a>)',
+        'url'     => '',
     ],
 
     // GUILD_JOIN_REQUEST_REJECTED
     1704   => [
         'name'    => 'Guild Join Request Rejected',
-        'message' => '<a href="{guild_mod_url}">{guild_mod} has rejected your request to join {guild_name}. (<a href="{url}">Visit Guild</a>)',
-        'url'     => 'guild/{guild_id}',
+        'message' => '<a href="{guild_mod_url}">{guild_mod}</a> has rejected your request to join {guild_name}. (<a href="{guild_url}">Visit Guild</a>)',
+        'url'     => '',
     ],
 
     // GUILD_CREATION_ACCEPTED
     1705   => [
         'name'    => 'Guild Creation Accepted',
-        'message' => 'Your request to create a guild has been accepted by <a href="{staff_url}">{staff_name}</a>. (<a href="{url}">Visit Guild</a>)',
-        'url'     => '{[guild creation request link here]}',
+        'message' => 'Your request to create a guild has been accepted by <a href="{staff_url}">{staff_name}</a>. (<a href="{guild_url}">Visit Guild</a>)',
+        'url'     => '',
     ],
 
     // GUILD_CREATION_REJECTED
     1706   => [
         'name'    => 'Guild Creation Rejected',
-        'message' => 'Your request to create a guild has been rejected by <a href="{staff_url}">{staff_name}</a>. (<a href="{url}">Visit Guild</a>)',
-        'url'     => '{[guild creation request link here]}',
+        'message' => 'Your request to create a guild has been rejected by <a href="{staff_url}">{staff_name}</a>. (<a href="{guilds_url}">Browse Guilds</a>)',
+        'url'     => '',
     ],
 
     // CHARACTER_JOIN_REQUEST_ACCEPTED
@@ -483,15 +483,15 @@ return [
     // GUILD_CURRENCY_GRANT
     1800   => [
         'name'    => 'Guild Currency Grant',
-        'message' => '{guild_name} has received a staff grant of {currency_quantity} {currency_name} from <a href="{sender_url}">{sender_name}</a>. (<a href="{url}">View Bank</a>)',
-        'url'     => 'guild/{guild_id}/bank',
+        'message' => '{guild_name} has received a staff grant of {currency_quantity} {currency_name} from <a href="{sender_url}">{sender_name}</a>. (<a href="{guild_bank_url}">View Bank</a>)',
+        'url'     => '',
     ],
 
     // GUILD_CURRENCY_REMOVAL
     1801   => [
         'name'    => 'Guild Currency Removal',
-        'message' => '{currency_quantity} {currency_name} was removed from {guild_name} by <a href="{sender_url}">{sender_name}</a>. (<a href="{url}">View Bank</a>)',
-        'url'     => 'guild/{guild_id}/bank',
+        'message' => '{currency_quantity} {currency_name} was removed from {guild_name} by <a href="{sender_url}">{sender_name}</a>. (<a href="{guild_bank_url}">View Bank</a>)',
+        'url'     => '',
     ],
 
     // GUILD_INVITATION

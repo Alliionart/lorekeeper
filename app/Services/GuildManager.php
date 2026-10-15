@@ -391,6 +391,14 @@ class GuildManager extends Service {
                 throw new \Exception('Failed to log admin action.');
             }
 
+            if (!$request->is_update && $request->user) {
+                Notifications::create('GUILD_CREATION_ACCEPTED', $request->user, [
+                    'staff_url'  => $staff->url,
+                    'staff_name' => $staff->name,
+                    'guild_url'  => $guild->viewUrl,
+                ]);
+            }
+
             return $this->commitReturn(true);
         } catch (\Exception $e) {
             $this->setError('error', $e->getMessage());
@@ -432,6 +440,14 @@ class GuildManager extends Service {
 
             if (!$this->logAdminAction($staff, 'Rejected Guild Request', 'Rejected Guild Request '.$request->id)) {
                 throw new \Exception('Failed to log admin action.');
+            }
+
+            if (!$request->is_update && $request->user) {
+                Notifications::create('GUILD_CREATION_REJECTED', $request->user, [
+                    'staff_url'  => $staff->url,
+                    'staff_name' => $staff->name,
+                    'guilds_url' => url(__('guilds.guilds')),
+                ]);
             }
 
             return $this->commitReturn(true);
@@ -569,7 +585,20 @@ class GuildManager extends Service {
 
             if ($guild->automatic_app_approval) {
                 $status = 'accepted';
-                $this->addMembers($guild, ['users' => [$user->id]], $user);
+                GuildMember::create([
+                    'guild_id'      => $guild->id,
+                    'user_id'       => $user->id,
+                    'permissions'   => 0,
+                    'joined_at'     => Carbon::now(),
+                ]);
+
+                $guildOwner = $guild->owner;
+                Notifications::create('GUILD_JOIN_REQUEST_ACCEPTED', $user, [
+                    'guild_mod_url' => $guildOwner ? $guildOwner->url : $guild->viewUrl,
+                    'guild_mod'     => $guildOwner ? $guildOwner->name : $guild->name,
+                    'guild_name'    => $guild->name,
+                    'guild_url'     => $guild->viewUrl,
+                ]);
             }
 
             $app = GuildApplication::create([
@@ -631,6 +660,15 @@ class GuildManager extends Service {
                         'permissions'   => 0,
                         'joined_at'     => Carbon::now(),
                     ]);
+
+                    if ($app->user) {
+                        Notifications::create('GUILD_JOIN_REQUEST_ACCEPTED', $app->user, [
+                            'guild_mod_url' => $user->url,
+                            'guild_mod'     => $user->name,
+                            'guild_name'    => $guild->name,
+                            'guild_url'     => $guild->viewUrl,
+                        ]);
+                    }
                 }
             } else if ($action === 'reject') {
                 foreach( $data['application_ids'] as $app_id) {
@@ -645,6 +683,15 @@ class GuildManager extends Service {
                         $updates['guild_comment'] = $data['guild_comment'][$app->id];
                     }
                     $app->update($updates);
+
+                    if ($app->user) {
+                        Notifications::create('GUILD_JOIN_REQUEST_REJECTED', $app->user, [
+                            'guild_mod_url' => $user->url,
+                            'guild_mod'     => $user->name,
+                            'guild_name'    => $guild->name,
+                            'guild_url'     => $guild->viewUrl,
+                        ]);
+                    }
                 }
             }
 
