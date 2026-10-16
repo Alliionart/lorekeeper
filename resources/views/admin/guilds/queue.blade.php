@@ -28,7 +28,7 @@
                 'type',
                 [
                     'all' => 'All',
-                    'new' => 'New '. ucfirst(__('guilds.guild')) .' Requests',
+                    'new' => 'New ' . ucfirst(__('guilds.guild')) . ' Requests',
                     'update' => 'Update Requests',
                 ],
                 Request::get('type') ?: 'all',
