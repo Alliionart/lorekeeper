@@ -233,8 +233,6 @@ Route::group(['prefix' => 'comments', 'namespace' => 'Comments'], function () {
     Guilds
 **************************************************************************************************/
 Route::group(['prefix' => __('guilds.guilds'), 'namespace' => 'Guilds'], function () {
-    Route::get('new', 'GuildController@getGuildCreate');
-    Route::post('new', 'GuildController@postGuildCreate');
 
     Route::group(['prefix' => '{id}'], function () {
         Route::get('apply', 'GuildController@getGuildApplyModal');

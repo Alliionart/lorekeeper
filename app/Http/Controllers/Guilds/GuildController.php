@@ -237,6 +237,11 @@ class GuildController extends Controller {
      * @return \Illuminate\Contracts\Support\Renderable
      */
     public function getGuildCreate() {
+
+        if (!Auth::check()) {
+            abort(404);
+        }
+
         return view('guilds.create', [
             'global_max_players'    => Settings::get('guilds_max_players'),
             'global_max_characters' => Settings::get('guilds_max_characters'),
@@ -265,7 +270,7 @@ class GuildController extends Controller {
             }
         }
 
-        return redirect()->to(__('guilds.guild'));
+        return redirect()->to(__('guilds.guilds'));
     }
 
     /**
@@ -329,7 +334,7 @@ class GuildController extends Controller {
      */
     public function getGuildShop($id) {
         $guild = Guild::where('id', $id)->first();
-        $shop = $guild->shop->first();
+        $shop = $guild->shop;
 
         if (!$guild || !$shop || !$shop->is_active) {
             abort(404);

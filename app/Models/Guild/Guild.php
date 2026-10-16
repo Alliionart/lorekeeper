@@ -458,7 +458,7 @@ class Guild extends Model {
             $user = Auth::user();
         }
 
-        if ($user->isStaff || $user->id === $this->owner_id) {
+        if ($user->isStaff || (int) $user->id === (int) $this->owner_id) {
             return true;
         }
 
@@ -471,6 +471,22 @@ class Guild extends Model {
         }
 
         return false;
+    }
+
+    /**
+     * Checks if a given/current user is in the guild
+     * 
+     * @return bool
+     */
+    public function inGuild($user = null) {
+        $user = $user ?: Auth::user();
+
+        if (!$user) {
+            return false;
+        }
+
+        return (int) $this->owner_id === (int) $user->id
+            || $this->members()->where('user_id', $user->id)->exists();
     }
 
     /**

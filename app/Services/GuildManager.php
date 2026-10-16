@@ -389,6 +389,7 @@ class GuildManager extends Service {
                     'guild_id'      => $guild->id,
                     'user_id'       => $request->user_id,
                     'permissions'   => 2,
+                    'joined_at'     => Carbon::now(),
                 ]);
 
                 if (!$member) {
@@ -1273,7 +1274,7 @@ class GuildManager extends Service {
             if (!$guild) {
                 throw new \Exception('Invalid guild!');
             }
-            if ($guild->getPermission($user)) {
+            if (!$guild->getPermission($user)) {
                 throw new \Exception('Only the guild owner or mods may create a shop.');
             }
 
