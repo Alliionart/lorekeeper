@@ -109,8 +109,8 @@ class GuildController extends Controller {
             abort(404);
         }
 
-        if (($guild->owner_id !== Auth::user()->id) || !Auth::user()->isStaff) {
-            return redirect('/guilds/'.$guild->id)->with('error', 'You do not have permission to edit this guild.');
+        if (($guild->owner_id !== Auth::user()->id) && !Auth::user()->isStaff) {
+            return redirect($guild->viewUrl)->with('error', 'You do not have permission to edit this guild.');
         }
 
         return view('guilds.guild_settings', [
@@ -133,28 +133,59 @@ class GuildController extends Controller {
      * @return \Illuminate\Http\RedirectResponse
      */
     public function postGuildEdit(Request $request, GuildManager $service, $id = null) {
-        $id ? $request->validate(Guild::$updateRules) : $request->validate(Guild::$createRules);
+        $rules = Guild::$updateRules;
+        $rules['name'] = 'required|unique:guilds,name,'.$id;
+        $request->validate($rules);
+        $guild = Guild::find($id);
+
+        if (!$guild->hasPermissions(Auth::user())) {
+            abort(404);
+        }
+
         $data = $request->only([
             'name', 'description', 'location', 'image', 'remove_image',
-            'location', 'max_players', 'max_characters',
+            'location', 'max_users', 'max_characters',
             'open_new_users', 'automatical_app_approval', 'open_inventory',
             'open_bank', 'open_pets', 'open_armory',
             'logo', 'remove_logo', 'banner', 'remove_banner',
         ]);
 
         $automatic_update = Settings::get('guilds_enable_automatic_updates');
-        $enable_inventory = Settings::get('guilds_enable_inventory');
-        $enable_shop = Settings::get('guilds_enable_shop');
+        $enable_inventory = config('lorekeeper.guilds.enable_inventories');
+        $enable_shop = config('lorekeeper.guilds.enable_shops');
+        $enable_bank = config('lorekeeper.guilds.enable_banks');
 
-        //Need to add validation to check if the site has guilds_enable_automatic_updates true before allowing this to directly post.
-        //Do another auth check for owners/mods/staff here and return with error if false
+        $forcedSettings = [];
+        if (!$enable_inventory) {
+            $data['open_inventory'] = 0;
+            $forcedSettings['open_inventory'] = 0;
+        }
+        if (!$enable_bank) {
+            $data['open_bank'] = 0;
+            $forcedSettings['open_bank'] = 0;
+        }
+        if (!$enable_shop) {
+            $guild->shop()->update(['is_active' => 0]);
+        }
+        if ($forcedSettings) {
+            $guild->update($forcedSettings);
+        }
 
-        if ($id && $service->updateGuild(Guild::find($id), $data, Auth::user())) {
+        if ($automatic_update && $id) {
+            $data['guild_id'] = $guild->id;
+            if ($service->queueGuildUpdate($data, Auth::user(), 1)) {
+                flash('Guild update submitted successfully. Please wait for staff approval.')->success();
+            } else {
+                foreach ($service->errors()->getMessages()['error'] as $error) {
+                    flash($error)->error();
+                }
+            }
+        } elseif ($id && $service->updateGuild($guild, $data, Auth::user())) {
             flash('Guild updated successfully.')->success();
         } elseif (!$id && $category = $service->createGuild($data, Auth::user())) {
             flash('Guild created successfully.')->success();
 
-            return redirect()->to('guilds/edit/'.$guild->id);
+            return redirect()->to($guild->editUrl);
         } else {
             foreach ($service->errors()->getMessages()['error'] as $error) {
                 flash($error)->error();
@@ -173,12 +204,21 @@ class GuildController extends Controller {
      * @return \Illuminate\Http\RedirectResponse
      */
     public function postGuildStaffEdit(Request $request, GuildManager $service, $id = null) {
-        $id ? $request->validate(Guild::$updateRules) : $request->validate(Guild::$createRules);
         $data = $request->only([
             'owner_id', 'mods',
         ]);
 
-        if ($id && $service->updateGuildStaff(Guild::find($id), $data, Auth::user())) {
+        $guild = Guild::find($id);
+
+        if (!$guild) {
+            abort(404);
+        }
+
+        if (!$guild->hasPermission(Auth::user())) {
+            abort(404);
+        }
+
+        if ($id && $service->updateGuildStaff($guild, $data, Auth::user())) {
             flash('Guild staff updated successfully.')->success();
         } else {
             foreach ($service->errors()->getMessages()['error'] as $error) {
@@ -217,7 +257,7 @@ class GuildController extends Controller {
             'name', 'description', 'logo'
         ]);
 
-        if ($service->queueGuildCreation($data, Auth::user())) {
+        if ($service->queueGuildUpdate($data, Auth::user(), 0)) {
             flash('Guild creation requested successfully. Please wait for staff to approve your request.')->success();
         } else {
             foreach ($service->errors()->getMessages()['error'] as $error) {
@@ -225,7 +265,7 @@ class GuildController extends Controller {
             }
         }
 
-        return redirect()->to('guilds');
+        return redirect()->to(__('guilds.guild'));
     }
 
     /**
@@ -242,8 +282,8 @@ class GuildController extends Controller {
             abort(404);
         }
 
-        if (($guild->owner_id !== Auth::user()->id) || !Auth::user()->isStaff) {
-            return redirect('/guilds/view'.$guild->id)->with('error', 'You do not have permission to edit this guild.');
+        if (($guild->owner_id !== Auth::user()->id) && !Auth::user()->isStaff) {
+            return redirect($guild->viewUrl)->with('error', 'You do not have permission to edit this guild.');
         }
 
         return view('guilds.edit_ranks', [
@@ -261,7 +301,6 @@ class GuildController extends Controller {
      * @return \Illuminate\Http\RedirectResponse
      */
     public function postGuildEditRanks(Request $request, GuildManager $service, $id = null) {
-        $id ? $request->validate(Guild::$updateRules) : $request->validate(Guild::$createRules);
         $data = $request->only([
             'user_ranks', 'character_ranks',
         ]);
@@ -271,7 +310,7 @@ class GuildController extends Controller {
         } elseif (!$id && $category = $service->updateGuildRanks($data, Auth::user())) {
             flash('Guild ranks created successfully.')->success();
 
-            return redirect()->to('guilds/edit-ranks/'.$guild->id);
+            return redirect()->to($guild->viewUrl . '/edit-ranks');
         } else {
             foreach ($service->errors()->getMessages()['error'] as $error) {
                 flash($error)->error();
@@ -296,10 +335,14 @@ class GuildController extends Controller {
             abort(404);
         }
 
-        $in_guild = GuildMember::where([
-            ['guild_id', $guild->id],
-            ['user_id', Auth::user()->id],
-        ])->exists();
+        if ( Auth::check() && Auth::user() ) {
+            $in_guild = GuildMember::where([
+                ['guild_id', $guild->id],
+                ['user_id', Auth::user()->id],
+            ])->exists();
+        } else {
+            $in_guild = false;
+        }
 
         $categories = ItemCategory::visible(Auth::check() ? Auth::user() : null)->orderBy('sort', 'DESC')->get();
         $query = $shop->displayStock()->where(function ($query) use ($categories) {
@@ -308,7 +351,7 @@ class GuildController extends Controller {
         });
 
         if (!$in_guild) {
-            $query->where('is_guild_only', 0);
+            $query->where('guild_only', 0);
         }
 
         $items = count($categories) ? $query->orderByRaw('FIELD(item_category_id,'.implode(',', $categories->pluck('id')->toArray()).')')
@@ -389,15 +432,13 @@ class GuildController extends Controller {
 
         $query = $guild->members()->join('users', 'guild_users.user_id', '=', 'users.id')->select('guild_users.*');
         $sort = $request->only(['sort']);
-        $permissions = $request->only(['permissions']);
 
         if ($request->get('name')) {
-            $query->join('users', 'guild_users.user_id', '=', 'users.id')
-                ->where('users.name', 'LIKE', '%'.$request->get('name').'%');
+            $query->where('users.name', 'LIKE', '%'.$request->get('name').'%');
         }
 
-        if ($permissions !== '') {
-            $query->where('permissions', $permissions);
+        if ($request->filled('permissions')) {
+            $query->where('guild_users.permissions', $request->get('permissions'));
         }
 
         switch ($sort['sort'] ?? null) {
@@ -507,6 +548,11 @@ class GuildController extends Controller {
 
         $guild = Guild::find($id);
 
+        if (!$guild || !$guild->canManage(Auth::user())) {
+            flash('You do not have permission to manage this guild\'s bank.')->error();
+            return redirect()->back();
+        }
+
         $action = $request->get('action');
         $sender = ($action == 'take') ? $guild : Auth::user();
         $recipient = ($action == 'take') ? Auth::user() : $guild;
@@ -588,7 +634,7 @@ class GuildController extends Controller {
         }
 
         $applications = $guild->applications()
-            ->where('status', $applicationStatuses[$status])
+            ->whereIn('status', $status === 'pending' ? ['Pending', 'pending'] : [$applicationStatuses[$status]])
             ->with('user')
             ->orderBy('created_at', 'DESC')
             ->get();
@@ -950,8 +996,8 @@ class GuildController extends Controller {
             abort(404);
         }
 
-        if (($guild->owner_id !== Auth::user()->id) || !Auth::user()->isStaff) {
-            return redirect('/guilds/view'.$guild->id.'/shop')->with('error', 'You do not have permission to edit this guild shop.');
+        if (($guild->owner_id !== Auth::user()->id) && !Auth::user()->isStaff) {
+            return redirect($guild->viewUrl . '/shop')->with('error', 'You do not have permission to edit this guild shop.');
         }
 
         $guild_item_ids = $guild->items()->get()->pluck('id')->toArray();
@@ -1018,7 +1064,7 @@ class GuildController extends Controller {
      * @return \Illuminate\Contracts\Support\Renderable
      */
     public function getShopStock(GuildShopManager $service, $id, $shopId, $stockId) {
-        $shop = GuildShop::where('id', $id)->where('is_active', 1)->first();
+        $shop = GuildShop::where('id', $shopId)->where('guild_id', $id)->where('is_active', 1)->first();
         if (!$shop) {
             abort(404);
         }

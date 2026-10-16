@@ -10,7 +10,7 @@ return new class extends Migration {
      */
     public function up(): void {
         Schema::table('item_categories', function (Blueprint $table) {
-            $table->boolean('is_guild_owned')->default(1)->after('character_limit');
+            $table->boolean('is_guild_owned')->default(0)->after('character_limit');
             $table->unsignedInteger('guild_limit')->default(0)->after('is_guild_owned');
         });
     }

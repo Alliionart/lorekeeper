@@ -228,3 +228,70 @@ Route::group(['prefix' => 'comments', 'namespace' => 'Comments'], function () {
     Route::post('/{id}/like/{action}', 'CommentController@like')->name('comments.like');
     Route::get('/liked', 'CommentController@getLikedComments');
 });
+
+/**************************************************************************************************
+    Guilds
+**************************************************************************************************/
+Route::group(['prefix' => __('guilds.guilds'), 'namespace' => 'Guilds'], function () {
+    Route::get('new', 'GuildController@getGuildCreate');
+    Route::post('new', 'GuildController@postGuildCreate');
+
+    Route::group(['prefix' => '{id}'], function () {
+        Route::get('apply', 'GuildController@getGuildApplyModal');
+        Route::post('apply', 'GuildController@postGuildApplyModal');
+
+        Route::get('edit', 'GuildController@getGuildEdit');
+        Route::post('edit', 'GuildController@postGuildEdit');
+        Route::post('edit/staff', 'GuildController@postGuildStaffEdit');
+
+        Route::get('edit-ranks', 'GuildController@getGuildEditRanks');
+        Route::post('edit-ranks', 'GuildController@postGuildEditRanks');
+        Route::get('manage-members', 'GuildController@getManageMembers');
+        Route::post('manage-members', 'GuildController@postEditManageMembers');
+
+        Route::group(['prefix' => 'shop'], function () {
+            Route::get('create', 'GuildController@getGuildShopCreateEdit');
+            Route::post('create', 'GuildController@postCreateEditShop');
+
+            Route::get('edit', 'GuildController@getGuildShopCreateEdit');
+            Route::post('edit', 'GuildController@postCreateEditShop');
+
+            Route::post('edit/stock', 'GuildController@postEditShopStock');
+            Route::post('buy', 'GuildController@postBuy');
+        });
+
+        Route::group(['prefix' => 'bank'], function () {
+            Route::post('transfer', 'GuildController@postCurrencyTransfer');
+        });
+
+        Route::group(['prefix' => 'members'], function () {
+            Route::get('add', 'GuildController@getGuildAddMembersModal');
+            Route::post('add', 'GuildController@postGuildAddMembers');
+            Route::post('remove', 'GuildController@postGuildRemoveMembers');
+        });
+
+        Route::group(['prefix' => 'characters'], function () {
+            Route::get('add', 'GuildController@getGuildAddCharactersModal');
+            Route::post('add', 'GuildController@postGuildAddCharacters');
+            Route::get('remove', 'GuildController@getGuildRemoveCharactersModal');
+            Route::post('remove', 'GuildController@postGuildRemoveCharacters');
+        });
+
+        Route::group(['prefix' => 'applications'], function () {
+            Route::get('{status?}', 'GuildController@getGuildApplications')->where('status', 'pending|accepted|rejected');
+            Route::post('{action}', 'GuildController@postGuildApplications')->where('action', 'accept|reject');
+        });
+
+        Route::group(['prefix' => 'inventory'], function () {
+            Route::post('edit', 'InventoryController@postEdit');
+        });
+
+        Route::get(strtolower(__('guilds.playpen')), 'GuildController@getGuildPets');
+        Route::get('armory', 'GuildController@getGuildArmory');
+
+        Route::post('disband', 'GuildController@postDisbandGuild');
+        Route::post('delete', 'GuildController@postDeleteGuild');
+        Route::post('leave', 'GuildController@postLeaveGuild');
+        Route::post('invite/{action}', 'GuildController@postGuildInvitationAction')->where('action', 'accept|reject');
+    });
+});

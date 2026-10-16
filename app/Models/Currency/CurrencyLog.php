@@ -51,7 +51,7 @@ class CurrencyLog extends Model {
             case 'Guild':
                 return $this->belongsTo(Guild::class, 'sender_id');
             default:
-                return $this->belongsTo(User::class, 'sender_id');
+                return $this->belongsTo(Character::class, 'sender_id');
         }
     }
 
@@ -67,7 +67,7 @@ class CurrencyLog extends Model {
             case 'Guild':
                 return $this->belongsTo(Guild::class, 'recipient_id');
             default:
-                return $this->belongsTo(User::class, 'recipient_id');
+                return $this->belongsTo(Character::class, 'recipient_id');
         }
     }
 

@@ -5,6 +5,7 @@ namespace App\Models\Item;
 use App\Models\Character\Character;
 use App\Models\Guild\Guild;
 use App\Models\Model;
+use App\Models\Shop\Shop;
 use App\Models\User\User;
 
 class ItemLog extends Model {
@@ -50,8 +51,10 @@ class ItemLog extends Model {
                 return $this->belongsTo(Character::class, 'sender_id');
             case 'Guild':
                 return $this->belongsTo(Guild::class, 'sender_id');
+            case 'Shop':
+                return $this->belongsTo(Shop::class, 'sender_id');
             default:
-                return $this->belongsTo(User::class, 'sender_id');
+                return $this->belongsTo(Character::class, 'sender_id');
         }
     }
 
@@ -66,8 +69,10 @@ class ItemLog extends Model {
                 return $this->belongsTo(Character::class, 'recipient_id');
             case 'Guild':
                 return $this->belongsTo(Guild::class, 'recipient_id');
+            case 'Shop':
+                return $this->belongsTo(Shop::class, 'recipient_id');
             default:
-                return $this->belongsTo(User::class, 'recipient_id');
+                return $this->belongsTo(Character::class, 'recipient_id');
         }
     }
 

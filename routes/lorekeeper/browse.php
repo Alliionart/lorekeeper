@@ -180,77 +180,34 @@ Route::group(['prefix' => 'reports', 'namespace' => 'Users'], function () {
 Route::group(['prefix' => __('guilds.guilds'), 'namespace' => 'Guilds'], function () {
     Route::get('/', 'GuildController@getGuildIndex');
 
-    Route::get('new', 'GuildController@getGuildCreate');
-    Route::post('new', 'GuildController@postGuildCreate');
-
     Route::group(['prefix' => '{id}'], function () {
         Route::get('/', 'GuildController@getGuild');
-
-        Route::get('apply', 'GuildController@getGuildApplyModal');
-        Route::post('apply', 'GuildController@postGuildApplyModal');
-
-        Route::get('edit', 'GuildController@getGuildEdit');
-        Route::post('edit', 'GuildController@postGuildEdit');
-        Route::post('edit/staff', 'GuildController@postGuildStaffEdit');
-
-        Route::get('edit-ranks', 'GuildController@getGuildEditRanks');
-        Route::post('edit-ranks', 'GuildController@postGuildEditRanks');
-        Route::get('manage-members', 'GuildController@getManageMembers');
-        Route::post('manage-members', 'GuildController@postEditManageMembers');
 
         Route::get('item-logs', 'GuildController@getGuildItemLogs');
         Route::get('currency-logs', 'GuildController@getGuildCurrencyLogs');
 
         Route::group(['prefix' => 'shop'], function () {
             Route::get('/', 'GuildController@getGuildShop');
-            Route::get('create', 'GuildController@getGuildShopCreateEdit');
-            Route::post('create', 'GuildController@postCreateEditShop');
-
-            Route::get('edit', 'GuildController@getGuildShopCreateEdit');
-            Route::post('edit', 'GuildController@postCreateEditShop');
-
-            //Route::get('edit/stock', 'GuildController@getStockModal');
-            Route::post('edit/stock', 'GuildController@postEditShopStock');
-            Route::post('buy', 'GuildController@postBuy');
             Route::get('{shopId}/{stockId}', 'GuildController@getShopStock')->where(['id' => '[0-9]+', 'stockId' => '[0-9]+']);
         });
 
         Route::group(['prefix' => 'bank'], function () {
             Route::get('/', 'GuildController@getGuildBank');
-            Route::post('transfer', 'GuildController@postCurrencyTransfer');
         });
 
         Route::group(['prefix' => 'members'], function () {
             Route::get('/', 'GuildController@getGuildMembers');
-            Route::get('add', 'GuildController@getGuildAddMembersModal');
-            Route::post('add', 'GuildController@postGuildAddMembers');
-            Route::post('remove', 'GuildController@postGuildRemoveMembers');
         });
 
         Route::group(['prefix' => 'characters'], function () {
             Route::get('/', 'GuildController@getGuildCharacters');
-            Route::get('add', 'GuildController@getGuildAddCharactersModal');
-            Route::post('add', 'GuildController@postGuildAddCharacters');
-            Route::get('remove', 'GuildController@getGuildRemoveCharactersModal');
-            Route::post('remove', 'GuildController@postGuildRemoveCharacters');
-        });
-
-        Route::group(['prefix' => 'applications'], function () {
-            Route::get('{status?}', 'GuildController@getGuildApplications')->where('status', 'pending|accepted|rejected');
-            Route::post('{action}', 'GuildController@postGuildApplications')->where('action', 'accept|reject');
         });
 
         Route::group(['prefix' => 'inventory'], function () {
             Route::get('/', 'GuildController@getGuildInventory');
-            Route::post('edit', 'InventoryController@postEdit');
         });
 
         Route::get(strtolower(__('guilds.playpen')), 'GuildController@getGuildPets');
         Route::get('armory', 'GuildController@getGuildArmory');
-
-        Route::post('disband', 'GuildController@postDisbandGuild');
-        Route::post('delete', 'GuildController@postDeleteGuild');
-        Route::post('leave', 'GuildController@postLeaveGuild');
-        Route::post('invite/{action}', 'GuildController@postGuildInvitationAction')->where('action', 'accept|reject');
     });
 });

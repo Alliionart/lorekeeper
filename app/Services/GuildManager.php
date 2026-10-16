@@ -82,30 +82,36 @@ class GuildManager extends Service {
     }
 
     /**
-     * Queues a new guild for creation.
+     * Queues a new guild for creation/update.
      *
      * @param array                 $data
      * @param \App\Models\User\User $user
      *
      * @return \App\Models\Guild\Guild|bool
      */
-    public function queueGuildCreation($data, $user) {
+    public function queueGuildUpdate($data, $user, $is_update = 1) {
         DB::beginTransaction();
 
         try {
+            $guild = $is_update ? Guild::find($data['guild_id'] ?? null) : null;
+            if ($is_update && !$guild) {
+                throw new \Exception('Invalid guild selected.');
+            }
+
             $image = null;
             if (isset($data['logo']) && $data['logo']) {
                 $data['has_logo'] = 1;
                 $image = $data['logo'];
                 unset($data['logo']);
             } else {
-                $data['has_logo'] = 0;
+                $data['has_logo'] = $guild ? $guild->has_logo : 0;
             }
 
             $update = GuildUpdate::create([
+                'guild_id'      => $guild ? $guild->id : null,
                 'user_id'       => $user->id,
                 'staff_id'      => null,
-                'is_update'     => 0,
+                'is_update'     => $is_update,
                 'status'        => 'pending',
                 'name'          => parse($data['name']) ?? null,
                 'description'   => parse($data['description']) ?? null,
@@ -154,6 +160,15 @@ class GuildManager extends Service {
                 ['guild_id', $guild->id],
                 ['user_id', $ownerId],
             ]);
+            $prevOwnerMembership = GuildMember::where([
+                ['guild_id', $guild->id],
+                ['user_id', $ownerId],
+            ]);
+
+            if ($ownerChanged) {
+                $guild->update(['owner_id' => $data['owner_id']]);
+                $prevOwnerMembership->update(['permissions', 0]);
+            }
 
             if (!$ownerMembership->exists()) {
                 GuildMember::create([
@@ -362,7 +377,23 @@ class GuildManager extends Service {
                     'owner_id'      => $request->user_id,
                     'status'        => 'active',
                     'has_logo'      => $request->has_logo,
+                    'max_users'     => Settings::get('guilds_max_players'),
+                    'max_characters'     => Settings::get('guilds_max_characters'),
                 ]);
+
+                if (!$guild) {
+                    throw new \Exception('The guild was unable to be created!');
+                }
+
+                $member = GuildMember::create([
+                    'guild_id'      => $guild->id,
+                    'user_id'       => $request->user_id,
+                    'permissions'   => 2,
+                ]);
+
+                if (!$member) {
+                    throw new \Exception('Unable to assign '. $request->user->name .' to the guild.');
+                }
             }
 
             if ($request->has_logo) {
@@ -558,39 +589,43 @@ class GuildManager extends Service {
      * @return bool
      */
     public function applyToGuild($guild, $data, $user) {
-        $in_guild = GuildMember::where([
-            ['guild_id', $guild->id],
-            ['user_id', $user->id],
-        ])->exists();
-
         DB::beginTransaction();
 
         try {
-            if ($in_guild) {
-                throw new \Exception('You are already in the guild!');
+            if (!$guild || !$user) {
+                throw new \Exception('Invalid guild or user.');
             }
-            
-            $alreadyApplied = GuildApplication::where([
+
+            $in_guild = GuildMember::where([
                 ['guild_id', $guild->id],
                 ['user_id', $user->id],
             ])->exists();
+            if ($in_guild) {
+                throw new \Exception('You are already in the guild!');
+            }
+
+            $alreadyApplied = GuildApplication::where('guild_id', $guild->id)
+                ->where('user_id', $user->id)
+                ->whereIn('status', ['pending', 'Pending'])
+                ->exists();
 
             if ($alreadyApplied) {
                 throw new \Exception('You have already applied to this guild!');
             }
 
-            if ($guild->max_users > 0 && $guild->members()->count() >= $guild->max_users) {
-                throw new \Exception('This guild has reached its maximum number of members.');
-            }
+            $this->ensureGuildHasMemberCapacity($guild);
 
             if ($guild->automatic_app_approval) {
                 $status = 'accepted';
-                GuildMember::create([
+                $member = GuildMember::create([
                     'guild_id'      => $guild->id,
                     'user_id'       => $user->id,
                     'permissions'   => 0,
                     'joined_at'     => Carbon::now(),
                 ]);
+                if (!$member) {
+                    throw new \Exception('Unable to add you to the guild.');
+                }
 
                 $guildOwner = $guild->owner;
                 Notifications::create('GUILD_JOIN_REQUEST_ACCEPTED', $user, [
@@ -605,8 +640,11 @@ class GuildManager extends Service {
                 'guild_id'      => $guild->id,
                 'user_id'       => $user->id,
                 'comment'       => parse($data['application_message']) ?? null,
-                'status'        => $status ?? 'pending',
+                'status'        => $status ?? 'Pending',
             ]);
+            if (!$app) {
+                throw new \Exception('Unable to create your guild application.');
+            }
 
             return $this->commitReturn(true);
         } catch (\Exception $e) {
@@ -640,62 +678,69 @@ class GuildManager extends Service {
                 throw new \Exception('Select at least one application.');
             }
 
+            $applicationIds = array_values(array_unique($data['application_ids']));
+            $applications = [];
+            foreach ($applicationIds as $applicationId) {
+                $application = GuildApplication::where('guild_id', $guild->id)
+                    ->where('id', $applicationId)
+                    ->whereIn('status', ['pending', 'Pending'])
+                    ->first();
+
+                if (!$application) {
+                    throw new \Exception('One or more selected applications are not pending or do not belong to this guild.');
+                }
+                $applications[] = $application;
+            }
+
             if ($action === 'accept') {
-                foreach( $data['application_ids'] as $app_id) {
-                    $app = GuildApplication::where('guild_id', $guild->id)->where('id', $app_id)->first();
-
-                    if (!$app) {
-                        throw new \Exception('One or more selected applications do not belong to this guild.');
+                foreach ($applications as $application) {
+                    if (GuildMember::where('guild_id', $guild->id)->where('user_id', $application->user_id)->exists()) {
+                        throw new \Exception('An applicant is already a member of this guild.');
                     }
+                }
+                $this->ensureGuildHasMemberCapacity($guild, count($applications));
+            }
 
-                    $updates = ['status' => 'accepted', 'updated_at' => Carbon::now()];
-                    if (isset($data['guild_comment']) && array_key_exists($app->id, $data['guild_comment'])) {
-                        $updates['guild_comment'] = $data['guild_comment'][$app->id];
-                    }
-                    $app->update($updates);
+            foreach ($applications as $application) {
+                $updates = [
+                    'status'     => $action === 'accept' ? 'accepted' : 'rejected',
+                    'updated_at' => Carbon::now(),
+                ];
+                if (isset($data['guild_comment']) && array_key_exists($application->id, $data['guild_comment'])) {
+                    $updates['guild_comment'] = $data['guild_comment'][$application->id];
+                }
+                $application->update($updates);
 
-                    GuildMember::create([
+                if ($action === 'accept') {
+                    $member = GuildMember::create([
                         'guild_id'      => $guild->id,
-                        'user_id'       => $app->user_id,
+                        'user_id'       => $application->user_id,
                         'permissions'   => 0,
                         'joined_at'     => Carbon::now(),
                     ]);
+                    if (!$member) {
+                        throw new \Exception('Unable to add an applicant to the guild.');
+                    }
 
-                    if ($app->user) {
-                        Notifications::create('GUILD_JOIN_REQUEST_ACCEPTED', $app->user, [
+                    if ($application->user) {
+                        Notifications::create('GUILD_JOIN_REQUEST_ACCEPTED', $application->user, [
                             'guild_mod_url' => $user->url,
                             'guild_mod'     => $user->name,
                             'guild_name'    => $guild->name,
                             'guild_url'     => $guild->viewUrl,
                         ]);
                     }
-                }
-            } else if ($action === 'reject') {
-                foreach( $data['application_ids'] as $app_id) {
-                    $app = GuildApplication::where('guild_id', $guild->id)->where('id', $app_id)->first();
-
-                    if (!$app) {
-                        throw new \Exception('One or more selected applications do not belong to this guild.');
-                    }
-
-                    $updates = ['status' => 'rejected', 'updated_at' => Carbon::now()];
-                    if (isset($data['guild_comment']) && array_key_exists($app->id, $data['guild_comment'])) {
-                        $updates['guild_comment'] = $data['guild_comment'][$app->id];
-                    }
-                    $app->update($updates);
-
-                    if ($app->user) {
-                        Notifications::create('GUILD_JOIN_REQUEST_REJECTED', $app->user, [
-                            'guild_mod_url' => $user->url,
-                            'guild_mod'     => $user->name,
-                            'guild_name'    => $guild->name,
-                            'guild_url'     => $guild->viewUrl,
-                        ]);
-                    }
+                } elseif ($application->user) {
+                    Notifications::create('GUILD_JOIN_REQUEST_REJECTED', $application->user, [
+                        'guild_mod_url' => $user->url,
+                        'guild_mod'     => $user->name,
+                        'guild_name'    => $guild->name,
+                        'guild_url'     => $guild->viewUrl,
+                    ]);
                 }
             }
 
-            return $this->commitReturn($action == 'expired' ?: true);
+            return $this->commitReturn(true);
         } catch (\Exception $e) {
             $this->setError('error', $e->getMessage());
         }
@@ -714,39 +759,47 @@ class GuildManager extends Service {
      * @return bool
      */
     public function handleInvitation($guild, $action, $user) {
-        // We always want to remove the invite row regardless
-        $in_guild = GuildMember::where([
-            ['guild_id', $guild->id],
-            ['user_id', $user->id],
-        ])->exists();
-        $invite = GuildInvitation::where([
-            ['guild_id', $guild->id],
-            ['user_id', $user->id],
-        ])->first();
-
-        $invite->delete();
-
         DB::beginTransaction();
 
         try {
-            if ($in_guild) {
+            if (!$guild || !$user || !in_array($action, ['accept', 'reject'], true)) {
+                throw new \Exception('Invalid invitation request.');
+            }
+
+            $invite = GuildInvitation::where([
+                ['guild_id', $guild->id],
+                ['user_id', $user->id],
+            ])->first();
+
+            if (!$invite) {
+                throw new \Exception('You currently do not have an invite to ' . $guild->name);
+            }
+
+            if (GuildMember::where('guild_id', $guild->id)->where('user_id', $user->id)->exists()) {
                 throw new \Exception('You are already in the guild!');
             }
 
-            if ($invite->expires_in <= Carbon::now()) {
-                $action = 'expired';
+            if ($invite->expires_at && $invite->expires_at <= Carbon::now()) {
+                $invite->delete();
+                return $this->commitReturn(true);
             }
 
             if ($action === 'accept') {
+                $this->ensureGuildHasMemberCapacity($guild);
                 $member = GuildMember::create([
                     'guild_id'      => $guild->id,
                     'user_id'       => $user->id,
                     'permissions'   => 0,
                     'joined_at'     => Carbon::now(),
                 ]);
+                if (!$member) {
+                    throw new \Exception('Unable to add you to the guild.');
+                }
             }
 
-            return $this->commitReturn($action == 'expired' ?: true);
+            $invite->delete();
+
+            return $this->commitReturn(true);
         } catch (\Exception $e) {
             $this->setError('error', $e->getMessage());
         }
@@ -810,7 +863,7 @@ class GuildManager extends Service {
                     throw new \Exception($u->name.' already has a pending guild invitation.');
                 }
 
-                if (!$user->settings->allow_guild_invitations) {
+                if (!$u->settings->allow_guild_invitations) {
                     continue;
                 }
 
@@ -901,22 +954,25 @@ class GuildManager extends Service {
             if (!$guild) {
                 throw new \Exception('Invalid guild.');
             }
+            if (!$user) {
+                throw new \Exception('Invalid user.');
+            }
             if ((int) $user->id === (int) $guild->owner_id) {
                 throw new \Exception('The guild owner must transfer ownership before leaving.');
             }
 
-            $membership = GuildMember::where([
+            $membershipQuery = GuildMember::where([
                 ['guild_id', $guild->id],
                 ['user_id', $user->id],
-            ])->first();
+            ]);
 
-            if (!$membership) {
+            if (!$membershipQuery->exists()) {
                 throw new \Exception('You are not a member of this guild.');
             }
 
             $characterIds = Character::where('user_id', $user->id)->pluck('id');
             $guild->characters()->whereIn('character_id', $characterIds)->delete();
-            $membership->delete();
+            $membershipQuery->delete();
 
             return $this->commitReturn(true);
         } catch (\Exception $e) {
@@ -949,6 +1005,12 @@ class GuildManager extends Service {
             $newCharacters = [];
 
             foreach ($data['characters'] as $c_id) {
+                $count = GuildCharacter::where('guild_id', $guild->id)->count();
+
+                if ($count >= $guild->max_characters) {
+                    throw new \Exception('Max character limit has been reached.');
+                }
+
                 $c = Character::find($c_id);
 
                 if (!$c || $c->is_myo_slot) {
@@ -1208,6 +1270,13 @@ class GuildManager extends Service {
         DB::beginTransaction();
 
         try {
+            if (!$guild) {
+                throw new \Exception('Invalid guild!');
+            }
+            if ($guild->getPermission($user)) {
+                throw new \Exception('Only the guild owner or mods may create a shop.');
+            }
+
             $data = $this->populateShopData($data);
 
             $image = null;
@@ -1249,6 +1318,13 @@ class GuildManager extends Service {
         DB::beginTransaction();
 
         try {
+            if (!$guild) {
+                throw new \Exception('Invalid guild!');
+            }
+            if ($guild->getPermission($user)) {
+                throw new \Exception('Only the guild owner or mods may create a shop.');
+            }
+
             $shop = $guild->shop()->first();
 
             if (!$shop) {
@@ -1313,20 +1389,41 @@ class GuildManager extends Service {
                     if ($data['cost'][$key] < 0) {
                         throw new \Exception('One or more of the items has a negative cost.');
                     }
+
+                    $quantity = $data['quantity'][$key] ?? null;
+                    if (!is_scalar($quantity) || filter_var($quantity, FILTER_VALIDATE_INT) === false || (int) $quantity < 1) {
+                        throw new \Exception('One or more of the items has an invalid quantity.');
+                    }
+                    $data['quantity'][$key] = (int) $quantity;
+                    $purchaseLimit = $data['purchase_limit'][$key] ?? 0;
+                    if (!is_scalar($purchaseLimit) || filter_var($purchaseLimit, FILTER_VALIDATE_INT) === false || (int) $purchaseLimit < 0) {
+                        throw new \Exception('One or more of the items has an invalid purchase limit.');
+                    }
+                    $data['purchase_limit'][$key] = (int) $purchaseLimit;
+                }
+            }
+
+            $inventoryManager = new InventoryManager;
+            foreach ($shop->stock()->with('item')->get() as $stock) {
+                if ($stock->stock_type !== 'Item' || !$stock->item || $stock->quantity < 1) {
+                    continue;
                 }
 
-                // Clear the existing shop stock
-                $shop->stock()->delete();
+                if (!$inventoryManager->creditItem($guild, $guild, 'Guild Shop Stock Return', ['data' => 'Returned unsold stock from '.$shop->name], $stock->item, (int) $stock->quantity)) {
+                    throw new \Exception('Failed to return unsold guild shop stock to the inventory.');
+                }
+            }
+            $shop->stock()->delete();
 
+            if (isset($data['item_id'])) {
                 foreach ($data['item_id'] as $key => $itemId) {
-                    $qtyRemaining = (int) ($data['quantity'][$key] ?? 1);
+                    $stockQuantity = $data['quantity'][$key];
+                    $qtyRemaining = $stockQuantity;
                     $stacks = GuildItem::where([
                         ['item_id', $itemId],
                         ['guild_id', $guild->id],
                         ['count', '>', 0],
                     ])->orderBy('id')->get();
-
-                    $inventoryManager = new InventoryManager;
 
                     foreach ($stacks as $stack) {
                         if ($qtyRemaining <= 0) {
@@ -1356,16 +1453,13 @@ class GuildManager extends Service {
                         'cost'                  => $data['cost'][$key],
                         'guild_cost'            => $data['guild_cost'][$key] ?? $data['cost'][$key],
                         'is_limited_stock'      => isset($data['is_limited_stock'][$key]),
-                        'quantity'              => $data['quantity'][$key] ?? 1,
+                        'quantity'              => $stockQuantity,
                         'purchase_limit'        => $data['purchase_limit'][$key],
                         'is_visible'            => 1,
-                        'guild_only'            => isset($data['guild_only']),
+                        'guild_only'            => isset($data['guild_only'][$key]),
                         'stock_type'            => 'Item', //Maybe change this so we can support other things?
                     ]);
                 }
-            } else {
-                // Clear the existing shop stock
-                $shop->stock()->delete();
             }
 
             return $this->commitReturn($shop);
@@ -1374,6 +1468,14 @@ class GuildManager extends Service {
         }
 
         return $this->rollbackReturn(false);
+    }
+
+    private function ensureGuildHasMemberCapacity($guild, $additionalMembers = 1) {
+        $maxUsers = (int) $guild->max_users;
+
+        if ($maxUsers > 0 && GuildMember::where('guild_id', $guild->id)->count() + $additionalMembers > $maxUsers) {
+            throw new \Exception('This guild has reached its maximum number of members.');
+        }
     }
 
     /**
@@ -1395,10 +1497,10 @@ class GuildManager extends Service {
             $data['status'] = $guild ? $guild->status : $data['status'] ?? 'inactive';
         }
         if (!isset($data['max_users'])) {
-            $data['max_users'] = $guild ? $guild->max_users : Settings::get('guild_max_users');
+            $data['max_users'] = $guild ? $guild->max_users : Settings::get('guilds_max_players');
         }
         if (!isset($data['max_characters'])) {
-            $data['max_characters'] = $guild ? $guild->max_characters : Settings::get('guild_max_characters');
+            $data['max_characters'] = $guild ? $guild->max_characters : Settings::get('guilds_max_characters');
         }
         if (!isset($data['open_inventory'])) {
             $data['open_inventory'] = 0;
@@ -1444,7 +1546,10 @@ class GuildManager extends Service {
         } else {
             $data['parsed_description'] = null;
         }
-        $data['is_active'] = isset($data['is_active']);
+        
+        if (!isset($data['is_active'])) {
+            $data['is_active'] = 0;
+        }
 
         if (isset($data['remove_image'])) {
             if ($shop && $shop->has_image && $data['remove_image']) {

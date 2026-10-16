@@ -7,6 +7,8 @@ use App\Facades\Settings;
 use App\Models\Character\Character;
 use App\Models\Currency\Currency;
 use App\Models\Guild\Guild;
+use App\Models\Guild\GuildCharacter;
+use App\Models\Guild\GuildMember;
 use App\Models\Item\Item;
 use App\Models\Loot\LootTable;
 use App\Models\Prompt\Prompt;
@@ -92,7 +94,7 @@ class SubmissionManager extends Service {
             ]);
 
             // Set characters that have been attached.
-            $this->createCharacterAttachments($submission, $data);
+            $this->createCharacterAttachments($submission, $data, $user);
 
             // Set guilds that have been attached
             $this->createGuildAttachments($submission, $data);
@@ -144,6 +146,7 @@ class SubmissionManager extends Service {
             // Also, as this is an edit, delete all attached characters to be re-applied later.
             $this->removeAttachments($submission);
             SubmissionCharacter::where('submission_id', $submission->id)->delete();
+            SubmissionGuild::where('submission_id', $submission->id)->delete();
 
             if ($isSubmit) {
                 $submission->update(['status' => 'Pending']);
@@ -153,7 +156,8 @@ class SubmissionManager extends Service {
             $assets = $this->createUserAttachments($submission, $data, $user);
             $userAssets = $assets['userAssets'];
             $promptRewards = $assets['promptRewards'];
-            $this->createCharacterAttachments($submission, $data);
+            $this->createCharacterAttachments($submission, $data, $user);
+            $this->createGuildAttachments($submission, $data);
 
             // Modify submission
             $submission->update([
@@ -844,13 +848,13 @@ class SubmissionManager extends Service {
      * @param mixed $submission the submission object
      * @param mixed $data       the data for creating character attachments
      */
-    private function createCharacterAttachments($submission, $data) {
+    private function createCharacterAttachments($submission, $data, $user) {
         // The character identification comes in both the slug field and as character IDs
         // that key the reward ID/quantity arrays.
         // We'll need to match characters to the rewards for them.
         // First, check if the characters are accessible to begin with.
         if (isset($data['slug'])) {
-            $characters = Character::myo(0)->visible()->whereIn('slug', $data['slug'])->get();
+            $characters = Character::myo(0)->visible()->where('user_id', $user->id)->whereIn('slug', $data['slug'])->get();
             if (count($characters) != count($data['slug'])) {
                 throw new \Exception('One or more of the selected characters do not exist.');
             }
@@ -915,9 +919,23 @@ class SubmissionManager extends Service {
      */
     private function createGuildAttachments($submission, $data) {
         if (isset($data['guild_id'])) {
+            if (!is_array($data['guild_id'])) {
+                throw new \Exception('Invalid guild selected.');
+            }
+
+            $guildIds = array_values(array_unique($data['guild_id']));
+            $attachedCharacterIds = SubmissionCharacter::where('submission_id', $submission->id)->pluck('character_id');
+            $allowedGuildIds = GuildMember::where('user_id', $submission->user_id)
+                ->pluck('guild_id')
+                ->merge(Guild::where('owner_id', $submission->user_id)->pluck('id'))
+                ->merge(GuildCharacter::whereIn('character_id', $attachedCharacterIds)->pluck('guild_id'))
+                ->unique();
             $guilds = Guild::where('status', 'active')->whereIn('id', $data['guild_id'])->get();
-            if (count($guilds) != count($data['guild_id'])) {
+            if (count($guilds) != count($guildIds)) {
                 throw new \Exception('One or more of the selected guilds do not exist.');
+            }
+            if (array_diff($guildIds, $allowedGuildIds->all())) {
+                throw new \Exception('You may only attach guilds you belong to or that contain one of your attached characters.');
             }
         } else {
             $guilds = [];

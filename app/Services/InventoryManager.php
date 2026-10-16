@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Facades\Notifications;
 use App\Models\Character\CharacterItem;
+use App\Models\Currency\Currency;
 use App\Models\Guild\Guild;
 use App\Models\Guild\GuildItem;
 use App\Models\Item\Item;
@@ -337,6 +338,9 @@ class InventoryManager extends Service {
             if (!in_array($senderType, $allowedTypes, true) || !in_array($recipientType, $allowedTypes, true)) {
                 throw new \Exception('Invalid transfer direction selected.');
             }
+            if ($senderType === 'Guild' && (!$user || (!$user->isStaff && !$user->hasPower('edit_inventories') && !$sender->getGuildEditPermissions($user)))) {
+                throw new \Exception('You do not have permission to manage this guild inventory.');
+            }
 
             // One-way stack model to source owner restriction.
             $sourceMap = [
@@ -346,7 +350,11 @@ class InventoryManager extends Service {
             ];
 
             foreach ($stacks as $key => $stack) {
-                $quantity = (int) $quantities[$key] ?? 0;
+                $quantityValue = $quantities[$key] ?? null;
+                if (!is_scalar($quantityValue) || filter_var($quantityValue, FILTER_VALIDATE_INT) === false) {
+                    throw new \Exception('Invalid quantity entered.');
+                }
+                $quantity = (int) $quantityValue;
                 if (!$stack) {
                     throw new \Exception('Invalid or no stack selected.');
                 }
@@ -402,7 +410,7 @@ class InventoryManager extends Service {
                 if ($senderType == 'Character' && $stack->character->user_id != $sender->user_id && !($user && $user->hasPower('edit_inventories'))) {
                     throw new \Exception('You do not own one of the selected items.');
                 }
-                if ($senderType == 'Guild' && $stack->guild_id != $sender->id && !($user && $user->hasPower('edit_inventories'))) {
+                if ($senderType == 'Guild' && $stack->guild_id != $sender->id) {
                     throw new \Exception('You do not own one of the selected items.');
                 }
 
@@ -521,7 +529,35 @@ class InventoryManager extends Service {
         DB::beginTransaction();
 
         try {
-            if ($owner->logType == 'User') {
+            if (!$owner) {
+                throw new \Exception('Invalid inventory owner.');
+            }
+
+            if ($owner->logType == 'Guild') {
+                if (!$user || (!$user->isStaff && !$user->hasPower('edit_inventories') && !$owner->getGuildEditPermissions($user))) {
+                    throw new \Exception('You do not have permission to manage this guild inventory.');
+                }
+                if (!$stacks || $stacks->isEmpty()) {
+                    throw new \Exception('An invalid item was selected.');
+                }
+
+                foreach ($stacks as $key => $stack) {
+                    $quantity = $quantities[$key] ?? 0;
+                    if (!$stack || $stack->guild_id != $owner->id) {
+                        throw new \Exception('An invalid item was selected.');
+                    }
+                    if (!is_scalar($quantity) || filter_var($quantity, FILTER_VALIDATE_INT) === false || (int) $quantity <= 0) {
+                        throw new \Exception('Invalid quantity entered.');
+                    }
+                    $quantity = (int) $quantity;
+                    if ($stack->count < $quantity) {
+                        throw new \Exception('Quantity to delete exceeds item count.');
+                    }
+                    if (!$this->debitStack($owner, 'Guild Item Deleted', ['data' => 'Deleted by '.$user->displayName], $stack, $quantity)) {
+                        throw new \Exception('Failed to delete the guild item.');
+                    }
+                }
+            } elseif ($owner->logType == 'User') {
                 foreach ($stacks as $key=> $stack) {
                     $quantity = $quantities[$key];
                     if (!$owner->hasAlias) {
@@ -598,10 +634,57 @@ class InventoryManager extends Service {
      *
      * @return bool
      */
-    public function resellStack($user, $stacks, $quantities) {
+    public function resellStack($user, $stacks, $quantities, $actor = null) {
         DB::beginTransaction();
 
         try {
+            if ($user && $user->logType == 'Guild') {
+                if (!$actor || (!$actor->isStaff && !$actor->hasPower('edit_inventories') && !$user->getGuildEditPermissions($actor))) {
+                    throw new \Exception('You do not have permission to manage this guild inventory.');
+                }
+                if (!$stacks || $stacks->isEmpty()) {
+                    throw new \Exception('An invalid item was selected.');
+                }
+                if (!config('lorekeeper.extensions.item_entry_expansion.resale_function')) {
+                    throw new \Exception('This function is not currently enabled.');
+                }
+
+                foreach ($stacks as $key => $stack) {
+                    $quantity = $quantities[$key] ?? 0;
+                    if (!$stack || $stack->guild_id != $user->id) {
+                        throw new \Exception('An invalid item was selected.');
+                    }
+                    if (!is_scalar($quantity) || filter_var($quantity, FILTER_VALIDATE_INT) === false || (int) $quantity <= 0) {
+                        throw new \Exception('Invalid quantity entered.');
+                    }
+                    $quantity = (int) $quantity;
+                    if ($stack->count < $quantity) {
+                        throw new \Exception('Quantity to sell exceeds item count.');
+                    }
+                    if (!isset($stack->item->data['resell']) || !$stack->item->data['resell']) {
+                        throw new \Exception('This item cannot be sold.');
+                    }
+
+                    $resell = $stack->item->resell;
+                    $currencyId = $resell->keys()->last();
+                    $currency = Currency::find($currencyId);
+                    if (!$currency || !$currency->is_guild_owned) {
+                        throw new \Exception('The resale currency cannot be held by guilds.');
+                    }
+
+                    $currencyQuantity = $resell->get($currencyId) * $quantity;
+                    $currencyManager = new CurrencyManager;
+                    if (!$currencyManager->creditCurrency(null, $user, 'Guild Item Sold', 'Sold '.$stack->item->displayName.' ×'.$quantity, $currency, $currencyQuantity)) {
+                        throw new \Exception('Failed to credit currency to the guild.');
+                    }
+                    if (!$this->debitStack($user, 'Guild Item Sold', ['data' => 'Sold by '.$actor->displayName], $stack, $quantity)) {
+                        throw new \Exception('Failed to remove the sold guild item.');
+                    }
+                }
+
+                return $this->commitReturn(true);
+            }
+
             foreach ($stacks as $key=> $stack) {
                 $quantity = $quantities[$key];
                 if (!$user->hasAlias) {

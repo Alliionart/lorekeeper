@@ -49,7 +49,7 @@
                 </div>
                 <div class="text-right mt-2">
                     <a href="{{ $guild->viewUrl }}" class="btn btn-outline-primary">Visit Guild</a>
-                    @if ($guild->open_new_users && !$guild->is_disbanded)
+                    @if (Auth::check() && $guild->open_new_users && !$guild->is_disbanded)
                         <a href="#" class="ml-2 btn btn-primary applyButton" data-guild-id="{{ $guild->id }}" data-target="#applyModal">Submit an Application</a>
                     @endif
                 </div>

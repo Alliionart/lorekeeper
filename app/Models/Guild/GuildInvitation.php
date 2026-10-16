@@ -12,7 +12,7 @@ class GuildInvitation extends Model {
      * @var array
      */
     protected $fillable = [
-        'guild_id', 'user_id',
+        'guild_id', 'user_id', 'expires_at'
     ];
 
     /**

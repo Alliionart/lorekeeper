@@ -186,11 +186,13 @@ class CurrencyManager extends Service {
                 throw new \Exception('This currency cannot be held by guilds.');
             }
             if ($data['quantity'] < 0) {
-                $this->debitCurrency($guild, $staff, 'Staff Removal', $data['data'], $currency, -$data['quantity']);
+                if (!$this->debitCurrency($guild, $staff, 'Staff Removal', $data['data'], $currency, -$data['quantity'])) {
+                    throw new \Exception('Failed to remove currency from the guild.');
+                }
                 $owner = $guild->owner;
                 if ($owner) {
                     Notifications::create('GUILD_CURRENCY_REMOVAL', $owner, [
-                        'currency_name'     => $currency->owner(),
+                        'currency_name'     => $currency->name,
                         'currency_quantity' => -$data['quantity'],
                         'sender_url'        => $staff->url,
                         'sender_name'       => $staff->name,
@@ -199,7 +201,9 @@ class CurrencyManager extends Service {
                     ]);
                 }
             } else {
-                $this->creditCurrency($staff, $guild, 'Staff Grant', $data['data'], $currency, $data['quantity']);
+                if (!$this->creditCurrency($staff, $guild, 'Staff Grant', $data['data'], $currency, $data['quantity'])) {
+                    throw new \Exception('Failed to grant currency to the guild.');
+                }
                 $owner = $guild->owner;
                 if ($owner) {
                     Notifications::create('GUILD_CURRENCY_GRANT', $owner, [

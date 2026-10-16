@@ -93,7 +93,7 @@ class GuildShopManager extends Service {
                     ['character_id', $characterId],
                 ])->exists();
 
-                if ($shopStock->is_guild_only && !$in_guild) {
+                if ($shopStock->guild_only && !$in_guild) {
                     throw new \Exception('Only guild members may purchase this item.');
                 }
 
@@ -118,7 +118,7 @@ class GuildShopManager extends Service {
                     ['user_id', $user->id],
                 ])->exists();
 
-                if ($shopStock->is_guild_only && !$in_guild) {
+                if ($shopStock->guild_only && !$in_guild) {
                     throw new \Exception('Only guild members may purchase this item.');
                 }
 

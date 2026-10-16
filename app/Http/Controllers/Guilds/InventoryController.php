@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Guilds;
 
 use App\Http\Controllers\Controller;
-use App\Models\Character\Character;
 use App\Models\Guild\Guild;
 use App\Models\Guild\GuildItem;
 use App\Models\Item\Item;
@@ -82,6 +81,13 @@ class InventoryController extends Controller {
             flash('Quantities not set.')->error();
         }
 
+        $guild = Guild::find($request->route('id'));
+
+        if (!$this->canManageGuildInventory($guild)) {
+            flash('You do not have permission to manage this guild\'s inventory.')->error();
+            return redirect()->back();
+        }
+
         if ($request->ids && $request->quantities) {
             switch ($request->action) {
                 default:
@@ -131,6 +137,11 @@ class InventoryController extends Controller {
     private function postTransfer(Request $request, InventoryManager $service) {
         $guild = Guild::find($request->route('id'));
 
+        if (!$this->canManageGuildInventory($guild)) {
+            flash('You do not have permission to manage this guild\'s inventory.')->error();
+            return redirect()->back();
+        }
+
         if ($service->transferGuildStack($guild, User::visible()->where('id', $request->get('user'))->first(), GuildItem::find($request->get('ids')), $request->get('quantities'), Auth::user())) {
             flash('Item transferred successfully.')->success();
         } else {
@@ -151,8 +162,15 @@ class InventoryController extends Controller {
      */
     private function postTransferToCharacter(Request $request, InventoryManager $service) {
         $guild = Guild::find($request->route('id'));
+        if (!$this->canManageGuildInventory($guild)) {
+            flash('You do not have permission to manage this guild\'s inventory.')->error();
+            return redirect()->back();
+        }
 
-        if ($service->transferCharacterStack($guild, Character::visible()->where('id', $request->get('character_id'))->first(), GuildItem::find($request->get('ids')), $request->get('quantities'), Auth::user())) {
+        $guildCharacter = $guild->characters()->where('character_id', $request->get('character_id'))->first();
+        $character = $guildCharacter ? $guildCharacter->character : null;
+
+        if ($service->transferGuildStack($guild, $character, GuildItem::find($request->get('ids')), $request->get('quantities'), Auth::user())) {
             flash('Item transferred successfully.')->success();
         } else {
             foreach ($service->errors()->getMessages()['error'] as $error) {
@@ -194,7 +212,7 @@ class InventoryController extends Controller {
     private function postResell(Request $request, InventoryManager $service) {
         $guild = Guild::find($request->route('id'));
 
-        if ($service->resellStack($guild, GuildItem::find($request->get('ids')), $request->get('quantities'))) {
+        if ($service->resellStack($guild, GuildItem::find($request->get('ids')), $request->get('quantities'), Auth::user())) {
             flash('Item sold successfully.')->success();
         } else {
             foreach ($service->errors()->getMessages()['error'] as $error) {
@@ -203,6 +221,12 @@ class InventoryController extends Controller {
         }
 
         return redirect()->back();
+    }
+
+    private function canManageGuildInventory($guild) {
+        $user = Auth::user();
+
+        return $guild && $user && ($user->isStaff || $user->hasPower('edit_inventories') || $guild->getGuildEditPermissions($user));
     }
 
     /**

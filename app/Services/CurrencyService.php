@@ -264,8 +264,8 @@ class CurrencyService extends Service {
         if (!$data['is_user_owned']) {
             $data['allow_user_to_user'] = $data['is_displayed'] = 0;
         }
-        if (!$data['is_guild_owned']) {
-            $data['allow_user_to_user'] = $data['is_displayed'] = 0;
+        if (!isset($data['is_guild_owned'])) {
+            $data['allow_user_to_guild'] = $data['allow_guild_to_user'] = 0;
         }
 
         if (isset($data['remove_icon']) || isset($data['remove_image'])) {

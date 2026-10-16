@@ -446,13 +446,24 @@ class Guild extends Model {
 
     **********************************************************************************************/
 
-    public function getPermission() {
-        if (Auth::user()->isStaff || Auth::user()->id === $this->owner_id) {
+    /**
+     * Check if a user has permission to manage the guild. Allows both mods and owner to manage the guild.
+     * 
+     * @param mixed|null $user
+     * @return bool
+     */
+    public function getPermission( $user = null) {
+
+        if (!$user) {
+            $user = Auth::user();
+        }
+
+        if ($user->isStaff || $user->id === $this->owner_id) {
             return true;
         }
 
         if (GuildMember::where([
-            ['user_id', Auth::user()->id],
+            ['user_id', $user->id],
             ['guild_id', $this->id],
             ['permissions', '>', 0],
         ])->exists()) {
