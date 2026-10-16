@@ -131,7 +131,7 @@
                     <div class="logs-table-cell">Recipient</div>
                 </div>
                 <div class="col-6 col-md-2">
-                    <div class="logs-table-cell">Guild</div>
+                    <div class="logs-table-cell">{{ ucfirst(__('guilds.guild')) }}</div>
                 </div>
                 <div class="col-6 col-md-4">
                     <div class="logs-table-cell">Log</div>

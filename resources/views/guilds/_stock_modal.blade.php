@@ -6,7 +6,7 @@
         <div><a href="{{ $stock->item->idUrl }}"><strong>{{ $stock->item->name }}</strong></a></div>
         <div><strong>Cost: </strong> {!! $stock->currency->display($stock->cost) !!}</div>
         @if ($stock->guild_cost !== $stock->cost)
-            <div><strong>Guild Cost: </strong> {!! $stock->currency->display($stock->guild_cost) !!}</div>
+            <div><strong>{{ ucfirst(__('guilds.guild')) }} Cost: </strong> {!! $stock->currency->display($stock->guild_cost) !!}</div>
         @endif
         @if ($stock->is_limited_stock)
             <div>Stock: {{ $stock->quantity }}</div>

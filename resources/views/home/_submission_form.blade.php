@@ -120,12 +120,12 @@
 
 <div class="card mb-3">
     <div class="card-header h2">
-        <a href="#" class="btn btn-outline-info float-right" id="addGuild">Add Guild</a>
+        <a href="#" class="btn btn-outline-info float-right" id="addGuild">Add {{ ucfirst(__('guilds.guild')) }}</a>
         Guilds
     </div>
     <div class="card-body" style="clear:both;">
         @if ($isClaim)
-            <p>If there are guild-specific rewards you would like to claim, attach them here. Otherwise, this section can be left blank.</p>
+            <p>If there are {{ __('guilds.guild') }}-specific rewards you would like to claim, attach them here. Otherwise, this section can be left blank.</p>
         @endif
         <div id="guilds" class="mb-3">
             @foreach ($submission->guilds as $guild)

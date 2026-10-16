@@ -1,13 +1,13 @@
 @extends('admin.layout')
 
 @section('admin-title')
-    Guild Request
+    {{ ucfirst(__('guilds.guild')) }} Request
 @endsection
 
 @section('admin-content')
-    {!! breadcrumbs(['Admin Panel' => 'admin', 'Guild Requests' => 'admin/guilds/queue', 'Guild Request' => 'admin/guilds/requests/' . $request->id]) !!}
+    {!! breadcrumbs(['Admin Panel' => 'admin', ucfirst(__('guilds.guild')) . ' Requests' => 'admin/guilds/queue', ucfirst(__('guilds.guild')) . ' Request' => 'admin/guilds/requests/' . $request->id]) !!}
 
-    <h1>Guild Request
+    <h1>{{ ucfirst(__('guilds.guild')) }} Request
         <span class="float-right badge badge-{{ $request->status == 'pending' || $request->status == 'Draft' ? 'secondary' : ($request->status == 'approved' ? 'success' : 'danger') }}">
             {{ ucfirst($request->status) }}
         </span>
@@ -16,7 +16,7 @@
     {!! Form::open(['url' => 'admin/guilds/queue/' . $request->id . '/update', 'files' => true, 'id' => 'requestForm']) !!}
 
     <div class="card mb-3">
-        <h5 class="card-header">Guild Request</h5>
+        <h5 class="card-header">{{ ucfirst(__('guilds.guild')) }} Request</h5>
         <div class="card-body">
             <div class="mb-1">
                 <div class="row">
@@ -29,24 +29,24 @@
                     <div class="col-md-2 col-4">
                         <h5>Type</h5>
                     </div>
-                    <div class="col-md-10 col-8">{!! $request->is_update ? 'Update' : 'New Guild' !!}</div>
+                    <div class="col-md-10 col-8">{!! $request->is_update ? 'Update' : 'New ' . ucfirst(__('guilds.guild')) !!}</div>
                 </div>
                 <div class="row">
                     <div class="col-md-2 col-4">
-                        <h5>Guild Name</h5>
+                        <h5>{{ ucfirst(__('guilds.guild')) }} Name</h5>
                     </div>
                     <div class="col-md-10 col-8">{!! $request->name !!}</div>
                 </div>
                 <div class="row">
                     <div class="col-md-2 col-4">
-                        <h5>Guild Description</h5>
+                        <h5>{{ ucfirst(__('guilds.guild')) }} Description</h5>
                     </div>
                     <div class="col-md-10 col-8">{!! $request->description !!}</div>
                 </div>
                 @if ($request->has_logo)
                     <div class="row">
                         <div class="col-md-2 col-4">
-                            <h5>Guild Logo</h5>
+                            <h5>{{ ucfirst(__('guilds.guild')) }} Logo</h5>
                         </div>
                         <div class="col-md-10 col-8">
                             <img src="{{ $request->logoUrl }}" class="img-fluid img-thumbnail mb-2" />

@@ -1,13 +1,13 @@
 @extends('admin.layout')
 
 @section('admin-title')
-    Guilds
+    {{ ucfirst(__('guilds.guilds')) }}
 @endsection
 
 @section('admin-content')
-    {!! breadcrumbs(['Admin Panel' => 'admin', 'Guilds' => 'admin/guilds']) !!}
+    {!! breadcrumbs(['Admin Panel' => 'admin', ucfirst(__('guilds.guilds')) => 'admin/guilds']) !!}
 
-    <h1>Guilds</h1>
+    <h1>{{ ucfirst(__('guilds.guilds')) }}</h1>
 
     <p>Here you can find all guilds created by players</p>
 

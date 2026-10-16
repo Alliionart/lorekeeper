@@ -7,13 +7,13 @@
 @section('account-content')
     {!! breadcrumbs(['My Account' => Auth::user()->url, 'Invitations' => 'account/invitations']) !!}
 
-    <h1>Guild Invitations</h1>
+    <h1>{{ ucfirst(__('guilds.guild')) }} Invitations</h1>
 
     @if ($invites && count($invites) > 0)
         <table class="table table-striped">
             <thead>
                 <tr>
-                    <th scope="col">Guild</th>
+                    <th scope="col">{{ ucfirst(__('guilds.guild')) }}</th>
                     <th scope="col">Created</th>
                     <th scope="col">Expires In</th>
                     <th class="text-right" scope="col">Actions</th>

@@ -48,7 +48,7 @@
                     </div>
                 </div>
                 <div class="text-right mt-2">
-                    <a href="{{ $guild->viewUrl }}" class="btn btn-outline-primary">Visit Guild</a>
+                    <a href="{{ $guild->viewUrl }}" class="btn btn-outline-primary">Visit {{ ucfirst(__('guilds.guild')) }}</a>
                     @if (Auth::check() && !$guild->inGuild() && $guild->open_new_users && !$guild->is_disbanded)
                         <a href="#" class="ml-2 btn btn-primary applyButton" data-guild-id="{{ $guild->id }}" data-target="#applyModal">Submit an Application</a>
                     @endif

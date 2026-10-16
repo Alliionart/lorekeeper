@@ -66,10 +66,10 @@
         <div class="form-group">
             <div class="row">
                 <div class="col-md-6">
-                    <label>{{ Form::radio('action', 'take', true, ['class' => 'take-button']) }} Take from Guild</label>
+                    <label>{{ Form::radio('action', 'take', true, ['class' => 'take-button']) }} Take from {{ ucfirst(__('guilds.guild')) }}</label>
                 </div>
                 <div class="col-md-6">
-                    <label>{{ Form::radio('action', 'give', false, ['class' => 'give-button']) }} Give to Guild</label>
+                    <label>{{ Form::radio('action', 'give', false, ['class' => 'give-button']) }} Give to {{ ucfirst(__('guilds.guild')) }}</label>
                 </div>
             </div>
         </div>

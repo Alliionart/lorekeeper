@@ -98,13 +98,13 @@
         </div>
 
         <div class="card my-2">
-            <h2 class="card-header">Guilds</h2>
+            <h2 class="card-header">{{ ucfirst(__('guilds.guilds')) }}</h2>
             <div class="card-body">
                 <div id="characters" class="mb-3">
                     @if (count(
                             $submission->guilds()->whereRelation('guild', 'status', 'active')->get()) != count($submission->guilds()->get()))
                         <div class="alert alert-warning">
-                            Some guild have been disbanded since this submission was created.
+                            Some {{ ucfirst(__('guilds.guilds')) }} have been disbanded since this submission was created.
                         </div>
                     @endif
                     @foreach ($submission->guilds()->whereRelation('guild', 'status', 'active')->get() as $guild)
@@ -112,7 +112,7 @@
                     @endforeach
                 </div>
                 <div class="text-right">
-                    <a href="#" class="btn btn-outline-info" id="addGuild">Add Guild</a>
+                    <a href="#" class="btn btn-outline-info" id="addGuild">Add {{ ucfirst(__('guilds.guild')) }}</a>
                 </div>
             </div>
         </div>

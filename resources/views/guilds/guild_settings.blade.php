@@ -18,7 +18,7 @@
         </div>
         @if (Auth::check() && (Auth::user()->id == $guild->owner_id || Auth::user()->isStaff))
             <div class="col-md-2 text-right">
-                <a class="btn btn-danger disband">Disband Guild</a>
+                <a class="btn btn-danger disband">Disband {{ ucfirst(__('guilds.guild')) }}</a>
             </div>
         @endif
     </div>
@@ -143,7 +143,7 @@
     {!! Form::close() !!}
 
     <div class="card mt-4">
-        <h3 class="card-header">Guild Moderators</h3>
+        <h3 class="card-header">{{ ucfirst(__('guilds.guild')) }} Moderators</h3>
         <div class="card-body">
             {!! Form::open(['url' => '/' . __('guilds.guilds') . '/' . $guild->id . '/edit/staff', 'id' => 'guildSettingForm']) !!}
 

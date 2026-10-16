@@ -26,7 +26,7 @@
                     {!! Form::select('guild_id[]', $guilds, $guild ? $guild->guild->id : null, ['class' => 'form-control guild-id', 'placeholder' => 'Select Guild']) !!}
                 </div>
                 <div class="guild-rewards">
-                    <h4>Guild Rewards</h4>
+                    <h4>{{ ucfirst(__('guilds.guild')) }} Rewards</h4>
                     <table class="table table-sm">
                         <thead>
                             <tr>

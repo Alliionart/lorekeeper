@@ -1,7 +1,7 @@
 @extends('admin.layout')
 
 @section('admin-title')
-    Guilds
+    {{ ucfirst(__('guilds.guilds')) }}
 @endsection
 
 @section('admin-content')
@@ -28,7 +28,7 @@
                 'type',
                 [
                     'all' => 'All',
-                    'new' => 'New Guild Requests',
+                    'new' => 'New '. ucfirst(__('guilds.guild')) .' Requests',
                     'update' => 'Update Requests',
                 ],
                 Request::get('type') ?: 'all',
@@ -66,7 +66,7 @@
                                 <div class="logs-table-cell">User</div>
                             </div>
                             <div class="col-6 col-md-3">
-                                <div class="logs-table-cell">Guild Name</div>
+                                <div class="logs-table-cell">{{ ucfirst(__('guilds.guild')) }} Name</div>
                             </div>
                             <div class="col-6 col-md-3">
                                 <div class="logs-table-cell">Submitted</div>

@@ -6,7 +6,7 @@
 </div>
 
 <div class="text-right">
-    {!! Form::submit('Apply to Guild', ['class' => 'btn btn-primary']) !!}
+    {!! Form::submit('Apply to ' . ucfirst(__('guilds.guild')), ['class' => 'btn btn-primary']) !!}
 </div>
 
 {!! Form::close() !!}
