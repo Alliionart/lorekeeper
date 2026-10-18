@@ -34,14 +34,14 @@
                 <div class="form-group">
                     {!! Form::hidden('guild_only_default[' . $key . ']', 0, ['class' => 'stock-field', 'data-name' => 'guild_only_default']) !!}
                     {!! Form::checkbox('guild_only[' . $key . ']', 1, $stock ? $stock->guild_only : false, ['class' => 'form-check-input stock-limited stock-toggle stock-field', 'data-name' => 'guild_only']) !!}
-                    {!! Form::label('guild_only[' . $key . ']', 'Guild Only', ['class' => 'form-check-label ml-3']) !!} {!! add_help('If turned on, only members of the '.__('guilds.guild').' can purchase this item.') !!}
+                    {!! Form::label('guild_only[' . $key . ']', 'Guild Only', ['class' => 'form-check-label ml-3']) !!} {!! add_help('If turned on, only members of the ' . __('guilds.guild') . ' can purchase this item.') !!}
                 </div>
             </div>
         </div>
         <div class="row">
             <div class="col-md-6">
                 <div class="form-group qty-wrapper">
-                    {!! Form::label('quantity[' . $key . ']', 'Quantity') !!} {!! add_help('At minimum, 1 unit will be transferred to the shop. All items will come from the '.__('guilds.guild').' inventory.') !!}
+                    {!! Form::label('quantity[' . $key . ']', 'Quantity') !!} {!! add_help('At minimum, 1 unit will be transferred to the shop. All items will come from the ' . __('guilds.guild') . ' inventory.') !!}
                     {!! Form::number('quantity[' . $key . ']', $stock ? $stock->quantity : 1, ['class' => 'form-control stock-field quantity', 'min' => 1, 'data-name' => 'quantity']) !!}
                     <small class="{{ $stock ?? 'hide' }}">Currently in Inventory: {{ isset($itemCounts) && isset($itemCounts[$stock->item_id]) ? $itemCounts[$stock->item_id] : 0 }}</small>
                 </div>

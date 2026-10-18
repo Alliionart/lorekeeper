@@ -67,12 +67,12 @@
             <div class="row">
                 <div class="col-md-6">
                     @if (isset($takeCurrencyOptions))
-                    <label>{{ Form::radio('action', 'take', true, ['class' => 'take-button']) }} Take from {{ ucfirst(__('guilds.guild')) }}</label>
+                        <label>{{ Form::radio('action', 'take', true, ['class' => 'take-button']) }} Take from {{ ucfirst(__('guilds.guild')) }}</label>
                     @endif
                 </div>
                 <div class="col-md-6">
                     @if (isset($giveCurrencyOptions))
-                    <label>{{ Form::radio('action', 'give', !isset($takeCurrencyOptions), ['class' => 'give-button']) }} Give to {{ ucfirst(__('guilds.guild')) }}</label>
+                        <label>{{ Form::radio('action', 'give', !isset($takeCurrencyOptions), ['class' => 'give-button']) }} Give to {{ ucfirst(__('guilds.guild')) }}</label>
                     @endif
                 </div>
             </div>
@@ -84,16 +84,16 @@
                     {!! Form::text('quantity', null, ['class' => 'form-control']) !!}
                 </div>
                 @if (isset($takeCurrencyOptions))
-                <div class="col-md-6 take">
-                    {!! Form::label('currency_id', 'Currency') !!}
-                    {!! Form::select('take_currency_id', $takeCurrencyOptions, null, ['class' => 'form-control', 'placeholder' => 'Select Currency']) !!}
-                </div>
+                    <div class="col-md-6 take">
+                        {!! Form::label('currency_id', 'Currency') !!}
+                        {!! Form::select('take_currency_id', $takeCurrencyOptions, null, ['class' => 'form-control', 'placeholder' => 'Select Currency']) !!}
+                    </div>
                 @endif
                 @if (isset($giveCurrencyOptions))
-                <div class="col-md-6 give {{ isset($takeCurrencyOptions) ? 'hide' : '' }}">
-                    {!! Form::label('currency_id', 'Currency') !!}
-                    {!! Form::select('give_currency_id', $giveCurrencyOptions, null, ['class' => 'form-control', 'placeholder' => 'Select Currency']) !!}
-                </div>
+                    <div class="col-md-6 give {{ isset($takeCurrencyOptions) ? 'hide' : '' }}">
+                        {!! Form::label('currency_id', 'Currency') !!}
+                        {!! Form::select('give_currency_id', $giveCurrencyOptions, null, ['class' => 'form-control', 'placeholder' => 'Select Currency']) !!}
+                    </div>
                 @endif
             </div>
         </div>

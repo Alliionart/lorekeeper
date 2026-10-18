@@ -12,12 +12,12 @@
     @if (Auth::check() && Auth::user())
         <div>
             <p>This is a list of all {{ ucwords(__('guilds.guilds')) }} on the site, including disbanded {{ __('guilds.guilds') }}. If you want to form a {{ ucwords(__('guilds.guild')) }}, you can form a new {{ __('guilds.guild') }}.</p>
-            <a href="{{ url( __('guilds.guilds') . '/new') }}" class="btn btn-success float-right ml-2">Form a New {{ __('guilds.guild') }}</a>
+            <a href="{{ url(__('guilds.guilds') . '/new') }}" class="btn btn-success float-right ml-2">Form a New {{ __('guilds.guild') }}</a>
         </div>
     @else
         <p>This is a list of all {{ ucwords(__('guilds.guilds')) }} on the site, including disbanded {{ __('guilds.guilds') }}. You must be logged in to form a new {{ __('guilds.guild') }}.</p>
     @endif
-    
+
 
     <div>
         {!! Form::open(['method' => 'GET', 'class' => 'form-inline justify-content-end']) !!}

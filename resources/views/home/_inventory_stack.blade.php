@@ -114,7 +114,7 @@
                         <div id="guildTransferForm" class="collapse">
                             <p>This will transfer this stack or stacks to this {{ __('guilds.guild') }}'s inventory.</p>
                             <div class="form-group">
-                                {!! Form::select('guild_id', $guildOptions, null, ['class' => 'form-control mr-2 default guild-select', 'placeholder' => 'Select '. __('guilds.guild')]) !!}
+                                {!! Form::select('guild_id', $guildOptions, null, ['class' => 'form-control mr-2 default guild-select', 'placeholder' => 'Select ' . __('guilds.guild')]) !!}
                             </div>
                             <div class="text-right">
                                 {!! Form::button('Transfer', ['class' => 'btn btn-primary', 'name' => 'action', 'value' => 'guildTransfer', 'type' => 'submit']) !!}

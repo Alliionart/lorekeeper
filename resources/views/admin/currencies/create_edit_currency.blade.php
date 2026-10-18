@@ -127,11 +127,11 @@
         <div class="card-body">
             <div class="mb-2">
                 {!! Form::checkbox('allow_user_to_guild', 1, $currency->allow_user_to_guild, ['class' => 'form-check-input', 'data-toggle' => 'toggle', 'data-on' => 'Allow', 'data-off' => 'Disallow']) !!}
-                {!! Form::label('allow_user_to_guild', 'User → Guild Transfers', ['class' => 'form-check-label ml-3']) !!} {!! add_help('This will allow a user to transfer this currency to their own '.__('guilds.guilds').' unidirectionally.') !!}
+                {!! Form::label('allow_user_to_guild', 'User → Guild Transfers', ['class' => 'form-check-label ml-3']) !!} {!! add_help('This will allow a user to transfer this currency to their own ' . __('guilds.guilds') . ' unidirectionally.') !!}
             </div>
             <div>
                 {!! Form::checkbox('allow_guild_to_user', 1, $currency->allow_guild_to_user, ['class' => 'form-check-input', 'data-toggle' => 'toggle', 'data-on' => 'Allow', 'data-off' => 'Disallow']) !!}
-                {!! Form::label('allow_guild_to_user', 'Guild → User Transfers', ['class' => 'form-check-label ml-3']) !!} {!! add_help('This will allow a user to transfer this currency from their own '.__('guilds.guilds').' to their bank unidirectionally.') !!}
+                {!! Form::label('allow_guild_to_user', 'Guild → User Transfers', ['class' => 'form-check-label ml-3']) !!} {!! add_help('This will allow a user to transfer this currency from their own ' . __('guilds.guilds') . ' to their bank unidirectionally.') !!}
             </div>
         </div>
     </div>
