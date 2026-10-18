@@ -9,8 +9,8 @@
 
     <h1>{{ $guild->id ? 'Edit' : 'Create' }} Guild
         @if ($guild->id)
-            <a href="#" class="btn btn-outline-danger float-right delete-guild-button">Delete guild</a>
-            <a href="#" class="btn btn-outline-secondary float-right disband-guild-button mr-2">Disband guild</a>
+            <a href="#" class="btn btn-outline-danger float-right delete-guild-button">Delete {{ ucfirst(__('guilds.guild')) }}</a>
+            <a href="#" class="btn btn-outline-secondary float-right disband-guild-button mr-2">Disband {{ ucfirst(__('guilds.guild')) }}</a>
         @endif
     </h1>
 

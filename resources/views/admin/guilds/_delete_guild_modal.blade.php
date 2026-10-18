@@ -6,7 +6,7 @@
     <p>Are you sure you want to delete <strong>{{ $guild->name }}</strong>?</p>
 
     <div class="text-right">
-        {!! Form::submit('Delete guild', ['class' => 'btn btn-danger']) !!}
+        {!! Form::submit('Delete '.__('guilds.guild'), ['class' => 'btn btn-danger']) !!}
     </div>
 
     {!! Form::close() !!}

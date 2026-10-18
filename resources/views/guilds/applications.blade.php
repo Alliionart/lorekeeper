@@ -14,7 +14,7 @@
     <div class="row align-items-end">
         <div class="col-md-8">
             <h1>Manage {{ $guild->name }} Applications</h1>
-            <p>Manage the applications for your {{ __('guilds.guild') }} below. Only {{ __('guilds.guild') }} owners and mods may edit the guild. Staff may manage applications as well.</p>
+            <p>Manage the applications for your {{ __('guilds.guild') }} below. Only {{ __('guilds.guild') }} owners and mods may edit the {{ __('guilds.guild') }}. Staff may manage applications as well.</p>
         </div>
     </div>
 

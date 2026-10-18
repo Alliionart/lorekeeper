@@ -77,6 +77,57 @@ class GuildController extends Controller {
     }
 
     /**
+     * Shows the user's specific guilds index page.
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function getUserGuilds(Request $request) {
+        $query = Guild::query();
+        
+        if (!Auth::check()) {
+            abort(404);
+        }
+
+        $user = Auth::user();
+        $guild_ids = GuildMember::where('user_id', $user->id)->pluck('guild_id')->toArray();
+
+        $query->whereIn('id', $guild_ids);
+
+        $sort = $request->only(['sort']);
+
+        if ($request->get('name')) {
+            $query->where(function ($query) use ($request) {
+                $query->where('guilds.name', 'LIKE', '%'.$request->get('name').'%');
+            });
+        }
+
+        switch ($sort['sort'] ?? null) {
+            default:
+                $query->orderBy('created_at', 'DESC');
+                break;
+            case 'alpha':
+                $query->orderBy('name');
+                break;
+            case 'alpha-reverse':
+                $query->orderBy('name', 'DESC');
+                break;
+            case 'reputation':
+                $query->orderBy('reputation', 'DESC')->orderBy('name');
+                break;
+            case 'newest':
+                $query->orderBy('created_at', 'DESC');
+                break;
+            case 'oldest':
+                $query->orderBy('created_at', 'ASC');
+                break;
+        }
+
+        return view('guilds.my_guilds', [
+            'guilds'    => $query->paginate(30)->appends($request->query()),
+        ]);
+    }
+
+    /**
      * Shows an individual guild.
      *
      * @param mixed $id
@@ -524,15 +575,17 @@ class GuildController extends Controller {
      */
     public function getGuildBank($id) {
         $guild = Guild::where('id', $id)->first();
+        $canManageBank = Auth::check() && $guild->getPermission(Auth::user());
+        $canGiveToGuild = Auth::check() && $guild->inGuild(Auth::user());
 
         return view('guilds.bank', [
             'guild'                 => $guild,
             'currencies'            => $guild->getCurrencies($guild),
             'logs'                  => $guild->getCurrencyLogs(),
-        ] + (Auth::check() && Auth::user()->id == $guild->owner_id ? [
-            'takeCurrencyOptions' => Currency::where('allow_user_to_guild', 1)->where('is_guild_owned', 1)->where('is_user_owned', 1)->whereIn('id', GuildCurrency::where('guild_id', $guild->id)->pluck('currency_id')->toArray())->orderBy('id', 'DESC')->pluck('name', 'id')->toArray() ?? [],
-            'giveCurrencyOptions' => Currency::where('allow_guild_to_user', 1)->where('is_guild_owned', 1)->where('is_user_owned', 1)->whereIn('id', UserCurrency::where('user_id', Auth::user()->id)->pluck('currency_id')->toArray())->orderBy('id', 'DESC')->pluck('name', 'id')->toArray() ?? [],
-
+        ] + ($canManageBank ? [
+            'takeCurrencyOptions' => Currency::where('allow_guild_to_user', 1)->where('is_guild_owned', 1)->where('is_user_owned', 1)->whereIn('id', GuildCurrency::where('guild_id', $guild->id)->pluck('currency_id')->toArray())->orderBy('id', 'DESC')->pluck('name', 'id')->toArray() ?? [],
+        ] : []) + ($canGiveToGuild ? [
+            'giveCurrencyOptions' => Currency::where('allow_user_to_guild', 1)->where('is_guild_owned', 1)->where('is_user_owned', 1)->whereIn('id', UserCurrency::where('user_id', Auth::user()->id)->pluck('currency_id')->toArray())->orderBy('id', 'DESC')->pluck('name', 'id')->toArray() ?? [],
         ] : []) + (Auth::check() && (Auth::user()->hasPower('edit_inventories') || Auth::user()->id == $guild->owner_id) ? [
             'currencyOptions' => Currency::where('is_guild_owned', 1)->orderBy('id', 'DESC')->pluck('name', 'id')->toArray(),
         ] : []));
@@ -553,12 +606,26 @@ class GuildController extends Controller {
 
         $guild = Guild::find($id);
 
-        if (!$guild || !$guild->canManage(Auth::user())) {
-            flash('You do not have permission to manage this guild\'s bank.')->error();
+        if (!$guild) {
+            flash('Invalid guild selected.')->error();
             return redirect()->back();
         }
 
         $action = $request->get('action');
+        if (!in_array($action, ['take', 'give'], true)) {
+            flash('Invalid currency transfer action.')->error();
+            return redirect()->back();
+        }
+
+        if ($action === 'take' && !$guild->getPermission(Auth::user())) {
+            flash('You do not have permission to take currency from this guild.')->error();
+            return redirect()->back();
+        }
+        if ($action === 'give' && !$guild->inGuild(Auth::user())) {
+            flash('Only guild members may give currency to this guild.')->error();
+            return redirect()->back();
+        }
+
         $sender = ($action == 'take') ? $guild : Auth::user();
         $recipient = ($action == 'take') ? Auth::user() : $guild;
 
@@ -1129,7 +1196,7 @@ class GuildController extends Controller {
      */
     public function postEditShopStock(Request $request, GuildManager $service, $id) {
         $data = $request->only([
-            'item_id', 'currency_id', 'cost', 'guild_cost', 'is_limited_stock', 'guild_only', 'quantity', 'purchase_limit',
+            'item_id', 'currency_id', 'cost', 'guild_cost', 'is_limited_stock', 'is_limited_stock_default', 'guild_only', 'guild_only_default', 'quantity', 'purchase_limit',
         ]);
 
         if ($service->updateShopStock(Guild::find($id), $data, Auth::user())) {

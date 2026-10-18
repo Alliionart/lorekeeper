@@ -1,5 +1,5 @@
 {!! Form::open(['url' => $guild->viewUrl . '/characters/add']) !!}
-<p>This will add characters from guild members to the group. You may add up to 15 characters at a time.</p>
+<p>This will add characters from {{ __('guilds.guild') }} members to the group. You may add up to 15 characters at a time.</p>
 <div class="form-group">
     {!! Form::label('characters[]', 'Characters to Add') !!}
     {!! Form::select('characters[]', $characters, null, ['class' => 'form-control selectize', 'multiple', 'placeholder' => 'Select characters...']) !!}

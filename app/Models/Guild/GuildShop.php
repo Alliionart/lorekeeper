@@ -143,7 +143,7 @@ class GuildShop extends Model {
      * @return string
      */
     public function getShopImageFileNameAttribute() {
-        return $this->id.'/-image.png/';
+        return $this->id.'-image.png';
     }
 
     /**

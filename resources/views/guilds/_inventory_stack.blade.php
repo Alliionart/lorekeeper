@@ -8,7 +8,7 @@
 
     <h5>Item Variations</h5>
     @if ($user && $user->hasPower('edit_inventories'))
-        <p class="alert alert-warning my-2">Note: Your rank allows you to transfer guild-bound items.</p>
+        <p class="alert alert-warning my-2">Note: Your rank allows you to transfer {{ __('guilds.guild') }}-bound items.</p>
     @endif
 
     {!! Form::open(['url' => __('guilds.guilds') . '/' . $guild->id . '/inventory/edit']) !!}
@@ -89,7 +89,7 @@
                         @endif Transfer Item to Member
                     </a>
                     <div id="transferForm" class="collapse">
-                        <p>This will transfer this item back to the desired guild member.</p>
+                        <p>This will transfer this item back to the desired {{ __('guilds.guild') }} member.</p>
                         {!! Form::select('Guild Member', $members, null, ['class' => 'selectize form-control', 'name' => 'user', 'placeholder' => 'Select a user...']) !!}
                         <div class="text-right mt-2">
                             {!! Form::button('Transfer', ['class' => 'btn btn-primary', 'name' => 'action', 'value' => 'transfer', 'type' => 'submit']) !!}
@@ -103,7 +103,7 @@
                         @endif Transfer Item to Character
                     </a>
                     <div id="characterTransferForm" class="collapse">
-                        <p>This will transfer this item back to the desired guild character.</p>
+                        <p>This will transfer this item back to the desired {{ __('guilds.guild') }} character.</p>
                         {!! Form::select('Guild Character', $characters, null, ['class' => 'selectize form-control', 'name' => 'character_id', 'placeholder' => 'Select a character...']) !!}
                         <div class="text-right mt-2">
                             {!! Form::button('Transfer', ['class' => 'btn btn-primary', 'name' => 'action', 'value' => 'characterTransfer', 'type' => 'submit']) !!}

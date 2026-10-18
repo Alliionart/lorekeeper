@@ -325,8 +325,11 @@ class CurrencyManager extends Service {
                 ['user_id', $user->id],
             ])->exists();
 
-            if (!$in_guild) {
-                throw new \Exception('Only guild members may withdraw currency.');
+            if ($sender instanceof Guild && !$guild->getPermission($user)) {
+                throw new \Exception('Only guild owners, moderators, or staff may withdraw currency.');
+            }
+            if ($recipient instanceof Guild && !$in_guild) {
+                throw new \Exception('Only guild members may give currency to the guild.');
             }
 
             // Determine log type

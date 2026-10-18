@@ -5,7 +5,7 @@
 @endsection
 
 @section('home-content')
-    {!! breadcrumbs([__('guilds.guilds') => 'guilds', 'New ' . __('guilds.guild') . ' Request' => 'guilds/new']) !!}
+    {!! breadcrumbs([__('guilds.guilds') => 'guilds', 'New ' . __('guilds.guild') . ' Request' => __('guilds.guilds') . '/new']) !!}
 
     <h1>Request to Open a {{ __('guilds.guild') }}</h1>
 

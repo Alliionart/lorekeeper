@@ -104,6 +104,24 @@
                         </div>
                     </li>
                 @endif
+                @if (isset($item->category) && $item->category->is_guild_owned)
+                    <li class="list-group-item">
+                        <a class="card-title h5 collapse-title" data-toggle="collapse" href="#guildTransferForm">
+                            @if ($stack->first()->user_id != $user->id)
+                                [ADMIN]
+                            @endif Transfer Item to {{ ucfirst(__('guilds.guild')) }}
+                        </a>
+                        <div id="guildTransferForm" class="collapse">
+                            <p>This will transfer this stack or stacks to this {{ __('guilds.guild') }}'s inventory.</p>
+                            <div class="form-group">
+                                {!! Form::select('guild_id', $guildOptions, null, ['class' => 'form-control mr-2 default guild-select', 'placeholder' => 'Select '. __('guilds.guild')]) !!}
+                            </div>
+                            <div class="text-right">
+                                {!! Form::button('Transfer', ['class' => 'btn btn-primary', 'name' => 'action', 'value' => 'guildTransfer', 'type' => 'submit']) !!}
+                            </div>
+                        </div>
+                    </li>
+                @endif
                 @if (isset($item->data['resell']) && App\Models\Currency\Currency::where('id', $item->resell->flip()->pop())->first() && config('lorekeeper.extensions.item_entry_expansion.resale_function'))
                     <li class="list-group-item">
                         <a class="card-title h5 collapse-title" data-toggle="collapse" href="#resellForm">

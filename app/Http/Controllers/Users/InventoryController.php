@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Character\Character;
 use App\Models\Character\CharacterDesignUpdate;
 use App\Models\Character\CharacterItem;
+use App\Models\Guild\Guild;
 use App\Models\Guild\GuildItem;
 use App\Models\Item\Item;
 use App\Models\Item\ItemCategory;
@@ -77,6 +78,9 @@ class InventoryController extends Controller {
             'userOptions'      => ['' => 'Select User'] + User::visible()->where('id', '!=', $first_instance ? $first_instance->user_id : 0)->orderBy('name')->get()->pluck('verified_name', 'id')->toArray(),
             'readOnly'         => $readOnly,
             'characterOptions' => Character::visible()->myo(0)->where('user_id', optional(Auth::user())->id)->orderBy('sort', 'DESC')->get()->pluck('fullName', 'id')->toArray(),
+            'guildOptions'     => Guild::whereHas('members', function ($query) {
+                $query->where('user_id', Auth::id());
+            })->orderBy('name')->pluck('name', 'id')->toArray(),
         ]);
     }
 
@@ -176,6 +180,9 @@ class InventoryController extends Controller {
                     break;
                 case 'characterTransfer':
                     return $this->postTransferToCharacter($request, $service);
+                    break;
+                case 'guildTransfer':
+                    return $this->postTransferToGuild($request, $service);
                     break;
                 case 'resell':
                     return $this->postResell($request, $service);
@@ -353,6 +360,25 @@ class InventoryController extends Controller {
      */
     private function postTransferToCharacter(Request $request, InventoryManager $service) {
         if ($service->transferCharacterStack(Auth::user(), Character::visible()->where('id', $request->get('character_id'))->first(), UserItem::find($request->get('ids')), $request->get('quantities'), Auth::user())) {
+            flash('Item transferred successfully.')->success();
+        } else {
+            foreach ($service->errors()->getMessages()['error'] as $error) {
+                flash($error)->error();
+            }
+        }
+
+        return redirect()->back();
+    }
+
+    /**
+     * Transfers inventory items to a guild.
+     *
+     * @param App\Services\InventoryManager $service
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    private function postTransferToGuild(Request $request, InventoryManager $service) {
+        if ($service->transferGuildStack(Auth::user(), Guild::find($request->get('guild_id')), UserItem::find($request->get('ids')), $request->get('quantities'), Auth::user())) {
             flash('Item transferred successfully.')->success();
         } else {
             foreach ($service->errors()->getMessages()['error'] as $error) {

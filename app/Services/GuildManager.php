@@ -1384,7 +1384,7 @@ class GuildManager extends Service {
 
             if (isset($data['item_id'])) {
                 foreach ($data['item_id'] as $key => $itemId) {
-                    if ($data['cost'][$key] == null) {
+                    if (($data['cost'][$key] ?? null) == null) {
                         throw new \Exception('One or more of the items is missing a cost.');
                     }
                     if ($data['cost'][$key] < 0) {
@@ -1453,11 +1453,11 @@ class GuildManager extends Service {
                         'currency_id'           => $data['currency_id'][$key],
                         'cost'                  => $data['cost'][$key],
                         'guild_cost'            => $data['guild_cost'][$key] ?? $data['cost'][$key],
-                        'is_limited_stock'      => isset($data['is_limited_stock'][$key]),
+                        'is_limited_stock'      => (string) ($data['is_limited_stock'][$key] ?? $data['is_limited_stock_default'][$key] ?? '0') === '1',
                         'quantity'              => $stockQuantity,
                         'purchase_limit'        => $data['purchase_limit'][$key],
                         'is_visible'            => 1,
-                        'guild_only'            => isset($data['guild_only'][$key]),
+                        'guild_only'            => (string) ($data['guild_only'][$key] ?? $data['guild_only_default'][$key] ?? '0') === '1',
                         'stock_type'            => 'Item', //Maybe change this so we can support other things?
                     ]);
                 }

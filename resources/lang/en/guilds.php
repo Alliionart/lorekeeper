@@ -13,8 +13,8 @@ return [
     */
 
     // Main
-    'guild'      => 'flight',
-    'guilds'     => 'flights',
+    'guild'      => 'guild',
+    'guilds'     => 'guilds',
 
     // Other Items
     'playpen'   => 'Daycare',

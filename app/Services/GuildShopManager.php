@@ -130,11 +130,8 @@ class GuildShopManager extends Service {
                 }
             }
 
-            // If the item has a limited quantity, decrease the quantity
-            if ($shopStock->is_limited_stock) {
-                $shopStock->quantity -= $quantity;
-                $shopStock->save();
-            }
+            $shopStock->quantity -= $quantity;
+            $shopStock->save();
 
             // Add a purchase log
             $shopLog = GuildShopLog::create([

@@ -232,6 +232,10 @@ Route::group(['prefix' => 'comments', 'namespace' => 'Comments'], function () {
 /**************************************************************************************************
     Guilds
 **************************************************************************************************/
+Route::group(['prefix' => 'my-'.__('guilds.guilds'), 'namespace' => 'Guilds'], function() {
+    Route::get('/', 'GuildController@getUserGuilds');
+});
+
 Route::group(['prefix' => __('guilds.guilds'), 'namespace' => 'Guilds'], function () {
 
     Route::group(['prefix' => '{id}'], function () {
