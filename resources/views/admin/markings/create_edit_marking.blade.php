@@ -83,9 +83,18 @@
         {!! Form::textarea('description', $marking->description, ['class' => 'form-control wysiwyg']) !!}
     </div>
 
-    <div class="form-group">
-        {!! Form::checkbox('is_visible', 1, $marking->id ? $marking->is_visible : 1, ['class' => 'form-check-input', 'data-toggle' => 'toggle']) !!}
-        {!! Form::label('is_visible', 'Is Visible', ['class' => 'form-check-label ml-3']) !!} {!! add_help('If turned off, the marking will not be visible in the marking list or available for selection in search and design updates. Permissioned staff will still be able to add them to characters, however.') !!}
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-group">
+                {!! Form::checkbox('is_visible', 1, $marking->id ? $marking->is_visible : 1, ['class' => 'form-check-input', 'data-toggle' => 'toggle']) !!}
+                {!! Form::label('is_visible', 'Is Visible', ['class' => 'form-check-label ml-3']) !!} {!! add_help('If turned off, the marking will not be visible in the marking list or available for selection in search and design updates. Permissioned staff will still be able to add them to characters, however.') !!}
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                {!! Form::label('Order in Genome') !!} {!! add_help('This number determines the order of the markings in the genome. Lower numbers will appear first. Base appears between 0 and 1.') !!}
+                {!! Form::number('order_in_genome', $marking->order_in_genome ?? null, ['class' => 'form-control']) !!}
+            </div>
     </div>
 
     <div class="text-right">

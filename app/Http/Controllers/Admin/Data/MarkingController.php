@@ -95,7 +95,7 @@ class MarkingController extends Controller {
     public function postCreateEditMarking(Request $request, MarkingService $service, $id = null) {
         $id ? $request->validate(Marking::$updateRules) : $request->validate(Marking::$createRules);
         $data = $request->only([
-            'name', 'slug', 'species_id', 'rarity_id', 'description', 'image', 'is_visible', 'recessive', 'dominant', 'short_description',
+            'name', 'slug', 'species_id', 'rarity_id', 'description', 'image', 'is_visible', 'recessive', 'dominant', 'short_description', 'order_in_genome',
         ]);
         if ($id && $service->updateMarking(Marking::find($id), $data, Auth::user())) {
             flash('Marking updated successfully.')->success();

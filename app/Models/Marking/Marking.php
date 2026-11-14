@@ -16,7 +16,7 @@ class Marking extends Model {
      */
     protected $fillable = [
         'slug', 'species_id', 'rarity_id', 'name', 'marking_image_id', 'description', 'short_description', 'is_visible', 'recessive', 'dominant',
-        'order_in_genome', // TODO
+        'order_in_genome',
     ];
 
     /**

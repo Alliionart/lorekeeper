@@ -40,23 +40,33 @@
             <input type="text" placeholder="Search markings by name or code..." class="searchBar rounded mb-3 form-control" data-id="markingSearch" />
 
             @if ($rarity_list)
-                @foreach ($markings as $rarityId => $markingItems)
-                    <div class="card rounded {{ $loop->last ? '' : 'mb-3' }}">
-                        <div class="card-header"><span class="rarity-indicator" style="background-color:#{{ $rarity_list[$rarityId]->color }}"></span> {{ $rarity_list[$rarityId]->name }} Markings</div>
-                        <div class="p-2">
-                            <div class="row no-gutters flex-gap searchContent" data-id="markingSearch">
-                                @foreach ($markingItems as $marking)
-                                    @include('designhub._entry', [
-                                        'imageUrl' => $marking->imageUrl ?? '/images/account.png',
-                                        'name' => $marking->name . ' (' . $marking->recessive . '/' . $marking->dominant . ')',
-                                        'description' => $marking->short_description,
-                                        'url' => $marking->url,
-                                    ])
-                                @endforeach
+                <div class="accordion" id="markingAccordion">
+                    @foreach ($markings as $rarityId => $markingItems)
+                        <div class="card rounded {{ $loop->last ? '' : 'mb-3' }}">
+                            <div class="card-header" id="heading{{ $rarityId }}">
+                                <h3 class="mb-0">
+                                    <button class="btn btn-link btn-block text-left h3 mb-0" type="button" data-toggle="collapse" data-target="#collapse{{ $rarityId }}" aria-expanded="true" aria-controls="collapse{{ $rarityId }}">
+                                        <span class="rarity-indicator" style="background-color:#{{ $rarity_list[$rarityId]->color }}"></span> {{ $rarity_list[$rarityId]->name }} Markings
+                                    </button>
+                                </h3>
+                            </div>
+                            <div id="collapse{{ $rarityId }}" class="collapse show" aria-labelledby="heading{{ $rarityId }}" data-parent="#markingAccordion">
+                                <div class="p-2">
+                                    <div class="row no-gutters flex-gap searchContent" data-id="markingSearch">
+                                        @foreach ($markingItems as $marking)
+                                            @include('designhub._entry', [
+                                                'imageUrl' => $marking->imageUrl ?? '/images/account.png',
+                                                'name' => $marking->name . ' (' . $marking->recessive . '/' . $marking->dominant . ')',
+                                                'description' => $marking->short_description,
+                                                'url' => $marking->url,
+                                            ])
+                                        @endforeach
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                @endforeach
+                    @endforeach
+                </div>
             @endif
         </div>
     </div>
