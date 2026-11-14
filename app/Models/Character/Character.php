@@ -858,17 +858,23 @@ class Character extends Model {
      *
      * @return array
      */
+    
+    /**
+     * Gets the genotype for the character genome.
+     *
+     * @return array
+     */
     public function getBaseCoat() {
-        if ($this->base) {
+        if ($this->base && !(Str::contains($this->base_id, '|'))) {
             // if the relationship match is successful, return that
             return [0 => [
                 'name'  => $this->base->name,
                 'code'  => $this->base->code,
             ]];
-        } elseif (!($this->base) && Str::contains($this->base, '|')) {
+        } elseif (Str::contains($this->base_id, '|')) {
             // if the relationship match fails and the base contains valid chimera string
             $chimera_bases = [];
-            $bases = explode('|', $this->base);
+            $bases = explode('|', $this->base_id);
             if (count($bases) > 1) {
                 foreach ($bases as $b) {
                     $temp = Base::where('id', $b)->first();
