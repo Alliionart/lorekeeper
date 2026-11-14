@@ -12,7 +12,8 @@ class CharacterMarking extends Model {
      * @var array
      */
     protected $fillable = [
-        'character_id', 'marking_id', 'code', 'order', 'is_dominant', 'data', 'base_id',
+        'character_id', 'marking_id', 'code', 'order', 'is_dominant', 'data',
+        'base_id', // use for implementation of carriers if desired
     ];
 
     /**
@@ -34,6 +35,13 @@ class CharacterMarking extends Model {
         RELATIONS
 
     **********************************************************************************************/
+
+    /**
+     * Get the marking associated with this record.
+     */
+    public function character() {
+        return $this->belongsTo(Character::class, 'character_id');
+    }
 
     /**
      * Get the marking associated with this record.

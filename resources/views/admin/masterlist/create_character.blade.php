@@ -260,56 +260,25 @@
             </div>
         </div>
 
-        <div class="form-group">
-            {!! Form::checkbox('is_chimera', 0, 0, ['class' => 'form-check-input', 'data-toggle' => 'toggle', 'id' => 'is_chimera']) !!}
-            {!! Form::label('is_chimera', 'Is Chimera', ['class' => 'form-check-label ml-3']) !!} {!! add_help('If this character has the Chimera modifier, then this will give you the ability to customize both genomes.') !!}
-        </div>
+        <hr>
 
-        <div class="row">
-            <div class="col-md-6">
-                <div class="form-group">
-                    {!! Form::label('Base Color') !!}
-                    {!! Form::select('base', $bases, old('base_id'), ['class' => 'form-control']) !!}
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="form-group" connect="is_chimera" style="display:none">
-                    {!! Form::label('Secondary Base Color') !!}
-                    {!! Form::select('secondary_base', $bases, old('base_id'), ['class' => 'form-control']) !!}
-                </div>
-            </div>
-        </div>
+        <h5>Genetics</h5>
 
-        <div class="form-group">
-            {!! Form::label('Markings') !!}
-            {!! add_help('Select markings applicable to character') !!}
-            <div><a href="#" class="btn btn-primary mb-2" id="add-marking">Add Marking</a></div>
-            <div id="markingList">
-            </div>
-            <div class="marking-row align-items-end hide mb-2">
-                {!! Form::select('marking_id[]', $markings, null, ['class' => 'form-control mr-2 marking-select', 'placeholder' => 'Select Marking']) !!}
-                <div class="form-group mb-0" style="width:50%">
-                    <select name="is_dominant[]" id="is_dominant[]" class="form-control markingType" placeholder="Select Type...">
-                        <option value="" data-code="">Select Type...</option>
-                        <option value="0" data-code="0">Recessive</option>
-                        <option value="1" data-code="1">Dominant</option>
-                    </select>
-                </div>
-                <div class="form-group mb-0 mx-2" connect="is_chimera" style="width:50%;display:none;">
-                    <select name="side_id[]" id="side_id" class="form-control" placeholder="Select Side...">
-                        <option value="" data-code="">Select Side...</option>
-                        <option value="0" data-code="0">Side 1</option>
-                        <option value="1" data-code="1">Side 2</option>
-                    </select>
-                </div>
-                <a href="#" class="remove-marking btn btn-danger mb-2">×</a>
-            </div>
-        </div>
+        @include('widgets._markingbases', [
+            'is_chimera' => false,
+            'bases' => $bases,
+            'base' => null,
+            'secondary_base' => null,
+            'characterMarkings' => null,
+            'markings' => $markings,
+        ])
 
         <div class="text-right">
             {!! Form::submit('Create Character', ['class' => 'btn btn-primary', 'multiple' => true, 'placeholder' => 'Select Marking(s)']) !!}
         </div>
         {!! Form::close() !!}
+
+        @include('widgets._markingbases_row', ['markings' => $markings])
     @endif
 
 @endsection

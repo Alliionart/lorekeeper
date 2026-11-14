@@ -3,7 +3,8 @@
 namespace App\Services;
 
 use App\Models\Carrier\Carrier;
-use App\Models\Carrier\MarkingCarrier;
+use App\Models\Carrier\CarrierMarking;
+use App\Models\Marking\Marking;
 use Illuminate\Support\Facades\DB;
 
 class CarrierService extends Service {
@@ -45,8 +46,8 @@ class CarrierService extends Service {
             $carrier = Carrier::create($data);
 
             if (isset($data['attached_markings']) && $data['attached_markings']) {
-                foreach ($data['attached_markings'] as $marking_id => $name) {
-                    $relation = MarkingCarrier::create([
+                foreach ($data['attached_markings'] as $marking_id) {
+                    $relation = CarrierMarking::create([
                         'marking_id' => $marking_id,
                         'carrier_id' => $carrier->id,
                     ]);
@@ -95,14 +96,17 @@ class CarrierService extends Service {
                 unset($data['image']);
             }
 
-            MarkingCarrier::where('carrier_id', $carrier->id)->delete();
+            $carrier->carrierMarkings()->delete();
 
             if (isset($data['attached_markings']) && $data['attached_markings']) {
                 if (!is_array($data['attached_markings'])) {
                     $data['attached_markings'] = [$data['attached_markings']];
                 }
-                foreach ($data['attached_markings'] as $i => $marking_id) {
-                    $relation = MarkingCarrier::create([
+                foreach ($data['attached_markings'] as $marking_id) {
+                    if (!Marking::where('id', $marking_id)->exists()) {
+                        throw new \Exception('Invalid marking ID selected.');
+                    }
+                    $relation = CarrierMarking::create([
                         'marking_id' => $marking_id,
                         'carrier_id' => $carrier->id,
                     ]);
@@ -139,10 +143,11 @@ class CarrierService extends Service {
         DB::beginTransaction();
 
         try {
+            // TODO: This will need to be implemented based on how you use carriers
             // Check first if the carrier is currently in use
-            if (DB::table('carriers')->where('id', $carrier->id)->exists()) {
-                throw new \Exception('A character with this carrier exists. Please remove the carrier first.');
-            }
+            //if (DB::table('carriers')->where('id', $carrier->id)->exists()) {
+            //    throw new \Exception('A character with this carrier exists. Please remove the carrier first.');
+            //}
 
             if (!$this->logAdminAction($user, 'Deleted Carrier', 'Deleted '.$carrier->name)) {
                 throw new \Exception('Failed to log admin action.');
@@ -151,6 +156,7 @@ class CarrierService extends Service {
             if (file_exists($carrier->imageDirectory.'/'.$carrier->imageFileName)) {
                 $this->deleteImage($carrier->imagePath, $carrier->imageFileName);
             }
+            $carrier->carrierMarkings()->delete();
             $carrier->delete();
 
             return $this->commitReturn(true);

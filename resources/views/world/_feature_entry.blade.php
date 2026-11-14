@@ -32,7 +32,7 @@
         @endif
 
         @if ($feature->full_page)
-            <a href="{{ $feature->getUrlAttribute() }}" class="btn btn-primary mt-4">View Guide</a>
+            <a href="{{ $feature->url }}" class="btn btn-primary mt-4">View Guide</a>
         @else
             <div class="world-entry-text parsed-text">
                 {!! $feature->parsed_description !!}

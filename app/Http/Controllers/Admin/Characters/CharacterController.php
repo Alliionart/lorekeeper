@@ -21,6 +21,7 @@ use App\Services\CharacterManager;
 use App\Services\TradeManager;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 class CharacterController extends Controller {
     /*
@@ -54,7 +55,7 @@ class CharacterController extends Controller {
             'userOptions' => User::query()->orderBy('name')->pluck('name', 'id')->toArray(),
             'rarities'    => ['0' => 'Select Rarity'] + Rarity::orderBy('sort', 'DESC')->pluck('name', 'id')->toArray(),
             'specieses'   => ['0' => 'Select Species'] + Species::orderBy('sort', 'DESC')->pluck('name', 'id')->toArray(),
-            'markings'    => ['' => 'Select Markings(s)'] + Marking::orderBy('name', 'DESC')->pluck('name', 'id')->toArray(),
+            'markings'    => Marking::getDropdownItems(1),
             'bases'       => ['' => 'Select Base(s)'] + Base::orderBy('name', 'DESC')->pluck('name', 'id')->toArray(),
             'subtypes'    => ['0' => 'Pick a Species First'],
             'features'    => Feature::getDropdownItems(1),
@@ -72,7 +73,7 @@ class CharacterController extends Controller {
             'userOptions' => User::query()->orderBy('name')->pluck('name', 'id')->toArray(),
             'rarities'    => ['0' => 'Select Rarity'] + Rarity::orderBy('sort', 'DESC')->pluck('name', 'id')->toArray(),
             'specieses'   => ['0' => 'Select Species'] + Species::orderBy('sort', 'DESC')->pluck('name', 'id')->toArray(),
-            'markings'    => ['' => 'Select Markings(s)'] + Marking::orderBy('name', 'DESC')->pluck('name', 'id')->toArray(),
+            'markings'    => Marking::getDropdownItems(1),
             'bases'       => ['' => 'Select Base(s)'] + Base::orderBy('name', 'DESC')->pluck('name', 'id')->toArray(),
             'subtypes'    => ['0' => 'Pick a Species First'],
             'features'    => Feature::getDropdownItems(1),
@@ -117,8 +118,6 @@ class CharacterController extends Controller {
 
         if ($character = $service->createCharacter($data, Auth::user())) {
             flash('Character created successfully.')->success();
-
-            $service->updateCharacterMarkings($data, $character);
 
             return redirect()->to($character->url);
         } else {
@@ -178,33 +177,12 @@ class CharacterController extends Controller {
             abort(404);
         }
 
-        $glint_bases = [];
-        $temp = CharacterMarking::where('character_id', $this->character->id)
-            ->whereIn('code', ['GG', 'Gl'])
-            ->value('base_id');
-        if ($temp) {
-            $has_glint = true;
-            if (str_contains($temp, '|')) {
-                $glint_bases = Base::whereIn('id', explode('|', $temp))->pluck('name', 'id')->toArray();
-            } else {
-                $glint_bases = Base::where('id', $temp)->pluck('name', 'id')->toArray();
-            }
-        } else {
-            $has_glint = false;
-        }
-
         return view('character.admin._edit_stats_modal', [
             'character'         => $this->character,
             'categories'        => CharacterCategory::orderBy('sort')->pluck('name', 'id')->toArray(),
             'userOptions'       => User::query()->orderBy('name')->pluck('name', 'id')->toArray(),
             'number'            => format_masterlist_number($this->character->number, config('lorekeeper.settings.character_number_digits')),
             'isMyo'             => false,
-            'markings'          => ['' => 'Select Markings(s)'] + Marking::orderBy('name', 'DESC')->pluck('name', 'id')->toArray(),
-            'bases'             => ['' => 'Select Base(s)'] + Base::orderBy('name', 'DESC')->pluck('name', 'id')->toArray(),
-            'is_chimera'        => (str_contains($this->character->base, '|') ? 1 : 0),
-            'characterMarkings' => CharacterMarking::where('character_id', $this->character->id)->get(),
-            'has_glint'         => $has_glint,
-            'glint_bases'       => $glint_bases,
         ]);
     }
 
@@ -262,8 +240,7 @@ class CharacterController extends Controller {
         $data = $request->only([
             'character_category_id', 'number', 'slug',
             'is_giftable', 'is_tradeable', 'is_sellable', 'sale_value',
-            'transferrable_at', 'marking_id', 'is_dominant', 'base', 'secondary_base', 'side_id',
-            'marking_color_0', 'marking_color_1',
+            'transferrable_at',
         ]);
         $this->character = Character::where('slug', $slug)->first();
         if (!$this->character) {
@@ -271,8 +248,6 @@ class CharacterController extends Controller {
         }
         if ($service->updateCharacterStats($data, $this->character, Auth::user())) {
             flash('Character stats updated successfully.')->success();
-
-            $service->updateCharacterMarkings($data, $this->character);
 
             return redirect()->to($this->character->url);
         } else {
@@ -297,7 +272,7 @@ class CharacterController extends Controller {
         $data = $request->only([
             'name',
             'is_giftable', 'is_tradeable', 'is_sellable', 'sale_value',
-            'transferrable_at', 'marking_id', 'is_dominant', 'base', 'secondary_base', 'side_id', 'marking_color_0', 'marking_color_1',
+            'transferrable_at',
         ]);
         $this->character = Character::where('is_myo_slot', 1)->where('id', $id)->first();
         if (!$this->character) {
@@ -305,8 +280,6 @@ class CharacterController extends Controller {
         }
         if ($service->updateCharacterStats($data, $this->character, Auth::user())) {
             flash('Character stats updated successfully.')->success();
-
-            $service->updateCharacterMarkings($data, $this->character);
 
             return redirect()->to($this->character->url);
         } else {
@@ -809,13 +782,114 @@ class CharacterController extends Controller {
     }
 
     /**
-     * Shows a list of all existing MYO slots.
+     * Shows the edit character genetics modal.
+     *
+     * @param string $slug
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getMyoIndex() {
-        return view('admin.masterlist.myo_index', [
-            'slots' => Character::myo(1)->orderBy('id', 'DESC')->paginate(30),
+    public function getEditCharacterGenetics($slug) {
+        $this->character = Character::where('slug', $slug)->first();
+        if (!$this->character) {
+            abort(404);
+        }
+
+        $markings = Marking::orderBy('name', 'DESC')->pluck('name', 'id')->toArray();
+        $bases = Base::orderBy('name', 'DESC')->pluck('name', 'id')->toArray();
+
+        return view('character.admin._edit_genetics_modal', [
+            'character'         => $this->character,
+            'isMyo'             => false,
+            'markings'          => ['' => 'Select Markings(s)'] + $markings,
+            'bases'             => ['' => 'Select Base(s)'] + $bases,
+            'is_chimera'        => (Str::contains($this->character->base_id, '|') ? 1 : 0),
+            'characterMarkings' => CharacterMarking::where('character_id', $this->character->id)->get(),
         ]);
+    }
+
+    /**
+     * Shows the edit MYO genetics modal.
+     *
+     * @param int $id
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function getEditMyoGenetics($id) {
+        $this->character = Character::where('is_myo_slot', 1)->where('id', $id)->first();
+        if (!$this->character) {
+            abort(404);
+        }
+
+        $markings = Marking::orderBy('name', 'DESC')->pluck('name', 'id')->toArray();
+        $bases = Base::orderBy('name', 'DESC')->pluck('name', 'id')->toArray();
+
+        return view('character.admin._edit_genetics_modal', [
+            'character'         => $this->character,
+            'isMyo'             => true,
+            'markings'          => ['' => 'Select Markings(s)'] + $markings,
+            'bases'             => ['' => 'Select Base(s)'] + $bases,
+            'is_chimera'        => (Str::contains($this->character->base_id, '|') ? 1 : 0),
+            'characterMarkings' => CharacterMarking::where('character_id', $this->character->id)->get(),
+        ]);
+    }
+
+    /**
+     * Edits a character's stats.
+     *
+     * @param App\Services\CharacterManager $service
+     * @param string                        $slug
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function postEditCharacterGenetics(Request $request, CharacterManager $service, $slug) {
+        $data = $request->only([
+            'marking_id', 'is_dominant', 'is_chimera', 'base', 'secondary_base', 'side_id',
+            'marking_color_0', 'marking_color_1',
+        ]);
+
+        $this->character = Character::where('slug', $slug)->first();
+        if (!$this->character) {
+            abort(404);
+        }
+        if ($service->updateCharacterGenetics($data, $this->character, Auth::user(), true)) {
+            flash('Character genetics updated successfully.')->success();
+
+            return redirect()->to($this->character->url);
+        } else {
+            foreach ($service->errors()->getMessages()['error'] as $error) {
+                flash($error)->error();
+            }
+        }
+
+        return redirect()->back()->withInput();
+    }
+
+    /**
+     * Edits an MYO slot's stats.
+     *
+     * @param App\Services\CharacterManager $service
+     * @param int                           $id
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function postEditMyoGenetics(Request $request, CharacterManager $service, $id) {
+        $data = $request->only([
+            'marking_id', 'is_dominant', 'base', 'secondary_base', 'side_id', 'marking_color_0', 'marking_color_1',
+        ]);
+        $this->character = Character::where('is_myo_slot', 1)->where('id', $id)->first();
+        if (!$this->character) {
+            abort(404);
+        }
+        if ($service->updateCharacterGenetics($data, $this->character, Auth::user())) {
+            flash('Character genetics updated successfully.')->success();
+
+            return redirect()->to($this->character->url);
+        } else {
+            foreach ($service->errors()->getMessages()['error'] as $error) {
+                flash($error)->error();
+            }
+        }
+
+        return redirect()->back()->withInput();
     }
 }

@@ -90,7 +90,7 @@ class BaseController extends Controller {
         } elseif (!$id && $base = $service->createBase($data, Auth::user())) {
             flash('Base created successfully.')->success();
 
-            return redirect()->to('admin/data/base/edit/'.$base->id);
+            return redirect()->to('admin/data/bases/edit/'.$base->id);
         } else {
             foreach ($service->errors()->getMessages()['error'] as $error) {
                 flash($error)->error();

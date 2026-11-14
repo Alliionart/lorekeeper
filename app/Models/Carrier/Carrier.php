@@ -43,6 +43,20 @@ class Carrier extends Model {
         'image'               => 'mimes:png',
     ];
 
+    /*
+     * Get markings attached to this carrier
+    */
+    public function markings() {
+        return $this->belongsToMany(Marking::class, 'marking_carriers');
+    }
+
+    /*
+     * Get pivot model for marking <-> carrier relationship
+    */
+    public function carrierMarkings() {
+        return $this->hasMany(CarrierMarking::class, 'carrier_id');
+    }
+
     /**********************************************************************************************
 
         SCOPES
@@ -187,7 +201,7 @@ class Carrier extends Model {
      * @return string
      */
     public function getAdminUrlAttribute() {
-        return url('admin/data/carrier/edit/'.$this->id);
+        return url('admin/data/carriers/edit/'.$this->id);
     }
 
     /**
@@ -205,8 +219,7 @@ class Carrier extends Model {
      * @return string
      */
     public function getAttachedMarkingsAttribute() {
-        $attachments = MarkingCarrier::where('carrier_id', $this->id)->pluck('marking_id');
-        $markings = Marking::whereIn('id', $attachments)->pluck('name', 'slug')->toArray();
+        $markings = $this->markings->pluck('name', 'slug')->toArray();
 
         $row = [];
 

@@ -1,28 +1,15 @@
-.markings a {
-	color: var(--gray-400) !important;
-	text-decoration: underline dotted;
-	transition: 250ms all;
-}
-.markings a:hover {
-	text-decoration-color: var(--blue-300);
-}
-.d-flex .btn {
+/******************* Layout/Structural Styles *******************/
+.dh-nav .d-flex .btn {
 	flex-grow: 1;
 }
-.flex-gap {
-	gap: 20px;
-}
-.searchContent .item {
-	width: calc(33% - 10px);
-	background-color: rgba(255,255,255,0.05);
-	border: 0;
-	border-radius: 20px;
-}
-.card-header {
+.dh-section .card-header {
 	font-weight: 700;
 	font-size: 18px;
 }
-.card.item h4 {
+.dh-section .card p:last-of-type {
+	margin-bottom: 0;
+}
+.dh-section .item .card h4 {
 	text-transform: unset;
 }
 .rarity-indicator {
@@ -33,34 +20,34 @@
 	border-radius: 50%;
 	margin-right: 10px;
 }
-
-.base-card-container .card {
-	width: calc(25% - 20px);
-}
 .base-card-container .card img {
+	max-width: 100%;
 	max-height: 150px;
 	object-fit: contain;
 }
+
+.marking-output a {
+	color: inherit;
+	text-decoration: dotted underline;
+	transition: 250ms all;
+}
+
+/* LK's version of bootstrap lacks these classes, so adding them where needed */
+@media (min-width: 768px) {
+	.dh-section .pr-md-2 {
+		padding-right: .5rem !important;
+	}
+	.dh-section .pb-md-0 {
+		padding-bottom: 0 !important;
+	}
+}
+
+/******************* Optional Decorative/Unimplemented Styles *******************/
 .bg-soft {
 	background-color: rgba(255,255,255,0.05);
 }
-.carrier-card.card h5 {
-	background-color: var(--gray-dark);
-}
 
-/* ATTRIBUTES */
-.card {
-	overflow: hidden;
-}
-.card.rounded {
-	border-radius: 20px !important;
-}
-.flex-gap {
-	gap: 10px;
-}
-.card.bg-secondary, .col.bg-secondary {
-	background-color: var(--gray-800) !important;
-}
+/* Attributes */
 .attribute {
 	width: 50px;
 	aspect-ratio: 1;

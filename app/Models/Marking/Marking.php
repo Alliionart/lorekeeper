@@ -2,6 +2,7 @@
 
 namespace App\Models\Marking;
 
+use App\Models\Carrier\Carrier;
 use App\Models\Model;
 use App\Models\Rarity;
 use App\Models\Species\Species;
@@ -15,6 +16,7 @@ class Marking extends Model {
      */
     protected $fillable = [
         'slug', 'species_id', 'rarity_id', 'name', 'marking_image_id', 'description', 'short_description', 'is_visible', 'recessive', 'dominant',
+        'order_in_genome', // TODO
     ];
 
     /**
@@ -79,6 +81,13 @@ class Marking extends Model {
      */
     public function species() {
         return $this->belongsTo(Species::class);
+    }
+
+    /**
+     * Get the carriers with this marking attached.
+     */
+    public function carriers() {
+        return $this->belongsToMany(Carrier::class, 'carrier_markings');
     }
 
     /**********************************************************************************************
@@ -212,7 +221,7 @@ class Marking extends Model {
      * @return string
      */
     public function getImageUrlAttribute() {
-        if (!$this->slug) {
+        if (!file_exists($this->imageDirectory.'/'.$this->imageFileName)) {
             return null;
         }
 

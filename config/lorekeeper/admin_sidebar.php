@@ -175,18 +175,6 @@ return [
                 'url'  => 'admin/data/traits',
             ],
             [
-                'name' => 'Markings',
-                'url'  => 'admin/data/markings',
-            ],
-            [
-                'name' => 'Carriers',
-                'url'  => 'admin/data/carriers',
-            ],
-            [
-                'name' => 'Bases',
-                'url'  => 'admin/data/bases',
-            ],
-            [
                 'name' => 'Shops',
                 'url'  => 'admin/data/shops',
             ],
@@ -205,6 +193,23 @@ return [
             [
                 'name' => 'Items',
                 'url'  => 'admin/data/items',
+            ],
+        ],
+    ],
+    'Design Hub' => [
+        'power' => 'edit_data',
+        'links' => [
+            [
+                'name' => 'Markings',
+                'url'  => 'admin/data/markings',
+            ],
+            [
+                'name' => 'Carriers',
+                'url'  => 'admin/data/carriers',
+            ],
+            [
+                'name' => 'Bases',
+                'url'  => 'admin/data/bases',
             ],
         ],
     ],

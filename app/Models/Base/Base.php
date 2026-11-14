@@ -188,7 +188,7 @@ class Base extends Model {
      * @return string
      */
     public function getAdminUrlAttribute() {
-        return url('admin/data/base/edit/'.$this->id);
+        return url('admin/data/bases/edit/'.$this->id);
     }
 
     /**

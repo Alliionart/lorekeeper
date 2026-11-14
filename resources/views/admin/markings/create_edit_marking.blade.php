@@ -10,6 +10,7 @@
     <h1>{{ $marking->id ? 'Edit' : 'Create' }} Marking
         @if ($marking->id)
             <a href="#" class="btn btn-danger float-right delete-marking-button">Delete Marking</a>
+            <a href="{{ $marking->url }}" class="btn btn-primary float-right mr-2">View Page</a>
         @endif
     </h1>
 
@@ -95,10 +96,13 @@
 
     @if ($marking->id)
         <h3>Preview</h3>
-        <div class="card mb-3">
-            <div class="card-body">
-                @include('world._feature_entry', ['feature' => $marking])
-            </div>
+        <div class="row no-gutters justify-content-center">
+            @include('designhub._entry', [
+                'imageUrl' => $marking->imageUrl ?? '/images/account.png',
+                'name' => $marking->name . ' (' . $marking->recessive . '/' . $marking->dominant . ')',
+                'description' => $marking->short_description,
+                'url' => $marking->url,
+            ])
         </div>
     @endif
 @endsection

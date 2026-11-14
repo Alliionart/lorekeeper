@@ -18,7 +18,7 @@ class DesignHubController extends Controller {
     }
 
     public function getDesignHubPage(Request $request) {
-        $markings = self::getDesignHubGenetics($request);
+        $markings = Marking::visible()->with('rarity')->orderBy('name', 'ASC')->get()->sortByDesc('rarity.sort')->groupBy('rarity.id');
         $rarities = Rarity::whereIn('id', $markings->keys())->get()->keyBy('id');
         $trait_categories = Settings::get('designhub_trait_categories');
         $pages = SitePage::whereIn('key', ['dh-start', 'dh-end'])->get();
@@ -36,23 +36,12 @@ class DesignHubController extends Controller {
             'subtypes'          => Subtype::orderBy('sort', 'DESC')->get(),
             'markings'          => $markings,
             'rarity_list'       => $rarities,
-            'trait_lists'       => self::getDesignHubTraitByCategory($request, $trait_categories),
+            'trait_lists'       => $this->paginateDesignHubTraitByCategory($request, $trait_categories),
         ]);
     }
 
-    public function getDesignHubGenetics(Request $request) {
-        $query = Marking::visible()->with('rarity');
-        $data = $request->only([
-            'name',
-            'variant',
-        ]);
-
-        return $query->orderBy('name', 'ASC')->paginate(20)->appends($request->query())->sortByDesc('rarity.sort')->groupBy('rarity.id');
-    }
-
-    public function getDesignHubTraitByCategory(Request $request, $category_ids) {
+    private function paginateDesignHubTraitByCategory(Request $request, $category_ids) {
         $query = Feature::visible(Auth::check() ? Auth::user() : null)->with('category')->with('rarity')->with('species');
-        $data = $request->only(['rarity_id', 'feature_category_id', 'species_id', 'subtype_id', 'name', 'sort']);
 
         return $query->orderBy('id')->whereIn('feature_category_id', $category_ids)->paginate(20)->appends($request->query());
     }

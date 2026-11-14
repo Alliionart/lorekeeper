@@ -5,7 +5,7 @@
 @endsection
 
 @section('admin-content')
-    {!! breadcrumbs(['Admin Panel' => 'admin', 'Bases' => 'admin/data/bases', ($base->id ? 'Edit' : 'Create') . ' Base' => $base->id ? 'admin/data/base/edit/' . $base->id : 'admin/data/base/create']) !!}
+    {!! breadcrumbs(['Admin Panel' => 'admin', 'Bases' => 'admin/data/bases', ($base->id ? 'Edit' : 'Create') . ' Base' => $base->id ? 'admin/data/bases/edit/' . $base->id : 'admin/data/bases/create']) !!}
 
     <h1>{{ $base->id ? 'Edit' : 'Create' }} Base
         @if ($base->id)
@@ -13,11 +13,11 @@
         @endif
     </h1>
 
-    {!! Form::open(['url' => $base->id ? 'admin/data/base/edit/' . $base->id : 'admin/data/base/create', 'files' => true]) !!}
+    {!! Form::open(['url' => $base->id ? 'admin/data/bases/edit/' . $base->id : 'admin/data/bases/create', 'files' => true]) !!}
 
     <h3>Basic Information</h3>
 
-    <div class="row">
+    <div class="row mb-2">
         <div class="col-md-4">
             <div class="form-group">
                 {!! Form::label('Name') !!}
@@ -30,18 +30,16 @@
                 {!! Form::text('code', $base->code, ['class' => 'form-control']) !!}
             </div>
         </div>
-        <div class="col-md-4">
-            <div class="form-group">
+        <div class="col-md-4 d-flex align-items-center">
+            <div class="mt-2">
                 {!! Form::checkbox('is_visible', 1, $base->id ? $base->is_visible : 1, ['class' => 'form-check-input', 'data-toggle' => 'toggle']) !!}
                 {!! Form::label('is_visible', 'Is Visible', ['class' => 'form-check-label ml-3']) !!} {!! add_help('If turned off, the base will not be visible in the base list or available for selection in search and design updates. Permissioned staff will still be able to add them to characters, however.') !!}
             </div>
         </div>
     </div>
 
-
-
     <div class="form-group">
-        {!! Form::label('Preview Image (Optional)') !!} {!! add_help('This image is used only on the base coats page.') !!}
+        {!! Form::label('Reference Image (Optional)') !!} {!! add_help('This image represents the base in some way, such as a valid color range. This will be displayed and downloadable on the base coats page.') !!}
         <div class="custom-file">
             {!! Form::label('image', file_exists($base->imageDirectory . '/' . $base->imageFileName) ? $base->imageFileName : 'Choose file...', ['class' => 'custom-file-label']) !!}
             {!! Form::file('image', ['class' => 'custom-file-input']) !!}
@@ -63,10 +61,8 @@
 
     @if ($base->id)
         <h3>Preview</h3>
-        <div class="card mb-3">
-            <div class="card-body">
-                @include('world._feature_entry', ['feature' => $base])
-            </div>
+        <div class="row no-gutters justify-content-center">
+            @include('designhub._base_entry', ['base' => $base])
         </div>
     @endif
 @endsection
@@ -77,7 +73,7 @@
         $(document).ready(function() {
             $('.delete-feature-button').on('click', function(e) {
                 e.preventDefault();
-                loadModal("{{ url('admin/data/base/delete') }}/{{ $base->id }}", 'Delete Base');
+                loadModal("{{ url('admin/data/bases/delete') }}/{{ $base->id }}", 'Delete Base');
             });
         });
     </script>

@@ -20,6 +20,8 @@ use App\Models\User\User;
 use App\Models\User\UserCharacterLog;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 
 class Character extends Model {
     use SoftDeletes;
@@ -35,7 +37,7 @@ class Character extends Model {
         'is_sellable', 'is_tradeable', 'is_giftable',
         'sale_value', 'transferrable_at', 'is_visible',
         'is_gift_art_allowed', 'is_gift_writing_allowed', 'is_trading', 'sort',
-        'is_myo_slot', 'name', 'trade_id', 'owner_url', 'base',
+        'is_myo_slot', 'name', 'trade_id', 'owner_url', 'base_id',
     ];
 
     /**
@@ -197,6 +199,22 @@ class Character extends Model {
      */
     public function items() {
         return $this->belongsToMany(Item::class, 'character_items')->withPivot('count', 'data', 'updated_at', 'id')->whereNull('character_items.deleted_at');
+    }
+
+    /**
+     * Get the pivot model for a character's markings.
+     */
+    public function markings() {
+        return $this->hasMany(CharacterMarking::class, 'character_id')->with('marking', 'marking.carriers');
+    }
+
+    /**
+     * Get the base for a character.
+     *
+     * this will return null if it s a chimera, which works well for our handling
+     */
+    public function base() {
+        return $this->belongsTo(Base::class, 'base_id');
     }
 
     /**********************************************************************************************
@@ -593,30 +611,37 @@ class Character extends Model {
      * @return array
      */
     public function getMarkingFinalArray() {
-        $markings = CharacterMarking::where('character_id', $this->id)->get();
+        $markings = $this->markings;
 
         if (!$markings->count()) {
-            //If no markings, return null
+            // If no markings, return null
             return null;
         }
 
         $rendered = [];
+        $rendered['is_chimera'] = (Str::contains($this->base_id, '|') ? 1 : 0);
         foreach ($markings as $marking) {
-            $temp = Marking::where('id', $marking->marking_id)->first();
-            $rendered['is_chimera'] = $marking->data === null ? 0 : 1;
-            $has_multi_bases = false;
+            $temp = $marking->marking;
             $marking_data = $marking->data ?? 0;
-            if ($marking->carrier_id) {
-                //Add carriers if needed
-                $rendered['carriers'][$marking->carrier_id] = Carrier::where('id', $marking->carrier_id)->pluck('name')->toArray();
-            }
-            if (str_contains($marking->base_id, '|')) {
-                $has_multi_bases = true;
-                $multi_bases = explode('|', $marking->base_id);
-                foreach ($multi_bases as $base) {
-                    $temp_bases[] = Base::where('id', $base)->pluck('code', 'name')->toArray();
+            /*
+                CARRIER PROCESSING GOES HERE (if desired)
+                recommended to optimize, as this WILL do many repeated DB calls
+
+                if ($marking->carrier_id) {
+                    // Add carriers if needed
+                    $rendered['carriers'][$marking->carrier_id] = $markings->carriers->firstWhere('id', $marking->carrier_id);
                 }
-            }
+
+                if (Str::contains($marking->base_id, '|')) {
+                    $has_multi_bases = true;
+                    $multi_bases = explode('|', $marking->base_id);
+                    foreach ($multi_bases as $base) {
+                        $temp_bases[] = Base::where('id', $base)->pluck('code', 'name')->toArray();
+                    }
+                } else {
+                    $has_multi_bases = false;
+                }
+            */
             if ($temp) {
                 if ($rendered['is_chimera'] === 1) {
                     $marksrender[$marking_data][$temp->order_in_genome][] = [
@@ -624,7 +649,7 @@ class Character extends Model {
                         'is_dominant'   => $marking->is_dominant,
                         'code'          => $marking->code,
                         'link'          => $temp->getUrlAttribute(),
-                        'base_info'     => $has_multi_bases ? $temp_bases : Base::where('id', $marking->base_id)->pluck('code', 'name')->toArray(),
+                        // 'base_info'     => $has_multi_bases ? $temp_bases : Base::where('id', $marking->base_id)->pluck('code', 'name')->toArray(),
                     ];
                 } else {
                     $marksrender[0][$temp->order_in_genome][] = [
@@ -632,7 +657,7 @@ class Character extends Model {
                         'is_dominant'   => $marking->is_dominant,
                         'code'          => $marking->code,
                         'link'          => $temp->getUrlAttribute(),
-                        'base_info'     => $has_multi_bases ? $temp_bases : Base::where('id', $marking->base_id)->pluck('code', 'name')->toArray(),
+                        //  'base_info'     => $has_multi_bases ? $temp_bases : Base::where('id', $marking->base_id)->pluck('code', 'name')->toArray(),
                     ];
                 }
             }
@@ -648,95 +673,88 @@ class Character extends Model {
      *
      * @param mixed $markings
      * @param mixed $type
+     * @param mixed $bases
      *
      * @return string
      */
-    public function getMarkingLinkedArray($markings, $type = 'phenotype') {
-        $bases = $this->getBaseCoat();
-
+    public function getMarkingLinkedArray($bases, $markings, $type = 'phenotype') {
         if ($markings === null || count($markings) < 1) {
             if (count($bases) > 1 && array_key_exists(1, $bases)) {
-                //If Chimera and no marks
-                if ($type === 'phenotype') {
-                    return $bases[0]['name'].' // '.$bases[1]['name'];
-                } else {
-                    return $bases[0]['code'].'+//'.$bases[1]['code'].'+';
+                // If Chimera and no marks
+                switch ($type) {
+                    case 'genotype':
+                        return $bases[0]['code'].'+//'.$bases[1]['code'].'+';
+                    case 'phenotype': default:
+                        return $bases[0]['name'].' // '.$bases[1]['name'];
                 }
             } elseif (count($bases) > 1 && !array_key_exists(0, $bases)) {
-                //This shit is a mess, I know, I'm tired, no switchcase here :(
-                if ($type === 'phenotype') {
-                    return $bases['name'];
-                } else {
-                    return $bases['code'].'+';
+                // This shit is a mess, I know, I'm tired, no switchcase here :(
+                // it's ok I gotchu
+                switch ($type) {
+                    case 'genotype':
+                        return $bases['code'].'+';
+                    case 'phenotype': default:
+                        return $bases['name'];
                 }
             } else {
-                if ($type === 'phenotype') {
-                    if (array_key_exists(0, $bases)) {
-                        return $bases[0]['name'];
-                    }
-
-                    return $bases['name'];
-                } else {
-                    if (array_key_exists(0, $bases)) {
-                        return $bases[0]['code'].'+';
-                    }
-
-                    return $bases['code'].'+';
+                switch ($type) {
+                    case 'genotype':
+                        return count($bases) ? Arr::first($bases)['code'].'+' : $bases['code'].'+';
+                    case 'phenotype': default:
+                        return count($bases) ? Arr::first($bases)['name'] : $bases['name'];
                 }
             }
-        }
-
-        if (!is_array($markings) || !array_key_exists('markings', $markings)) {
-            return 'Unknown';
-        }
-
-        $chimera = false;
-        if (array_key_exists('is_chimera', $markings) && $markings['is_chimera'] == 1) {
-            $chimera = true;
+        } elseif (is_array($markings) || array_key_exists('markings', $markings)) {
+            // multiple markings data was given
+            // this is handled the same whether it's a chimera or not
             $geno_sides = [];
+            $html_inner = [];
+
+            foreach ($markings['markings'] as $side => $group) {
+                // Sides - Max of 2 for chimera
+                $sideInner = $this->handleMarkingGroup($group, $type);
+                $geno_sides[$side] = $sideInner;
+
+                // Get the bases per side
+                $geno_sides[$side][2] = $bases[0];
+                ksort($geno_sides[$side]);
+            }
+            if (!isset($geno_sides[1]) && isset($bases[1])) {
+                // If secondary side is without markings
+                $geno_sides[1][2] = $bases[1];
+            }
+            if (!isset($geno_sides[0]) && isset($bases[0])) {
+                // If primary side is without markings
+                $geno_sides[0][2] = $bases[0];
+            }
+            foreach ($geno_sides as $i => $side) {
+                $html_inner[] = $this->renderFinalMarkingOutput($side, $type);
+            }
+            if (count($html_inner) == 2) {
+                $seperator = ($type == 'phenotype' ? ' // ' : '//');
+                $html_inner = implode($seperator, $html_inner);
+            } else {
+                $html_inner = implode('', $html_inner);
+            }
+
+            return $html_inner;
         }
 
-        $html_inner = [];
-
-        //return print_r($markings, true);
-
-        foreach ($markings['markings'] as $side => $group) {
-            //Sides - Max of 2 for chimera
-            $sideInner = $this->handleMarkingGroup($group, $type);
-            $geno_sides[$side] = $sideInner;
-
-            //Get the bases per side
-            $geno_sides[$side][2] = $bases[0];
-            ksort($geno_sides[$side]);
-        }
-        if (!isset($geno_sides[1]) && isset($bases[1])) {
-            //If secondary side is without markings
-            $geno_sides[1][2] = $bases[1];
-        }
-        if (!isset($geno_sides[0]) && isset($bases[0])) {
-            //If primary side is without markings
-            $geno_sides[0][2] = $bases[0];
-        }
-        foreach ($geno_sides as $i => $side) {
-            $html_inner[] = $this->renderFinalMarkingOutput($side, $type);
-        }
-        if (count($html_inner) == 2) {
-            $seperator = ($type == 'phenotype' ? ' // ' : '//');
-            $html_inner = implode($seperator, $html_inner);
-        } else {
-            $html_inner = implode('', $html_inner);
-        }
-
-        return $html_inner;
+        // none or no valid data
+        return 'Unknown';
     }
 
     public function handleMarkingGroup($group, $type = 'phenotype') {
         $html_inner = [];
         foreach ($group as $id => $order_group) {
-            //Inside each order group, we have the markings
-            foreach ($order_group as $marking) {
-                //Individual markings
-                $html_inner[$id][] = $this->renderIndividualMarking($marking, $type);
+            // Inside each order group, we have the markings
+            foreach ($order_group as $i => $marking) {
+                // Individual markings
+                if ($type == 'phenotype' && count($order_group) > 1 && $i == count($order_group) - 1) {
+                    $html_inner[$id][] = ' and '.$this->renderIndividualMarking($marking, $type);
+                } else {
+                    $html_inner[$id][] = $this->renderIndividualMarking($marking, $type);
+                }
             }
         }
 
@@ -785,8 +803,13 @@ class Character extends Model {
         switch ($type) {
             case 'phenotype':
                 $base = $array[2] ?? [0 => ['name' => 'Unknown', 'code' => '??']];
-                unset($array[2]);
 
+                unset($array[2]);
+                $html = $base['name'];
+                // if no markings, just the name
+                if (!count($array)) {
+                    break;
+                }
                 foreach ($array as $order => $marking_group) {
                     foreach ($marking_group as $marking) {
                         if ($order < 2) {
@@ -798,8 +821,7 @@ class Character extends Model {
                         }
                     }
                 }
-                $html = (isset($temp[0]) && count($temp[0]) > 0 ? implode(' ', $temp[0]).' ' : '');
-                $html .= $base['name'];
+                $html = $base['name'].' with '.(isset($temp[0]) && count($temp[0]) > 0 ? implode(' ', $temp[0]).' ' : '');
                 if (isset($temp[1]) && count($temp[1]) > 0) {
                     $html .= ' with '.implode(' ', $temp[1]);
                 }
@@ -836,10 +858,23 @@ class Character extends Model {
      *
      * @return array
      */
+
+    /**
+     * Gets the genotype for the character genome.
+     *
+     * @return array
+     */
     public function getBaseCoat() {
-        if (str_contains($this->base, '|')) {
+        if ($this->base && !(Str::contains($this->base_id, '|'))) {
+            // if the relationship match is successful, return that
+            return [0 => [
+                'name'  => $this->base->name,
+                'code'  => $this->base->code,
+            ]];
+        } elseif (Str::contains($this->base_id, '|')) {
+            // if the relationship match fails and the base contains valid chimera string
             $chimera_bases = [];
-            $bases = explode('|', $this->base);
+            $bases = explode('|', $this->base_id);
             if (count($bases) > 1) {
                 foreach ($bases as $b) {
                     $temp = Base::where('id', $b)->first();
@@ -851,12 +886,8 @@ class Character extends Model {
 
                 return $chimera_bases;
             }
-        }
-
-        //If Not Chimera, Continue as normal
-        $base = Base::where('id', $this->base)->first();
-
-        if (!$base) {
+        } else {
+            // else character has no base, or base value is invalid
             return [
                 [
                     'name'  => 'Unknown',
@@ -864,10 +895,21 @@ class Character extends Model {
                 ],
             ];
         }
+    }
 
-        return [0 => [
-            'name'  => $base->name,
-            'code'  => $base->code,
-        ]];
+    /**
+     * Gets a character's genetics.
+     *
+     * @return array
+     */
+    public function getGeneticsAttribute() {
+        $markings = $this->getMarkingFinalArray();
+        $bases = $this->getBaseCoat();
+
+        return [
+            'markings'  => $markings,
+            'phenotype' => $this->getMarkingLinkedArray($bases, $markings),
+            'genotype'  => $this->getMarkingLinkedArray($bases, $markings, 'genotype'),
+        ];
     }
 }
