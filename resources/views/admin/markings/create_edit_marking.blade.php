@@ -95,35 +95,35 @@
                 {!! Form::label('Order in Genome') !!} {!! add_help('This number determines the order of the markings in the genome. Lower numbers will appear first. Base appears between 0 and 1.') !!}
                 {!! Form::number('order_in_genome', $marking->order_in_genome ?? null, ['class' => 'form-control']) !!}
             </div>
-    </div>
-
-    <div class="text-right">
-        {!! Form::submit($marking->id ? 'Edit' : 'Create', ['class' => 'btn btn-primary']) !!}
-    </div>
-
-    {!! Form::close() !!}
-
-    @if ($marking->id)
-        <h3>Preview</h3>
-        <div class="row no-gutters justify-content-center">
-            @include('designhub._entry', [
-                'imageUrl' => $marking->imageUrl ?? '/images/account.png',
-                'name' => $marking->name . ' (' . $marking->recessive . '/' . $marking->dominant . ')',
-                'description' => $marking->short_description,
-                'url' => $marking->url,
-            ])
         </div>
-    @endif
-@endsection
 
-@section('scripts')
-    @parent
-    <script>
-        $(document).ready(function() {
-            $('.delete-marking-button').on('click', function(e) {
-                e.preventDefault();
-                loadModal("{{ url('admin/data/markings/delete') }}/{{ $marking->id }}", 'Delete Marking');
+        <div class="text-right">
+            {!! Form::submit($marking->id ? 'Edit' : 'Create', ['class' => 'btn btn-primary']) !!}
+        </div>
+
+        {!! Form::close() !!}
+
+        @if ($marking->id)
+            <h3>Preview</h3>
+            <div class="row no-gutters justify-content-center">
+                @include('designhub._entry', [
+                    'imageUrl' => $marking->imageUrl ?? '/images/account.png',
+                    'name' => $marking->name . ' (' . $marking->recessive . '/' . $marking->dominant . ')',
+                    'description' => $marking->short_description,
+                    'url' => $marking->url,
+                ])
+            </div>
+        @endif
+    @endsection
+
+    @section('scripts')
+        @parent
+        <script>
+            $(document).ready(function() {
+                $('.delete-marking-button').on('click', function(e) {
+                    e.preventDefault();
+                    loadModal("{{ url('admin/data/markings/delete') }}/{{ $marking->id }}", 'Delete Marking');
+                });
             });
-        });
-    </script>
-@endsection
+        </script>
+    @endsection
