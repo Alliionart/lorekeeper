@@ -92,7 +92,7 @@
         var $markingSelect = $('.marking-select');
 
         // the exact same functions work for both
-         @if (config('lorekeeper.extensions.organised_traits_dropdown.enable'))
+        @if (config('lorekeeper.extensions.organised_traits_dropdown.enable'))
             let markingRenderOptions = {};
             markingRenderOptions = {
                 item: featureSelectedRender
