@@ -240,8 +240,7 @@ class CharacterController extends Controller {
         $data = $request->only([
             'character_category_id', 'number', 'slug',
             'is_giftable', 'is_tradeable', 'is_sellable', 'sale_value',
-            'transferrable_at', 'marking_id', 'is_dominant', 'base', 'secondary_base', 'side_id',
-            'marking_color_0', 'marking_color_1',
+            'transferrable_at',
         ]);
         $this->character = Character::where('slug', $slug)->first();
         if (!$this->character) {
@@ -249,8 +248,6 @@ class CharacterController extends Controller {
         }
         if ($service->updateCharacterStats($data, $this->character, Auth::user())) {
             flash('Character stats updated successfully.')->success();
-
-            $service->updateCharacterMarkings($data, $this->character);
 
             return redirect()->to($this->character->url);
         } else {
@@ -275,7 +272,7 @@ class CharacterController extends Controller {
         $data = $request->only([
             'name',
             'is_giftable', 'is_tradeable', 'is_sellable', 'sale_value',
-            'transferrable_at', 'marking_id', 'is_dominant', 'base', 'secondary_base', 'side_id', 'marking_color_0', 'marking_color_1',
+            'transferrable_at',
         ]);
         $this->character = Character::where('is_myo_slot', 1)->where('id', $id)->first();
         if (!$this->character) {
@@ -283,8 +280,6 @@ class CharacterController extends Controller {
         }
         if ($service->updateCharacterStats($data, $this->character, Auth::user())) {
             flash('Character stats updated successfully.')->success();
-
-            $service->updateCharacterMarkings($data, $this->character);
 
             return redirect()->to($this->character->url);
         } else {
@@ -807,7 +802,7 @@ class CharacterController extends Controller {
             'isMyo'             => false,
             'markings'          => ['' => 'Select Markings(s)'] + $markings,
             'bases'             => ['' => 'Select Base(s)'] + $bases,
-            'is_chimera'        => (Str::contains($this->character->base, '|') ? 1 : 0),
+            'is_chimera'        => (Str::contains($this->character->base_id, '|') ? 1 : 0),
             'characterMarkings' => CharacterMarking::where('character_id', $this->character->id)->get(),
         ]);
     }
@@ -833,7 +828,7 @@ class CharacterController extends Controller {
             'isMyo'             => true,
             'markings'          => ['' => 'Select Markings(s)'] + $markings,
             'bases'             => ['' => 'Select Base(s)'] + $bases,
-            'is_chimera'        => (Str::contains($this->character->base, '|') ? 1 : 0),
+            'is_chimera'        => (Str::contains($this->character->base_id, '|') ? 1 : 0),
             'characterMarkings' => CharacterMarking::where('character_id', $this->character->id)->get(),
         ]);
     }

@@ -260,6 +260,10 @@
             </div>
         </div>
 
+        <hr>
+
+        <h5>Genetics</h5>
+
         @include('widgets._markingbases', [
             'is_chimera' => false,
             'bases' => $bases,
