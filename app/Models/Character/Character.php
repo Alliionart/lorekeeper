@@ -858,7 +858,7 @@ class Character extends Model {
      *
      * @return array
      */
-    
+
     /**
      * Gets the genotype for the character genome.
      *

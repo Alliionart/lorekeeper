@@ -7,7 +7,6 @@ use App\Models\Base\Base;
 use App\Models\Character\Character;
 use App\Models\Character\CharacterCategory;
 use App\Models\Character\CharacterImage;
-use App\Models\Character\CharacterMarking;
 use App\Models\Character\Sublist;
 use App\Models\Feature\Feature;
 use App\Models\Marking\Marking;
@@ -219,7 +218,7 @@ class BrowseController extends Controller {
             $markingIds = $request->get('marking_ids');
             $query->where(function ($query) use ($markingIds) {
                 foreach ($markingIds as $markingId) {
-                    $query->whereHas('markings', function($q) use ($markingId) {
+                    $query->whereHas('markings', function ($q) use ($markingId) {
                         $q->where('marking_id', $markingId);
                     });
                 }
@@ -404,7 +403,7 @@ class BrowseController extends Controller {
             $markingIds = $request->get('marking_ids');
             $query->where(function ($query) use ($markingIds) {
                 foreach ($markingIds as $markingId) {
-                    $query->whereHas('markings', function($q) use ($markingId) {
+                    $query->whereHas('markings', function ($q) use ($markingId) {
                         $q->where('marking_id', $markingId);
                     });
                 }
@@ -585,7 +584,7 @@ class BrowseController extends Controller {
                 $query->where('owner_url', 'LIKE', '%'.$ownerUrl.'%');
             });
         }
-        
+
         if ($request->get('base')) {
             $base = $request->get('base');
             $query->where(function ($query) use ($base) {
@@ -596,7 +595,7 @@ class BrowseController extends Controller {
             $markingIds = $request->get('marking_ids');
             $query->where(function ($query) use ($markingIds) {
                 foreach ($markingIds as $markingId) {
-                    $query->whereHas('markings', function($q) use ($markingId) {
+                    $query->whereHas('markings', function ($q) use ($markingId) {
                         $q->where('marking_id', $markingId);
                     });
                 }
@@ -688,16 +687,16 @@ class BrowseController extends Controller {
         }
 
         return view('browse.sub_masterlist', [
-            'isMyo'       => false,
-            'characters'  => $query->paginate(24)->appends($request->query()),
-            'categories'  => [0 => 'Any Category'] + $subCategory,
-            'specieses'   => [0 => 'Any Species'] + $subSpecies,
-            'subtypes'    => [0 => 'Any Subtype'] + Subtype::visible(Auth::check() ? Auth::user() : null)->orderBy('subtypes.sort', 'DESC')->pluck('name', 'id')->toArray(),
-            'rarities'    => [0 => 'Any Rarity'] + Rarity::orderBy('rarities.sort', 'DESC')->pluck('name', 'id')->toArray(),
-            'features'    => Feature::getDropdownItems(),
-            'sublist'     => $sublist,
-            'sublists'    => Sublist::orderBy('sort', 'DESC')->get(),
-            'userOptions' => User::query()->orderBy('name')->pluck('name', 'id')->toArray(),
+            'isMyo'        => false,
+            'characters'   => $query->paginate(24)->appends($request->query()),
+            'categories'   => [0 => 'Any Category'] + $subCategory,
+            'specieses'    => [0 => 'Any Species'] + $subSpecies,
+            'subtypes'     => [0 => 'Any Subtype'] + Subtype::visible(Auth::check() ? Auth::user() : null)->orderBy('subtypes.sort', 'DESC')->pluck('name', 'id')->toArray(),
+            'rarities'     => [0 => 'Any Rarity'] + Rarity::orderBy('rarities.sort', 'DESC')->pluck('name', 'id')->toArray(),
+            'features'     => Feature::getDropdownItems(),
+            'sublist'      => $sublist,
+            'sublists'     => Sublist::orderBy('sort', 'DESC')->get(),
+            'userOptions'  => User::query()->orderBy('name')->pluck('name', 'id')->toArray(),
             'markings'     => Marking::getDropdownItems(),
             'bases'        => ['' => 'Select Base(s)'] + Base::orderBy('name', 'DESC')->pluck('name', 'id')->toArray(),
         ]);
